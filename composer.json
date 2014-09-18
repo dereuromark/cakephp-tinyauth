@@ -1,9 +1,9 @@
 {
-	"name": "dereuromark/cakephp-tools",
+	"name": "dereuromark/cakephp-tinyauth",
 	"type": "cakephp-plugin",
-	"description": "A CakePHP plugin containing lots of useful and reusable tools",
-	"keywords": ["cakephp", "plugin", "tools", "utils", "helpers", "components", "behaviors", "datasources"],
-	"homepage": "https://github.com/dereuromark/cakephp-tools",
+	"description": "A CakePHP plugin to handle user authorization the easy way.",
+	"keywords": ["cakephp", "plugin", "tinyauth", "authorization", "roles"],
+	"homepage": "https://github.com/dereuromark/cakephp-tinyauth",
 	"license": "MIT",
 	"authors": [
 		{
@@ -13,13 +13,26 @@
 		}
 	],
 	"require": {
-		"php": ">=5.3",
-		"composer/installers": "*"
+		"php": ">=5.4",
+		"cakephp/cakephp": "3.0.x-dev"
+	},
+	"require-dev": {
+		"phpunit/phpunit": "*"
 	},
 	"support": {
-		"source": "https://github.com/dereuromark/cakephp-tools"
+		"source": "https://github.com/dereuromark/cakephp-tinyauth"
 	},
+	"autoload": {
+		"psr-4": {
+			"TinyAuth\\": "src"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"TinyAuth\\Test\\": "tests"
+		}
+	}
 	"extra": {
-		"installer-name": "Tools"
+		"installer-name": "TinyAuth"
 	}
 }

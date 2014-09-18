@@ -43,6 +43,7 @@ class Auth {
 	 * This can be used anywhere to check if a user is logged in.
 	 *
 	 * @return mixed User id if existent, null otherwise.
+	 * @deprecated Not usable in CakePHP 3.
 	 */
 	public static function id() {
 		return AuthComponent::user('id');
@@ -55,6 +56,7 @@ class Auth {
 	 * list of roles for multi role setup.
 	 *
 	 * @return mixed String or array of roles or null if inexistent.
+	 * @deprecated Not usable in CakePHP 3.
 	 */
 	public static function roles() {
 		$roles = AuthComponent::user(USER_ROLE_KEY);
@@ -72,6 +74,7 @@ class Auth {
 	 *
 	 * @param string $key Key in dot syntax.
 	 * @return mixed Data
+	 * @deprecated Not usable in CakePHP 3.
 	 */
 	public static function user($key = null) {
 		return AuthComponent::user($key);
@@ -81,25 +84,12 @@ class Auth {
 	 * Check if the current session has this role.
 	 *
 	 * @param mixed $role
-	 * @param mixed $providedRoles
+	 * @param array $currentRoles
 	 * @return bool Success
 	 */
-	public static function hasRole($ownRole, $providedRoles = null) {
-		if ($providedRoles !== null) {
-			$roles = $providedRoles;
-		} else {
-			$roles = static::roles();
-		}
-		if (is_array($roles)) {
-			if (in_array($ownRole, $roles)) {
-				return true;
-			}
-		} elseif (!empty($roles)) {
-			if ($ownRole == $roles) {
-				return true;
-			}
-		}
-		return false;
+	public static function hasRole($expectedRole, $currentRoles) {
+		$currentRoles = (array)$currentRoles;
+		return in_array($expectedRole, $currentRoles);
 	}
 
 	/**
@@ -110,22 +100,17 @@ class Auth {
 	 *
 	 * @param mixed $roles
 	 * @param bool $oneRoleIsEnough (if all $roles have to match instead of just one)
-	 * @param mixed $providedRoles
+	 * @param array $currentRoles
 	 * @return bool Success
 	 */
-	public static function hasRoles($ownRoles, $oneRoleIsEnough = true, $providedRoles = null) {
-		if ($providedRoles !== null) {
-			$roles = $providedRoles;
-		} else {
-			$roles = static::roles();
-		}
-		$ownRoles = (array)$ownRoles;
-		if (empty($ownRoles)) {
+	public static function hasRoles($expectedRoles, $currentRoles, $oneRoleIsEnough = true) {
+		$expectedRoles = (array)$expectedRoles;
+		if (empty($expectedRoles)) {
 			return false;
 		}
 		$count = 0;
-		foreach ($ownRoles as $role) {
-			if (static::hasRole($role, $roles)) {
+		foreach ($expectedRoles as $role) {
+			if (static::hasRole($role, $currentRoles)) {
 				if ($oneRoleIsEnough) {
 					return true;
 				}
@@ -137,7 +122,7 @@ class Auth {
 			}
 		}
 
-		if ($count === count($ownRoles)) {
+		if ($count === count($expectedRoles)) {
 			return true;
 		}
 		return false;
@@ -152,17 +137,12 @@ class Auth {
 	 * the same way the roles are.
 	 *
 	 * @param mixed $role
-	 * @param mixed $providedRights
+	 * @param array $currentRights
 	 * @return bool Success
 	 */
-	public static function hasRight($ownRight, $providedRights = null) {
-		if ($providedRights !== null) {
-			$rights = $providedRights;
-		} else {
-			$rights = AuthComponent::user(USER_RIGHT_KEY);
-		}
-		$rights = (array)$rights;
-		if (array_key_exists($ownRight, $rights) && !empty($rights[$ownRight])) {
+	public static function hasRight($expectedRight, $currentRights) {
+		$currentRights = (array)$currentRights;
+		if (array_key_exists($expectedRight, $currentRights) && !empty($currentRights[$expectedRight])) {
 			return true;
 		}
 		return false;
