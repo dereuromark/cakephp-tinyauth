@@ -4,7 +4,7 @@
  *
  */
 App::uses('TinyAuthorize', 'Tools.Controller/Component/Auth');
-App::uses('MyCakeTestCase', 'Tools.TestSuite');
+App::uses('CakeTestCase', 'TestSuite');
 App::uses('Controller', 'Controller');
 App::uses('ComponentCollection', 'Controller');
 App::uses('CakeRequest', 'Network');
@@ -13,7 +13,7 @@ App::uses('CakeRequest', 'Network');
  * Test case for DirectAuthentication
  *
  */
-class TinyAuthorizeTest extends MyCakeTestCase {
+class TinyAuthorizeTest extends CakeTestCase {
 
 	public $fixtures = array('core.user', 'core.auth_user', 'plugin.tools.role');
 
