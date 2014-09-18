@@ -1,17 +1,16 @@
 <?php
 App::uses('Auth', 'Tools.Lib');
-App::uses('MyCakeTestCase', 'Tools.TestSuite');
 
 /**
  */
-class AuthTest extends MyCakeTestCase {
+class AuthTest extends CakeTestCase {
 
-	public $fixtures = array('core.cake_session');
+	//public $fixtures = array('core.cake_session');
 
 	public function setUp() {
 		parent::setUp();
 
-		ClassRegistry::init(array('table' => 'cake_sessions', 'class' => 'Session', 'alias' => 'Session'));
+		//ClassRegistry::init(array('table' => 'cake_sessions', 'class' => 'Session', 'alias' => 'Session'));
 	}
 
 	public function tearDown() {
@@ -19,15 +18,18 @@ class AuthTest extends MyCakeTestCase {
 
 		ClassRegistry::flush();
 
-		CakeSession::delete('Auth');
+		//CakeSession::delete('Auth');
 	}
 
 	/**
 	 * AuthTest::testId()
 	 *
 	 * @return void
+	 * @deprecated
 	 */
 	public function testId() {
+		$this->skipIf(true, 'Deprecated');
+
 		$id = Auth::id();
 		$this->assertNull($id);
 
@@ -67,18 +69,18 @@ class AuthTest extends MyCakeTestCase {
 		if (!defined('USER_ROLE_KEY')) {
 			define('USER_ROLE_KEY', 'Role');
 		}
-		CakeSession::write('Auth.User.id', 1);
+		//CakeSession::write('Auth.User.id', 1);
 		$roles = array(
 			array('id' => '1', 'name' => 'User', 'alias' => 'user'),
 			array('id' => '2', 'name' => 'Moderator', 'alias' => 'moderator'),
 			array('id' => '3', 'name' => 'Admin', 'alias' => 'admin'),
 		);
-		CakeSession::write('Auth.User.' . USER_ROLE_KEY, $roles);
+		//CakeSession::write('Auth.User.' . USER_ROLE_KEY, $roles);
 
-		$res = Auth::hasRole(4);
+		$res = Auth::hasRole(4, $roles);
 		$this->assertFalse($res);
 
-		$res = Auth::hasRole(3);
+		$res = Auth::hasRole(3, $roles);
 		$this->assertTrue($res);
 	}
 
