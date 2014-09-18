@@ -1,9 +1,11 @@
 <?php
+namespace TinyAuth\Test\Lib;
+
 App::uses('Auth', 'Tools.Lib');
 
 /**
  */
-class AuthTest extends CakeTestCase {
+class AuthTest extends TestCase {
 
 	//public $fixtures = array('core.cake_session');
 

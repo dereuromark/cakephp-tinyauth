@@ -1,4 +1,6 @@
 <?php
+namespace TinyAuth\Test\Auth;
+
 /**
  * TinyAuthorizeTest file
  *
@@ -13,7 +15,7 @@ App::uses('CakeRequest', 'Network');
  * Test case for DirectAuthentication
  *
  */
-class TinyAuthorizeTest extends CakeTestCase {
+class TinyAuthorizeTest extends TestCase {
 
 	public $fixtures = array('core.user', 'core.auth_user', 'plugin.tools.role');
 
