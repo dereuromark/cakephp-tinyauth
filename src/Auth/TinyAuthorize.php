@@ -1,7 +1,9 @@
 <?php
-App::uses('Inflector', 'Utility');
-App::uses('Hash', 'Utility');
-App::uses('BaseAuthorize', 'Controller/Component/Auth');
+namespace TinyAuth\Auth;
+
+use Cake\Utility\Inflector;
+use Cake\Utility\Hash;
+use Cake\Auth\BaseAuthorize;
 
 if (!defined('CLASS_USER')) {
 	define('CLASS_USER', 'User'); // override if you have it in a plugin: PluginName.User etc
@@ -51,10 +53,10 @@ class TinyAuthorize extends BaseAuthorize {
 	/**
 	 * TinyAuthorize::__construct()
 	 *
-	 * @param ComponentCollection $Collection
+	 * @param ComponentRegistry $Collection
 	 * @param array $config
 	 */
-	public function __construct(ComponentCollection $Collection, $config = array()) {
+	public function __construct(ComponentRegistry $Collection, $config = array()) {
 		$config += $this->_defaultConfig;
 		parent::__construct($Collection, $config);
 
@@ -72,10 +74,10 @@ class TinyAuthorize extends BaseAuthorize {
 	 * - User belongsTo Roles (role_id in User array)
 	 *
 	 * @param array $user The user to authorize
-	 * @param CakeRequest $request The request needing authorization.
+	 * @param Request $request The request needing authorization.
 	 * @return bool Success
 	 */
-	public function authorize($user, CakeRequest $request) {
+	public function authorize($user, Request $request) {
 		if (isset($user[$this->settings['aclModel']])) {
 			if (isset($user[$this->settings['aclModel']][0]['id'])) {
 				$roles = Hash::extract($user[$this->settings['aclModel']], '{n}.id');

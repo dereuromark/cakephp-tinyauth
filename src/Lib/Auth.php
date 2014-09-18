@@ -1,4 +1,6 @@
 <?php
+namespace TinyAuth\Lib;
+
 if (!defined('USER_ROLE_KEY')) {
 	define('USER_ROLE_KEY', 'Role');
 }
@@ -6,8 +8,8 @@ if (!defined('USER_RIGHT_KEY')) {
 	define('USER_RIGHT_KEY', 'Right');
 }
 
-App::uses('AuthComponent', 'Controller/Component');
-App::uses('Hash', 'Utility');
+use App\Controller\Component\AuthComponent;
+use Cake\Utility\Hash;
 
 /**
  * Convenience wrapper to access Auth data and check on rights/roles.
@@ -21,7 +23,7 @@ App::uses('Hash', 'Utility');
  *
  * Simply add it at the end of your bootstrap file (after the plugin is loaded):
  *
- *   App::uses('Auth', 'Tools.Lib');
+ *   use Tools\Auth;
  *
  * Expects the Role session infos to be either
  * 	- `Auth.User.role_id` (single) or
