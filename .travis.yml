@@ -1,47 +1,50 @@
 language: php
 
 php:
-  - 5.3
   - 5.4
   - 5.5
 
 env:
-  global:
-    - REPO_NAME=cakephp-tools
-    - PLUGIN_NAME=Tools
-    - DB=mysql
   matrix:
-    - DB=mysql CAKE_VERSION=master
-    - DB=mysql CAKE_VERSION=2.6
+    - DB=mysql db_class='Cake\Database\Driver\Mysql' db_dsn='mysql:host=0.0.0.0;dbname=cakephp_test' db_database='cakephp_test' db_login='travis' db_password=''
+  global:
+    - DEFAULT=1
 
 matrix:
-  include:
+  allow_failures:
     - php: 5.4
-      env:
-        - CAKE_VERSION=master
-        - COVERALLS=1
+      env: PHPCS=1 DEFAULT=0
+
   fast_finish: true
 
+  include:
+    - php: 5.4
+      env: PHPCS=1 DEFAULT=0
+
+    - php: 5.4
+      env: COVERALLS=1 DEFAULT=0
+
 before_script:
-  - composer global require 'phpunit/phpunit=3.7.33'
-  - git clone https://github.com/FriendsOfCake/travis.git --depth 1 ../travis
-  - ../travis/before_script.sh
-  - cd ../cakephp/app
-  - ln -s ~/.composer/vendor/phpunit/phpunit/PHPUnit Vendor/PHPUnit
-  - echo "Configure::write('Security.salt', 'AxcG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi');" >> Config/bootstrap.php
-  - echo "Configure::write('Security.cipherSeed', '16659201697453542496749683615');" >> Config/bootstrap.php
-  - echo "<?php App::uses('MyModel', 'Tools.Model'); class AppModel extends MyModel {}" > Model/AppModel.php
-  - echo "<?php App::uses('MyController', 'Tools.Controller'); class AppController extends MyController {}" > Controller/AppController.php
-  - echo "<?php App::uses('BaseEmailConfig', 'Tools.Config'); class EmailConfig extends BaseEmailConfig {}" > Config/email.php
-  - echo "Configure::write('Config.adminEmail', 'example@example.org');" >> Config/bootstrap.php
-  - cd ..
-  - cp ../cakephp-tools/phpunit.xml app/
+  - composer self-update
+  - composer install --prefer-source --no-interaction --dev
+
+  - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'CREATE DATABASE cakephp_test;'; fi"
+
+  - sh -c "if [ '$PHPCS' = '1' ]; then pear channel-discover pear.cakephp.org; fi"
+  - sh -c "if [ '$PHPCS' = '1' ]; then pear install --alldeps cakephp/CakePHP_CodeSniffer; fi"
+
+  - sh -c "if [ '$COVERALLS' = '1' ]; then composer require --dev satooshi/php-coveralls:dev-master; fi"
+  - sh -c "if [ '$COVERALLS' = '1' ]; then mkdir -p build/logs; fi"
+
+  - phpenv rehash
+  - set +H
+  - cp phpunit.xml.dist phpunit.xml
 
 script:
-  - ../travis/script.sh
-
-after_success:
-  - ../travis/after_success.sh
+  - sh -c "if [ '$COVERALLS' = '1' ]; then phpunit --coverage-clover build/logs/clover.xml; fi"
+  - sh -c "if [ '$COVERALLS' = '1' ]; then php vendor/bin/coveralls -c .coveralls.yml -v; fi"
+  - sh -c "if [ '$DEFAULT' = '1' ]; then phpunit; fi"
+  - sh -c "if [ '$PHPCS' = '1' ]; then phpcs -p --extensions=php --standard=CakePHP --ignore=vendor --ignore=Test --ignore=docs . ; fi"
 
 notifications:
   email: false

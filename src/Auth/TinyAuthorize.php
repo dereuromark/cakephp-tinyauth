@@ -1,6 +1,8 @@
 <?php
 namespace TinyAuth\Auth;
 
+use Cake\Core\Configure;
+use Cake\Cache\Cache;
 use Cake\Utility\Inflector;
 use Cake\Utility\Hash;
 use Cake\Auth\BaseAuthorize;
