@@ -29,7 +29,8 @@
 	},
 	"autoload-dev": {
 		"psr-4": {
-			"TinyAuth\\Test\\": "tests"
+			"TinyAuth\\Test\\": "tests",
+			"Cake\\Test\\Fixture\\": "vendor/cakephp/cakephp/tests/Fixture"
 		}
 	},
 	"extra": {

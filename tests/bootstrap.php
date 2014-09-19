@@ -28,3 +28,48 @@ define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
 Cake\Core\Configure::write('App', [
 	'namespace' => 'App'
 ]);
+
+Cake\Core\Configure::write('debug', true);
+
+$cache = [
+	'default' => [
+		'engine' => 'File'
+	],
+	'_cake_core_' => [
+		'className' => 'File',
+		'prefix' => 'crud_myapp_cake_core_',
+		'path' => CACHE . 'persistent/',
+		'serialize' => true,
+		'duration' => '+10 seconds'
+	],
+	'_cake_model_' => [
+		'className' => 'File',
+		'prefix' => 'crud_my_app_cake_model_',
+		'path' => CACHE . 'models/',
+		'serialize' => 'File',
+		'duration' => '+10 seconds'
+	]
+];
+
+Cake\Cache\Cache::config($cache);
+
+//needed?
+Cake\Core\Plugin::load('TinyAuth', ['path' => ROOT . DS, 'autoload' => true]);
+
+// Ensure default test connection is defined
+if (!getenv('db_class')) {
+	putenv('db_class=Cake\Database\Driver\Sqlite');
+	putenv('db_dsn=sqlite::memory:');
+}
+
+Cake\Datasource\ConnectionManager::config('test', [
+	'className' => 'Cake\Database\Connection',
+	'driver' => getenv('db_class'),
+	'dsn' => getenv('db_dsn'),
+	'database' => getenv('db_database'),
+	'login' => getenv('db_login'),
+	'password' => getenv('db_password'),
+	'timezone' => 'UTC',
+	'quoteIdentifiers' => true,
+	'cacheMetadata' => true,
+]);

@@ -6,9 +6,12 @@ use Cake\Cache\Cache;
 use Cake\Utility\Inflector;
 use Cake\Utility\Hash;
 use Cake\Auth\BaseAuthorize;
+use Cake\Network\Request;
+use Cake\Controller\ComponentRegistry;
+use Cake\ORM\TableRegistry;
 
 if (!defined('CLASS_USER')) {
-	define('CLASS_USER', 'User'); // override if you have it in a plugin: PluginName.User etc
+	define('CLASS_USER', 'Users'); // override if you have it in a plugin: PluginName.Users etc
 }
 if (!defined('AUTH_CACHE')) {
 	define('AUTH_CACHE', '_cake_core_'); // use the most persistent cache by default
@@ -48,22 +51,22 @@ class TinyAuthorize extends BaseAuthorize {
 		'cache' => AUTH_CACHE,
 		'cacheKey' => 'tiny_auth_acl',
 		'autoClearCache' => false, // usually done by Cache automatically in debug mode,
-		'aclModel' => 'Role', // only for multiple roles per user (HABTM)
+		'aclTable' => 'Roles', // only for multiple roles per user (HABTM)
 		'aclKey' => 'role_id', // only for single roles per user (BT)
 	);
 
 	/**
 	 * TinyAuthorize::__construct()
 	 *
-	 * @param ComponentRegistry $Collection
+	 * @param ComponentRegistry $registry
 	 * @param array $config
 	 */
-	public function __construct(ComponentRegistry $Collection, $config = array()) {
+	public function __construct(ComponentRegistry $registry, array $config = array()) {
 		$config += $this->_defaultConfig;
-		parent::__construct($Collection, $config);
+		parent::__construct($registry, $config);
 
 		if (Cache::config($config['cache']) === false) {
-			throw new CakeException(sprintf('TinyAuth could not find `%s` cache - expects at least a `default` cache', $config['cache']));
+			throw new \Exception(sprintf('TinyAuth could not find `%s` cache - expects at least a `default` cache', $config['cache']));
 		}
 	}
 
@@ -76,25 +79,26 @@ class TinyAuthorize extends BaseAuthorize {
 	 * - User belongsTo Roles (role_id in User array)
 	 *
 	 * @param array $user The user to authorize
-	 * @param Request $request The request needing authorization.
+	 * @param Cake\Network\Request $request The request needing authorization.
 	 * @return bool Success
 	 */
 	public function authorize($user, Request $request) {
-		if (isset($user[$this->settings['aclModel']])) {
-			if (isset($user[$this->settings['aclModel']][0]['id'])) {
-				$roles = Hash::extract($user[$this->settings['aclModel']], '{n}.id');
-			} elseif (isset($user[$this->settings['aclModel']]['id'])) {
-				$roles = array($user[$this->settings['aclModel']]['id']);
+		if (isset($user[$this->_config['aclTable']])) {
+			if (isset($user[$this->_config['aclTable']][0]['id'])) {
+				$roles = Hash::extract($user[$this->_config['aclTable']], '{n}.id');
+			} elseif (isset($user[$this->_config['aclTable']]['id'])) {
+				$roles = array($user[$this->_config['aclTable']]['id']);
 			} else {
-				$roles = (array)$user[$this->settings['aclModel']];
+				$roles = (array)$user[$this->_config['aclTable']];
 			}
-		} elseif (isset($user[$this->settings['aclKey']])) {
-			$roles = array($user[$this->settings['aclKey']]);
+		} elseif (isset($user[$this->_config['aclKey']])) {
+			$roles = array($user[$this->_config['aclKey']]);
 		} else {
-			$acl = $this->settings['aclModel'] . '/' . $this->settings['aclKey'];
+			$acl = $this->_config['aclTable'] . '/' . $this->_config['aclKey'];
 			trigger_error(sprintf('Missing acl information (%s) in user session', $acl));
 			$roles = array();
 		}
+
 		return $this->validate($roles, $request->params['plugin'], $request->params['controller'], $request->params['action']);
 	}
 
@@ -113,16 +117,16 @@ class TinyAuthorize extends BaseAuthorize {
 		$controller = Inflector::underscore($controller);
 		$plugin = Inflector::underscore($plugin);
 
-		if (!empty($this->settings['allowUser'])) {
+		if (!empty($this->_config['allowUser'])) {
 			// all user actions are accessable for logged in users
-			if (mb_strpos($action, $this->settings['adminPrefix']) !== 0) {
+			if (mb_strpos($action, $this->_config['adminPrefix']) !== 0) {
 				return true;
 			}
 		}
-		if (!empty($this->settings['allowAdmin']) && !empty($this->settings['adminRole'])) {
+		if (!empty($this->_config['allowAdmin']) && !empty($this->_config['adminRole'])) {
 			// all admin actions are accessable for logged in admins
-			if (mb_strpos($action, $this->settings['adminPrefix']) === 0) {
-				if (in_array((string)$this->settings['adminRole'], $roles)) {
+			if (mb_strpos($action, $this->_config['adminPrefix']) === 0) {
+				if (in_array((string)$this->_config['adminRole'], $roles)) {
 					return true;
 				}
 			}
@@ -133,9 +137,9 @@ class TinyAuthorize extends BaseAuthorize {
 		}
 
 		// allow_all check
-		if (!empty($this->settings['superadminRole'])) {
+		if (!empty($this->_config['superadminRole'])) {
 			foreach ($roles as $role) {
-				if ($role == $this->settings['superadminRole']) {
+				if ($role == $this->_config['superadminRole']) {
 					return true;
 				}
 			}
@@ -176,10 +180,10 @@ class TinyAuthorize extends BaseAuthorize {
 	}
 
 	/**
-	 * @return object The User model
+	 * @return Cake\ORM\Table The User table
 	 */
-	public function getModel() {
-		return ClassRegistry::init(CLASS_USER);
+	public function getTable() {
+		return TableRegistry::get(CLASS_USER);
 	}
 
 	/**
@@ -198,10 +202,10 @@ class TinyAuthorize extends BaseAuthorize {
 		}
 
 		$res = array();
-		if ($this->settings['autoClearCache'] && Configure::read('debug') > 0) {
-			Cache::delete($this->settings['cacheKey'], $this->settings['cache']);
+		if ($this->_config['autoClearCache'] && Configure::read('debug') > 0) {
+			Cache::delete($this->_config['cacheKey'], $this->_config['cache']);
 		}
-		if (($roles = Cache::read($this->settings['cacheKey'], $this->settings['cache'])) !== false) {
+		if (($roles = Cache::read($this->_config['cacheKey'], $this->_config['cache'])) !== false) {
 			return $roles;
 		}
 		if (!file_exists($path . ACL_FILE)) {
@@ -214,14 +218,15 @@ class TinyAuthorize extends BaseAuthorize {
 			$iniArray = parse_ini_string(file_get_contents($path . ACL_FILE), true);
 		}
 
-		$availableRoles = Configure::read($this->settings['aclModel']);
+		$availableRoles = Configure::read($this->_config['aclTable']);
 		if (!is_array($availableRoles)) {
-			$Model = $this->getModel();
-			if (!isset($Model->{$this->settings['aclModel']})) {
-				throw new CakeException('Missing relationship between User and Role.');
+			$Table = $this->getTable();
+			if (!isset($Table->{$this->_config['aclTable']})) {
+				throw new \Exception('Missing relationship between User and Role.');
 			}
-			$availableRoles = $Model->{$this->settings['aclModel']}->find('list', array('fields' => array('alias', 'id')));
-			Configure::write($this->settings['aclModel'], $availableRoles);
+
+			$availableRoles = $Table->{$this->_config['aclTable']}->find('list', array('fields' => array('alias', 'id')));
+			Configure::write($this->_config['aclTable'], $availableRoles);
 		}
 		if (!is_array($availableRoles) || !is_array($iniArray)) {
 			trigger_error('Invalid Role Setup for TinyAuthorize (no roles found)');
@@ -242,7 +247,7 @@ class TinyAuthorize extends BaseAuthorize {
 					}
 					if ($role === '*') {
 						unset($roles[$key]);
-						$roles = array_merge($roles, array_keys(Configure::read($this->settings['aclModel'])));
+						$roles = array_merge($roles, array_keys(Configure::read($this->_config['aclTable'])));
 					}
 				}
 
@@ -256,7 +261,7 @@ class TinyAuthorize extends BaseAuthorize {
 						if (!($role = trim($role)) || $role === '*') {
 							continue;
 						}
-						$newRole = Configure::read($this->settings['aclModel'] . '.' . strtolower($role));
+						$newRole = Configure::read($this->_config['aclTable'] . '.' . strtolower($role));
 						if (!empty($res[$controllerName][$actionName]) && in_array((string)$newRole, $res[$controllerName][$actionName])) {
 							continue;
 						}
@@ -265,7 +270,7 @@ class TinyAuthorize extends BaseAuthorize {
 				}
 			}
 		}
-		Cache::write($this->settings['cacheKey'], $res, $this->settings['cache']);
+		Cache::write($this->_config['cacheKey'], $res, $this->_config['cache']);
 		return $res;
 	}
 

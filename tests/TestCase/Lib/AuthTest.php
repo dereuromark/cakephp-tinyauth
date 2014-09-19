@@ -1,7 +1,8 @@
 <?php
 namespace TinyAuth\Test\Lib;
 
-App::uses('Auth', 'Tools.Lib');
+use Cake\TestSuite\TestCase;
+use TinyAuth\Lib\Auth;
 
 /**
  */
@@ -18,8 +19,7 @@ class AuthTest extends TestCase {
 	public function tearDown() {
 		parent::tearDown();
 
-		ClassRegistry::flush();
-
+		//ClassRegistry::flush();
 		//CakeSession::delete('Auth');
 	}
 
@@ -92,40 +92,40 @@ class AuthTest extends TestCase {
 	 * @return void
 	 */
 	public function testHasRoles() {
-		$res = Auth::hasRoles(array(1, 3), true, array(2, 3, 6));
+		$res = Auth::hasRoles(array(1, 3), array(2, 3, 6));
 		$this->assertTrue($res);
 
-		$res = Auth::hasRoles(array(3), true, array(2, 3, 6));
+		$res = Auth::hasRoles(array(3), array(2, 3, 6));
 		$this->assertTrue($res);
 
-		$res = Auth::hasRoles(3, true, array(2, 3, 6));
+		$res = Auth::hasRoles(3, array(2, 3, 6));
 		$this->assertTrue($res);
 
-		$res = Auth::hasRoles(array(), true, array(2, 3, 6));
+		$res = Auth::hasRoles(array(), array(2, 3, 6));
 		$this->assertFalse($res);
 
-		$res = Auth::hasRoles(null, true, array(2, 3, 6));
+		$res = Auth::hasRoles(null, array(2, 3, 6));
 		$this->assertFalse($res);
 
-		$res = Auth::hasRoles(array(2, 7), false, array(2, 3, 6));
+		$res = Auth::hasRoles(array(2, 7), array(2, 3, 6), false);
 		$this->assertFalse($res);
 
-		$res = Auth::hasRoles(array(2, 6), false, array(2, 3, 6));
+		$res = Auth::hasRoles(array(2, 6), array(2, 3, 6), false);
 		$this->assertTrue($res);
 
-		$res = Auth::hasRoles(array(2, 6), true, array(2, 3, 6));
+		$res = Auth::hasRoles(array(2, 6), array(2, 3, 6));
 		$this->assertTrue($res);
 
-		$res = Auth::hasRoles(array(9, 11), true, array());
+		$res = Auth::hasRoles(array(9, 11), array());
 		$this->assertFalse($res);
 
-		$res = Auth::hasRoles(array(9, 11), true, '');
+		$res = Auth::hasRoles(array(9, 11), '');
 		$this->assertFalse($res);
 
-		$res = Auth::hasRoles(array(2, 7), false, array());
+		$res = Auth::hasRoles(array(2, 7), array(), false);
 		$this->assertFalse($res);
 
-		$res = Auth::hasRoles(array(2, 7), false);
+		$res = Auth::hasRoles(array(2, 7), array(), false);
 		$this->assertFalse($res);
 	}
 

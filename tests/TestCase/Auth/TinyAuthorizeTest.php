@@ -1,15 +1,13 @@
 <?php
 namespace TinyAuth\Test\Auth;
 
-/**
- * TinyAuthorizeTest file
- *
- */
-App::uses('TinyAuthorize', 'Tools.Controller/Component/Auth');
-App::uses('CakeTestCase', 'TestSuite');
-App::uses('Controller', 'Controller');
-App::uses('ComponentCollection', 'Controller');
-App::uses('CakeRequest', 'Network');
+use TinyAuth\Auth\TinyAuthorize;
+use Cake\TestSuite\TestCase;
+use Cake\Controller\Controller;
+use Cake\Controller\ComponentRegistry;
+use Cake\Network\Request;
+use Cake\Core\Configure;
+use Cake\ORM\TableRegistry;
 
 /**
  * Test case for DirectAuthentication
@@ -17,7 +15,7 @@ App::uses('CakeRequest', 'Network');
  */
 class TinyAuthorizeTest extends TestCase {
 
-	public $fixtures = array('core.user', 'core.auth_user', 'plugin.tools.role');
+	public $fixtures = array('core.user', 'core.auth_user', 'plugin.tiny_auth.role');
 
 	public $Collection;
 
@@ -30,9 +28,13 @@ class TinyAuthorizeTest extends TestCase {
 	 */
 	public function setUp() {
 		parent::setUp();
-		$this->Collection = new ComponentCollection();
 
-		$this->request = new CakeRequest(null, false);
+		$config = \Cake\Datasource\ConnectionManager::config('test');
+		$this->assertNotEmpty($config, 'No test connection set up.');
+
+		$this->Collection = new ComponentRegistry();
+
+		$this->request = new Request();
 
 		$aclData = <<<INI
 [Users]
@@ -61,18 +63,18 @@ INI;
 	}
 
 	/**
-	 * Test applying settings in the constructor
+	 * Test applying config in the constructor
 	 *
 	 * @return void
 	 */
 	public function testConstructor() {
 		$object = new TestTinyAuthorize($this->Collection, array(
-			'aclModel' => 'AuthRole',
+			'aclTable' => 'AuthRole',
 			'aclKey' => 'auth_role_id',
 			'autoClearCache' => true,
 		));
-		$this->assertEquals('AuthRole', $object->settings['aclModel']);
-		$this->assertEquals('auth_role_id', $object->settings['aclKey']);
+		$this->assertEquals('AuthRole', $object->config('aclTable'));
+		$this->assertEquals('auth_role_id', $object->config('aclKey'));
 	}
 
 	/**
@@ -99,7 +101,7 @@ INI;
 				'public_action' => array(-1)
 			),
 		);
-		$this->debug($res);
+		//debug($res);
 		$this->assertEquals($expected, $res);
 	}
 
@@ -111,8 +113,8 @@ INI;
 		$this->request->params['action'] = 'edit';
 
 		$object = new TestTinyAuthorize($this->Collection, array('autoClearCache' => true));
-		$this->assertEquals('Role', $object->settings['aclModel']);
-		$this->assertEquals('role_id', $object->settings['aclKey']);
+		$this->assertEquals('Roles', $object->config('aclTable'));
+		$this->assertEquals('role_id', $object->config('aclKey'));
 
 		$user = array(
 			'role_id' => 4,
@@ -316,13 +318,13 @@ INI;
 	 * @return void
 	 */
 	public function testWithRoleTable() {
-		$User = ClassRegistry::init('User');
-		$User->bindModel(array('belongsTo' => array('Role')), false);
+		$Users = TableRegistry::get('Users');
+		$Users->belongsTo('Roles');
 
 		// We want the session to be used.
 		Configure::delete('Role');
 
-		$this->request->params['controller'] = 'users';
+		$this->request->params['controller'] = 'Users';
 		$this->request->params['action'] = 'edit';
 
 		$object = new TestTinyAuthorize($this->Collection, array('autoClearCache' => true));
@@ -418,6 +420,18 @@ class TestTinyAuthorize extends TinyAuthorize {
 
 	protected function _getAcl($path = TMP) {
 		return parent::_getAcl($path);
+	}
+
+	/**
+	 * @return Cake\ORM\Table The User table
+	 */
+	public function getTable() {
+		$Users = TableRegistry::get(CLASS_USER);
+		$Users->belongsTo('Roles');
+
+		//$test = $Users->Roles->find('first');
+		//debug($test);die();
+		return $Users;
 	}
 
 }
