@@ -52,18 +52,17 @@ class Auth {
 	}
 
 	/**
-	 * Get the role(s) of the current session.
+	 * Normalizes roles.
 	 *
 	 * It will return the single role for single role setup, and a flat
 	 * list of roles for multi role setup.
 	 *
-	 * @return mixed String or array of roles or null if inexistent.
-	 * @deprecated Not usable in CakePHP 3.
+	 * @param string|array Roles as simple or complex (Role.id) array.
+	 * @return array Roles
 	 */
-	public static function roles() {
-		$roles = AuthComponent::user(USER_ROLE_KEY);
+	public static function roles($roles) {
 		if (!is_array($roles)) {
-			return $roles;
+			return (array)$roles;
 		}
 		if (isset($roles[0]['id'])) {
 			$roles = Hash::extract($roles, '{n}.id');
@@ -90,7 +89,7 @@ class Auth {
 	 * @return bool Success
 	 */
 	public static function hasRole($expectedRole, $currentRoles) {
-		$currentRoles = (array)$currentRoles;
+		$currentRoles = static::roles($currentRoles);
 		return in_array($expectedRole, $currentRoles);
 	}
 
