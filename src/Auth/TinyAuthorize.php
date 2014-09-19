@@ -32,9 +32,8 @@ if (!defined('ACL_FILE')) {
  * $this->Auth->authorize = array('Tools.Tiny');
  *
  * Or with admin prefix protection only
- * $this->Auth->authorize = array('Tools.Tiny'=>array('allowUser'=>true));
+ * $this->Auth->authorize = array('Tools.Tiny' => array('allowUser' => true));
  *
- * @version 1.2 - now allows other parent model relations besides Role/role_id
  * @author Mark Scherer
  * @license MIT
  */
