@@ -1,15 +1,15 @@
 # CakePHP TinyAuth Plugin
 
-A CakePHP 3.x Plugin to handle user authorization the easy way.
-This plugin requires PHP5.4+
-
-Please note: This plugin is currently still pre-alpha and not ready to be used.
-
 [![Build Status](https://api.travis-ci.org/dereuromark/cakephp-tinyauth.png?branch=master)](https://travis-ci.org/dereuromark/cakephp-tinyauth)
 [![Latest Stable Version](https://poser.pugx.org/dereuromark/cakephp-tinyauth/v/stable.png)](https://packagist.org/packages/dereuromark/cakephp-tinyauth)
 [![Coverage Status](https://coveralls.io/repos/dereuromark/cakephp-tinyauth/badge.png)](https://coveralls.io/r/dereuromark/cakephp-tinyauth)
 [![License](https://poser.pugx.org/dereuromark/cakephp-tinyauth/license.png)](https://packagist.org/packages/dereuromark/cakephp-tinyauth)
 [![Total Downloads](https://poser.pugx.org/dereuromark/cakephp-tinyauth/d/total.png)](https://packagist.org/packages/dereuromark/cakephp-tinyauth)
+
+A CakePHP 3.x Plugin to handle user authorization the easy way.
+This plugin requires PHP5.4+
+
+Please note: This plugin is currently still pre-alpha and not ready to be used.
 
 ## How to include
 Installing the Plugin is pretty much as with every other CakePHP Plugin.
@@ -23,14 +23,14 @@ Installing the Plugin is pretty much as with every other CakePHP Plugin.
 Then load the plugin:
 
 ```php
-Plugin::load('Tools', array('bootstrap' => true));
+Plugin::load('TinyAuth', array('bootstrap' => true));
 ```
 
 For `Plugin::loadAll()` it's
 
 ```php
 Plugin::loadAll(array(
-		'Tools' => array('bootstrap' => true)
+		'TinyAuth' => array('bootstrap' => true)
 ));
 ```
 
