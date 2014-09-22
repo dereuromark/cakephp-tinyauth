@@ -36,6 +36,8 @@ Plugin::loadAll(array(
 
 That's it. It should be up and running.
 
+## Docs
+See [WIKI](https://github.com/dereuromark/cakephp-tinyauth/wiki).
 
 ## Disclaimer
 Use at your own risk. Please provide any fixes or enhancements via issue or better pull request.
@@ -45,7 +47,3 @@ If you are able to help on that one, that would be awesome.
 ### Branching strategy
 The master branch is the currently active and maintained one and works with the current 3.x stable version.
 Please see the original [Tools plugin](https://github.com/dereuromark/cakephp-tools) if you need TinyAuth for CakePHP 2.x versions.
-
-### TODOs
-
-* Documentation and 2.x migration guide

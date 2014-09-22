@@ -221,12 +221,12 @@ class TinyAuthorize extends BaseAuthorize {
 		if (!is_array($availableRoles)) {
 			$Table = $this->getTable();
 			if (!isset($Table->{$this->_config['aclTable']})) {
-				throw new \Exception('Missing relationship between User and Role.');
+				throw new \Exception('Missing relationship between Users and Roles.');
 			}
 
 			$availableRoles = $Table->{$this->_config['aclTable']}->find('all')->formatResults(function ($results) {
 				return $results->combine('alias', 'id');
-			})->toArray(); //find('list', array('fields' => array('alias', 'id')));
+			})->toArray();
 			Configure::write($this->_config['aclTable'], $availableRoles);
 		}
 		if (!is_array($availableRoles) || !is_array($iniArray)) {
