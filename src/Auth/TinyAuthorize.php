@@ -224,7 +224,9 @@ class TinyAuthorize extends BaseAuthorize {
 				throw new \Exception('Missing relationship between User and Role.');
 			}
 
-			$availableRoles = $Table->{$this->_config['aclTable']}->find('list', array('fields' => array('alias', 'id')));
+			$availableRoles = $Table->{$this->_config['aclTable']}->find('all')->formatResults(function ($results) {
+				return $results->combine('alias', 'id');
+			})->toArray(); //find('list', array('fields' => array('alias', 'id')));
 			Configure::write($this->_config['aclTable'], $availableRoles);
 		}
 		if (!is_array($availableRoles) || !is_array($iniArray)) {
