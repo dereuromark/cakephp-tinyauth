@@ -15,7 +15,7 @@ use Cake\ORM\TableRegistry;
  */
 class TinyAuthorizeTest extends TestCase {
 
-	public $fixtures = array('core.user', 'core.auth_user', 'plugin.tiny_auth.role');
+	public $fixtures = array('core.users', 'core.auth_users', 'plugin.tiny_auth.roles');
 
 	public $Collection;
 
