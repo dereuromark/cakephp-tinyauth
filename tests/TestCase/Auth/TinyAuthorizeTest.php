@@ -101,7 +101,7 @@ INI;
 				'public_action' => array(-1)
 			),
 		);
-		debug($res);
+		//debug($res);
 		$this->assertEquals($expected, $res);
 	}
 
