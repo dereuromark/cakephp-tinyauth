@@ -1,8 +1,8 @@
 <?php
-namespace TinyAuth\Test\Lib;
+namespace TinyAuth\Test\Auth;
 
 use Cake\TestSuite\TestCase;
-use TinyAuth\Lib\Auth;
+use TinyAuth\Auth\Auth;
 
 /**
  */

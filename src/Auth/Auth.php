@@ -1,5 +1,5 @@
 <?php
-namespace TinyAuth\Lib;
+namespace TinyAuth\Auth;
 
 if (!defined('USER_ROLE_KEY')) {
 	define('USER_ROLE_KEY', 'Role');
