@@ -197,7 +197,7 @@ class TinyAuthorize extends BaseAuthorize {
 	 */
 	protected function _getAcl($path = null) {
 		if ($path === null) {
-			$path = APP . 'Config' . DS;
+			$path = ROOT . DS . 'config' . DS;
 		}
 
 		$res = array();
