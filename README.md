@@ -9,7 +9,7 @@
 A CakePHP 3.x Plugin to handle user authorization the easy way.
 This plugin requires PHP5.4+
 
-Please note: This plugin is currently still pre-alpha and not ready to be used.
+Please note: This plugin is currently still beta and should only be used with caution. A release will be made once CakePHP 3.0 is stable.
 
 ## How to include
 Installing the Plugin is pretty much as with every other CakePHP Plugin.
