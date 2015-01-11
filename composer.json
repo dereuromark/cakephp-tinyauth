@@ -15,10 +15,7 @@
 	"require": {
 		"php": ">=5.4",
 		"cakephp/cakephp": "3.0.x-dev"
-	},
-	"require-dev": {
-		"phpunit/phpunit": "*"
-	},
+	}
 	"support": {
 		"source": "https://github.com/dereuromark/cakephp-tinyauth"
 	},
@@ -30,7 +27,7 @@
 	"autoload-dev": {
 		"psr-4": {
 			"TinyAuth\\Test\\": "tests",
-			"Cake\\Test\\Fixture\\": "vendor/cakephp/cakephp/tests/Fixture"
+			"Cake\\Test\\": "vendor/cakephp/cakephp/tests"
 		}
 	},
 	"extra": {
