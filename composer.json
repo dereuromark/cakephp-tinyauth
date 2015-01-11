@@ -15,7 +15,7 @@
 	"require": {
 		"php": ">=5.4",
 		"cakephp/cakephp": "3.0.x-dev"
-	}
+	},
 	"support": {
 		"source": "https://github.com/dereuromark/cakephp-tinyauth"
 	},
