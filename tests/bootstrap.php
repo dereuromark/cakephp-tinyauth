@@ -13,6 +13,8 @@ if (!is_dir(APP)) {
 	mkdir(APP, 0770, true);
 }
 
+define('CONFIG', ROOT . DS . 'config' . DS);
+
 define('TMP', ROOT . DS . 'tmp' . DS);
 if (!is_dir(TMP)) {
 	mkdir(TMP, 0770, true);
@@ -32,7 +34,8 @@ Cake\Core\Configure::write('debug', true);
 
 $cache = [
 	'default' => [
-		'engine' => 'File'
+		'engine' => 'File',
+		'path' => CACHE
 	],
 	'_cake_core_' => [
 		'className' => 'File',
