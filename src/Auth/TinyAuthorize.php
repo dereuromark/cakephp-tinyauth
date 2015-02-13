@@ -43,7 +43,7 @@ class TinyAuthorize extends BaseAuthorize {
 
 	protected $_defaultConfig = [
 		'adminRole' => null, // needed together with adminPrefix if allowAdmin is enabled
-		'superAdminRole' => null, // quick way to allow access to every action
+		'superAdminRole' => null, // id of the role to grant access to ALL resources
 		'allowUser' => false, // quick way to allow user access to non prefixed urls
 		'allowAdmin' => false, // quick way to allow admin access to admin prefixed urls
 		'adminPrefix' => 'admin',
@@ -141,9 +141,8 @@ class TinyAuthorize extends BaseAuthorize {
 
 		// allow logged in super admins access to all resources
 		if (!empty($this->_config['superAdminRole'])) {
-			$superAdminRoleId = $availableRoles[$this->_config['superAdminRole']];
 			foreach ($roles as $role) {
-				if ($role == $superAdminRoleId) {
+				if ($role == $this->_config['superAdminRole']) {
 					return true;
 				}
 			}
@@ -287,7 +286,6 @@ class TinyAuthorize extends BaseAuthorize {
 				}
 			}
 		}
-		//pr($res);
 		Cache::write($this->_config['cacheKey'], $res, $this->_config['cache']);
 		return $res;
 	}

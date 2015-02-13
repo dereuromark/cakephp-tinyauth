@@ -15,7 +15,7 @@ use Cake\ORM\TableRegistry;
  */
 class TinyAuthorizeTest extends TestCase {
 
-	public $fixtures = array('core.users', 'core.auth_users', 'plugin.tiny_auth.roles');
+	public $fixtures = ['core.users', 'core.auth_users', 'plugin.tiny_auth.roles'];
 
 	public $Collection;
 
@@ -39,8 +39,14 @@ class TinyAuthorizeTest extends TestCase {
 		$aclData = <<<INI
 [Users]
 ; add = public
-edit = user
-admin_index = admin
+;edit = user
+;* = admin
+[users]
+index = user, non-configured-role
+edit,view = user
+* = admin
+[admin/Users]
+* = admin
 [Comments]
 ; index is public
 add,edit,delete = user
@@ -53,7 +59,12 @@ INI;
 		file_put_contents(TMP . 'acl.ini', $aclData);
 		$this->assertTrue(file_exists(TMP . 'acl.ini'));
 
-		Configure::write('Roles', array('user' => 1, 'moderator' => 2, 'admin' => 3, 'public' => -1));
+		Configure::write('Roles', [
+			'user' => 1,
+			'moderator' => 2,
+			'admin' => 3,
+			'public' => -1
+		]);
 	}
 
 	public function tearDown() {
@@ -68,11 +79,11 @@ INI;
 	 * @return void
 	 */
 	public function testConstructor() {
-		$object = new TestTinyAuthorize($this->Collection, array(
+		$object = new TestTinyAuthorize($this->Collection, [
 			'aclTable' => 'AuthRole',
 			'aclKey' => 'auth_role_id',
 			'autoClearCache' => true,
-		));
+		]);
 		$this->assertEquals('AuthRole', $object->config('aclTable'));
 		$this->assertEquals('auth_role_id', $object->config('aclKey'));
 	}
@@ -81,27 +92,51 @@ INI;
 	 * @return void
 	 */
 	public function testGetAcl() {
-		$object = new TestTinyAuthorize($this->Collection, array('autoClearCache' => true));
+		$object = new TestTinyAuthorize($this->Collection, ['autoClearCache' => true]);
 		$res = $object->getAcl();
 
-		$expected = array(
-			'users' => array(
-				'edit' => array(1),
-				'admin_index' => array(3)
-			),
-			'comments' => array(
-				'add' => array(1),
-				'edit' => array(1),
-				'delete' => array(1),
-				'*' => array(3),
-			),
-			'tags' => array(
-				'add' => array(1, 2, 3, -1),
-				'very_long_action_name_action' => array(1),
-				'public_action' => array(-1)
-			),
-		);
-		//debug($res);
+		$expected = [
+			'Users' => [
+				'plugin' => null,
+				'prefix' => null,
+				'controller' => 'Users',
+				'actions' => [
+					'index' => [1],
+					'edit' => [1],
+					'view' => [1],
+					'*' => [3]
+				]
+			],
+			'admin/Users' => [
+				'plugin' => null,
+				'prefix' => 'admin',
+				'controller' => 'Users',
+				'actions' => [
+					'*' => [3]
+				]
+			],
+			'Comments' => [
+				'plugin' => null,
+				'prefix' => null,
+				'controller' => 'Comments',
+				'actions' => [
+					'add' => [1],
+					'edit' => [1],
+					'delete' => [1],
+					'*' => [3]
+				]
+			],
+			'Tags' => [
+				'plugin' => null,
+				'prefix' => null,
+				'controller' => 'Tags',
+				'actions' => [
+					'add' => [1, 2, 3, -1],
+					'very_long_action_name_action' => [1],
+					'public_action' => [-1]
+				]
+			]
+		];
 		$this->assertEquals($expected, $res);
 	}
 
@@ -110,21 +145,21 @@ INI;
 	 */
 	public function testBasicUserMethodDisallowed() {
 		$this->request->params['controller'] = 'users';
-		$this->request->params['action'] = 'edit';
+		$this->request->params['action'] = 'add';
 
-		$object = new TestTinyAuthorize($this->Collection, array('autoClearCache' => true));
+		$object = new TestTinyAuthorize($this->Collection, ['autoClearCache' => true]);
 		$this->assertEquals('Roles', $object->config('aclTable'));
 		$this->assertEquals('role_id', $object->config('aclKey'));
 
-		$user = array(
-			'role_id' => 4,
-		);
+		$user = [
+			'role_id' => 4
+		];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 
-		$user = array(
-			'role_id' => 3,
-		);
+		$user = [
+			'role_id' => 1
+		];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 	}
@@ -136,20 +171,20 @@ INI;
 		$this->request->params['controller'] = 'users';
 		$this->request->params['action'] = 'edit';
 
-		$object = new TestTinyAuthorize($this->Collection, array('autoClearCache' => true));
+		$object = new TestTinyAuthorize($this->Collection, ['autoClearCache' => true]);
 
 		// single role_id field in users table
-		$user = array(
+		$user = [
 			'role_id' => 1,
-		);
+		];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
 		$this->request->params['action'] = 'admin_index';
 
-		$user = array(
+		$user = [
 			'role_id' => 3,
-		);
+		];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 	}
@@ -161,18 +196,18 @@ INI;
 		$this->request->params['controller'] = 'tags';
 		$this->request->params['action'] = 'very_long_action_name_action';
 
-		$object = new TestTinyAuthorize($this->Collection, array('autoClearCache' => true));
+		$object = new TestTinyAuthorize($this->Collection, ['autoClearCache' => true]);
 
 		// single role_id field in users table
-		$user = array(
-			'role_id' => 1,
-		);
+		$user = [
+			'role_id' => 1
+		];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
-		$user = array(
-			'role_id' => 3,
-		);
+		$user = [
+			'role_id' => 3
+		];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 	}
@@ -184,19 +219,30 @@ INI;
 		$this->request->params['controller'] = 'Users';
 		$this->request->params['action'] = 'admin_index';
 
-		$object = new TestTinyAuthorize($this->Collection, array('autoClearCache' => true));
+		$object = new TestTinyAuthorize($this->Collection, ['autoClearCache' => true]);
 
 		// flat list of roles
-		$user = array(
-			'Roles' => array(1, 3),
-		);
+		$user = [
+			'Roles' => [1, 3]
+		];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
 		// verbose role defition using the new 2.x contain param for Auth
-		$user = array(
-			'Roles' => array(array('id' => 1, 'RoleUsers' => array()), array('id' => 3, 'RoleUsers' => array())),
-		);
+		$user = [
+			'Roles' => [
+				['id' => 1, 'RoleUsers' => []],
+				['id' => 3, 'RoleUsers' => []]
+			],
+		];
+
+
+		$user = [
+			'Roles' => [
+				['id' => 1, 'RoleUsers' => []],
+				['id' => 3, 'RoleUsers' => []]
+			]
+		];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 	}
@@ -208,11 +254,11 @@ INI;
 		$this->request->params['controller'] = 'Tags';
 		$this->request->params['action'] = 'public_action';
 
-		$object = new TestTinyAuthorize($this->Collection, array('autoClearCache' => true));
+		$object = new TestTinyAuthorize($this->Collection, ['autoClearCache' => true]);
 
-		$user = array(
-			'role_id' => 6,
-		);
+		$user = [
+			'role_id' => 6
+		];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 	}
@@ -224,28 +270,29 @@ INI;
 		$this->request->params['controller'] = 'Users';
 		$this->request->params['action'] = 'some_action';
 
-		$object = new TestTinyAuthorize($this->Collection, array('allowUser' => true, 'autoClearCache' => true));
+		$object = new TestTinyAuthorize($this->Collection, ['allowUser' => true, 'autoClearCache' => true]);
 
-		$user = array(
-			'role_id' => 1,
-		);
+		$user = [
+			'role_id' => 1
+		];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
 		$this->request->params['controller'] = 'Users';
-		$this->request->params['action'] = 'admin_index';
+		$this->request->params['prefix'] = 'admin';
+		$this->request->params['action'] = 'index';
 
-		$object = new TestTinyAuthorize($this->Collection, array('allowUser' => true, 'autoClearCache' => true));
+		$object = new TestTinyAuthorize($this->Collection, ['allowUser' => true, 'autoClearCache' => true]);
 
-		$user = array(
-			'role_id' => 1,
-		);
+		$user = [
+			'role_id' => 1
+		];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 
-		$user = array(
-			'role_id' => 3,
-		);
+		$user = [
+			'role_id' => 3
+		];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 	}
@@ -256,13 +303,13 @@ INI;
 	public function testAdminMethodsAllowed() {
 		$this->request->params['controller'] = 'Users';
 		$this->request->params['action'] = 'some_action';
-		$config = array('allowAdmin' => true, 'adminRole' => 3, 'autoClearCache' => true);
+		$config = ['allowAdmin' => true, 'adminRole' => 3, 'autoClearCache' => true];
 
 		$object = new TestTinyAuthorize($this->Collection, $config);
 
-		$user = array(
-			'role_id' => 1,
-		);
+		$user = [
+			'role_id' => 1
+		];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 
@@ -271,15 +318,15 @@ INI;
 
 		$object = new TestTinyAuthorize($this->Collection, $config);
 
-		$user = array(
-			'role_id' => 1,
-		);
+		$user = [
+			'role_id' => 1
+		];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 
-		$user = array(
-			'role_id' => 3,
-		);
+		$user = [
+			'role_id' => 3
+		];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 	}
@@ -294,20 +341,20 @@ INI;
 		$this->request->params['controller'] = 'tags';
 		$this->request->params['action'] = 'add';
 
-		$object = new TestTinyAuthorize($this->Collection, array('autoClearCache' => true));
+		$object = new TestTinyAuthorize($this->Collection, ['autoClearCache' => true]);
 
-		$user = array(
-			'role_id' => 2,
-		);
+		$user = [
+			'role_id' => 2
+		];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
 		$this->request->params['controller'] = 'comments';
 		$this->request->params['action'] = 'foo';
 
-		$user = array(
-			'role_id' => 3,
-		);
+		$user = [
+			'role_id' => 3
+		];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 	}
@@ -327,25 +374,25 @@ INI;
 		$this->request->params['controller'] = 'Users';
 		$this->request->params['action'] = 'edit';
 
-		$object = new TestTinyAuthorize($this->Collection, array('autoClearCache' => true));
+		$object = new TestTinyAuthorize($this->Collection, ['autoClearCache' => true]);
 
 		// User role is 4 here, though. Also contains left joined Role date here just to check that it works, too.
-		$user = array(
-			'Roles' => array(
+		$user = [
+			'Roles' => [
 				'id' => '4',
-				'alias' => 'user',
-			),
+				'alias' => 'user'
+			],
 			'role_id' => 4,
-		);
+		];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
 		Configure::delete('Roles');
-		$object = new TestTinyAuthorize($this->Collection, array('autoClearCache' => true));
+		$object = new TestTinyAuthorize($this->Collection, ['autoClearCache' => true]);
 
-		$user = array(
-			'role_id' => 6,
-		);
+		$user = [
+			'role_id' => 6
+		];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 
@@ -353,53 +400,53 @@ INI;
 
 		// Multi-role test - failure
 		Configure::delete('Roles');
-		$object = new TestTinyAuthorize($this->Collection, array('autoClearCache' => true));
+		$object = new TestTinyAuthorize($this->Collection, ['autoClearCache' => true]);
 
-		$user = array(
-			'Roles' => array(
-				array('id' => 7, 'alias' => 'user'),
-				array('id' => 8, 'alias' => 'partner'),
-			)
-		);
+		$user = [
+			'Roles' => [
+				['id' => 7, 'alias' => 'user'],
+				['id' => 8, 'alias' => 'partner']
+			]
+		];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 
 		$this->assertTrue((bool)(Configure::read('Roles')));
 
 		Configure::delete('Roles');
-		$object = new TestTinyAuthorize($this->Collection, array('autoClearCache' => true));
+		$object = new TestTinyAuthorize($this->Collection, ['autoClearCache' => true]);
 
 		// Multi-role test
-		$user = array(
-			'Roles' => array(
-				array('id' => 4, 'alias' => 'user'),
-				array('id' => 6, 'alias' => 'partner'),
-			)
-		);
+		$user = [
+			'Roles' => [
+				['id' => 4, 'alias' => 'user'],
+				['id' => 6, 'alias' => 'partner'],
+			]
+		];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 	}
 
 	/**
-	 * Tests superadmin role, allowed to all actions
+	 * Tests superAdmin role, allowed to all actions
 	 *
 	 * @return void
 	 */
-	public function testSuperadminRole() {
-		$object = new TestTinyAuthorize($this->Collection, array(
+	public function testSuperAdminRole() {
+		$object = new TestTinyAuthorize($this->Collection, [
 			'autoClearCache' => true,
-			'superadminRole' => 9
-		));
+			'superAdminRole' => 9
+		]);
 		$res = $object->getAcl();
-		$user = array(
-			'role_id' => 9,
-		);
+		$user = [
+			'role_id' => 9
+		];
 
-		foreach ($object->getAcl() as $controller => $actions) {
-			foreach ($actions as $action => $allowed) {
-				$this->request->params['controller'] = $controller;
+		foreach ($object->getAcl() as $resource) {
+			foreach ($resource['actions'] as $action => $allowed) {
+				$this->request->params['controller'] = $resource['controller'];
+				$this->request->params['prefix'] = $resource['prefix'];
 				$this->request->params['action'] = $action;
-
 				$res = $object->authorize($user, $this->request);
 				$this->assertTrue($res);
 			}
