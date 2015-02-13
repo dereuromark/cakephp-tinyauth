@@ -169,6 +169,8 @@ class TinyAuthorize extends BaseAuthorize {
 
 		// allow access if user has been granted access to the specific resource
 		$action = Inflector::underscore($request->action);
+		pr($iniKey);
+
 		if(array_key_exists($action, $this->_acl[$iniKey]['actions']) && !empty($this->_acl[$iniKey]['actions'][$action])) {
 			$matchArray = $this->_acl[$iniKey]['actions'][$action];
 
@@ -287,6 +289,7 @@ class TinyAuthorize extends BaseAuthorize {
 				}
 			}
 		}
+		//pr($res);
 		Cache::write($this->_config['cacheKey'], $res, $this->_config['cache']);
 		return $res;
 	}
@@ -347,12 +350,12 @@ class TinyAuthorize extends BaseAuthorize {
 	 */
 	protected function constructIniKey(Request $request)
 	{
-		$res = $request->params['controller'];
+		$res = Inflector::camelize($request->params['controller']);
 		if (!empty($request->params['prefix'])) {
-			$res = $request->params['prefix'] . "/$res";
+			$res = strtolower($request->params['prefix']) . "/$res";
 		}
 		if (!empty($request->params['plugin'])) {
-			$res = $request->params['plugin'] . ".$res";
+			$res = Inflector::camelize($request->params['plugin']) . ".$res";
 		}
 		return $res;
 	}
