@@ -60,8 +60,7 @@ class TinyAuthorize extends BaseAuthorize {
 	 * @param ComponentRegistry $registry
 	 * @param array $config
 	 */
-	public function __construct(ComponentRegistry $registry, array $config = array())
-	{
+	public function __construct(ComponentRegistry $registry, array $config = array()) {
 		$config += $this->_defaultConfig;
 		parent::__construct($registry, $config);
 
@@ -82,8 +81,7 @@ class TinyAuthorize extends BaseAuthorize {
 	 * @param Cake\Network\Request $request The request needing authorization.
 	 * @return bool Success
 	 */
-	public function authorize($user, Request $request)
-	{
+	public function authorize($user, Request $request) {
 		if (isset($user[$this->_config['aclTable']])) {
 			if (isset($user[$this->_config['aclTable']][0]['id'])) {
 				$roles = Hash::extract($user[$this->_config['aclTable']], '{n}.id');
@@ -113,8 +111,7 @@ class TinyAuthorize extends BaseAuthorize {
 	 * @return bool Success
 	 */
 	//public function validate($roles, $plugin, $controller, $action) {
-	public function validate($roles, Request $request)
-	{
+	public function validate($roles, Request $request) {
 		// construct the iniKey and iniMap for easy lookups
 		$iniKey = $this->constructIniKey($request);
 		$availableRoles = Configure::read($this->_config['aclTable']);
@@ -189,8 +186,7 @@ class TinyAuthorize extends BaseAuthorize {
 	/**
 	 * @return Cake\ORM\Table The User table
 	 */
-	public function getTable()
-	{
+	public function getTable() {
 		return TableRegistry::get(CLASS_USER);
 	}
 
@@ -204,8 +200,7 @@ class TinyAuthorize extends BaseAuthorize {
 	 * @param string $path
 	 * @return array Roles
 	 */
-	protected function _getAcl($path = null)
-	{
+	protected function _getAcl($path = null) {
 		if ($path === null) {
 			$path = ROOT . DS . 'config' . DS;
 		}
@@ -300,8 +295,7 @@ class TinyAuthorize extends BaseAuthorize {
 	 * @param string INI section key as found in acl.ini
 	 * @return string String converted to use cake conventions
 	 */
-	protected function normalizeIniKey($key)
-	{
+	protected function normalizeIniKey($key) {
 		$iniMap = $this->deconstructIniKey($key);
 		$res = Inflector::camelize($iniMap['controller']);
 		if (!empty($iniMap['prefix'])) {
@@ -319,8 +313,7 @@ class TinyAuthorize extends BaseAuthorize {
 	 * @param string INI section key as found in acl.ini
 	 * @return array Hash with named keys for controller, plugin and prefix
 	 */
-	protected function deconstructIniKey($key)
-	{
+	protected function deconstructIniKey($key) {
 		$res = [
 			'plugin' => null,
 			'prefix' => null
@@ -344,8 +337,7 @@ class TinyAuthorize extends BaseAuthorize {
 	 * @param Cake\Network\Request $request The request needing authorization.
 	 * @return array Hash with named keys for controller, plugin and prefix
 	 */
-	protected function constructIniKey(Request $request)
-	{
+	protected function constructIniKey(Request $request) {
 		$res = Inflector::camelize($request->params['controller']);
 		if (!empty($request->params['prefix'])) {
 			$res = strtolower($request->params['prefix']) . "/$res";
