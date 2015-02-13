@@ -169,8 +169,6 @@ class TinyAuthorize extends BaseAuthorize {
 
 		// allow access if user has been granted access to the specific resource
 		$action = Inflector::underscore($request->action);
-		pr($iniKey);
-
 		if(array_key_exists($action, $this->_acl[$iniKey]['actions']) && !empty($this->_acl[$iniKey]['actions'][$action])) {
 			$matchArray = $this->_acl[$iniKey]['actions'][$action];
 
