@@ -163,18 +163,20 @@ class TinyAuthorize extends BaseAuthorize {
 		}
 
 		// allow access if user has been granted access to the specific resource
-		if(array_key_exists($request->action, $this->_acl[$iniKey]['actions']) && !empty($this->_acl[$iniKey]['actions'][$request->action])) {
-			$matchArray = $this->_acl[$iniKey]['actions'][$request->action];
+		if (isset($this->_acl[$iniKey]['actions'])){
+			if(array_key_exists($request->action, $this->_acl[$iniKey]['actions']) && !empty($this->_acl[$iniKey]['actions'][$request->action])) {
+				$matchArray = $this->_acl[$iniKey]['actions'][$request->action];
 
-			// direct access? (even if he has no roles = GUEST)
-			if (in_array('-1', $matchArray)) {
-				return true;
-			}
-
-			// normal access (rolebased)
-			foreach ($roles as $role) {
-				if (in_array((string)$role, $matchArray)) {
+				// direct access? (even if he has no roles = GUEST)
+				if (in_array('-1', $matchArray)) {
 					return true;
+				}
+
+				// normal access (rolebased)
+				foreach ($roles as $role) {
+					if (in_array((string)$role, $matchArray)) {
+						return true;
+					}
 				}
 			}
 		}
@@ -239,7 +241,6 @@ class TinyAuthorize extends BaseAuthorize {
 
 		$res = [];
 		foreach ($iniArray as $key => $array) {
-			$key = $this->_normalizeIniKey($key);
 			$res[$key] = $this->_deconstructIniKey($key);
 
 			foreach ($array as $actions => $roles) {
@@ -283,28 +284,6 @@ class TinyAuthorize extends BaseAuthorize {
 	}
 
 	/**
-	 * Conforms a user specified ACL ini section key to CakePHP conventions.
-	 * This way internal $_acl has correct naming for controllers etc + this
-	 * prevents possible casing problems.
-	 *
-	 * @todo: not changing prefix yet, is the casing user definable?
-	 *
-	 * @param string INI section key as found in acl.ini
-	 * @return string String converted to use cake conventions
-	 */
-	protected function _normalizeIniKey($key) {
-		$iniMap = $this->_deconstructIniKey($key);
-		$res = Inflector::camelize($iniMap['controller']);
-		if (!empty($iniMap['prefix'])) {
-			$res = strtolower($iniMap['prefix']) . "/$res";
-		}
-		if (!empty($iniMap['plugin'])) {
-			$res = Inflector::camelize($iniMap['plugin']) . ".$res";
-		}
-		return $res;
-	}
-
-	/**
 	 * Deconstructs an ACL ini section key into a named array with ACL parts
 	 *
 	 * @param string INI section key as found in acl.ini
@@ -317,14 +296,12 @@ class TinyAuthorize extends BaseAuthorize {
 		];
 
 		if (strpos($key, '.') !== false) {
-			list($plugin, $key) = explode('.', $key);
-			$res['plugin'] = Inflector::camelize($plugin);
+			list($res['plugin'], $key) = explode('.', $key);
 		}
 		if (strpos($key, '/') !== false) {
 			list($res['prefix'], $key) = explode('/', $key);
-			$res['prefix'] = strtolower($res['prefix']);
 		}
-		$res['controller'] = Inflector::camelize($key);
+		$res['controller'] = $key;
 		return $res;
 	}
 
@@ -335,12 +312,12 @@ class TinyAuthorize extends BaseAuthorize {
 	 * @return array Hash with named keys for controller, plugin and prefix
 	 */
 	protected function _constructIniKey(Request $request) {
-		$res = Inflector::camelize($request->params['controller']);
+		$res = $request->params['controller'];
 		if (!empty($request->params['prefix'])) {
-			$res = strtolower($request->params['prefix']) . "/$res";
+			$res = $request->params['prefix'] . "/$res";
 		}
 		if (!empty($request->params['plugin'])) {
-			$res = Inflector::camelize($request->params['plugin']) . ".$res";
+			$res = $request->params['plugin'] . ".$res";
 		}
 		return $res;
 	}
