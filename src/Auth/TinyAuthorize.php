@@ -42,11 +42,11 @@ class TinyAuthorize extends BaseAuthorize {
 	protected $_acl = null;
 
 	protected $_defaultConfig = [
-		'adminRole' => null, // needed together with adminPrefix if allowAdmin is enabled
-		'superAdminRole' => null, // id of the role to grant access to ALL resources
-		'allowUser' => false, // quick way to allow ALL roles access to non prefixed urls
-		'allowAdmin' => false, // quick way to allow admin access to admin prefixed urls
-		'adminPrefix' => 'admin', // must be defined in combination with allowAdmin
+		'adminRole' => null, // id of the admin role used by allowAdmin
+		'superAdminRole' => null, // id of super admin role granted access to ALL resources
+		'allowUser' => false, // enable to allow ALL roles access to all actions except prefixed with 'adminPrefix'
+		'allowAdmin' => false, // enable to allow admin role access to all 'adminPrefix' prefixed urls
+		'adminPrefix' => 'admin', // admin prefix used by  allowAdmin
 		'cache' => AUTH_CACHE,
 		'cacheKey' => 'tiny_auth_acl',
 		'autoClearCache' => false, // usually done by Cache automatically in debug mode,

@@ -1,13 +1,13 @@
 <?php
 namespace TinyAuth\Test\Auth;
 
-use TinyAuth\Auth\TinyAuthorize;
-use Cake\TestSuite\TestCase;
 use Cake\Controller\Controller;
 use Cake\Controller\ComponentRegistry;
-use Cake\Network\Request;
 use Cake\Core\Configure;
+use Cake\Network\Request;
 use Cake\ORM\TableRegistry;
+use Cake\TestSuite\TestCase;
+use TinyAuth\Auth\TinyAuthorize;
 
 /**
  * Test case for DirectAuthentication
