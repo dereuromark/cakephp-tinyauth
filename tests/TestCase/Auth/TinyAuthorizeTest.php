@@ -455,7 +455,6 @@ INI;
 			],
 		];
 
-
 		$user = [
 			'Roles' => [
 				['id' => 1, 'RoleUsers' => []],
@@ -832,6 +831,10 @@ INI;
 		$res = $method->invokeArgs($object, [$key]);
 		$this->assertEquals($expected, $res);
 
+		$key = 'users';	// test incorrect casing
+		$res = $method->invokeArgs($object, [$key]);
+		$this->assertNotEquals($expected, $res);
+
 		// Test standard controller with /admin prefix
 		$key = 'admin/Users';
 		$expected = [
@@ -841,6 +844,18 @@ INI;
 		];
 		$res = $method->invokeArgs($object, [$key]);
 		$this->assertEquals($expected, $res);
+
+		$key = 'admin/users';
+		$res = $method->invokeArgs($object, [$key]);
+		$this->assertNotEquals($expected, $res);
+
+		$key = 'Admin/users';
+		$res = $method->invokeArgs($object, [$key]);
+		$this->assertNotEquals($expected, $res);
+
+		$key = 'Admin/Users';
+		$res = $method->invokeArgs($object, [$key]);
+		$this->assertNotEquals($expected, $res);
 
 		// Test plugin controller without prefix
 		$key = 'Tags.Tags';
@@ -852,6 +867,18 @@ INI;
 		$res = $method->invokeArgs($object, [$key]);
 		$this->assertEquals($expected, $res);
 
+		$key = 'tags/tags';
+		$res = $method->invokeArgs($object, [$key]);
+		$this->assertNotEquals($expected, $res);
+
+		$key = 'tags/Tags';
+		$res = $method->invokeArgs($object, [$key]);
+		$this->assertNotEquals($expected, $res);
+
+		$key = 'Tags/tags';
+		$res = $method->invokeArgs($object, [$key]);
+		$this->assertNotEquals($expected, $res);
+
 		// Test plugin controller with /admin prefix
 		$key = 'Tags.admin/Tags';
 		$expected = [
@@ -861,8 +888,27 @@ INI;
 		];
 		$res = $method->invokeArgs($object, [$key]);
 		$this->assertEquals($expected, $res);
-	}
 
+		$key = 'tags.admin/tags';
+		$res = $method->invokeArgs($object, [$key]);
+		$this->assertNotEquals($expected, $res);
+
+		$key = 'tags.Admin/tags';
+		$res = $method->invokeArgs($object, [$key]);
+		$this->assertNotEquals($expected, $res);
+
+		$key = 'tags.admin/Tags';
+		$res = $method->invokeArgs($object, [$key]);
+		$this->assertNotEquals($expected, $res);
+
+		$key = 'Tags.Admin/Tags';
+		$res = $method->invokeArgs($object, [$key]);
+		$this->assertNotEquals($expected, $res);
+
+		$key = 'Tags.Admin/tags';
+		$res = $method->invokeArgs($object, [$key]);
+		$this->assertNotEquals($expected, $res);
+	}
 
 }
 

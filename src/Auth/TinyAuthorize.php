@@ -116,8 +116,8 @@ class TinyAuthorize extends BaseAuthorize {
 		$iniKey = $this->_constructIniKey($request);
 		$availableRoles = Configure::read($this->_config['aclTable']);
 
-		// Give any logged in user access to ALL actions if `allowUser` is
-		// enabled, except when the `adminPrefix` is being used.
+		// Give any logged in user access to ALL actions when `allowUser` is
+		// enabled except when the `adminPrefix` is being used.
 		if (!empty($this->_config['allowUser'])) {
 			if (empty($request->params['prefix'])) {
 				return true;
@@ -128,7 +128,7 @@ class TinyAuthorize extends BaseAuthorize {
 		}
 
 		// allow access to all /admin prefixed actions for users belonging to
-		// the specified adminRole.
+		// the specified adminRole id.
 		if (!empty($this->_config['allowAdmin']) && !empty($this->_config['adminRole'])) {
 			if (!empty($request->params['prefix']) && $request->params['prefix'] === $this->_config['adminPrefix']) {
 				if (in_array($this->_config['adminRole'], $roles)) {
