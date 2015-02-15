@@ -648,35 +648,6 @@ INI;
 	}
 
 	/**
-	 * Should only be used in combination with Auth->allow() to mark those
-	 * as public in the acl.ini, as well. Not necessary and certainly not
-	 * recommended as acl.ini only.
-	 *
-	 * @todo: discuss, what is this??
-	 *
-	 * @return void
-	 */
-	// public function testBasicUserMethodAllowedPublically() {
-	// 	$object = new TestTinyAuthorize($this->Collection, ['autoClearCache' => true]);
-	//
-	// 	// test standard controller
-	// 	$this->request->params['controller'] = 'Tags';
-	// 	$this->request->params['action'] = 'add';
-	// 	$user = ['role_id' => 2];
-	// 	$res = $object->authorize($user, $this->request);
-	// 	$this->assertTrue($res);
-	//
-	// 	$this->request->params['controller'] = 'Comments';
-	// 	$this->request->params['action'] = 'foo';
-	//
-	// 	$user = [
-	// 		'role_id' => 3
-	// 	];
-	// 	$res = $object->authorize($user, $this->request);
-	// 	$this->assertTrue($res);
-	// }
-
-	/**
 	 * TinyAuthorizeTest::testWithRoleTable()
 	 *
 	 * @return void
