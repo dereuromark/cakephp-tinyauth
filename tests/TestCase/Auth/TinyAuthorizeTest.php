@@ -690,6 +690,99 @@ INI;
 		}
 	}
 
+	/**
+	 * Tests constructing an ACL ini section key using CakeRequest parameters
+	 *
+	 * @return void
+	 */
+	public function testIniConstruct() {
+		// make protected function accessible
+		$object = new TestTinyAuthorize($this->Collection);
+		$reflection = new \ReflectionClass(get_class($object));
+		$method = $reflection->getMethod('_constructIniKey');
+		$method->setAccessible(true);
+
+		// test standard controller
+		$this->request->params['controller'] = 'Users';
+		$expected = 'Users';
+		$res =  $method->invokeArgs($object, [$this->request]);
+		$this->assertEquals($expected, $res);
+
+		// test standard controller with /admin prefix
+		$this->request->params['prefix'] = 'admin';
+		$expected = 'admin/Users';
+		$res =  $method->invokeArgs($object, [$this->request]);
+		$this->assertEquals($expected, $res);
+
+		// test plugin controller without prefix
+		$this->request->params['controller'] = 'Tags';
+		$this->request->params['plugin'] = 'Tags';
+		$this->request->params['prefix'] = null;
+		$expected = 'Tags.Tags';
+		$res =  $method->invokeArgs($object, [$this->request]);
+		$this->assertEquals($expected, $res);
+
+		// test plugin controller with /admin prefix
+		$this->request->params['prefix'] = 'admin';
+		$expected = 'Tags.admin/Tags';
+		$res =  $method->invokeArgs($object, [$this->request]);
+		$this->assertEquals($expected, $res);
+	}
+
+	/**
+	* Tests deconstructing an ACL ini section key
+	*
+	* @return void
+	*/
+	public function testIniDeconstruct() {
+		// make protected function accessible
+		$object = new TestTinyAuthorize($this->Collection);
+		$reflection = new \ReflectionClass(get_class($object));
+		$method = $reflection->getMethod('_deconstructIniKey');
+		$method->setAccessible(true);
+
+		// test standard controller
+		$key = 'Users';
+		$expected = [
+			'controller' => 'Users',
+			'plugin' => null,
+			'prefix' => null
+		];
+		$res = $method->invokeArgs($object, [$key]);
+		$this->assertEquals($expected, $res);
+
+		// test standard controller with /admin prefix
+		$key = 'admin/Users';
+		$expected = [
+			'controller' => 'Users',
+			'plugin' => null,
+			'prefix' => 'admin'
+		];
+		$res = $method->invokeArgs($object, [$key]);
+		$this->assertEquals($expected, $res);
+
+		// test plugin controller without prefix
+		$key = 'Tags.Tags';
+		$expected = [
+			'controller' => 'Tags',
+			'plugin' => 'Tags',
+			'prefix' => null
+		];
+		$res = $method->invokeArgs($object, [$key]);
+		$this->assertEquals($expected, $res);
+
+		// test plugin controller with /admin prefix
+		$key = 'Tags.admin/Tags';
+		$expected = [
+			'controller' => 'Tags',
+			'plugin' => 'Tags',
+			'prefix' => 'admin'
+		];
+		$res = $method->invokeArgs($object, [$key]);
+		$this->assertEquals($expected, $res);
+	}
+
+
 }
 
 class TestTinyAuthorize extends TinyAuthorize {
