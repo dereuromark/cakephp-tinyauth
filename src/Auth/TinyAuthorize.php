@@ -1,14 +1,14 @@
 <?php
 namespace TinyAuth\Auth;
 
-use Cake\Core\Configure;
-use Cake\Cache\Cache;
-use Cake\Utility\Inflector;
-use Cake\Utility\Hash;
 use Cake\Auth\BaseAuthorize;
-use Cake\Network\Request;
+use Cake\Cache\Cache;
 use Cake\Controller\ComponentRegistry;
+use Cake\Core\Configure;
+use Cake\Network\Request;
 use Cake\ORM\TableRegistry;
+use Cake\Utility\Hash;
+use Cake\Utility\Inflector;
 
 if (!defined('CLASS_USER')) {
 	define('CLASS_USER', 'Users'); // override if you have it in a plugin: PluginName.Users etc
