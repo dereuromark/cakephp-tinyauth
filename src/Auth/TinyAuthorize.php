@@ -113,7 +113,7 @@ class TinyAuthorize extends BaseAuthorize {
 	//public function validate($roles, $plugin, $controller, $action) {
 	public function validate($roles, Request $request) {
 		// construct the iniKey and iniMap for easy lookups
-		$iniKey = $this->constructIniKey($request);
+		$iniKey = $this->_constructIniKey($request);
 		$availableRoles = Configure::read($this->_config['aclTable']);
 
 		// allow logged in users access to all actions except prefixed
@@ -240,8 +240,8 @@ class TinyAuthorize extends BaseAuthorize {
 
 		$res = [];
 		foreach ($iniArray as $key => $array) {
-			$key = $this->normalizeIniKey($key);
-			$res[$key] = $this->deconstructIniKey($key);
+			$key = $this->_normalizeIniKey($key);
+			$res[$key] = $this->_deconstructIniKey($key);
 
 			foreach ($array as $actions => $roles) {
 				// get all roles used in the current ini section
@@ -293,8 +293,8 @@ class TinyAuthorize extends BaseAuthorize {
 	 * @param string INI section key as found in acl.ini
 	 * @return string String converted to use cake conventions
 	 */
-	protected function normalizeIniKey($key) {
-		$iniMap = $this->deconstructIniKey($key);
+	protected function _normalizeIniKey($key) {
+		$iniMap = $this->_deconstructIniKey($key);
 		$res = Inflector::camelize($iniMap['controller']);
 		if (!empty($iniMap['prefix'])) {
 			$res = strtolower($iniMap['prefix']) . "/$res";
@@ -311,7 +311,7 @@ class TinyAuthorize extends BaseAuthorize {
 	 * @param string INI section key as found in acl.ini
 	 * @return array Hash with named keys for controller, plugin and prefix
 	 */
-	protected function deconstructIniKey($key) {
+	protected function _deconstructIniKey($key) {
 		$res = [
 			'plugin' => null,
 			'prefix' => null
@@ -335,7 +335,7 @@ class TinyAuthorize extends BaseAuthorize {
 	 * @param Cake\Network\Request $request The request needing authorization.
 	 * @return array Hash with named keys for controller, plugin and prefix
 	 */
-	protected function constructIniKey(Request $request) {
+	protected function _constructIniKey(Request $request) {
 		$res = Inflector::camelize($request->params['controller']);
 		if (!empty($request->params['prefix'])) {
 			$res = strtolower($request->params['prefix']) . "/$res";
