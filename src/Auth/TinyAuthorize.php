@@ -44,9 +44,9 @@ class TinyAuthorize extends BaseAuthorize {
 	protected $_defaultConfig = [
 		'adminRole' => null, // needed together with adminPrefix if allowAdmin is enabled
 		'superAdminRole' => null, // id of the role to grant access to ALL resources
-		'allowUser' => false, // quick way to allow user access to non prefixed urls
+		'allowUser' => false, // quick way to allow ALL roles access to non prefixed urls
 		'allowAdmin' => false, // quick way to allow admin access to admin prefixed urls
-		'adminPrefix' => 'admin',
+		'adminPrefix' => 'admin', // must be defined in combination with allowAdmin
 		'cache' => AUTH_CACHE,
 		'cacheKey' => 'tiny_auth_acl',
 		'autoClearCache' => false, // usually done by Cache automatically in debug mode,
@@ -129,8 +129,7 @@ class TinyAuthorize extends BaseAuthorize {
 		// the specified adminRole.
 		if (!empty($this->_config['allowAdmin']) && !empty($this->_config['adminRole'])) {
 			if (!empty($request->params['prefix']) && $request->params['prefix'] === $this->_config['adminPrefix']) {
-				$adminRoleId = $availableRoles[$this->_config['adminRole']];
-				if (in_array($adminRoleId, $roles)) {
+				if (in_array($this->_config['adminRole'], $roles)) {
 					return true;
 				}
 			}
