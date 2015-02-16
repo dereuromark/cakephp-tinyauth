@@ -39,7 +39,7 @@ You need to define some roles for Authorize to work, for example:
 
 
 /**
-* Optionally define constants for easy referencing throughout your code authorization
+* Optionally define constants for easy referencing throughout your code
 */
 define('ROLE_PUBLIC', -1);
 define('ROLE_USERS', 1);
