@@ -41,14 +41,12 @@ You need to define some roles for Authorize to work, for example:
 /**
 * Optionally define constants for easy referencing throughout your code
 */
-define('ROLE_PUBLIC', -1);
 define('ROLE_USERS', 1);
 define('ROLE_ADMINS', 2);
 define('ROLE_SUPERADMINS', 9);
 
 return [
 	'Roles' => [
-		'public' => ROLE_PUBLIC,
 		'user' => ROLE_USERS,
 		'admin' => ROLE_ADMINS,
 		'supergirls' => ROLE_SUPERADMINS
@@ -67,7 +65,6 @@ Make sure to create an entry for each action you want to expose and use:
 
 - one or more role names (groups granted access)
 - the ``*`` wildcard to allow access to all authenticated users
-- the special `public` group to allow access to unauthenticated users
 
 ```ini
 ; ----------------------------------------------------------
@@ -81,7 +78,6 @@ edit, view = user, admin
 ; UsersController using /api prefixed route
 ; ----------------------------------------------------------
 [api/Users]
-index = public
 view = user
 * = admin
 ; ----------------------------------------------------------
