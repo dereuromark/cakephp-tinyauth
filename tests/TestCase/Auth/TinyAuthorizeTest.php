@@ -45,6 +45,7 @@ index = user, undefined-role
 edit = user
 delete = admin
 very_long_action_name_action = user
+veryLongActionNameAction = user
 public_action = public
 ; ----------------------------------------------------------
 ; UsersController (/admin prefixed route, no plugin)
@@ -55,6 +56,7 @@ edit = user
 delete = admin
 public_action = public
 very_long_action_name_action = user
+veryLongActionNameAction = user
 ; ----------------------------------------------------------
 ; TagsController (no prefixed route, no plugin)
 ; ----------------------------------------------------------
@@ -69,6 +71,7 @@ edit,view = user
 * = admin
 public_action = public
 very_long_action_name_action = user
+veryLongActionNameAction = user
 ; ----------------------------------------------------------
 ; TagsController (plugin Tags, /admin prefixed route)
 ; ----------------------------------------------------------
@@ -78,6 +81,7 @@ edit,view = user
 add = admin
 public_action = public
 very_long_action_name_action = user
+veryLongActionNameAction = user
 ; ----------------------------------------------------------
 ; CommentsController (no plugin, /special prefixed route)
 ; ----------------------------------------------------------
@@ -139,7 +143,8 @@ INI;
 					'edit' => [1],
 					'delete' => [3],
 					'public_action' => [-1],
-					'very_long_action_name_action' => [1]
+					'very_long_action_name_action' => [1],
+					'veryLongActionNameAction' => [1]
 				]
 			],
 			'admin/Users' => [
@@ -151,7 +156,8 @@ INI;
 					'edit' => [1],
 					'delete' => [3],
 					'public_action' => [-1],
-					'very_long_action_name_action' => [1]
+					'very_long_action_name_action' => [1],
+					'veryLongActionNameAction' => [1]
 				]
 			],
 			'Tags' => [
@@ -172,7 +178,8 @@ INI;
 					'view' => [1],
 					'*' => [3],
 					'public_action' => [-1],
-					'very_long_action_name_action' => [1]
+					'very_long_action_name_action' => [1],
+					'veryLongActionNameAction' => [1]
 				]
 			],
 			'Tags.admin/Tags' => [
@@ -185,7 +192,8 @@ INI;
 					'view' => [1],
 					'add' => [3],
 					'public_action' => [-1],
-					'very_long_action_name_action' => [1]
+					'very_long_action_name_action' => [1],
+					'veryLongActionNameAction' => [1]
 				]
 			],
 			'special/Comments' => [
@@ -383,12 +391,63 @@ INI;
 	/**
 	 * @return void
 	 */
-	public function testBasicUserMethodAllowedWithLongActionNames() {
+	public function testBasicUserMethodAllowedWithLongActionNamesInflectedRoute() {
 		$object = new TestTinyAuthorize($this->Collection, ['autoClearCache' => true]);
 
 		// Test standard controller
 		$this->request->params['controller'] = 'Users';
 		$this->request->params['action'] = 'very_long_action_name_action';
+
+		$user = ['role_id' => 1];
+		$res = $object->authorize($user, $this->request);
+		$this->assertTrue($res);
+
+		$user = ['role_id' => 2];
+		$res = $object->authorize($user, $this->request);
+		$this->assertFalse($res);
+
+		// Test standard controller with /admin prefix
+		$this->request->params['prefix'] = 'admin';
+		$user = [ 'role_id' => 1 ];
+		$res = $object->authorize($user, $this->request);
+		$this->assertTrue($res);
+
+		$user = ['role_id' => 2];
+		$res = $object->authorize($user, $this->request);
+		$this->assertFalse($res);
+
+		// Test plugin controller
+		$this->request->params['controller'] = 'Tags';
+		$this->request->params['plugin'] = 'Tags';
+		$this->request->params['prefix'] = null;
+		$user = [ 'role_id' => 1 ];
+		$res = $object->authorize($user, $this->request);
+		$this->assertTrue($res);
+
+		$user = ['role_id' => 2];
+		$res = $object->authorize($user, $this->request);
+		$this->assertFalse($res);
+
+		// Test plugin controller with /admin prefix
+		$this->request->params['prefix'] = 'admin';
+		$user = [ 'role_id' => 1 ];
+		$res = $object->authorize($user, $this->request);
+		$this->assertTrue($res);
+
+		$user = ['role_id' => 2];
+		$res = $object->authorize($user, $this->request);
+		$this->assertFalse($res);
+	}
+
+	/**
+	* @return void
+	*/
+	public function testBasicUserMethodAllowedWithLongActionNamesDashedRoute() {
+		$object = new TestTinyAuthorize($this->Collection, ['autoClearCache' => true]);
+
+		// Test standard controller
+		$this->request->params['controller'] = 'Users';
+		$this->request->params['action'] = 'veryLongActionNameAction';
 
 		$user = ['role_id' => 1];
 		$res = $object->authorize($user, $this->request);
