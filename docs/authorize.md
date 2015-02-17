@@ -43,7 +43,7 @@ You need to define some roles for Authorize to work, for example:
 */
 define('ROLE_USERS', 1);
 define('ROLE_ADMINS', 2);
-define('ROLE_SUPERADMINS', 9);
+define('ROLE_SUPERADMIN', 9);
 
 return [
 	'Roles' => [
