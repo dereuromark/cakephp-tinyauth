@@ -154,9 +154,6 @@ class TinyAuthorize extends BaseAuthorize {
 		// allow access if user has a role with wildcard access to the resource
 		if (isset($this->_acl[$iniKey]['actions']['*'])) {
 			$matchArray = $this->_acl[$iniKey]['actions']['*'];
-			if (in_array('-1', $matchArray)) {
-				return true;
-			}
 			foreach ($roles as $role) {
 				if (in_array((string)$role, $matchArray)) {
 					return true;
@@ -168,13 +165,6 @@ class TinyAuthorize extends BaseAuthorize {
 		if (isset($this->_acl[$iniKey]['actions'])){
 			if(array_key_exists($request->action, $this->_acl[$iniKey]['actions']) && !empty($this->_acl[$iniKey]['actions'][$request->action])) {
 				$matchArray = $this->_acl[$iniKey]['actions'][$request->action];
-
-				// direct access? (even if he has no roles = GUEST)
-				if (in_array('-1', $matchArray)) {
-					return true;
-				}
-
-				// normal access (rolebased)
 				foreach ($roles as $role) {
 					if (in_array((string)$role, $matchArray)) {
 						return true;

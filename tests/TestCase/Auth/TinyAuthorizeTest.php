@@ -92,6 +92,28 @@ veryLongActionNameAction = user
 ; ----------------------------------------------------------
 [Comments.special/Comments]
 * = admin
+; ----------------------------------------------------------
+; PostsController (for testing generic wildcard access)
+; ----------------------------------------------------------
+[Posts]
+*=*
+[admin/Posts]
+* = *
+[Posts.Posts]
+* = *
+[Posts.admin/Posts]
+* = *
+; ----------------------------------------------------------
+; BlogsController (for testing specific wildcard access)
+; ----------------------------------------------------------
+[Blogs]
+*= moderator
+[admin/Blogs]
+* = moderator
+[Blogs.Blogs]
+* = moderator
+[Blogs.admin/Blogs]
+* = moderator
 INI;
 
 		file_put_contents(TMP . 'acl.ini', $aclData);
@@ -210,6 +232,70 @@ INI;
 				'controller' => 'Comments',
 				'actions' => [
 					'*' => [3]
+				]
+			],
+			'Posts' => [
+				'plugin' => null,
+				'prefix' => null,
+				'controller' => 'Posts',
+				'actions' => [
+					'*' => [1, 2, 3, -1]
+				]
+			],
+			'admin/Posts' => [
+				'plugin' => null,
+				'prefix' => 'admin',
+				'controller' => 'Posts',
+				'actions' => [
+					'*' => [1, 2, 3, -1]
+				]
+			],
+			'Posts.Posts' => [
+				'plugin' => 'Posts',
+				'prefix' => null,
+				'controller' => 'Posts',
+				'actions' => [
+					'*' => [1, 2, 3, -1]
+				]
+			],
+			'Posts.admin/Posts' => [
+				'plugin' => 'Posts',
+				'prefix' => 'admin',
+				'controller' => 'Posts',
+				'actions' => [
+					'*' => [1, 2, 3, -1]
+				]
+			],
+			'Blogs' => [
+				'plugin' => null,
+				'prefix' => null,
+				'controller' => 'Blogs',
+				'actions' => [
+					'*' => [2]
+				]
+			],
+			'admin/Blogs' => [
+				'plugin' => null,
+				'prefix' => 'admin',
+				'controller' => 'Blogs',
+				'actions' => [
+					'*' => [2]
+				]
+			],
+			'Blogs.Blogs' => [
+				'plugin' => 'Blogs',
+				'prefix' => null,
+				'controller' => 'Blogs',
+				'actions' => [
+					'*' => [2]
+				]
+			],
+			'Blogs.admin/Blogs' => [
+				'plugin' => 'Blogs',
+				'prefix' => 'admin',
+				'controller' => 'Blogs',
+				'actions' => [
+					'*' => [2]
 				]
 			]
 		];
@@ -525,35 +611,127 @@ INI;
 	}
 
 	/**
+	 * Tests access to a controller that uses the * wildcard for both the
+	 * action and the allowed groups (* = *).
+	 *
+	 * Note: users without a valid/defined role will not be granted access.
+	 *
 	 * @return void
 	 */
 	public function testBasicUserMethodAllowedWildcard() {
-		$object = new TestTinyAuthorize($this->Collection, ['autoClearCache' => true]);
-		$user = ['role_id' => 6];
+		$object = new TestTinyAuthorize($this->Collection, [
+			'autoClearCache' => true
+		]);
 
-		// Test standard controller
-		$this->request->params['controller'] = 'Users';
-		$this->request->params['action'] = 'public_action';
-		$res = $object->authorize($user, $this->request);
-		$this->assertTrue($res);
-
-		// Test standard controller with /admin prefix
-		$this->request->params['prefix'] = 'admin';
-		$res = $object->authorize($user, $this->request);
-		$this->assertTrue($res);
-
-		// Test plugin controller
-		$this->request->params['controller'] = 'Tags';
-		$this->request->params['plugin'] = 'Tags';
+		// Test *=* for standard controller
+		$this->request->params['controller'] = 'Posts';
+		$this->request->params['action'] = 'any_action';
 		$this->request->params['prefix'] = null;
+		$this->request->params['plugin'] = null;
+
+		$user = ['role_id' => 2];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
-		// Test plugin controller with /admin prefix
+		$user = ['role_id' => 123];
+		$res = $object->authorize($user, $this->request);
+		$this->assertFalse($res);
+
+		// Test *=* for standard controller with /admin prefix
+		$this->request->params['controller'] = 'Posts';
 		$this->request->params['prefix'] = 'admin';
+		$this->request->params['plugin'] = null;
+
+		$user = ['role_id' => 2];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
+
+		$user = ['role_id' => 123];
+		$res = $object->authorize($user, $this->request);
+		$this->assertFalse($res);
+
+		// Test *=* for plugin controller
+		$this->request->params['controller'] = 'Posts';
+		$this->request->params['prefix'] = null;
+		$this->request->params['plugin'] = 'Posts';
+
+		$user = ['role_id' => 2];
+		$res = $object->authorize($user, $this->request);
+		$this->assertTrue($res);
+
+		$user = ['role_id' => 123];
+		$res = $object->authorize($user, $this->request);
+		$this->assertFalse($res);
+
+		// Test *=* for plugin controller with /admin prefix
+		$this->request->params['controller'] = 'Posts';
+		$this->request->params['prefix'] = 'admin';
+		$this->request->params['plugin'] = 'Posts';
+
+		$user = ['role_id' => 2];
+		$res = $object->authorize($user, $this->request);
+		$this->assertTrue($res);
+
+		$user = ['role_id' => 123];
+		$res = $object->authorize($user, $this->request);
+		$this->assertFalse($res);
+
 	}
+
+	/**
+	* Tests access to a controller that uses the * wildcard for the action
+	* but combines it with a specific group (e.g. * = moderators).
+	*
+	* @return void
+	*/
+	public function testBasicUserMethodAllowedWildcardSpecificGroup() {
+		$object = new TestTinyAuthorize($this->Collection, [
+			'autoClearCache' => true
+		]);
+		$user = ['role_id' => 2];
+
+		// test standard controller
+		$this->request->params['controller'] = 'Blogs';
+		$this->request->params['action'] = 'any_action';
+		$res = $object->authorize($user, $this->request);
+		$this->assertTrue($res);
+
+		$user = ['role_id' => 3];
+		$res = $object->authorize($user, $this->request);
+		$this->assertFalse($res);
+
+		// test standard controller with /admin prefix
+		$this->request->params['prefix'] = 'admin';
+		$user = ['role_id' => 2];
+		$res = $object->authorize($user, $this->request);
+		$this->assertTrue($res);
+
+		$user = ['role_id' => 3];
+		$res = $object->authorize($user, $this->request);
+		$this->assertFalse($res);
+
+		// test plugin controlller
+		$this->request->params['plugin'] = 'Blogs';
+		$this->request->params['prefix'] = null;
+		$user = ['role_id' => 2];
+		$res = $object->authorize($user, $this->request);
+		$this->assertTrue($res);
+
+		$user = ['role_id' => 3];
+		$res = $object->authorize($user, $this->request);
+		$this->assertFalse($res);
+
+		// test plugin controlller with /admin prefix
+		$this->request->params['prefix'] = 'admin';
+		$user = ['role_id' => 2];
+		$res = $object->authorize($user, $this->request);
+		$this->assertTrue($res);
+
+		$user = ['role_id' => 3];
+		$res = $object->authorize($user, $this->request);
+		$this->assertFalse($res);
+	}
+
 
 	/**
 	 * Tests with configuration setting 'allowUser' set to true, giving user
