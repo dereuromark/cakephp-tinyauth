@@ -1,14 +1,14 @@
 <?php
 namespace TinyAuth\Auth;
 
-use Cake\Core\Configure;
-use Cake\Cache\Cache;
-use Cake\Utility\Inflector;
-use Cake\Utility\Hash;
 use Cake\Auth\BaseAuthorize;
-use Cake\Network\Request;
+use Cake\Cache\Cache;
 use Cake\Controller\ComponentRegistry;
+use Cake\Core\Configure;
+use Cake\Network\Request;
 use Cake\ORM\TableRegistry;
+use Cake\Utility\Hash;
+use Cake\Utility\Inflector;
 
 if (!defined('CLASS_USER')) {
 	define('CLASS_USER', 'Users'); // override if you have it in a plugin: PluginName.Users etc
@@ -41,18 +41,18 @@ class TinyAuthorize extends BaseAuthorize {
 
 	protected $_acl = null;
 
-	protected $_defaultConfig = array(
-		'superadminRole' => null, // quick way to allow access to every action
-		'allowUser' => false, // quick way to allow user access to non prefixed urls
-		'allowAdmin' => false, // quick way to allow admin access to admin prefixed urls
-		'adminPrefix' => 'admin_',
-		'adminRole' => null, // needed together with adminPrefix if allowAdmin is enabled
+	protected $_defaultConfig = [
+		'adminRole' => null, // id of the admin role used by allowAdmin
+		'superAdminRole' => null, // id of super admin role granted access to ALL resources
+		'allowUser' => false, // enable to allow ALL roles access to all actions except prefixed with 'adminPrefix'
+		'allowAdmin' => false, // enable to allow admin role access to all 'adminPrefix' prefixed urls
+		'adminPrefix' => 'admin', // admin prefix used by  allowAdmin
 		'cache' => AUTH_CACHE,
 		'cacheKey' => 'tiny_auth_acl',
 		'autoClearCache' => false, // usually done by Cache automatically in debug mode,
 		'aclTable' => 'Roles', // only for multiple roles per user (HABTM)
 		'aclKey' => 'role_id', // only for single roles per user (BT)
-	);
+	];
 
 	/**
 	 * TinyAuthorize::__construct()
@@ -97,8 +97,7 @@ class TinyAuthorize extends BaseAuthorize {
 			trigger_error(sprintf('Missing acl information (%s) in user session', $acl));
 			$roles = array();
 		}
-
-		return $this->validate($roles, $request->params['plugin'], $request->params['controller'], $request->params['action']);
+		return $this->validate($roles, $request);
 	}
 
 	/**
@@ -111,45 +110,50 @@ class TinyAuthorize extends BaseAuthorize {
 	 * @param string $action
 	 * @return bool Success
 	 */
-	public function validate($roles, $plugin, $controller, $action) {
-		$action = Inflector::underscore($action);
-		$controller = Inflector::underscore($controller);
-		$plugin = Inflector::underscore($plugin);
+	//public function validate($roles, $plugin, $controller, $action) {
+	public function validate($roles, Request $request) {
+		// construct the iniKey and iniMap for easy lookups
+		$iniKey = $this->_constructIniKey($request);
+		$availableRoles = Configure::read($this->_config['aclTable']);
 
+		// Give any logged in user access to ALL actions when `allowUser` is
+		// enabled except when the `adminPrefix` is being used.
 		if (!empty($this->_config['allowUser'])) {
-			// all user actions are accessable for logged in users
-			if (mb_strpos($action, $this->_config['adminPrefix']) !== 0) {
+			if (empty($request->params['prefix'])) {
+				return true;
+			}
+			if ($request->params['prefix'] != $this->_config['adminPrefix']) {
 				return true;
 			}
 		}
+
+		// allow access to all /admin prefixed actions for users belonging to
+		// the specified adminRole id.
 		if (!empty($this->_config['allowAdmin']) && !empty($this->_config['adminRole'])) {
-			// all admin actions are accessable for logged in admins
-			if (mb_strpos($action, $this->_config['adminPrefix']) === 0) {
-				if (in_array((string)$this->_config['adminRole'], $roles)) {
+			if (!empty($request->params['prefix']) && $request->params['prefix'] === $this->_config['adminPrefix']) {
+				if (in_array($this->_config['adminRole'], $roles)) {
 					return true;
 				}
 			}
 		}
 
+		// allow logged in super admins access to all resources
+		if (!empty($this->_config['superAdminRole'])) {
+			foreach ($roles as $role) {
+				if ($role === $this->_config['superAdminRole']) {
+					return true;
+				}
+			}
+		}
+
+		// generate ACL if not already set
 		if ($this->_acl === null) {
 			$this->_acl = $this->_getAcl();
 		}
 
-		// allow_all check
-		if (!empty($this->_config['superadminRole'])) {
-			foreach ($roles as $role) {
-				if ($role == $this->_config['superadminRole']) {
-					return true;
-				}
-			}
-		}
-
-		// controller wildcard
-		if (isset($this->_acl[$controller]['*'])) {
-			$matchArray = $this->_acl[$controller]['*'];
-			if (in_array('-1', $matchArray)) {
-				return true;
-			}
+		// allow access if user has a role with wildcard access to the resource
+		if (isset($this->_acl[$iniKey]['actions']['*'])) {
+			$matchArray = $this->_acl[$iniKey]['actions']['*'];
 			foreach ($roles as $role) {
 				if (in_array((string)$role, $matchArray)) {
 					return true;
@@ -157,17 +161,10 @@ class TinyAuthorize extends BaseAuthorize {
 			}
 		}
 
-		// specific controller/action
-		if (!empty($controller) && !empty($action)) {
-			if (array_key_exists($controller, $this->_acl) && !empty($this->_acl[$controller][$action])) {
-				$matchArray = $this->_acl[$controller][$action];
-
-				// direct access? (even if he has no roles = GUEST)
-				if (in_array('-1', $matchArray)) {
-					return true;
-				}
-
-				// normal access (rolebased)
+		// allow access if user has been granted access to the specific resource
+		if (isset($this->_acl[$iniKey]['actions'])) {
+			if(array_key_exists($request->action, $this->_acl[$iniKey]['actions']) && !empty($this->_acl[$iniKey]['actions'][$request->action])) {
+				$matchArray = $this->_acl[$iniKey]['actions'][$request->action];
 				foreach ($roles as $role) {
 					if (in_array((string)$role, $matchArray)) {
 						return true;
@@ -200,13 +197,13 @@ class TinyAuthorize extends BaseAuthorize {
 			$path = ROOT . DS . 'config' . DS;
 		}
 
-		$res = array();
 		if ($this->_config['autoClearCache'] && Configure::read('debug') > 0) {
 			Cache::delete($this->_config['cacheKey'], $this->_config['cache']);
 		}
 		if (($roles = Cache::read($this->_config['cacheKey'], $this->_config['cache'])) !== false) {
 			return $roles;
 		}
+
 		if (!file_exists($path . ACL_FILE)) {
 			touch($path . ACL_FILE);
 		}
@@ -234,44 +231,86 @@ class TinyAuthorize extends BaseAuthorize {
 			return array();
 		}
 
+		$res = [];
 		foreach ($iniArray as $key => $array) {
-			list($plugin, $controllerName) = pluginSplit($key);
-			$controllerName = Inflector::underscore($controllerName);
+			$res[$key] = $this->_deconstructIniKey($key);
 
 			foreach ($array as $actions => $roles) {
-				$actions = explode(',', $actions);
+				// get all roles used in the current ini section
 				$roles = explode(',', $roles);
+				$actions = explode(',', $actions);
 
-				foreach ($roles as $key => $role) {
+				foreach ($roles as $roleId => $role) {
 					if (!($role = trim($role))) {
 						continue;
 					}
+					// prevent undefined roles appearing in the iniMap
+					if (!array_key_exists($role, $availableRoles) && $role != '*') {
+						unset($roles[$roleId]);
+						continue;
+					}
 					if ($role === '*') {
-						unset($roles[$key]);
+						unset($roles[$roleId]);
 						$roles = array_merge($roles, array_keys(Configure::read($this->_config['aclTable'])));
 					}
 				}
 
+				// process actions
 				foreach ($actions as $action) {
 					if (!($action = trim($action))) {
 						continue;
 					}
-					$actionName = Inflector::underscore($action);
-
 					foreach ($roles as $role) {
 						if (!($role = trim($role)) || $role === '*') {
 							continue;
 						}
 						$newRole = Configure::read($this->_config['aclTable'] . '.' . strtolower($role));
-						if (!empty($res[$controllerName][$actionName]) && in_array((string)$newRole, $res[$controllerName][$actionName])) {
-							continue;
-						}
-						$res[$controllerName][$actionName][] = $newRole;
+						$res[$key]['actions'][$action][] = $newRole;
+
 					}
 				}
 			}
 		}
 		Cache::write($this->_config['cacheKey'], $res, $this->_config['cache']);
+		return $res;
+	}
+
+	/**
+	 * Deconstructs an ACL ini section key into a named array with ACL parts
+	 *
+	 * @param string INI section key as found in acl.ini
+	 * @return array Hash with named keys for controller, plugin and prefix
+	 */
+	protected function _deconstructIniKey($key) {
+		$res = [
+			'plugin' => null,
+			'prefix' => null
+		];
+
+		if (strpos($key, '.') !== false) {
+			list($res['plugin'], $key) = explode('.', $key);
+		}
+		if (strpos($key, '/') !== false) {
+			list($res['prefix'], $key) = explode('/', $key);
+		}
+		$res['controller'] = $key;
+		return $res;
+	}
+
+	/**
+	 * Constructs an ACL ini section key from a given CakeRequest
+	 *
+	 * @param Cake\Network\Request $request The request needing authorization.
+	 * @return array Hash with named keys for controller, plugin and prefix
+	 */
+	protected function _constructIniKey(Request $request) {
+		$res = $request->params['controller'];
+		if (!empty($request->params['prefix'])) {
+			$res = $request->params['prefix'] . "/$res";
+		}
+		if (!empty($request->params['plugin'])) {
+			$res = $request->params['plugin'] . ".$res";
+		}
 		return $res;
 	}
 
