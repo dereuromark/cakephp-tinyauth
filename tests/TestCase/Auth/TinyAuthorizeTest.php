@@ -38,37 +38,32 @@ class TinyAuthorizeTest extends TestCase {
 
 		$aclData = <<<INI
 ; ----------------------------------------------------------
-; Userscontroller (no prefixed route, no plugin)
-; ----------------------------------------------------------
-[Users]
-index = user, undefined-role
-edit = user
-delete = admin
-very_long_underscored_action = user
-veryLongActionNameAction = user
-public_action = public
-; ----------------------------------------------------------
-; UsersController (/admin prefixed route, no plugin)
-; ----------------------------------------------------------
-[admin/Users]
-index = user, undefined-role
-edit = user
-delete = admin
-public_action = public
-very_long_underscored_action = user
-veryLongActionNameAction = user
-; ----------------------------------------------------------
 ; TagsController (no prefixed route, no plugin)
 ; ----------------------------------------------------------
 [Tags]
-* = *
+index = user, undefined-role
+edit = user
+delete = admin
+very_long_underscored_action = user
+veryLongActionNameAction = user
+public_action = public
+; ----------------------------------------------------------
+; TagsController (/admin prefixed route, no plugin)
+; ----------------------------------------------------------
+[admin/Tags]
+index = user, undefined-role
+edit = user
+delete = admin
+very_long_underscored_action = user
+veryLongActionNameAction = user
+public_action = public
 ; ----------------------------------------------------------
 ; TagsController (plugin Tags, no prefixed route)
 ; ----------------------------------------------------------
 [Tags.Tags]
 index = user
 edit,view = user
-* = admin
+delete = admin
 public_action = public
 very_long_underscored_action = user
 veryLongActionNameAction = user
@@ -77,23 +72,21 @@ veryLongActionNameAction = user
 ; ----------------------------------------------------------
 [Tags.admin/Tags]
 index = user
-edit,view = user
-add = admin
+view, edit = user
+delete = admin
 public_action = public
 very_long_underscored_action = user
 veryLongActionNameAction = user
 ; ----------------------------------------------------------
-; CommentsController (no plugin, /special prefixed route)
+; CommentsController, used for testing 'allowUser' access to
+; non-admin-prefixed routes.
 ; ----------------------------------------------------------
 [special/Comments]
 * = admin
-; ----------------------------------------------------------
-; CommentsController (plugin Comments, /special prefixed route)
-; ----------------------------------------------------------
 [Comments.special/Comments]
 * = admin
 ; ----------------------------------------------------------
-; PostsController (for testing generic wildcard access)
+; PostsController, used for testing generic wildcard access
 ; ----------------------------------------------------------
 [Posts]
 *=*
@@ -104,7 +97,7 @@ veryLongActionNameAction = user
 [Posts.admin/Posts]
 * = *
 ; ----------------------------------------------------------
-; BlogsController (for testing specific wildcard access)
+; BlogsController, used for testing specific wildcard access
 ; ----------------------------------------------------------
 [Blogs]
 *= moderator
@@ -156,144 +149,136 @@ INI;
 		$res = $object->getAcl();
 
 		$expected = [
-			'Users' => [
-				'plugin' => null,
-				'prefix' => null,
-				'controller' => 'Users',
-				'actions' => [
-					'index' => [1],
-					'edit' => [1],
-					'delete' => [3],
-					'public_action' => [-1],
-					'very_long_underscored_action' => [1],
-					'veryLongActionNameAction' => [1]
-				]
-			],
-			'admin/Users' => [
-				'plugin' => null,
-				'prefix' => 'admin',
-				'controller' => 'Users',
-				'actions' => [
-					'index' => [1],
-					'edit' => [1],
-					'delete' => [3],
-					'public_action' => [-1],
-					'very_long_underscored_action' => [1],
-					'veryLongActionNameAction' => [1]
-				]
-			],
 			'Tags' => [
-				'plugin' => null,
-				'prefix' => null,
 				'controller' => 'Tags',
+				'prefix' => null,
+				'plugin' => null,
 				'actions' => [
-					'*' => [1, 2, 3, -1]
+					'index' => [1],
+					'edit' => [1],
+					'delete' => [3],
+					'public_action' => [-1],
+					'very_long_underscored_action' => [1],
+					'veryLongActionNameAction' => [1]
+				]
+			],
+			'admin/Tags' => [
+				'controller' => 'Tags',
+				'prefix' => 'admin',
+				'plugin' => null,
+				'actions' => [
+					'index' => [1],
+					'edit' => [1],
+					'delete' => [3],
+					'public_action' => [-1],
+					'very_long_underscored_action' => [1],
+					'veryLongActionNameAction' => [1]
 				]
 			],
 			'Tags.Tags' => [
-				'plugin' => 'Tags',
-				'prefix' => null,
 				'controller' => 'Tags',
+				'prefix' => null,
+				'plugin' => 'Tags',
 				'actions' => [
 					'index' => [1],
 					'edit' => [1],
 					'view' => [1],
-					'*' => [3],
+					'delete' => [3],
 					'public_action' => [-1],
 					'very_long_underscored_action' => [1],
 					'veryLongActionNameAction' => [1]
 				]
 			],
 			'Tags.admin/Tags' => [
-				'plugin' => 'Tags',
-				'prefix' => 'admin',
 				'controller' => 'Tags',
+				'prefix' => 'admin',
+				'plugin' => 'Tags',
 				'actions' => [
 					'index' => [1],
 					'edit' => [1],
 					'view' => [1],
-					'add' => [3],
+					'delete' => [3],
 					'public_action' => [-1],
 					'very_long_underscored_action' => [1],
 					'veryLongActionNameAction' => [1]
 				]
 			],
 			'special/Comments' => [
-				'plugin' => null,
-				'prefix' => 'special',
 				'controller' => 'Comments',
+				'prefix' => 'special',
+				'plugin' => null,
 				'actions' => [
 					'*' => [3]
 				]
 			],
 			'Comments.special/Comments' => [
-				'plugin' => 'Comments',
-				'prefix' => 'special',
 				'controller' => 'Comments',
+				'prefix' => 'special',
+				'plugin' => 'Comments',
 				'actions' => [
 					'*' => [3]
 				]
 			],
 			'Posts' => [
-				'plugin' => null,
-				'prefix' => null,
 				'controller' => 'Posts',
+				'prefix' => null,
+				'plugin' => null,
 				'actions' => [
 					'*' => [1, 2, 3, -1]
 				]
 			],
 			'admin/Posts' => [
-				'plugin' => null,
-				'prefix' => 'admin',
 				'controller' => 'Posts',
+				'prefix' => 'admin',
+				'plugin' => null,
 				'actions' => [
 					'*' => [1, 2, 3, -1]
 				]
 			],
 			'Posts.Posts' => [
-				'plugin' => 'Posts',
-				'prefix' => null,
 				'controller' => 'Posts',
+				'prefix' => null,
+				'plugin' => 'Posts',
 				'actions' => [
 					'*' => [1, 2, 3, -1]
 				]
 			],
 			'Posts.admin/Posts' => [
-				'plugin' => 'Posts',
-				'prefix' => 'admin',
 				'controller' => 'Posts',
+				'prefix' => 'admin',
+				'plugin' => 'Posts',
 				'actions' => [
 					'*' => [1, 2, 3, -1]
 				]
 			],
 			'Blogs' => [
-				'plugin' => null,
-				'prefix' => null,
 				'controller' => 'Blogs',
+				'prefix' => null,
+				'plugin' => null,
 				'actions' => [
 					'*' => [2]
 				]
 			],
 			'admin/Blogs' => [
-				'plugin' => null,
-				'prefix' => 'admin',
 				'controller' => 'Blogs',
+				'prefix' => 'admin',
+				'plugin' => null,
 				'actions' => [
 					'*' => [2]
 				]
 			],
 			'Blogs.Blogs' => [
-				'plugin' => 'Blogs',
-				'prefix' => null,
 				'controller' => 'Blogs',
+				'prefix' => null,
+				'plugin' => 'Blogs',
 				'actions' => [
 					'*' => [2]
 				]
 			],
 			'Blogs.admin/Blogs' => [
-				'plugin' => 'Blogs',
-				'prefix' => 'admin',
 				'controller' => 'Blogs',
+				'prefix' => 'admin',
+				'plugin' => 'Blogs',
 				'actions' => [
 					'*' => [2]
 				]
@@ -307,13 +292,20 @@ INI;
 	 * @return void
 	 */
 	public function testBasicUserMethodDisallowed() {
-		$object = new TestTinyAuthorize($this->Collection, ['autoClearCache' => true]);
+		$object = new TestTinyAuthorize($this->Collection, [
+			'autoClearCache' => true
+		]);
 		$this->assertEquals('Roles', $object->config('aclTable'));
 		$this->assertEquals('role_id', $object->config('aclKey'));
 
-		// Test standard controller
-		$this->request->params['controller'] = 'Users';
+		// All tests performed against this action
 		$this->request->params['action'] = 'add';
+
+		// Test standard controller
+		$this->request->params['controller'] = 'Tags';
+		$this->request->params['prefix'] = null;
+		$this->request->params['plugin'] = 'Tags';
+
 		$user = ['role_id' => 4]; // invalid non-existing role
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
@@ -323,7 +315,9 @@ INI;
 		$this->assertFalse($res);
 
 		// Test standard controller with /admin prefix
-		$this->request->params['prefix'] = 'admin';
+		$this->request->params['controller'] = 'Tags';
+		$this->request->params['prefix'] = null;
+		$this->request->params['plugin'] = null;
 
 		$user = ['role_id' => 4];
 		$res = $object->authorize($user, $this->request);
@@ -334,10 +328,9 @@ INI;
 		$this->assertFalse($res);
 
 		// Test plugin controller
-		$this->request->params['plugin'] = 'Tags';
 		$this->request->params['controller'] = 'Tags';
-		$this->request->params['action'] = 'add';
 		$this->request->params['prefix'] = null;
+		$this->request->params['plugin'] = 'Tags';
 
 		$user = ['role_id' => 4];
 		$res = $object->authorize($user, $this->request);
@@ -348,10 +341,9 @@ INI;
 		$this->assertFalse($res);
 
 		// Test plugin controller with /admin prefix
-		$this->request->params['plugin'] = 'Tags';
-		$this->request->params['prefix'] = 'admin';
 		$this->request->params['controller'] = 'Tags';
-		$this->request->params['action'] = 'add';
+		$this->request->params['prefix'] = 'admin';
+		$this->request->params['plugin'] = 'Tags';
 
 		$user = ['role_id' => 4];
 		$res = $object->authorize($user, $this->request);
@@ -366,12 +358,17 @@ INI;
 	 * @return void
 	 */
 	public function testBasicUserMethodAllowed() {
-		$object = new TestTinyAuthorize($this->Collection, ['autoClearCache' => true]);
+		$object = new TestTinyAuthorize($this->Collection, [
+			'autoClearCache' => true
+		]);
 
 		// Test standard controller
-		$this->request->params['controller'] = 'Users';
-		$this->request->params['action'] = 'edit';
+		$this->request->params['controller'] = 'Tags';
+		$this->request->params['prefix'] = null;
+		$this->request->params['plugin'] = null;
+
 		$user = [ 'role_id' => 1 ];
+		$this->request->params['action'] = 'edit';
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
@@ -381,10 +378,12 @@ INI;
 		$this->assertTrue($res);
 
 		// Test standard controller with /admin prefix
+		$this->request->params['controller'] = 'Tags';
 		$this->request->params['prefix'] = 'admin';
-		$this->request->params['action'] = 'edit';
+		$this->request->params['plugin'] = null;
 
 		$user = [ 'role_id' => 1 ];
+		$this->request->params['action'] = 'edit';
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
@@ -395,29 +394,31 @@ INI;
 
 		// Test plugin controller
 		$this->request->params['controller'] = 'Tags';
-		$this->request->params['plugin'] = 'Tags';
-		$this->request->params['action'] = 'index';
 		$this->request->params['prefix'] = null;
+		$this->request->params['plugin'] = 'Tags';
 
 		$user = ['role_id' => 1];
+		$this->request->params['action'] = 'edit';
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
 		$user = ['role_id' => 3];
-		$this->request->params['action'] = 'add';
+		$this->request->params['action'] = 'delete';
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
 		// Test plugin controller with /admin prefix
+		$this->request->params['controller'] = 'Tags';
 		$this->request->params['prefix'] = 'admin';
-		$this->request->params['action'] = 'index';
+		$this->request->params['plugin'] = 'Tags';
 
 		$user = ['role_id' => 1];
+		$this->request->params['action'] = 'edit';
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
 		$user = ['role_id' => 3];
-		$this->request->params['action'] = 'add';
+		$this->request->params['action'] = 'delete';
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 	}
@@ -428,17 +429,27 @@ INI;
 	 * @return void
 	 */
 	public function testCaseSensitivity() {
-		$object = new TestTinyAuthorize($this->Collection, ['autoClearCache' => true]);
+		$object = new TestTinyAuthorize($this->Collection, [
+			'autoClearCache' => true]
+		);
+
+		// All tests performed against this action
+		$this->request->params['action'] = 'index';
 
 		// Test incorrect controller casing
-		$this->request->params['controller'] = 'users';
-		$this->request->params['action'] = 'index';
+		$this->request->params['controller'] = 'tags';
+		$this->request->params['prefix'] = null;
+		$this->request->params['plugin'] = null;
+
 		$user = [ 'role_id' => 1 ];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 
 		// Test incorrect controller casing with /admin prefix
+		$this->request->params['controller'] = 'tags';
 		$this->request->params['prefix'] = 'admin';
+		$this->request->params['plugin'] = null;
+
 		$user = [ 'role_id' => 1 ];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
@@ -446,29 +457,35 @@ INI;
 		// Test correct controller casing with incorrect prefix casing
 		$this->request->params['controller'] = 'Users';
 		$this->request->params['prefix'] = 'Admin';
+		$this->request->params['plugin'] = null;
+
 		$user = [ 'role_id' => 1 ];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 
 		// Test incorrect plugin controller casing
 		$this->request->params['controller'] = 'tags';
-		$this->request->params['plugin'] = 'Tags';
 		$this->request->params['prefix'] = null;
+		$this->request->params['plugin'] = 'Tags';
+
 		$user = [ 'role_id' => 1 ];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 
 		// Test correct plugin controller with incorrect plugin casing
 		$this->request->params['controller'] = 'Tags';
+		$this->request->params['prefix'] = null;
 		$this->request->params['plugin'] = 'tags';
+
 		$user = [ 'role_id' => 1 ];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 
 		// Test correct plugin controller with correct plugin but incorrect prefix casing
 		$this->request->params['controller'] = 'Tags';
-		$this->request->params['plugin'] = 'Tags';
 		$this->request->params['prefix'] = 'Admin';
+		$this->request->params['plugin'] = 'Tags';
+
 		$user = [ 'role_id' => 1 ];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
@@ -478,11 +495,17 @@ INI;
 	 * @return void
 	 */
 	public function testBasicUserMethodAllowedWithLongActionNames() {
-		$object = new TestTinyAuthorize($this->Collection, ['autoClearCache' => true]);
+		$object = new TestTinyAuthorize($this->Collection, [
+			'autoClearCache' => true
+		]);
+
+		// All tests performed against this action
+		$this->request->params['action'] = 'veryLongActionNameAction';
 
 		// Test standard controller
-		$this->request->params['controller'] = 'Users';
-		$this->request->params['action'] = 'veryLongActionNameAction';
+		$this->request->params['controller'] = 'Tags';
+		$this->request->params['prefix'] = null;
+		$this->request->params['plugin'] = null;
 
 		$user = ['role_id' => 1];
 		$res = $object->authorize($user, $this->request);
@@ -493,7 +516,10 @@ INI;
 		$this->assertFalse($res);
 
 		// Test standard controller with /admin prefix
+		$this->request->params['controller'] = 'Tags';
 		$this->request->params['prefix'] = 'admin';
+		$this->request->params['plugin'] = null;
+
 		$user = [ 'role_id' => 1 ];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
@@ -504,8 +530,9 @@ INI;
 
 		// Test plugin controller
 		$this->request->params['controller'] = 'Tags';
-		$this->request->params['plugin'] = 'Tags';
 		$this->request->params['prefix'] = null;
+		$this->request->params['plugin'] = 'Tags';
+
 		$user = [ 'role_id' => 1 ];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
@@ -515,7 +542,10 @@ INI;
 		$this->assertFalse($res);
 
 		// Test plugin controller with /admin prefix
+		$this->request->params['controller'] = 'Tags';
 		$this->request->params['prefix'] = 'admin';
+		$this->request->params['plugin'] = 'Tags';
+
 		$user = [ 'role_id' => 1 ];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
@@ -529,11 +559,17 @@ INI;
 	 * @return void
 	 */
 	public function testBasicUserMethodAllowedWithLongActionNamesUnderscored() {
-		$object = new TestTinyAuthorize($this->Collection, ['autoClearCache' => true]);
+		$object = new TestTinyAuthorize($this->Collection, [
+			'autoClearCache' => true
+		]);
+
+		// All tests performed against this action
+		$this->request->params['action'] = 'very_long_underscored_action';
 
 		// Test standard controller
-		$this->request->params['controller'] = 'Users';
-		$this->request->params['action'] = 'very_long_underscored_action';
+		$this->request->params['controller'] = 'Tags';
+		$this->request->params['prefix'] = null;
+		$this->request->params['plugin'] = null;
 
 		$user = ['role_id' => 1];
 		$res = $object->authorize($user, $this->request);
@@ -544,7 +580,10 @@ INI;
 		$this->assertFalse($res);
 
 		// Test standard controller with /admin prefix
+		$this->request->params['controller'] = 'Tags';
 		$this->request->params['prefix'] = 'admin';
+		$this->request->params['plugin'] = null;
+
 		$user = [ 'role_id' => 1 ];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
@@ -555,8 +594,9 @@ INI;
 
 		// Test plugin controller
 		$this->request->params['controller'] = 'Tags';
-		$this->request->params['plugin'] = 'Tags';
 		$this->request->params['prefix'] = null;
+		$this->request->params['plugin'] = 'Tags';
+
 		$user = [ 'role_id' => 1 ];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
@@ -566,7 +606,10 @@ INI;
 		$this->assertFalse($res);
 
 		// Test plugin controller with /admin prefix
+		$this->request->params['controller'] = 'Tags';
 		$this->request->params['prefix'] = 'admin';
+		$this->request->params['plugin'] = 'Tags';
+
 		$user = [ 'role_id' => 1 ];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
@@ -580,9 +623,11 @@ INI;
 	 * @return void
 	 */
 	public function testBasicUserMethodAllowedMultiRole() {
-		$object = new TestTinyAuthorize($this->Collection, ['autoClearCache' => true]);
+		$object = new TestTinyAuthorize($this->Collection, [
+			'autoClearCache' => true
+		]);
 
-		$this->request->params['controller'] = 'Users';
+		$this->request->params['controller'] = 'Tags';
 		$this->request->params['action'] = 'delete';
 
 		// Flat list of roles
@@ -623,9 +668,11 @@ INI;
 			'autoClearCache' => true
 		]);
 
-		// Test *=* for standard controller
-		$this->request->params['controller'] = 'Posts';
+		// All tests performed against this action
 		$this->request->params['action'] = 'any_action';
+
+		// Test standard controller
+		$this->request->params['controller'] = 'Posts';
 		$this->request->params['prefix'] = null;
 		$this->request->params['plugin'] = null;
 
@@ -675,12 +722,11 @@ INI;
 		$user = ['role_id' => 123];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
-
 	}
 
 	/**
 	* Tests access to a controller that uses the * wildcard for the action
-	* but combines it with a specific group (e.g. * = moderators).
+	* but combines it with a specific group (here: * = moderators).
 	*
 	* @return void
 	*/
@@ -688,31 +734,15 @@ INI;
 		$object = new TestTinyAuthorize($this->Collection, [
 			'autoClearCache' => true
 		]);
-		$user = ['role_id' => 2];
 
-		// test standard controller
-		$this->request->params['controller'] = 'Blogs';
+		// All tests performed against this action
 		$this->request->params['action'] = 'any_action';
-		$res = $object->authorize($user, $this->request);
-		$this->assertTrue($res);
 
-		$user = ['role_id' => 3];
-		$res = $object->authorize($user, $this->request);
-		$this->assertFalse($res);
-
-		// test standard controller with /admin prefix
-		$this->request->params['prefix'] = 'admin';
-		$user = ['role_id' => 2];
-		$res = $object->authorize($user, $this->request);
-		$this->assertTrue($res);
-
-		$user = ['role_id' => 3];
-		$res = $object->authorize($user, $this->request);
-		$this->assertFalse($res);
-
-		// test plugin controlller
-		$this->request->params['plugin'] = 'Blogs';
+		// Test standard controller
+		$this->request->params['controller'] = 'Blogs';
 		$this->request->params['prefix'] = null;
+		$this->request->params['plugin'] = null;
+
 		$user = ['role_id' => 2];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
@@ -721,8 +751,37 @@ INI;
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 
-		// test plugin controlller with /admin prefix
+		// Test standard controller with /admin prefix
+		$this->request->params['controller'] = 'Blogs';
 		$this->request->params['prefix'] = 'admin';
+		$this->request->params['plugin'] = null;
+
+		$user = ['role_id' => 2];
+		$res = $object->authorize($user, $this->request);
+		$this->assertTrue($res);
+
+		$user = ['role_id' => 3];
+		$res = $object->authorize($user, $this->request);
+		$this->assertFalse($res);
+
+		// Test plugin controlller
+		$this->request->params['controller'] = 'Blogs';
+		$this->request->params['prefix'] = null;
+		$this->request->params['plugin'] = 'Blogs';
+
+		$user = ['role_id' => 2];
+		$res = $object->authorize($user, $this->request);
+		$this->assertTrue($res);
+
+		$user = ['role_id' => 3];
+		$res = $object->authorize($user, $this->request);
+		$this->assertFalse($res);
+
+		// Test plugin controlller with /admin prefix
+		$this->request->params['controller'] = 'Blogs';
+		$this->request->params['prefix'] = 'admin';
+		$this->request->params['plugin'] = 'Blogs';
+
 		$user = ['role_id' => 2];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
@@ -737,19 +796,23 @@ INI;
 	 * Tests with configuration setting 'allowUser' set to true, giving user
 	 * access to all controller/actions except when prefixed with /admin
 	 *
-	 * @todo: discuss logic before completing, see code L120
-	 *
 	 * @return void
 	 */
 	public function testUserMethodsAllowed() {
 		$object = new TestTinyAuthorize($this->Collection, [
 			'allowUser' => true,
-			'autoClearCache' => true
+			'autoClearCache' => true,
+			'adminPrefix' => 'admin'
 		]);
 
+		// All tests performed against this action
+		$this->request->params['action'] = 'any_action';
+
 		// Test standard controller
-		$this->request->params['controller'] = 'Users';
-		$this->request->params['action'] = 'unknown_action';
+		$this->request->params['controller'] = 'Tags';
+		$this->request->params['prefix'] = null;
+		$this->request->params['plugin'] = null;
+
 		$user = ['role_id' => 1];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
@@ -762,24 +825,29 @@ INI;
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
-		// Test standard controller with /admin prefix
+		// Test standard controller with /admin prefix. Note: users should NOT
+		// be allowed access here since the prefix matches the  'adminPrefix'
+		// configuration setting.
+		$this->request->params['controller'] = 'Tags';
 		$this->request->params['prefix'] = 'admin';
+		$this->request->params['plugin'] = null;
+
 		$user = ['role_id' => 1];
+		$res = $object->authorize($user, $this->request);
+		$this->assertFalse($res);
+
+		$user = ['role_id' => 2];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 
 		$user = ['role_id' => 3];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
-
-		$this->request->params['action'] = 'delete';
-		$res = $object->authorize($user, $this->request);
-		$this->assertTrue($res);
 
 		// Test plugin controller
 		$this->request->params['controller'] = 'Tags';
-		$this->request->params['plugin'] = 'Tags';
 		$this->request->params['prefix'] = null;
+		$this->request->params['plugin'] = 'Tags';
 
 		$user = ['role_id' => 1];
 		$res = $object->authorize($user, $this->request);
@@ -789,31 +857,34 @@ INI;
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
-		$user = ['role_id' => 3]; // admin should be allowed
-		$res = $object->authorize($user, $this->request);
-		$this->assertTrue($res);
-
-		// Test plugin controller with /admin prefix
-		$this->request->params['prefix'] = 'admin';
-		$user = ['role_id' => 1];
-		$res = $object->authorize($user, $this->request);
-		$this->assertFalse($res);
-
-		$user = ['role_id' => 2];
-		$res = $object->authorize($user, $this->request);
-		$this->assertFalse($res);
-
-		$this->request->params['prefix'] = 'add';
 		$user = ['role_id' => 3];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
-		// Users should have access to standard controller using non-admin prefix
+		// Test plugin controller with /admin prefix. Again: access should
+		// NOT be allowed because of matching 'adminPrefix'
+		$this->request->params['controller'] = 'Tags';
+		$this->request->params['prefix'] = 'admin';
+		$this->request->params['plugin'] = 'Tags';
+
+		$user = ['role_id' => 1];
+		$res = $object->authorize($user, $this->request);
+		$this->assertFalse($res);
+
+		$user = ['role_id' => 2];
+		$res = $object->authorize($user, $this->request);
+		$this->assertFalse($res);
+
+		$user = ['role_id' => 3];
+		$res = $object->authorize($user, $this->request);
+		$this->assertFalse($res);
+
+		// Test access to a standard controller using a prefix not matching the
+		// 'adminPrefix' => users should be allowed access.
 		$this->request->params['controller'] = 'Comments';
+		$this->request->params['prefix'] = 'special';
 		$this->request->params['plugin'] = null;
-		$this->request->params['prefix'] = 'special';
-		$this->request->params['prefix'] = 'admin';
-		$this->request->params['prefix'] = 'index';
+
 		$user = ['role_id' => 1];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
@@ -826,10 +897,12 @@ INI;
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
-		// Users should have access to plugin controller using non-admin prefix
+		// Test access to a plugin controller using a prefix not matching the
+		// 'adminPrefix' => users should be allowed access.
 		$this->request->params['controller'] = 'Comments';
-		$this->request->params['plugin'] = 'Comments';
 		$this->request->params['prefix'] = 'special';
+		$this->request->params['plugin'] = 'Comments';
+
 		$user = ['role_id' => 1];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
@@ -859,10 +932,14 @@ INI;
 		];
 		$object = new TestTinyAuthorize($this->Collection, $config);
 
+		// All tests performed against this action
+		$this->request->params['action'] = 'any_action';
+
 		// Test standard controller with /admin prefix
-		$this->request->params['controller'] = 'Users';
+		$this->request->params['controller'] = 'Tags';
 		$this->request->params['prefix'] = 'admin';
-		$this->request->params['action'] = 'some_action';
+		$this->request->params['plugin'] = null;
+
 		$user = ['role_id' => 1];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
@@ -873,8 +950,9 @@ INI;
 
 		// Test plugin controller with /admin prefix
 		$this->request->params['controller'] = 'Tags';
+		$this->request->params['prefix'] = 'admin';
 		$this->request->params['plugin'] = 'Tags';
-		$this->request->params['prefix'] = null;
+
 		$user = ['role_id' => 1];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
@@ -895,10 +973,12 @@ INI;
 
 		// We want the session to be used.
 		Configure::delete('Roles');
-		$object = new TestTinyAuthorize($this->Collection, ['autoClearCache' => true]);
+		$object = new TestTinyAuthorize($this->Collection, [
+			'autoClearCache' => true
+		]);
 
 		// test standard controller
-		$this->request->params['controller'] = 'Users';
+		$this->request->params['controller'] = 'Tags';
 		$this->request->params['action'] = 'edit';
 
 		// User role is 4 here, though. Also contains left joined Role date here just to check that it works, too.
@@ -991,27 +1071,37 @@ INI;
 		$method->setAccessible(true);
 
 		// Test standard controller
-		$this->request->params['controller'] = 'Users';
-		$expected = 'Users';
+		$this->request->params['controller'] = 'Tags';
+		$this->request->params['prefix'] = null;
+		$this->request->params['plugin'] = null;
+
+		$expected = 'Tags';
 		$res =  $method->invokeArgs($object, [$this->request]);
 		$this->assertEquals($expected, $res);
 
 		// Test standard controller with /admin prefix
+		$this->request->params['controller'] = 'Tags';
 		$this->request->params['prefix'] = 'admin';
-		$expected = 'admin/Users';
+		$this->request->params['plugin'] = null;
+
+		$expected = 'admin/Tags';
 		$res =  $method->invokeArgs($object, [$this->request]);
 		$this->assertEquals($expected, $res);
 
 		// Test plugin controller
 		$this->request->params['controller'] = 'Tags';
-		$this->request->params['plugin'] = 'Tags';
 		$this->request->params['prefix'] = null;
+		$this->request->params['plugin'] = 'Tags';
+
 		$expected = 'Tags.Tags';
 		$res =  $method->invokeArgs($object, [$this->request]);
 		$this->assertEquals($expected, $res);
 
 		// Test plugin controller with /admin prefix
+		$this->request->params['controller'] = 'Tags';
 		$this->request->params['prefix'] = 'admin';
+		$this->request->params['plugin'] = 'Tags';
+
 		$expected = 'Tags.admin/Tags';
 		$res =  $method->invokeArgs($object, [$this->request]);
 		$this->assertEquals($expected, $res);
@@ -1030,38 +1120,38 @@ INI;
 		$method->setAccessible(true);
 
 		// Test standard controller
-		$key = 'Users';
+		$key = 'Tags';
 		$expected = [
-			'controller' => 'Users',
+			'controller' => 'Tags',
 			'plugin' => null,
 			'prefix' => null
 		];
 		$res = $method->invokeArgs($object, [$key]);
 		$this->assertEquals($expected, $res);
 
-		$key = 'users';	// test incorrect casing
+		$key = 'tags';	// test incorrect casing
 		$res = $method->invokeArgs($object, [$key]);
 		$this->assertNotEquals($expected, $res);
 
 		// Test standard controller with /admin prefix
-		$key = 'admin/Users';
+		$key = 'admin/Tags';
 		$expected = [
-			'controller' => 'Users',
-			'plugin' => null,
-			'prefix' => 'admin'
+			'controller' => 'Tags',
+			'prefix' => 'admin',
+			'plugin' => null
 		];
 		$res = $method->invokeArgs($object, [$key]);
 		$this->assertEquals($expected, $res);
 
-		$key = 'admin/users';
+		$key = 'admin/tags';
 		$res = $method->invokeArgs($object, [$key]);
 		$this->assertNotEquals($expected, $res);
 
-		$key = 'Admin/users';
+		$key = 'Admin/tags';
 		$res = $method->invokeArgs($object, [$key]);
 		$this->assertNotEquals($expected, $res);
 
-		$key = 'Admin/Users';
+		$key = 'Admin/Tags';
 		$res = $method->invokeArgs($object, [$key]);
 		$this->assertNotEquals($expected, $res);
 
@@ -1069,8 +1159,8 @@ INI;
 		$key = 'Tags.Tags';
 		$expected = [
 			'controller' => 'Tags',
-			'plugin' => 'Tags',
-			'prefix' => null
+			'prefix' => null,
+			'plugin' => 'Tags'
 		];
 		$res = $method->invokeArgs($object, [$key]);
 		$this->assertEquals($expected, $res);
@@ -1091,8 +1181,8 @@ INI;
 		$key = 'Tags.admin/Tags';
 		$expected = [
 			'controller' => 'Tags',
-			'plugin' => 'Tags',
-			'prefix' => 'admin'
+			'prefix' => 'admin',
+			'plugin' => 'Tags'
 		];
 		$res = $method->invokeArgs($object, [$key]);
 		$this->assertEquals($expected, $res);
