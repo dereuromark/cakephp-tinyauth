@@ -49,7 +49,7 @@ return [
 	'Roles' => [
 		'user' => ROLE_USERS,
 		'admin' => ROLE_ADMINS,
-		'supergirls' => ROLE_SUPERADMINS
+		'superadmin' => ROLE_SUPERADMIN
 	]
 ];
 ```
