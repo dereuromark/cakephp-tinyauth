@@ -140,7 +140,7 @@ class TinyAuthorize extends BaseAuthorize {
 		// allow logged in super admins access to all resources
 		if (!empty($this->_config['superAdminRole'])) {
 			foreach ($roles as $role) {
-				if ($role == $this->_config['superAdminRole']) {
+				if ($role === $this->_config['superAdminRole']) {
 					return true;
 				}
 			}
@@ -162,7 +162,7 @@ class TinyAuthorize extends BaseAuthorize {
 		}
 
 		// allow access if user has been granted access to the specific resource
-		if (isset($this->_acl[$iniKey]['actions'])){
+		if (isset($this->_acl[$iniKey]['actions'])) {
 			if(array_key_exists($request->action, $this->_acl[$iniKey]['actions']) && !empty($this->_acl[$iniKey]['actions'][$request->action])) {
 				$matchArray = $this->_acl[$iniKey]['actions'][$request->action];
 				foreach ($roles as $role) {
