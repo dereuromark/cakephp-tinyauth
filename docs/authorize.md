@@ -115,8 +115,8 @@ view, edit = user
 
 Authorize supports the following configuration options.
 
-Option  | Type|Description
---------|------------
+Option | Type | Description
+:----- | :--- | :----------
 allowUser|boolean|True will give authenticated users access to all resources except those using the `adminPrefix`
 allowAdmin|boolean|True will give users with a role id matching `adminRole` access to all resources using the `adminPrefix`
 adminRole|int|Id of the role you will use as admins. Users with this role are granted access to all actions using `adminPrefix` but only when `allowAdmin` is enabled
