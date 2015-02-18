@@ -218,7 +218,7 @@ class TinyAuthorize extends BaseAuthorize {
 		if (!is_array($availableRoles)) {
 			$Table = $this->getTable();
 			if (!isset($Table->{$this->_config['aclTable']})) {
-				throw new \Exception('Missing relationship between Users and Roles.');
+				throw new \Exception('Missing relationship between Users and Roles. TinyAuthorize needs either a Configure or DB setup.');
 			}
 
 			$availableRoles = $Table->{$this->_config['aclTable']}->find('all')->formatResults(function ($results) {
@@ -245,13 +245,13 @@ class TinyAuthorize extends BaseAuthorize {
 						continue;
 					}
 					// prevent undefined roles appearing in the iniMap
-					if (!array_key_exists($role, $availableRoles) && $role != '*') {
+					if (!array_key_exists($role, $availableRoles) && $role !== '*') {
 						unset($roles[$roleId]);
 						continue;
 					}
 					if ($role === '*') {
 						unset($roles[$roleId]);
-						$roles = array_merge($roles, array_keys(Configure::read($this->_config['aclTable'])));
+						$roles = array_merge($roles, array_keys($availableRoles));
 					}
 				}
 

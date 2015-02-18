@@ -10,7 +10,7 @@ use Cake\TestSuite\TestCase;
 use TinyAuth\Auth\TinyAuthorize;
 
 /**
- * Test case for DirectAuthentication
+ * Test case for TinyAuth Authentication
  *
  */
 class TinyAuthorizeTest extends TestCase {
@@ -28,9 +28,6 @@ class TinyAuthorizeTest extends TestCase {
 	 */
 	public function setUp() {
 		parent::setUp();
-
-		//$config = \Cake\Datasource\ConnectionManager::config('test');
-		//$this->assertNotEmpty($config, 'No test connection set up.');
 
 		$this->Collection = new ComponentRegistry();
 
@@ -367,7 +364,7 @@ INI;
 		$this->request->params['prefix'] = null;
 		$this->request->params['plugin'] = null;
 
-		$user = [ 'role_id' => 1 ];
+		$user = ['role_id' => 1];
 		$this->request->params['action'] = 'edit';
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
@@ -382,7 +379,7 @@ INI;
 		$this->request->params['prefix'] = 'admin';
 		$this->request->params['plugin'] = null;
 
-		$user = [ 'role_id' => 1 ];
+		$user = ['role_id' => 1];
 		$this->request->params['action'] = 'edit';
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
@@ -441,7 +438,7 @@ INI;
 		$this->request->params['prefix'] = null;
 		$this->request->params['plugin'] = null;
 
-		$user = [ 'role_id' => 1 ];
+		$user = ['role_id' => 1];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 
@@ -450,7 +447,7 @@ INI;
 		$this->request->params['prefix'] = 'admin';
 		$this->request->params['plugin'] = null;
 
-		$user = [ 'role_id' => 1 ];
+		$user = ['role_id' => 1];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 
@@ -459,7 +456,7 @@ INI;
 		$this->request->params['prefix'] = 'Admin';
 		$this->request->params['plugin'] = null;
 
-		$user = [ 'role_id' => 1 ];
+		$user = ['role_id' => 1];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 
@@ -468,7 +465,7 @@ INI;
 		$this->request->params['prefix'] = null;
 		$this->request->params['plugin'] = 'Tags';
 
-		$user = [ 'role_id' => 1 ];
+		$user = ['role_id' => 1];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 
@@ -477,7 +474,7 @@ INI;
 		$this->request->params['prefix'] = null;
 		$this->request->params['plugin'] = 'tags';
 
-		$user = [ 'role_id' => 1 ];
+		$user = ['role_id' => 1];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 
@@ -486,7 +483,7 @@ INI;
 		$this->request->params['prefix'] = 'Admin';
 		$this->request->params['plugin'] = 'Tags';
 
-		$user = [ 'role_id' => 1 ];
+		$user = ['role_id' => 1];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 	}
@@ -520,7 +517,7 @@ INI;
 		$this->request->params['prefix'] = 'admin';
 		$this->request->params['plugin'] = null;
 
-		$user = [ 'role_id' => 1 ];
+		$user = ['role_id' => 1];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
@@ -533,7 +530,7 @@ INI;
 		$this->request->params['prefix'] = null;
 		$this->request->params['plugin'] = 'Tags';
 
-		$user = [ 'role_id' => 1 ];
+		$user = ['role_id' => 1];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
@@ -546,7 +543,7 @@ INI;
 		$this->request->params['prefix'] = 'admin';
 		$this->request->params['plugin'] = 'Tags';
 
-		$user = [ 'role_id' => 1 ];
+		$user = ['role_id' => 1];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
@@ -584,7 +581,7 @@ INI;
 		$this->request->params['prefix'] = 'admin';
 		$this->request->params['plugin'] = null;
 
-		$user = [ 'role_id' => 1 ];
+		$user = ['role_id' => 1];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
@@ -597,7 +594,7 @@ INI;
 		$this->request->params['prefix'] = null;
 		$this->request->params['plugin'] = 'Tags';
 
-		$user = [ 'role_id' => 1 ];
+		$user = ['role_id' => 1];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
@@ -610,7 +607,7 @@ INI;
 		$this->request->params['prefix'] = 'admin';
 		$this->request->params['plugin'] = 'Tags';
 
-		$user = [ 'role_id' => 1 ];
+		$user = ['role_id' => 1];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
@@ -632,18 +629,26 @@ INI;
 
 		// Flat list of roles
 		$user = [
+			'Roles' => [2, 4]
+		];
+		$res = $object->authorize($user, $this->request);
+		$this->assertFalse($res);
+
+		$user = [
 			'Roles' => [1, 3]
 		];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
-		// Verbose role defition using the new 2.x contain param for Auth
+		// Verbose role definition using the new 2.x contain param for Auth
 		$user = [
 			'Roles' => [
-				['id' => 1, 'RoleUsers' => []],
-				['id' => 3, 'RoleUsers' => []]
+				['id' => 2, 'RoleUsers' => []],
+				['id' => 4, 'RoleUsers' => []]
 			],
 		];
+		$res = $object->authorize($user, $this->request);
+		$this->assertFalse($res);
 
 		$user = [
 			'Roles' => [
