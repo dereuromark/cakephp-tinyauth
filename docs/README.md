@@ -1,21 +1,32 @@
-# TinyAuth Autorization
+# TinyAuth Authorization
+The fast and easy way for user authorization in CakePHP 3.x applications.
 
-Enable TinyAuth Authorize if you want to add instant (and easy) role based
-access to your application.
+Enable TinyAuth Authorize adapter if you want to add instant (and easy) role based
+access (RBAC) to your application.
+
+## Basic Features
+- Singe or multi role
+- DB (dynamic) or Configure based role definition
+- INI file (static) based access rights (controller-action/role setup)
+- Lightweight and incredibly fast
+
+Do NOT use if
+- you need ROW based access
+- you want to dynamically adjust access rights (or enhance it with a web frontend yourself)
 
 ## Enabling
 
-Assuming you already have Authentiction set up correctly you can enable
-Authorization in your controllers beforeFilter like this example:
+Assuming you already have authentication set up correctly you can enable
+authorization in your controller's `beforeFilter` like this example:
 
 ```php
 // src/Controller/AppController
 
 use Cake\Event\Event;
 
-public function beforeFilter(Event $event)
-{
+public function beforeFilter(Event $event) {
 	parent::beforeFilter($event);
+
 	$this->loadComponent('Auth', [
 		'authorize' => [
 			'TinyAuth.Tiny' => [
