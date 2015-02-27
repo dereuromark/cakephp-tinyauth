@@ -82,8 +82,8 @@ class TinyAuthorize extends BaseAuthorize {
 	 * @return bool Success
 	 */
 	public function authorize($user, Request $request) {
-		// fetch associated roles from database when multi role is enabled
 		if (isset($this->_config['aclTable'])) {
+			// fetch associated roles from database when multi role is enabled
 			$usersTable = $this->getUserTable();
 			$userData = $usersTable->get($user['id'], [
 				'contain' => [$this->_config['aclTable']]
