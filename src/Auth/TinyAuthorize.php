@@ -111,7 +111,6 @@ class TinyAuthorize extends BaseAuthorize {
 	 * @param string $action
 	 * @return bool Success
 	 */
-	//public function validate($roles, $plugin, $controller, $action) {
 	public function validate($roles, Request $request) {
 		// construct the iniKey and iniMap for easy lookups
 		$iniKey = $this->_constructIniKey($request);
