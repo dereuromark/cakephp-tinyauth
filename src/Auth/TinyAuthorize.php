@@ -214,7 +214,7 @@ class TinyAuthorize extends BaseAuthorize {
 			$iniArray = parse_ini_string(file_get_contents($path . ACL_FILE), true);
 		}
 
-		// fetch roles from the database for multi role authorization
+		// fetch available roles from the database if a table is specified
 		$availableRoles = Configure::read($this->_config['aclTable']);
 		if (!is_array($availableRoles)) {
 			$table = $this->getTable();
