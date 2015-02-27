@@ -50,8 +50,9 @@ class TinyAuthorize extends BaseAuthorize {
 		'cache' => AUTH_CACHE,
 		'cacheKey' => 'tiny_auth_acl',
 		'autoClearCache' => false, // usually done by Cache automatically in debug mode,
-		'aclTable' => 'Roles', // only for multiple roles per user (HABTM)
-		'aclKey' => 'role_id', // only for single roles per user (BT)
+		'aclKey' => 'role_id', // name of column in user table holding single role per user (BT)
+		'aclTable' => 'Roles', // name of table holding all available roles, only used if present
+		'multiRole' => false // enables multirole (HABTM) authorization (requires valid aclTable and join table)
 	];
 
 	/**
@@ -82,8 +83,8 @@ class TinyAuthorize extends BaseAuthorize {
 	 * @return bool Success
 	 */
 	public function authorize($user, Request $request) {
-		if (isset($user[$this->_config['aclTable']])) {
-			// fetch associated roles from database when multi role is enabled
+		if ($this->_config['multiRole']) {
+			// fetch associated roles from database
 			$usersTable = $this->getUserTable();
 			$userData = $usersTable->get($user['id'], [
 				'contain' => [$this->_config['aclTable']]
@@ -98,7 +99,6 @@ class TinyAuthorize extends BaseAuthorize {
 			trigger_error(sprintf('Missing acl information (%s) in user session', $acl));
 			$roles = [];
 		}
-
 		return $this->validate($roles, $request);
 	}
 
