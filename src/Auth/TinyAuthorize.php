@@ -60,7 +60,7 @@ class TinyAuthorize extends BaseAuthorize {
 	 * @param ComponentRegistry $registry
 	 * @param array $config
 	 */
-	public function __construct(ComponentRegistry $registry, array $config = array()) {
+	public function __construct(ComponentRegistry $registry, array $config = []) {
 		$config += $this->_defaultConfig;
 		parent::__construct($registry, $config);
 
@@ -86,16 +86,16 @@ class TinyAuthorize extends BaseAuthorize {
 			if (isset($user[$this->_config['aclTable']][0]['id'])) {
 				$roles = Hash::extract($user[$this->_config['aclTable']], '{n}.id');
 			} elseif (isset($user[$this->_config['aclTable']]['id'])) {
-				$roles = array($user[$this->_config['aclTable']]['id']);
+				$roles = [$user[$this->_config['aclTable']]['id']];
 			} else {
 				$roles = (array)$user[$this->_config['aclTable']];
 			}
 		} elseif (isset($user[$this->_config['aclKey']])) {
-			$roles = array($user[$this->_config['aclKey']]);
+			$roles = [$user[$this->_config['aclKey']]];
 		} else {
 			$acl = $this->_config['aclTable'] . '/' . $this->_config['aclKey'];
 			trigger_error(sprintf('Missing acl information (%s) in user session', $acl));
-			$roles = array();
+			$roles = [];
 		}
 		return $this->validate($roles, $request);
 	}
@@ -228,7 +228,7 @@ class TinyAuthorize extends BaseAuthorize {
 		}
 		if (!is_array($availableRoles) || !is_array($iniArray)) {
 			trigger_error('Invalid Role Setup for TinyAuthorize (no roles found)');
-			return array();
+			return [];
 		}
 
 		$res = [];

@@ -46,10 +46,10 @@ class AuthTest extends TestCase {
 	 * @return void
 	 */
 	public function testHasRole() {
-		$res = Auth::hasRole(1, array(2, 3, 6));
+		$res = Auth::hasRole(1, [2, 3, 6]);
 		$this->assertFalse($res);
 
-		$res = Auth::hasRole(3, array(2, 3, 6));
+		$res = Auth::hasRole(3, [2, 3, 6]);
 		$this->assertTrue($res);
 
 		$res = Auth::hasRole(3, 1);
@@ -72,11 +72,11 @@ class AuthTest extends TestCase {
 			define('USER_ROLE_KEY', 'Role');
 		}
 		//CakeSession::write('Auth.User.id', 1);
-		$roles = array(
-			array('id' => '1', 'name' => 'User', 'alias' => 'user'),
-			array('id' => '2', 'name' => 'Moderator', 'alias' => 'moderator'),
-			array('id' => '3', 'name' => 'Admin', 'alias' => 'admin'),
-		);
+		$roles = [
+			['id' => '1', 'name' => 'User', 'alias' => 'user'],
+			['id' => '2', 'name' => 'Moderator', 'alias' => 'moderator'],
+			['id' => '3', 'name' => 'Admin', 'alias' => 'admin'],
+		];
 		//CakeSession::write('Auth.User.' . USER_ROLE_KEY, $roles);
 
 		$res = Auth::hasRole(4, $roles);
@@ -92,40 +92,40 @@ class AuthTest extends TestCase {
 	 * @return void
 	 */
 	public function testHasRoles() {
-		$res = Auth::hasRoles(array(1, 3), array(2, 3, 6));
+		$res = Auth::hasRoles([1, 3], [2, 3, 6]);
 		$this->assertTrue($res);
 
-		$res = Auth::hasRoles(array(3), array(2, 3, 6));
+		$res = Auth::hasRoles([3], [2, 3, 6]);
 		$this->assertTrue($res);
 
-		$res = Auth::hasRoles(3, array(2, 3, 6));
+		$res = Auth::hasRoles(3, [2, 3, 6]);
 		$this->assertTrue($res);
 
-		$res = Auth::hasRoles(array(), array(2, 3, 6));
+		$res = Auth::hasRoles([], [2, 3, 6]);
 		$this->assertFalse($res);
 
-		$res = Auth::hasRoles(null, array(2, 3, 6));
+		$res = Auth::hasRoles(null, [2, 3, 6]);
 		$this->assertFalse($res);
 
-		$res = Auth::hasRoles(array(2, 7), array(2, 3, 6), false);
+		$res = Auth::hasRoles([2, 7], [2, 3, 6], false);
 		$this->assertFalse($res);
 
-		$res = Auth::hasRoles(array(2, 6), array(2, 3, 6), false);
+		$res = Auth::hasRoles([2, 6], [2, 3, 6], false);
 		$this->assertTrue($res);
 
-		$res = Auth::hasRoles(array(2, 6), array(2, 3, 6));
+		$res = Auth::hasRoles([2, 6], [2, 3, 6]);
 		$this->assertTrue($res);
 
-		$res = Auth::hasRoles(array(9, 11), array());
+		$res = Auth::hasRoles([9, 11], []);
 		$this->assertFalse($res);
 
-		$res = Auth::hasRoles(array(9, 11), '');
+		$res = Auth::hasRoles([9, 11], '');
 		$this->assertFalse($res);
 
-		$res = Auth::hasRoles(array(2, 7), array(), false);
+		$res = Auth::hasRoles([2, 7], [], false);
 		$this->assertFalse($res);
 
-		$res = Auth::hasRoles(array(2, 7), array(), false);
+		$res = Auth::hasRoles([2, 7], [], false);
 		$this->assertFalse($res);
 	}
 
