@@ -214,18 +214,20 @@ class TinyAuthorize extends BaseAuthorize {
 			$iniArray = parse_ini_string(file_get_contents($path . ACL_FILE), true);
 		}
 
+		// fetch roles from the database for multi role authorization
 		$availableRoles = Configure::read($this->_config['aclTable']);
 		if (!is_array($availableRoles)) {
-			$Table = $this->getTable();
-			if (!isset($Table->{$this->_config['aclTable']})) {
+			$table = $this->getTable();
+			if (!$table->associations()->has($this->_config['aclTable'])) {
 				throw new \Exception('Missing relationship between Users and Roles. TinyAuthorize needs either a Configure or DB setup.');
 			}
 
-			$availableRoles = $Table->{$this->_config['aclTable']}->find('all')->formatResults(function ($results) {
+			$availableRoles = $table->{$this->_config['aclTable']}->find('all')->formatResults(function ($results) {
 				return $results->combine('alias', 'id');
 			})->toArray();
 			Configure::write($this->_config['aclTable'], $availableRoles);
 		}
+
 		if (!is_array($availableRoles) || !is_array($iniArray)) {
 			trigger_error('Invalid Role Setup for TinyAuthorize (no roles found)');
 			return [];
