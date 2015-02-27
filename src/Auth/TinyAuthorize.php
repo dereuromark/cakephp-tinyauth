@@ -82,14 +82,15 @@ class TinyAuthorize extends BaseAuthorize {
 	 * @return bool Success
 	 */
 	public function authorize($user, Request $request) {
-		if (isset($user[$this->_config['aclTable']])) {
-			if (isset($user[$this->_config['aclTable']][0]['id'])) {
-				$roles = Hash::extract($user[$this->_config['aclTable']], '{n}.id');
-			} elseif (isset($user[$this->_config['aclTable']]['id'])) {
-				$roles = [$user[$this->_config['aclTable']]['id']];
-			} else {
-				$roles = (array)$user[$this->_config['aclTable']];
-			}
+		// fetch associated roles from database when multi role is enabled
+		if (isset($this->_config['aclTable'])) {
+			$usersTable = $this->getUserTable();
+			$userData = $usersTable->get($user['id'], [
+				'contain' => [$this->_config['aclTable']]
+			]);
+			// extract associated roles from user data
+			$roleTableName = Inflector::tableize($this->_config['aclTable']);
+			$roles = Hash::extract($userData->toArray(), "$roleTableName.{n}.id");
 		} elseif (isset($user[$this->_config['aclKey']])) {
 			$roles = [$user[$this->_config['aclKey']]];
 		} else {
@@ -178,8 +179,13 @@ class TinyAuthorize extends BaseAuthorize {
 	/**
 	 * @return Cake\ORM\Table The User table
 	 */
-	public function getTable() {
-		return TableRegistry::get(CLASS_USER);
+	public function getUserTable() {
+		$table = TableRegistry::get(CLASS_USER);
+		if (!$table->associations()->has($this->_config['aclTable'])) {
+			throw new \Exception('Missing relationship between Users and ' .
+				$this->_config['aclTable'] . '.');
+		}
+		return $table;
 	}
 
 	/**
@@ -217,12 +223,8 @@ class TinyAuthorize extends BaseAuthorize {
 		// fetch available roles from the database if a table is specified
 		$availableRoles = Configure::read($this->_config['aclTable']);
 		if (!is_array($availableRoles)) {
-			$table = $this->getTable();
-			if (!$table->associations()->has($this->_config['aclTable'])) {
-				throw new \Exception('Missing relationship between Users and Roles. TinyAuthorize needs either a Configure or DB setup.');
-			}
-
-			$availableRoles = $table->{$this->_config['aclTable']}->find('all')->formatResults(function ($results) {
+			$userTable = $this->getUserTable();
+			$availableRoles = $userTable->{$this->_config['aclTable']}->find('all')->formatResults(function ($results) {
 				return $results->combine('alias', 'id');
 			})->toArray();
 			Configure::write($this->_config['aclTable'], $availableRoles);
