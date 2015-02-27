@@ -82,7 +82,7 @@ class TinyAuthorize extends BaseAuthorize {
 	 * @return bool Success
 	 */
 	public function authorize($user, Request $request) {
-		if (isset($this->_config['aclTable'])) {
+		if (isset($user[$this->_config['aclTable']])) {
 			// fetch associated roles from database when multi role is enabled
 			$usersTable = $this->getUserTable();
 			$userData = $usersTable->get($user['id'], [
@@ -98,6 +98,7 @@ class TinyAuthorize extends BaseAuthorize {
 			trigger_error(sprintf('Missing acl information (%s) in user session', $acl));
 			$roles = [];
 		}
+
 		return $this->validate($roles, $request);
 	}
 
@@ -112,10 +113,6 @@ class TinyAuthorize extends BaseAuthorize {
 	 * @return bool Success
 	 */
 	public function validate($roles, Request $request) {
-		// construct the iniKey and iniMap for easy lookups
-		$iniKey = $this->_constructIniKey($request);
-		$availableRoles = Configure::read($this->_config['aclTable']);
-
 		// Give any logged in user access to ALL actions when `allowUser` is
 		// enabled except when the `adminPrefix` is being used.
 		if (!empty($this->_config['allowUser'])) {
@@ -152,6 +149,7 @@ class TinyAuthorize extends BaseAuthorize {
 		}
 
 		// allow access if user has a role with wildcard access to the resource
+		$iniKey = $this->_constructIniKey($request);
 		if (isset($this->_acl[$iniKey]['actions']['*'])) {
 			$matchArray = $this->_acl[$iniKey]['actions']['*'];
 			foreach ($roles as $role) {
