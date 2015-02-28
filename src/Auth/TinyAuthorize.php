@@ -5,6 +5,8 @@ use Cake\Auth\BaseAuthorize;
 use Cake\Cache\Cache;
 use Cake\Controller\ComponentRegistry;
 use Cake\Core\Configure;
+use Cake\Database\Schema\Collection;
+use Cake\Datasource\ConnectionManager;
 use Cake\Network\Request;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
@@ -51,7 +53,7 @@ class TinyAuthorize extends BaseAuthorize {
 		'cacheKey' => 'tiny_auth_acl',
 		'autoClearCache' => false, // usually done by Cache automatically in debug mode,
 		'roleColumn' => 'role_id', // name of column in user table holding role id (used for single role/BT only)
-		'rolesTable' => 'Roles', // name of table class holding all available roles
+		'rolesTable' => 'Roles', // name of table class OR Configure key holding all available roles
 		'multiRole' => false // enables multirole (HABTM) authorization (requires valid rolesTable and join table)
 	];
 
@@ -278,26 +280,25 @@ class TinyAuthorize extends BaseAuthorize {
 	}
 
 	/**
-	 * Returns a list of all available roles defined in either Configure or
-	 * database.
+	 * Returns a list of all available roles from the database if the roles
+	 * table exists, otherwise returns the roles array from Configure.
 	 *
-	 * @todo discuss caching (?)
-	 * @todo this only works if Configure and rolesTable use a different name,
-	 * otherwise the configure always takes precedence. Maybe restructure
-	 * configuration options.
-	 *
-	 * @param array $user The user to get the roles for
-	 * @return array List with all role ids belonging to the user
+	 * @return array List with all available roles
 	 */
 	protected function _getAvailableRoles() {
-		$roles = Configure::read($this->_config['rolesTable']);
-		if (!is_array($roles)) {
-			$userTable = $this->getUserTable();
-			$roles = $userTable->{$this->_config['rolesTable']}->find('all')->formatResults(function ($results) {
-				return $results->combine('alias', 'id');
-			})->toArray();
-			Configure::write($this->_config['rolesTable'], $roles);
+		// return roles array from Configure if no database table is found
+		$db = ConnectionManager::get('default');
+		$collection = $db->schemaCollection();
+		if (!in_array(Inflector::tableize($this->_config['rolesTable']), $collection->listTables())) {
+			return Configure::read($this->_config['rolesTable']);
 		}
+
+		// return all roles found in the database
+		$userTable = $this->getUserTable();
+		$roles = $userTable->{$this->_config['rolesTable']}->find('all')->formatResults(function ($results) {
+			return $results->combine('alias', 'id');
+		})->toArray();
+		Configure::write($this->_config['rolesTable'], $roles);
 		return $roles;
 	}
 
