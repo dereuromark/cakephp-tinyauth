@@ -51,7 +51,7 @@ class TinyAuthorize extends BaseAuthorize {
 		'cacheKey' => 'tiny_auth_acl',
 		'autoClearCache' => false, // usually done by Cache automatically in debug mode,
 		'roleColumn' => 'role_id', // name of column in user table holding role id (used for single role/BT only)
-		'rolesTable' => 'Roles', // name of table holding all available roles, only used if present
+		'rolesTable' => 'Roles', // name of table class holding all available roles
 		'multiRole' => false // enables multirole (HABTM) authorization (requires valid rolesTable and join table)
 	];
 
@@ -202,14 +202,19 @@ class TinyAuthorize extends BaseAuthorize {
 		}
 
 		// fetch available roles from the database if a table is specified
-		$availableRoles = Configure::read($this->_config['rolesTable']);
-		if (!is_array($availableRoles)) {
-			$userTable = $this->getUserTable();
-			$availableRoles = $userTable->{$this->_config['rolesTable']}->find('all')->formatResults(function ($results) {
-				return $results->combine('alias', 'id');
-			})->toArray();
-			Configure::write($this->_config['rolesTable'], $availableRoles);
-		}
+		$availableRoles = $this->_getAvailableRoles();
+
+
+		// $availableRoles = Configure::read($this->_config['rolesTable']);
+		// if (!is_array($availableRoles)) {
+		// 	$userTable = $this->getUserTable();
+		// 	$availableRoles = $userTable->{$this->_config['rolesTable']}->find('all')->formatResults(function ($results) {
+		// 		return $results->combine('alias', 'id');
+		// 	})->toArray();
+		// 	Configure::write($this->_config['rolesTable'], $availableRoles);
+		// }
+
+		pr($availableRoles);
 
 		if (!is_array($availableRoles) || !is_array($iniArray)) {
 			trigger_error('Invalid Role Setup for TinyAuthorize (no roles found)');
@@ -260,11 +265,10 @@ class TinyAuthorize extends BaseAuthorize {
 		return $res;
 	}
 
-
 	/**
-	 * Get all roles for the authenticated user
+	 * Returns a list of all roles belonging to the authenticated user
 	 *
-	 * @todo discuss trigger_error
+	 * @todo discuss trigger_error + caching (?)
 	 *
 	 * @param array $user The user to get the roles for
 	 * @return array List with all role ids belonging to the user
@@ -284,6 +288,30 @@ class TinyAuthorize extends BaseAuthorize {
 			'contain' => [$this->_config['rolesTable']]
 		]);
 		return Hash::extract($userData->toArray(), Inflector::tableize($this->_config['rolesTable']) . '.{n}.id');
+	}
+
+	/**
+	 * Returns a list of all available roles defined in either Configure or
+	 * database.
+	 *
+	 * @todo discuss caching (?)
+	 * @todo this only works if Configure and rolesTable use a different name,
+	 * otherwise the configure always takes precedence. Maybe restructure
+	 * configuration options.
+	 *
+	 * @param array $user The user to get the roles for
+	 * @return array List with all role ids belonging to the user
+	 */
+	protected function _getAvailableRoles() {
+		$roles = Configure::read($this->_config['rolesTable']);
+		if (!is_array($roles)) {
+			$userTable = $this->getUserTable();
+			$roles = $userTable->{$this->_config['rolesTable']}->find('all')->formatResults(function ($results) {
+				return $results->combine('alias', 'id');
+			})->toArray();
+			Configure::write($this->_config['rolesTable'], $roles);
+		}
+		return $roles;
 	}
 
 	/**
