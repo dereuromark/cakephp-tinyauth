@@ -84,15 +84,17 @@ class TinyAuthorize extends BaseAuthorize {
 	 */
 	public function authorize($user, Request $request) {
 		if ($this->_config['multiRole']) {
-			// fetch associated roles from database
+			// multi-role: fetch user data and associated roles from database
 			$usersTable = $this->getUserTable();
 			$userData = $usersTable->get($user['id'], [
 				'contain' => [$this->_config['aclTable']]
 			]);
+
 			// extract associated roles from user data
 			$roleTableName = Inflector::tableize($this->_config['aclTable']);
 			$roles = Hash::extract($userData->toArray(), "$roleTableName.{n}.id");
 		} elseif (isset($user[$this->_config['aclKey']])) {
+			// single-role: simply use the single role id found in the aclKey
 			$roles = [$user[$this->_config['aclKey']]];
 		} else {
 			$acl = $this->_config['aclTable'] . '/' . $this->_config['aclKey'];
