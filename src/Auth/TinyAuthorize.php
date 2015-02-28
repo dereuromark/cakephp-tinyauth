@@ -50,9 +50,9 @@ class TinyAuthorize extends BaseAuthorize {
 		'cache' => AUTH_CACHE,
 		'cacheKey' => 'tiny_auth_acl',
 		'autoClearCache' => false, // usually done by Cache automatically in debug mode,
-		'aclKey' => 'role_id', // name of column in user table holding single role per user (BT)
-		'aclTable' => 'Roles', // name of table holding all available roles, only used if present
-		'multiRole' => false // enables multirole (HABTM) authorization (requires valid aclTable and join table)
+		'roleColumn' => 'role_id', // name of column in user table holding role id (used for single role/BT only)
+		'rolesTable' => 'Roles', // name of table holding all available roles, only used if present
+		'multiRole' => false // enables multirole (HABTM) authorization (requires valid rolesTable and join table)
 	];
 
 	/**
@@ -87,17 +87,16 @@ class TinyAuthorize extends BaseAuthorize {
 			// multi-role: fetch user data and associated roles from database
 			$usersTable = $this->getUserTable();
 			$userData = $usersTable->get($user['id'], [
-				'contain' => [$this->_config['aclTable']]
+				'contain' => [$this->_config['rolesTable']]
 			]);
 
 			// extract associated roles from user data
-			$roleTableName = Inflector::tableize($this->_config['aclTable']);
-			$roles = Hash::extract($userData->toArray(), "$roleTableName.{n}.id");
-		} elseif (isset($user[$this->_config['aclKey']])) {
-			// single-role: simply use the single role id found in the aclKey
-			$roles = [$user[$this->_config['aclKey']]];
+			$roles = Hash::extract($userData->toArray(), Inflector::tableize($this->_config['rolesTable']) . '.{n}.id');
+		} elseif (isset($user[$this->_config['roleColumn']])) {
+			// single-role: simply use the single role id found in the roleColumn
+			$roles = [$user[$this->_config['roleColumn']]];
 		} else {
-			$acl = $this->_config['aclTable'] . '/' . $this->_config['aclKey'];
+			$acl = $this->_config['rolesTable'] . '/' . $this->_config['roleColumn'];
 			trigger_error(sprintf('Missing acl information (%s) in user session', $acl));
 			$roles = [];
 		}
@@ -180,9 +179,9 @@ class TinyAuthorize extends BaseAuthorize {
 	 */
 	public function getUserTable() {
 		$table = TableRegistry::get(CLASS_USER);
-		if (!$table->associations()->has($this->_config['aclTable'])) {
+		if (!$table->associations()->has($this->_config['rolesTable'])) {
 			throw new \Exception('Missing relationship between Users and ' .
-				$this->_config['aclTable'] . '.');
+				$this->_config['rolesTable'] . '.');
 		}
 		return $table;
 	}
@@ -220,13 +219,13 @@ class TinyAuthorize extends BaseAuthorize {
 		}
 
 		// fetch available roles from the database if a table is specified
-		$availableRoles = Configure::read($this->_config['aclTable']);
+		$availableRoles = Configure::read($this->_config['rolesTable']);
 		if (!is_array($availableRoles)) {
 			$userTable = $this->getUserTable();
-			$availableRoles = $userTable->{$this->_config['aclTable']}->find('all')->formatResults(function ($results) {
+			$availableRoles = $userTable->{$this->_config['rolesTable']}->find('all')->formatResults(function ($results) {
 				return $results->combine('alias', 'id');
 			})->toArray();
-			Configure::write($this->_config['aclTable'], $availableRoles);
+			Configure::write($this->_config['rolesTable'], $availableRoles);
 		}
 
 		if (!is_array($availableRoles) || !is_array($iniArray)) {
@@ -267,7 +266,7 @@ class TinyAuthorize extends BaseAuthorize {
 						if (!($role = trim($role)) || $role === '*') {
 							continue;
 						}
-						$newRole = Configure::read($this->_config['aclTable'] . '.' . strtolower($role));
+						$newRole = Configure::read($this->_config['rolesTable'] . '.' . strtolower($role));
 						$res[$key]['actions'][$action][] = $newRole;
 
 					}

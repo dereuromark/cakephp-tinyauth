@@ -15,7 +15,12 @@ use TinyAuth\Auth\TinyAuthorize;
  */
 class TinyAuthorizeTest extends TestCase {
 
-	public $fixtures = ['core.users', 'core.auth_users', 'plugin.tiny_auth.roles'];
+	public $fixtures = [
+		'core.users',
+		'core.auth_users',
+		'plugin.tiny_auth.roles',
+		//'plugin.tiny_auth.roles_users',
+	];
 
 	public $Collection;
 
@@ -130,12 +135,12 @@ INI;
 	 */
 	public function testConstructor() {
 		$object = new TestTinyAuthorize($this->Collection, [
-			'aclTable' => 'AuthRole',
-			'aclKey' => 'auth_role_id',
+			'rolesTable' => 'AuthRoles',
+			'roleColumn' => 'auth_role_id',
 			'autoClearCache' => true,
 		]);
-		$this->assertEquals('AuthRole', $object->config('aclTable'));
-		$this->assertEquals('auth_role_id', $object->config('aclKey'));
+		$this->assertEquals('AuthRoles', $object->config('rolesTable'));
+		$this->assertEquals('auth_role_id', $object->config('roleColumn'));
 	}
 
 	/**
@@ -292,8 +297,8 @@ INI;
 		$object = new TestTinyAuthorize($this->Collection, [
 			'autoClearCache' => true
 		]);
-		$this->assertEquals('Roles', $object->config('aclTable'));
-		$this->assertEquals('role_id', $object->config('aclKey'));
+		$this->assertEquals('Roles', $object->config('rolesTable'));
+		$this->assertEquals('role_id', $object->config('roleColumn'));
 
 		// All tests performed against this action
 		$this->request->params['action'] = 'add';
@@ -968,11 +973,11 @@ INI;
 	}
 
 	/**
-	 * TinyAuthorizeTest::testWithRoleTable()
+	 * TinyAuthorizeTest::testWithRolesTable()
 	 *
 	 * @return void
 	 */
-	public function testWithRoleTable() {
+	public function testWithRolesTable() {
 		$Users = TableRegistry::get('Users');
 		$Users->belongsTo('Roles');
 
