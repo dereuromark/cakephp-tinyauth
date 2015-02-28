@@ -83,25 +83,7 @@ class TinyAuthorize extends BaseAuthorize {
 	 * @return bool Success
 	 */
 	public function authorize($user, Request $request) {
-		if ($this->_config['multiRole']) {
-			// multi-role: fetch user data and associated roles from database
-			$usersTable = $this->getUserTable();
-			$userData = $usersTable->get($user['id'], [
-				'contain' => [$this->_config['rolesTable']]
-			]);
-
-			// extract associated roles from user data
-			$userRoles = Hash::extract($userData->toArray(), Inflector::tableize($this->_config['rolesTable']) . '.{n}.id');
-		} elseif (isset($user[$this->_config['roleColumn']])) {
-			// single-role: simply use the single role id found in the roleColumn
-			$userRoles = [$user[$this->_config['roleColumn']]];
-		} else {
-			$acl = $this->_config['rolesTable'] . '/' . $this->_config['roleColumn'];
-			trigger_error(sprintf('Missing acl information (%s) in user session', $acl));
-			$userRoles = [];
-		}
-		pr($userRoles);
-		return $this->validate($userRoles, $request);
+		return $this->validate($this->_getUserRoles($user), $request);
 	}
 
 	/**
@@ -276,6 +258,32 @@ class TinyAuthorize extends BaseAuthorize {
 		}
 		Cache::write($this->_config['cacheKey'], $res, $this->_config['cache']);
 		return $res;
+	}
+
+
+	/**
+	 * Get all roles for the authenticated user
+	 *
+	 * @todo discuss trigger_error
+	 *
+	 * @param array $user The user to get the roles for
+	 * @return array List with all role ids belonging to the user
+	 */
+	protected function _getUserRoles($user) {
+		if (!$this->_config['multiRole']) {
+			if (isset($user[$this->_config['roleColumn']])) {
+				return [$user[$this->_config['roleColumn']]];
+			}
+			trigger_error(sprintf('Missing role id (%s) in user session', $this->_config['roleColumn']));
+			return [];
+		}
+
+		// multi-role: fetch user data and associated roles from database
+		$usersTable = $this->getUserTable();
+		$userData = $usersTable->get($user['id'], [
+			'contain' => [$this->_config['rolesTable']]
+		]);
+		return Hash::extract($userData->toArray(), Inflector::tableize($this->_config['rolesTable']) . '.{n}.id');
 	}
 
 	/**
