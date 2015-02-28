@@ -91,29 +91,30 @@ class TinyAuthorize extends BaseAuthorize {
 			]);
 
 			// extract associated roles from user data
-			$roles = Hash::extract($userData->toArray(), Inflector::tableize($this->_config['rolesTable']) . '.{n}.id');
+			$userRoles = Hash::extract($userData->toArray(), Inflector::tableize($this->_config['rolesTable']) . '.{n}.id');
 		} elseif (isset($user[$this->_config['roleColumn']])) {
 			// single-role: simply use the single role id found in the roleColumn
-			$roles = [$user[$this->_config['roleColumn']]];
+			$userRoles = [$user[$this->_config['roleColumn']]];
 		} else {
 			$acl = $this->_config['rolesTable'] . '/' . $this->_config['roleColumn'];
 			trigger_error(sprintf('Missing acl information (%s) in user session', $acl));
-			$roles = [];
+			$userRoles = [];
 		}
-		return $this->validate($roles, $request);
+		pr($userRoles);
+		return $this->validate($userRoles, $request);
 	}
 
 	/**
 	 * Validate the url to the role(s)
 	 * allows single or multi role based authorization
 	 *
-	 * @param array $roles
+	 * @param array $userRoles
 	 * @param string $plugin
 	 * @param string $controller
 	 * @param string $action
 	 * @return bool Success
 	 */
-	public function validate($roles, Request $request) {
+	public function validate($userRoles, Request $request) {
 		// Give any logged in user access to ALL actions when `allowUser` is
 		// enabled except when the `adminPrefix` is being used.
 		if (!empty($this->_config['allowUser'])) {
@@ -129,7 +130,7 @@ class TinyAuthorize extends BaseAuthorize {
 		// the specified adminRole id.
 		if (!empty($this->_config['allowAdmin']) && !empty($this->_config['adminRole'])) {
 			if (!empty($request->params['prefix']) && $request->params['prefix'] === $this->_config['adminPrefix']) {
-				if (in_array($this->_config['adminRole'], $roles)) {
+				if (in_array($this->_config['adminRole'], $userRoles)) {
 					return true;
 				}
 			}
@@ -137,8 +138,8 @@ class TinyAuthorize extends BaseAuthorize {
 
 		// allow logged in super admins access to all resources
 		if (!empty($this->_config['superAdminRole'])) {
-			foreach ($roles as $role) {
-				if ($role === $this->_config['superAdminRole']) {
+			foreach ($userRoles as $userRole) {
+				if ($userRole === $this->_config['superAdminRole']) {
 					return true;
 				}
 			}
@@ -153,8 +154,8 @@ class TinyAuthorize extends BaseAuthorize {
 		$iniKey = $this->_constructIniKey($request);
 		if (isset($this->_acl[$iniKey]['actions']['*'])) {
 			$matchArray = $this->_acl[$iniKey]['actions']['*'];
-			foreach ($roles as $role) {
-				if (in_array((string)$role, $matchArray)) {
+			foreach ($userRoles as $userRole) {
+				if (in_array((string)$userRole, $matchArray)) {
 					return true;
 				}
 			}
@@ -164,8 +165,8 @@ class TinyAuthorize extends BaseAuthorize {
 		if (isset($this->_acl[$iniKey]['actions'])) {
 			if(array_key_exists($request->action, $this->_acl[$iniKey]['actions']) && !empty($this->_acl[$iniKey]['actions'][$request->action])) {
 				$matchArray = $this->_acl[$iniKey]['actions'][$request->action];
-				foreach ($roles as $role) {
-					if (in_array((string)$role, $matchArray)) {
+				foreach ($userRoles as $userRole) {
+					if (in_array((string)$userRole, $matchArray)) {
 						return true;
 					}
 				}
