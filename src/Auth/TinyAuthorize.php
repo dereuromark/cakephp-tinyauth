@@ -286,10 +286,9 @@ class TinyAuthorize extends BaseAuthorize {
 	 * @return array List with all available roles
 	 */
 	protected function _getAvailableRoles() {
-		// return roles array from Configure if no database table is found
-		$db = ConnectionManager::get('default');
-		$collection = $db->schemaCollection();
-		if (!in_array(Inflector::tableize($this->_config['rolesTable']), $collection->listTables())) {
+		// if no roles table exists return the roles array from Configure
+		$tables = ConnectionManager::get('default')->schemaCollection()->listTables();
+		if (!in_array(Inflector::tableize($this->_config['rolesTable']), $tables)) {
 			return Configure::read($this->_config['rolesTable']);
 		}
 
