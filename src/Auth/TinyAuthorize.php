@@ -44,17 +44,17 @@ class TinyAuthorize extends BaseAuthorize {
 	protected $_acl = null;
 
 	protected $_defaultConfig = [
-		'adminRole' => null, // id of the admin role used by allowAdmin
-		'adminPrefix' => 'admin', // admin prefix used by  allowAdmin
+		'adminRole' => null, // id of the admin role (used by allowAdmin)
+		'superAdminRole' => null, // id of super admin role granted access to ALL resources
+		'adminPrefix' => 'admin', // admin prefix (used by allowAdmin)
 		'allowUser' => false, // enable to allow ALL roles access to all actions except prefixed with 'adminPrefix'
 		'allowAdmin' => false, // enable to allow admin role access to all 'adminPrefix' prefixed urls
-		'allowAll' => null, // id of super admin role granted access to ALL resources
 		'cache' => AUTH_CACHE,
 		'cacheKey' => 'tiny_auth_acl',
 		'autoClearCache' => false, // usually done by Cache automatically in debug mode,
+		'multiRole' => false, // enables multirole (HABTM) authorization (requires valid rolesTable and join table)
 		'roleColumn' => 'role_id', // name of column in user table holding role id (used for single role/BT only)
 		'rolesTable' => 'Roles', // name of table class OR Configure key holding all available roles
-		'multiRole' => false // enables multirole (HABTM) authorization (requires valid rolesTable and join table)
 	];
 
 	/**
@@ -121,9 +121,9 @@ class TinyAuthorize extends BaseAuthorize {
 		}
 
 		// allow logged in super admins access to all resources
-		if (!empty($this->_config['allowAll'])) {
+		if (!empty($this->_config['superAdminRole'])) {
 			foreach ($userRoles as $userRole) {
-				if ($userRole === $this->_config['allowAll']) {
+				if ($userRole === $this->_config['superAdminRole']) {
 					return true;
 				}
 			}
