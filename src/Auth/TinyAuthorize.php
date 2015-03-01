@@ -45,10 +45,10 @@ class TinyAuthorize extends BaseAuthorize {
 
 	protected $_defaultConfig = [
 		'adminRole' => null, // id of the admin role used by allowAdmin
-		'superAdminRole' => null, // id of super admin role granted access to ALL resources
+		'adminPrefix' => 'admin', // admin prefix used by  allowAdmin
 		'allowUser' => false, // enable to allow ALL roles access to all actions except prefixed with 'adminPrefix'
 		'allowAdmin' => false, // enable to allow admin role access to all 'adminPrefix' prefixed urls
-		'adminPrefix' => 'admin', // admin prefix used by  allowAdmin
+		'allowAll' => null, // id of super admin role granted access to ALL resources
 		'cache' => AUTH_CACHE,
 		'cacheKey' => 'tiny_auth_acl',
 		'autoClearCache' => false, // usually done by Cache automatically in debug mode,
@@ -121,9 +121,9 @@ class TinyAuthorize extends BaseAuthorize {
 		}
 
 		// allow logged in super admins access to all resources
-		if (!empty($this->_config['superAdminRole'])) {
+		if (!empty($this->_config['allowAll'])) {
 			foreach ($userRoles as $userRole) {
-				if ($userRole === $this->_config['superAdminRole']) {
+				if ($userRole === $this->_config['allowAll']) {
 					return true;
 				}
 			}
@@ -292,7 +292,7 @@ class TinyAuthorize extends BaseAuthorize {
 			return Configure::read($this->_config['rolesTable']);
 		}
 
-		// return all roles found in the database
+		// table exists so return all roles found in the database
 		$userTable = $this->getUserTable();
 		$roles = $userTable->{$this->_config['rolesTable']}->find('all')->formatResults(function ($results) {
 			return $results->combine('alias', 'id');
