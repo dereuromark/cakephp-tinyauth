@@ -58,7 +58,6 @@ class TinyAuthorize extends BaseAuthorize {
 
 		'cache' => AUTH_CACHE,
 		'cacheKey' => 'tiny_auth_acl',
-		'cacheRolesKey' => 'tiny_auth_roles',
 		'autoClearCache' => false, // usually done by Cache automatically in debug mode,
 	];
 
