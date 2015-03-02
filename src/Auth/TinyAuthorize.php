@@ -294,28 +294,32 @@ class TinyAuthorize extends BaseAuthorize {
 	}
 
 	/**
-	 * Returns a list of all available roles from either Configure or the database.
+	 * Returns a list of all available roles. Will look for a roles array in
+	 * Configure first, tries database roles table next.
 	 *
 	 * @return array List with all available roles
 	 * @throws Cake\Core\Exception\Exception
 	 */
 	protected function _getAvailableRoles() {
-		// get roles from Configure
-		if (!$this->_config['useDatabaseRoles']) {
-			$roles = Configure::read($this->_config['rolesTable']);
-			if (!$roles) {
-				throw new Exception('Invalid TinyAuthorize Role Setup (no Configure roles found)');
-			}
+		$roles = Configure::read($this->_config['rolesTable']);
+		if (is_array($roles)) {
 			return $roles;
 		}
 
-		// get roles from database
-		$userTable = $this->getUserTable();
-		$roles = $userTable->{$this->_config['rolesTable']}->find('all')->formatResults(function ($results) {
+		// no roles in Configure AND rolesTable does not exist
+		$tables = ConnectionManager::get('default')->schemaCollection()->listTables();
+		if (!in_array(Inflector::tableize($this->_config['rolesTable']), $tables)) {
+			throw new Exception('Invalid TinyAuthorize Role Setup (no roles found)');
+		}
+
+		// fetch roles from database
+		$rolesTable = TableRegistry::get($this->_config['rolesTable']);
+		$roles = $rolesTable->find('all')->formatResults(function ($results) {
 			return $results->combine('alias', 'id');
 		})->toArray();
+
 		if (!count($roles)) {
-			throw new Exception('Invalid TinyAuthorize Role Setup (no database roles found)');
+			throw new Exception('Invalid TinyAuthorize Role Setup (rolesTable has no roles)');
 		}
 		return $roles;
 	}

@@ -19,7 +19,7 @@ class TinyAuthorizeTest extends TestCase {
 		'core.users',
 		'core.auth_users',
 		'plugin.tiny_auth.roles',
-		//'plugin.tiny_auth.roles_users',
+//		'plugin.tiny_auth.roles_users',
 	];
 
 	public $Collection;

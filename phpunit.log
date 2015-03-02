@@ -1,0 +1,142 @@
+PHPUnit 4.4.4 by Sebastian Bergmann.
+
+Configuration read from /home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/phpunit.xml.dist
+
+S....EEEEEEEEEEEFE..
+
+Time: 962 ms, Memory: 14.50Mb
+
+There were 12 errors:
+
+1) TinyAuth\Test\Auth\TinyAuthorizeTest::testGetAcl
+Exception: Missing relationship between Users and Roles.
+
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/src/Auth/TinyAuthorize.php:172
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/src/Auth/TinyAuthorize.php:301
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/src/Auth/TinyAuthorize.php:210
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/tests/TestCase/Auth/TinyAuthorizeTest.php:1234
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/tests/TestCase/Auth/TinyAuthorizeTest.php:1230
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/tests/TestCase/Auth/TinyAuthorizeTest.php:151
+
+2) TinyAuth\Test\Auth\TinyAuthorizeTest::testBasicUserMethodDisallowed
+Exception: Missing relationship between Users and Roles.
+
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/src/Auth/TinyAuthorize.php:172
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/src/Auth/TinyAuthorize.php:301
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/src/Auth/TinyAuthorize.php:210
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/tests/TestCase/Auth/TinyAuthorizeTest.php:1234
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/src/Auth/TinyAuthorize.php:138
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/src/Auth/TinyAuthorize.php:92
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/tests/TestCase/Auth/TinyAuthorizeTest.php:312
+
+3) TinyAuth\Test\Auth\TinyAuthorizeTest::testBasicUserMethodAllowed
+Exception: Missing relationship between Users and Roles.
+
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/src/Auth/TinyAuthorize.php:172
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/src/Auth/TinyAuthorize.php:301
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/src/Auth/TinyAuthorize.php:210
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/tests/TestCase/Auth/TinyAuthorizeTest.php:1234
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/src/Auth/TinyAuthorize.php:138
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/src/Auth/TinyAuthorize.php:92
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/tests/TestCase/Auth/TinyAuthorizeTest.php:374
+
+4) TinyAuth\Test\Auth\TinyAuthorizeTest::testCaseSensitivity
+Exception: Missing relationship between Users and Roles.
+
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/src/Auth/TinyAuthorize.php:172
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/src/Auth/TinyAuthorize.php:301
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/src/Auth/TinyAuthorize.php:210
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/tests/TestCase/Auth/TinyAuthorizeTest.php:1234
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/src/Auth/TinyAuthorize.php:138
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/src/Auth/TinyAuthorize.php:92
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/tests/TestCase/Auth/TinyAuthorizeTest.php:447
+
+5) TinyAuth\Test\Auth\TinyAuthorizeTest::testBasicUserMethodAllowedWithLongActionNames
+Exception: Missing relationship between Users and Roles.
+
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/src/Auth/TinyAuthorize.php:172
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/src/Auth/TinyAuthorize.php:301
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/src/Auth/TinyAuthorize.php:210
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/tests/TestCase/Auth/TinyAuthorizeTest.php:1234
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/src/Auth/TinyAuthorize.php:138
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/src/Auth/TinyAuthorize.php:92
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/tests/TestCase/Auth/TinyAuthorizeTest.php:513
+
+6) TinyAuth\Test\Auth\TinyAuthorizeTest::testBasicUserMethodAllowedWithLongActionNamesUnderscored
+Exception: Missing relationship between Users and Roles.
+
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/src/Auth/TinyAuthorize.php:172
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/src/Auth/TinyAuthorize.php:301
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/src/Auth/TinyAuthorize.php:210
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/tests/TestCase/Auth/TinyAuthorizeTest.php:1234
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/src/Auth/TinyAuthorize.php:138
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/src/Auth/TinyAuthorize.php:92
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/tests/TestCase/Auth/TinyAuthorizeTest.php:577
+
+7) TinyAuth\Test\Auth\TinyAuthorizeTest::testBasicUserMethodAllowedMultiRole
+Missing role id (role_id) in user session
+
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/src/Auth/TinyAuthorize.php:273
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/src/Auth/TinyAuthorize.php:92
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/tests/TestCase/Auth/TinyAuthorizeTest.php:639
+
+8) TinyAuth\Test\Auth\TinyAuthorizeTest::testBasicUserMethodAllowedWildcard
+Exception: Missing relationship between Users and Roles.
+
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/src/Auth/TinyAuthorize.php:172
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/src/Auth/TinyAuthorize.php:301
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/src/Auth/TinyAuthorize.php:210
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/tests/TestCase/Auth/TinyAuthorizeTest.php:1234
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/src/Auth/TinyAuthorize.php:138
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/src/Auth/TinyAuthorize.php:92
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/tests/TestCase/Auth/TinyAuthorizeTest.php:690
+
+9) TinyAuth\Test\Auth\TinyAuthorizeTest::testBasicUserMethodAllowedWildcardSpecificGroup
+Exception: Missing relationship between Users and Roles.
+
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/src/Auth/TinyAuthorize.php:172
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/src/Auth/TinyAuthorize.php:301
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/src/Auth/TinyAuthorize.php:210
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/tests/TestCase/Auth/TinyAuthorizeTest.php:1234
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/src/Auth/TinyAuthorize.php:138
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/src/Auth/TinyAuthorize.php:92
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/tests/TestCase/Auth/TinyAuthorizeTest.php:757
+
+10) TinyAuth\Test\Auth\TinyAuthorizeTest::testUserMethodsAllowed
+Exception: Missing relationship between Users and Roles.
+
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/src/Auth/TinyAuthorize.php:172
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/src/Auth/TinyAuthorize.php:301
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/src/Auth/TinyAuthorize.php:210
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/tests/TestCase/Auth/TinyAuthorizeTest.php:1234
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/src/Auth/TinyAuthorize.php:138
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/src/Auth/TinyAuthorize.php:92
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/tests/TestCase/Auth/TinyAuthorizeTest.php:846
+
+11) TinyAuth\Test\Auth\TinyAuthorizeTest::testAdminMethodsAllowed
+Exception: Missing relationship between Users and Roles.
+
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/src/Auth/TinyAuthorize.php:172
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/src/Auth/TinyAuthorize.php:301
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/src/Auth/TinyAuthorize.php:210
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/tests/TestCase/Auth/TinyAuthorizeTest.php:1234
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/src/Auth/TinyAuthorize.php:138
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/src/Auth/TinyAuthorize.php:92
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/tests/TestCase/Auth/TinyAuthorizeTest.php:954
+
+12) TinyAuth\Test\Auth\TinyAuthorizeTest::testSuperAdminRole
+Undefined index: actions
+
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/tests/TestCase/Auth/TinyAuthorizeTest.php:1061
+
+--
+
+There was 1 failure:
+
+1) TinyAuth\Test\Auth\TinyAuthorizeTest::testWithRolesTable
+Failed asserting that false is true.
+
+/home/vagrant/Apps/app-plusplus/vendor/dereuromark/cakephp-tinyauth/tests/TestCase/Auth/TinyAuthorizeTest.php:1003
+
+FAILURES!
+Tests: 20, Assertions: 91, Failures: 1, Errors: 12, Skipped: 1.
