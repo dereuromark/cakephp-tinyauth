@@ -164,19 +164,6 @@ class TinyAuthorize extends BaseAuthorize {
 	}
 
 	/**
-	 * @return Cake\ORM\Table The User table
-	 * @throws Cake\Core\Exception\Exception
-	 */
-	public function getUserTable() {
-		$table = TableRegistry::get(CLASS_USER);
-		if (!$table->associations()->has($this->_config['rolesTable'])) {
-			throw new Exception('Missing TinyAuthorize relationship between Users and ' .
-				$this->_config['rolesTable'] . '.');
-		}
-		return $table;
-	}
-
-	/**
 	 * Parse ini file and returns the allowed roles per action
 	 * - uses cache for maximum performance
 	 * improved speed by several actions before caching:
