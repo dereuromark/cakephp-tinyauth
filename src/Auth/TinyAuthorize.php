@@ -46,9 +46,8 @@ class TinyAuthorize extends BaseAuthorize {
 
 	protected $_defaultConfig = [
 		'roleColumn' => 'role_id', // name of column in user table holding role id (used for single role/BT only)
-		'rolesTable' => 'Roles', // name of (database) table class OR Configure key holding all available roles
-		'useDatabaseRoles' => false, // true to use a database roles table instead of a Configure roles array
-		'multiRole' => false, // true to enables multirole/HABTM authorization (requires valid rolesTable and join table)
+		'rolesTable' => 'Roles', // name of Configure key holding available roles OR class name of roles table
+		'multiRole' => false, // true to enables multirole/HABTM authorization (requires a valid join table)
 
 		'adminRole' => null, // id of the admin role (used to give access to all /admin prefixed resources when allowAdmin is enabled)
 		'superAdminRole' => null, // id of super admin role granted access to ALL resources
