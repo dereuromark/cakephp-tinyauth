@@ -16,10 +16,11 @@ use TinyAuth\Auth\TinyAuthorize;
 class TinyAuthorizeTest extends TestCase {
 
 	public $fixtures = [
-		'core.users',
-		'core.auth_users',
-		'plugin.tiny_auth.roles',
+		'plugin.tiny_auth.users',
+		'plugin.tiny_auth.database_roles',
 		'plugin.tiny_auth.empty_roles',
+		'plugin.tiny_auth.roles_users', // pivot table using Configure role ids
+		'plugin.tiny_auth.database_roles_users' // pivot table using Database role ids
 	];
 
 	public $Collection;
@@ -625,45 +626,48 @@ INI;
 	}
 
 	/**
+	 * Tests multirole authorization.
+	 *
 	 * @return void
 	 */
 	public function testBasicUserMethodAllowedMultiRole() {
+		// Test against roles array in Configure
 		$object = new TestTinyAuthorize($this->Collection, [
-			'autoClearCache' => true
+			'autoClearCache' => true,
+			'multiRole' => true,
+			'rolesTable' => 'Roles'
 		]);
 
 		$this->request->params['controller'] = 'Tags';
 		$this->request->params['action'] = 'delete';
 
-		// Flat list of roles
-		$user = [
-			'Roles' => [2, 4]
-		];
+		// User 1 has roles 1 (user) and 2 (moderator): admin required for the delete.
+		$user = ['id' => 1];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 
-		$user = [
-			'Roles' => [1, 3]
-		];
+		// User 2 has roles 1 (user) and 3 (admin): admin required for the delete.
+		$user = ['id' => 2];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
-		// Verbose role definition using the new 2.x contain param for Auth
-		$user = [
-			'Roles' => [
-				['id' => 2, 'RoleUsers' => []],
-				['id' => 4, 'RoleUsers' => []]
-			],
-		];
+		// Test against roles array in Database
+		$object = new TestTinyAuthorize($this->Collection, [
+			'autoClearCache' => true,
+			'multiRole' => true,
+			'rolesTable' => 'DatabaseRoles'
+		]);
+
+		$this->request->params['controller'] = 'Tags';
+		$this->request->params['action'] = 'delete';
+
+		// User 1 has roles 11 (user) and 12 (moderator): admin required for the delete.
+		$user = ['id' => 1];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 
-		$user = [
-			'Roles' => [
-				['id' => 1, 'RoleUsers' => []],
-				['id' => 3, 'RoleUsers' => []]
-			]
-		];
+		// User 2 has roles 11 (user) and 13 (admin): admin required for the delete.
+		$user = ['id' => 2];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 	}
@@ -976,76 +980,6 @@ INI;
 	}
 
 	/**
-	 * TinyAuthorizeTest::testWithRolesTable()
-	 *
-	 * @return void
-	 */
-	public function testWithRolesTable() {
-		$Users = TableRegistry::get('Users');
-		$Users->belongsTo('Roles');
-
-		// We want the session to be used.
-		Configure::delete('Roles');
-		$object = new TestTinyAuthorize($this->Collection, [
-			'autoClearCache' => true
-		]);
-
-		// test standard controller
-		$this->request->params['controller'] = 'Tags';
-		$this->request->params['action'] = 'edit';
-
-		// User role is 4 here, though. Also contains left joined Role date here just to check that it works, too.
-		$user = [
-			'Roles' => [
-				'id' => '4',
-				'alias' => 'user'
-			],
-			'role_id' => 4,
-		];
-		$res = $object->authorize($user, $this->request);
-		$this->assertTrue($res);
-
-		Configure::delete('Roles');
-		$object = new TestTinyAuthorize($this->Collection, ['autoClearCache' => true]);
-
-		$user = [
-			'role_id' => 6
-		];
-		$res = $object->authorize($user, $this->request);
-		$this->assertFalse($res);
-
-		$this->assertTrue((bool)(Configure::read('Roles')));
-
-		// Multi-role test - failure
-		Configure::delete('Roles');
-		$object = new TestTinyAuthorize($this->Collection, ['autoClearCache' => true]);
-
-		$user = [
-			'Roles' => [
-				['id' => 7, 'alias' => 'user'],
-				['id' => 8, 'alias' => 'partner']
-			]
-		];
-		$res = $object->authorize($user, $this->request);
-		$this->assertFalse($res);
-
-		$this->assertTrue((bool)(Configure::read('Roles')));
-
-		Configure::delete('Roles');
-		$object = new TestTinyAuthorize($this->Collection, ['autoClearCache' => true]);
-
-		// Multi-role test
-		$user = [
-			'Roles' => [
-				['id' => 4, 'alias' => 'user'],
-				['id' => 6, 'alias' => 'partner'],
-			]
-		];
-		$res = $object->authorize($user, $this->request);
-		$this->assertTrue($res);
-	}
-
-	/**
 	 * Tests superAdmin role, allowed to all actions
 	 *
 	 * @return void
@@ -1071,8 +1005,6 @@ INI;
 		}
 	}
 
-
-
 	/**
 	 * Tests acl.ini parsing method.
 	 *
@@ -1088,7 +1020,7 @@ INI;
 		$method = $reflection->getMethod('_parseAclIni');
 		$method->setAccessible(true);
 		$res = $method->invokeArgs($object, [TMP . 'acl.ini']);
-		assert(is_array($res));
+		$this->assertTrue(is_array($res));
 	}
 
 	/**
@@ -1124,85 +1056,8 @@ INI;
 		$method->setAccessible(true);
 
 		// Create temporary empty acl.ini file
-		pr(TMP);
 		touch(TMP . 'acl.empty.ini');
 		$method->invokeArgs($object, [TMP . 'acl.empty.ini']);
-	}
-
-	/**
-	 * Tests getting available Roles from Configure and database
-	 *
-	 * @return void
-	 */
-	public function testAvailableRoles() {
-		$object = new TestTinyAuthorize($this->Collection, [
-			'autoClearCache' => true,
-			'rolesTable' => 'Roles'
-		]);
-
-		// Make protected function available
-		$reflection = new \ReflectionClass(get_class($object));
-		$method = $reflection->getMethod('_getAvailableRoles');
-		$method->setAccessible(true);
-
-		// Test against roles array in Configure
-		$expected = [
-			'user' => 1,
-			'moderator' => 2,
-			'admin' => 3,
-			'public' => -1
-		];
-		$res =  $method->invoke($object);
-		$this->assertEquals($expected, $res);
-
-		// Test against roles from database
-		Configure::delete('Roles');
-		$expected = [
-			'superadmin' => 1,
-			'admin' => 2,
-			'user' => 4,
-			'partner' => 6
-		];
-		$res =  $method->invoke($object);
-		$this->assertEquals($expected, $res);
-	}
-
-	/**
-	 * Tests exception thrown when no roles are in Configure AND the roles
-	 * database table does not exist.
-	 *
-	 * @expectedException Cake\Core\Exception\Exception
-	 */
-	public function testAvailableRolesMissingTableException() {
-		$object = new TestTinyAuthorize($this->Collection, [
-			'autoClearCache' => true,
-			'rolesTable' => 'NonExistentTable'
-		]);
-
-		// Make protected function available
-		$reflection = new \ReflectionClass(get_class($object));
-		$method = $reflection->getMethod('_getAvailableRoles');
-		$method->setAccessible(true);
-		$method->invoke($object);
-	}
-
-	/**
-	 * Tests exception thrown when the roles database table exists but contains
-	 * no roles/records.
-	 *
-	 * @expectedException Cake\Core\Exception\Exception
-	 */
-	public function testAvailableRolesEmptyTableException() {
-		$object = new TestTinyAuthorize($this->Collection, [
-			'autoClearCache' => true,
-			'rolesTable' => 'EmptyRoles'
-		]);
-
-		// Make protected function available
-		$reflection = new \ReflectionClass(get_class($object));
-		$method = $reflection->getMethod('_getAvailableRoles');
-		$method->setAccessible(true);
-		$method->invoke($object);
 	}
 
 	/**
@@ -1353,6 +1208,167 @@ INI;
 		$key = 'Tags.Admin/tags';
 		$res = $method->invokeArgs($object, [$key]);
 		$this->assertNotEquals($expected, $res);
+	}
+
+	/**
+	 * Tests fetching available Roles from Configure and database
+	 *
+	 * @return void
+	 */
+	public function testAvailableRoles() {
+		$object = new TestTinyAuthorize($this->Collection, [
+			'autoClearCache' => true,
+			'rolesTable' => 'Roles'
+		]);
+
+		// Make protected function available
+		$reflection = new \ReflectionClass(get_class($object));
+		$method = $reflection->getMethod('_getAvailableRoles');
+		$method->setAccessible(true);
+
+		// Test against roles array in Configure
+		$expected = [
+			'user' => 1,
+			'moderator' => 2,
+			'admin' => 3,
+			'public' => -1
+		];
+		$res =  $method->invoke($object);
+		$this->assertEquals($expected, $res);
+
+		// Test against roles from database
+		Configure::delete('Roles');
+		$object = new TestTinyAuthorize($this->Collection, [
+			'autoClearCache' => true,
+			'rolesTable' => 'DatabaseRoles'
+		]);
+		$expected = [
+			'user' => 11,
+			'moderator' => 12,
+			'admin' => 13
+		];
+		$res =  $method->invoke($object);
+		$this->assertEquals($expected, $res);
+	}
+
+	/**
+	 * Tests exception thrown when no roles are in Configure AND the roles
+	 * database table does not exist.
+	 *
+	 * @expectedException Cake\Core\Exception\Exception
+	 */
+	public function testAvailableRolesMissingTableException() {
+		$object = new TestTinyAuthorize($this->Collection, [
+			'autoClearCache' => true,
+			'rolesTable' => 'NonExistentTable'
+		]);
+
+		// Make protected function available
+		$reflection = new \ReflectionClass(get_class($object));
+		$method = $reflection->getMethod('_getAvailableRoles');
+		$method->setAccessible(true);
+		$method->invoke($object);
+	}
+
+	/**
+	 * Tests exception thrown when the roles database table exists but contains
+	 * no roles/records.
+	 *
+	 * @expectedException Cake\Core\Exception\Exception
+	 */
+	public function testAvailableRolesEmptyTableException() {
+		$object = new TestTinyAuthorize($this->Collection, [
+			'autoClearCache' => true,
+			'rolesTable' => 'EmptyRoles'
+		]);
+
+		// Make protected function available
+		$reflection = new \ReflectionClass(get_class($object));
+		$method = $reflection->getMethod('_getAvailableRoles');
+		$method->setAccessible(true);
+		$method->invoke($object);
+	}
+
+	/**
+	 * Tests fetching user roles
+	 *
+	 * @return void
+	 */
+	public function testUserRoles() {
+		$object = new TestTinyAuthorize($this->Collection, [
+			'autoClearCache' => true,
+			'multiRole' => false,
+			'roleColumn' => 'role_id'
+		]);
+
+		// Make protected function available
+		$reflection = new \ReflectionClass(get_class($object));
+		$method = $reflection->getMethod('_getUserRoles');
+		$method->setAccessible(true);
+
+		// Single-role: get role id from roleColumn in user table
+		$user = ['role_id' => 1];
+		$res = $method->invokeArgs($object, [$user]);
+		$this->assertEquals([0 => 1], $res);
+
+		// Multi-role: lookup roles directly in pivot table
+		$object = new TestTinyAuthorize($this->Collection, [
+			'autoClearCache' => true,
+			'multiRole' => true,
+			'rolesTable' => 'DatabaseRoles'
+		]);
+		$user = ['id' => 2];
+		$expected = [
+			0 => 11, // user
+			1 => 13	 // admin
+		];
+		$res = $method->invokeArgs($object, [$user]);
+		$this->assertEquals($expected, $res);
+	}
+
+	/**
+	 * Tests single-role exception thrown when the roleColumn field is missing
+	 * from the user table.
+	 *
+	 * @expectedException Cake\Core\Exception\Exception
+	 */
+	public function testUserRolesMissingRoleColumn() {
+		$object = new TestTinyAuthorize($this->Collection, [
+			'autoClearCache' => true,
+			'rolesTable' => 'NonExistentTable',
+			'multiRole' => false
+		]);
+
+		// Make protected function available
+		$reflection = new \ReflectionClass(get_class($object));
+		$method = $reflection->getMethod('_getUserRoles');
+		$method->setAccessible(true);
+
+		$user = ['id' => 1];
+		$res = $method->invokeArgs($object, [$user]);
+		$method->invoke($object);
+	}
+
+	/**
+	 * Tests multi-role exception thrown when user has no roles in the pivot table.
+	 *
+	 * @expectedException Cake\Core\Exception\Exception
+	 */
+	public function testUserRolesUserWithoutPivotRoles() {
+		$object = new TestTinyAuthorize($this->Collection, [
+			'autoClearCache' => true,
+			'rolesTable' => 'Roles',
+			'multiRole' => true
+		]);
+
+		// Make protected function available
+		$reflection = new \ReflectionClass(get_class($object));
+		$method = $reflection->getMethod('_getUserRoles');
+		$method->setAccessible(true);
+
+		$user = ['id' => 5];
+		$res = $method->invokeArgs($object, [$user]);
+		$method->invoke($object);
 	}
 
 }

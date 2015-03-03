@@ -247,31 +247,6 @@ class TinyAuthorize extends BaseAuthorize {
 	}
 
 	/**
-	 * Returns a list of all roles belonging to the authenticated user
-	 *
-	 * @todo discuss trigger_error + caching (?)
-	 *
-	 * @param array $user The user to get the roles for
-	 * @return array List with all role ids belonging to the user
-	 * @throws Cake\Core\Exception\Exception
-	 */
-	protected function _getUserRoles($user) {
-		if (!$this->_config['multiRole']) {
-			if (isset($user[$this->_config['roleColumn']])) {
-				return [$user[$this->_config['roleColumn']]];
-			}
-			throw new Exception (sprintf('Missing TinyAuthorize role id (%s) in user session', $this->_config['roleColumn']));
-		}
-
-		// multi-role: fetch user data and associated roles from database
-		$usersTable = $this->getUserTable();
-		$userData = $usersTable->get($user['id'], [
-			'contain' => [$this->_config['rolesTable']]
-		]);
-		return Hash::extract($userData->toArray(), Inflector::tableize($this->_config['rolesTable']) . '.{n}.id');
-	}
-
-	/**
 	 * Returns the acl.ini file as an array.
 	 *
 	 * @return array List with all available roles
@@ -291,37 +266,6 @@ class TinyAuthorize extends BaseAuthorize {
 			throw new Exception('Invalid TinyAuthorize ACL file');
 		}
 		return $iniArray;
-	}
-
-	/**
-	 * Returns a list of all available roles. Will look for a roles array in
-	 * Configure first, tries database roles table next.
-	 *
-	 * @return array List with all available roles
-	 * @throws Cake\Core\Exception\Exception
-	 */
-	protected function _getAvailableRoles() {
-		$roles = Configure::read($this->_config['rolesTable']);
-		if (is_array($roles)) {
-			return $roles;
-		}
-
-		// no roles in Configure AND rolesTable does not exist
-		$tables = ConnectionManager::get('default')->schemaCollection()->listTables();
-		if (!in_array(Inflector::tableize($this->_config['rolesTable']), $tables)) {
-			throw new Exception('Invalid TinyAuthorize Role Setup (no roles found)');
-		}
-
-		// fetch roles from database
-		$rolesTable = TableRegistry::get($this->_config['rolesTable']);
-		$roles = $rolesTable->find('all')->formatResults(function ($results) {
-			return $results->combine('alias', 'id');
-		})->toArray();
-
-		if (!count($roles)) {
-			throw new Exception('Invalid TinyAuthorize Role Setup (rolesTable has no roles)');
-		}
-		return $roles;
 	}
 
 	/**
@@ -361,6 +305,80 @@ class TinyAuthorize extends BaseAuthorize {
 			$res = $request->params['plugin'] . ".$res";
 		}
 		return $res;
+	}
+
+	/**
+	 * Returns a list of all available roles. Will look for a roles array in
+	 * Configure first, tries database roles table next.
+	 *
+	 * @return array List with all available roles
+	 * @throws Cake\Core\Exception\Exception
+	 */
+	protected function _getAvailableRoles() {
+		$roles = Configure::read($this->_config['rolesTable']);
+		if (is_array($roles)) {
+			return $roles;
+		}
+
+		// no roles in Configure AND rolesTable does not exist
+		$tables = ConnectionManager::get('default')->schemaCollection()->listTables();
+		if (!in_array(Inflector::tableize($this->_config['rolesTable']), $tables)) {
+			throw new Exception('Invalid TinyAuthorize Role Setup (no roles found in Configure or database)');
+		}
+
+		// fetch roles from database
+		$rolesTable = TableRegistry::get($this->_config['rolesTable']);
+		$roles = $rolesTable->find('all')->formatResults(function ($results) {
+			return $results->combine('alias', 'id');
+		})->toArray();
+
+		if (!count($roles)) {
+			throw new Exception('Invalid TinyAuthorize Role Setup (rolesTable has no roles)');
+		}
+		return $roles;
+	}
+
+	/**
+	 * Returns a list of all roles belonging to the authenticated user in the
+	 * following order:
+	 * - single role id using the roleColumn in single-role mode
+	 * - direct lookup in the pivot table (to support both Configure and Model
+	 *   in multi-role mode)
+	 *
+	 * @param array $user The user to get the roles for
+	 * @return array List with all role ids belonging to the user
+	 * @throws Cake\Core\Exception\Exception
+	 */
+	protected function _getUserRoles($user) {
+		// single-role
+		if (!$this->_config['multiRole']) {
+			if (isset($user[$this->_config['roleColumn']])) {
+				return [$user[$this->_config['roleColumn']]];
+			}
+			throw new Exception (sprintf('Missing TinyAuthorize role id (%s) in user session', $this->_config['roleColumn']));
+		}
+
+		// multi-role: reverse engineer name of the pivot table
+		$rolesTableName = Inflector::tableize($this->_config['rolesTable']);
+		$tables = [
+			Inflector::tableize(CLASS_USER),
+			$rolesTableName
+		];
+		asort($tables);
+		$pivotTableName = implode('_', $tables);
+
+		// fetch roles directly from the pivot table
+		$pivotTable = TableRegistry::get($pivotTableName);
+		$roleColumn = Inflector::singularize($rolesTableName) . '_id';
+		$roles = $pivotTable->find('all', [
+			'conditions' => ['user_id =' => $user['id']],
+			'fields' => $roleColumn
+		])->extract($roleColumn)->toArray();
+
+		if (!count($roles)) {
+			throw new Exception ('Missing TinyAuthorize roles for user in pivot table');
+		}
+		return $roles;
 	}
 
 }
