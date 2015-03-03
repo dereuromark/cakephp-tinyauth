@@ -118,8 +118,7 @@ INI;
 		Configure::write('Roles', [
 			'user' => 1,
 			'moderator' => 2,
-			'admin' => 3,
-			'public' => -1
+			'admin' => 3
 		]);
 	}
 
@@ -163,7 +162,6 @@ INI;
 					'index' => [1],
 					'edit' => [1],
 					'delete' => [3],
-					'public_action' => [-1],
 					'very_long_underscored_action' => [1],
 					'veryLongActionNameAction' => [1]
 				]
@@ -176,7 +174,6 @@ INI;
 					'index' => [1],
 					'edit' => [1],
 					'delete' => [3],
-					'public_action' => [-1],
 					'very_long_underscored_action' => [1],
 					'veryLongActionNameAction' => [1]
 				]
@@ -190,7 +187,6 @@ INI;
 					'edit' => [1],
 					'view' => [1],
 					'delete' => [3],
-					'public_action' => [-1],
 					'very_long_underscored_action' => [1],
 					'veryLongActionNameAction' => [1]
 				]
@@ -204,7 +200,6 @@ INI;
 					'edit' => [1],
 					'view' => [1],
 					'delete' => [3],
-					'public_action' => [-1],
 					'very_long_underscored_action' => [1],
 					'veryLongActionNameAction' => [1]
 				]
@@ -230,7 +225,7 @@ INI;
 				'prefix' => null,
 				'plugin' => null,
 				'actions' => [
-					'*' => [1, 2, 3, -1]
+					'*' => [1, 2, 3]
 				]
 			],
 			'admin/Posts' => [
@@ -238,7 +233,7 @@ INI;
 				'prefix' => 'admin',
 				'plugin' => null,
 				'actions' => [
-					'*' => [1, 2, 3, -1]
+					'*' => [1, 2, 3]
 				]
 			],
 			'Posts.Posts' => [
@@ -246,7 +241,7 @@ INI;
 				'prefix' => null,
 				'plugin' => 'Posts',
 				'actions' => [
-					'*' => [1, 2, 3, -1]
+					'*' => [1, 2, 3]
 				]
 			],
 			'Posts.admin/Posts' => [
@@ -254,7 +249,7 @@ INI;
 				'prefix' => 'admin',
 				'plugin' => 'Posts',
 				'actions' => [
-					'*' => [1, 2, 3, -1]
+					'*' => [1, 2, 3]
 				]
 			],
 			'Blogs' => [
@@ -1230,8 +1225,7 @@ INI;
 		$expected = [
 			'user' => 1,
 			'moderator' => 2,
-			'admin' => 3,
-			'public' => -1
+			'admin' => 3
 		];
 		$res =  $method->invoke($object);
 		$this->assertEquals($expected, $res);
