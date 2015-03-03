@@ -19,7 +19,7 @@ class TinyAuthorizeTest extends TestCase {
 		'core.users',
 		'core.auth_users',
 		'plugin.tiny_auth.roles',
-//		'plugin.tiny_auth.roles_users',
+		'plugin.tiny_auth.empty_roles',
 	];
 
 	public $Collection;
@@ -1066,6 +1066,82 @@ INI;
 				$this->assertTrue($res);
 			}
 		}
+	}
+
+	/**
+	 * Tests getting available Roles from Configure and database
+	 *
+	 * @return void
+	 */
+	public function testAvailableRoles() {
+		$object = new TestTinyAuthorize($this->Collection, [
+			'autoClearCache' => true,
+			'rolesTable' => 'Roles'
+		]);
+
+		// Make protected function available
+		$reflection = new \ReflectionClass(get_class($object));
+		$method = $reflection->getMethod('_getAvailableRoles');
+		$method->setAccessible(true);
+
+		// Test against roles array in Configure
+		$expected = [
+			'user' => 1,
+			'moderator' => 2,
+			'admin' => 3,
+			'public' => -1
+		];
+		$res =  $method->invoke($object);
+		$this->assertEquals($expected, $res);
+
+		// Test against roles from database
+		Configure::delete('Roles');
+		$expected = [
+			'superadmin' => 1,
+			'admin' => 2,
+			'user' => 4,
+			'partner' => 6
+		];
+		$res =  $method->invoke($object);
+		$this->assertEquals($expected, $res);
+	}
+
+	/**
+	 * Test exception thrown when no roles are in Configure AND the roles
+	 * database table does not exist.
+	 *
+	 * @expectedException Cake\Core\Exception\Exception
+	 */
+	public function testAvailableRolesMissingTableException() {
+		$object = new TestTinyAuthorize($this->Collection, [
+			'autoClearCache' => true,
+			'rolesTable' => 'NonExistentTable'
+		]);
+
+		// Make protected function available
+		$reflection = new \ReflectionClass(get_class($object));
+		$method = $reflection->getMethod('_getAvailableRoles');
+		$method->setAccessible(true);
+		$res =  $method->invoke($object);
+	}
+
+	/**
+	 * Test exception thrown when the roles database table exists but contains
+	 * no roles/records.
+	 *
+	 * @expectedException Cake\Core\Exception\Exception
+	 */
+	public function testAvailableRolesEmptyTableException() {
+		$object = new TestTinyAuthorize($this->Collection, [
+			'autoClearCache' => true,
+			'rolesTable' => 'EmptyRoles'
+		]);
+
+		// Make protected function available
+		$reflection = new \ReflectionClass(get_class($object));
+		$method = $reflection->getMethod('_getAvailableRoles');
+		$method->setAccessible(true);
+		$res =  $method->invoke($object);
 	}
 
 	/**
