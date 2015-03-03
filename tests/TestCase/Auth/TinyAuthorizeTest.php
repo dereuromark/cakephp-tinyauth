@@ -124,6 +124,9 @@ INI;
 
 	public function tearDown() {
 		unlink(TMP . 'acl.ini');
+		if (file_exists(TMP . 'acl.empty.ini')) {
+			unlink(TMP . 'acl.empty.ini');
+		}
 
 		parent::tearDown();
 	}
@@ -1068,6 +1071,64 @@ INI;
 		}
 	}
 
+
+
+	/**
+	 * Tests acl.ini parsing method.
+	 *
+	 * @return void
+	 */
+	public function testIniParsing() {
+		$object = new TestTinyAuthorize($this->Collection, [
+			'autoClearCache' => true
+		]);
+
+		// Make protected function available
+		$reflection = new \ReflectionClass(get_class($object));
+		$method = $reflection->getMethod('_parseAclIni');
+		$method->setAccessible(true);
+		$res = $method->invokeArgs($object, [TMP . 'acl.ini']);
+		assert(is_array($res));
+	}
+
+	/**
+	 * Tests exception thrown when no acl.ini exists.
+	 *
+	 * @expectedException Cake\Core\Exception\Exception
+	 */
+	public function testIniParsingMissingFileException() {
+		$object = new TestTinyAuthorize($this->Collection, [
+			'autoClearCache' => true
+		]);
+
+		// Make protected function available
+		$reflection = new \ReflectionClass(get_class($object));
+		$method = $reflection->getMethod('_parseAclIni');
+		$method->setAccessible(true);
+		$method->invokeArgs($object, [DS . 'non' . DS . 'existent' . DS . 'acl.ini']);
+	}
+
+	/**
+	 * Tests exception thrown when acl.ini is empty.
+	 *
+	 * @expectedException Cake\Core\Exception\Exception
+	 */
+	public function testIniParsingEmptyFileException() {
+		$object = new TestTinyAuthorize($this->Collection, [
+			'autoClearCache' => true
+		]);
+
+		// Make protected function available
+		$reflection = new \ReflectionClass(get_class($object));
+		$method = $reflection->getMethod('_parseAclIni');
+		$method->setAccessible(true);
+
+		// Create temporary empty acl.ini file
+		pr(TMP);
+		touch(TMP . 'acl.empty.ini');
+		$method->invokeArgs($object, [TMP . 'acl.empty.ini']);
+	}
+
 	/**
 	 * Tests getting available Roles from Configure and database
 	 *
@@ -1107,7 +1168,7 @@ INI;
 	}
 
 	/**
-	 * Test exception thrown when no roles are in Configure AND the roles
+	 * Tests exception thrown when no roles are in Configure AND the roles
 	 * database table does not exist.
 	 *
 	 * @expectedException Cake\Core\Exception\Exception
@@ -1122,11 +1183,11 @@ INI;
 		$reflection = new \ReflectionClass(get_class($object));
 		$method = $reflection->getMethod('_getAvailableRoles');
 		$method->setAccessible(true);
-		$res =  $method->invoke($object);
+		$method->invoke($object);
 	}
 
 	/**
-	 * Test exception thrown when the roles database table exists but contains
+	 * Tests exception thrown when the roles database table exists but contains
 	 * no roles/records.
 	 *
 	 * @expectedException Cake\Core\Exception\Exception
@@ -1141,7 +1202,7 @@ INI;
 		$reflection = new \ReflectionClass(get_class($object));
 		$method = $reflection->getMethod('_getAvailableRoles');
 		$method->setAccessible(true);
-		$res =  $method->invoke($object);
+		$method->invoke($object);
 	}
 
 	/**
