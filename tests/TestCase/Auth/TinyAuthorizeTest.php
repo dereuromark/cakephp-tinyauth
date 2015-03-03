@@ -1,6 +1,7 @@
 <?php
 namespace TinyAuth\Test\Auth;
 
+use Cake\Cache\Cache;
 use Cake\Controller\Controller;
 use Cake\Controller\ComponentRegistry;
 use Cake\Core\Configure;
@@ -144,6 +145,17 @@ INI;
 		]);
 		$this->assertEquals('AuthRoles', $object->config('rolesTable'));
 		$this->assertEquals('auth_role_id', $object->config('roleColumn'));
+	}
+
+	/**
+	 * Tests exception thrown when Cache is unavailable.
+	 *
+	 * @expectedException Cake\Core\Exception\Exception
+	 */
+	public function testConstructorWithoutValidCache() {
+		$object = new TestTinyAuthorize($this->Collection, [
+			'cache' => 'invalid-cache-config'
+		]);
 	}
 
 	/**

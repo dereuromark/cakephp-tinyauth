@@ -71,8 +71,8 @@ class TinyAuthorize extends BaseAuthorize {
 		$config += $this->_defaultConfig;
 		parent::__construct($registry, $config);
 
-		if (Cache::config($config['cache']) === false) {
-			throw new Exception(sprintf('TinyAuth could not find `%s` cache - expects at least a `default` cache', $config['cache']));
+		if (!in_array($config['cache'], Cache::configured())) {
+			throw new Exception(sprintf('Invalid TinyAuthorization cache `%s`', $config['cache']));
 		}
 	}
 
