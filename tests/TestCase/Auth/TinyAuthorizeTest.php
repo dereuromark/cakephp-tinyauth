@@ -51,7 +51,6 @@ edit = user
 delete = admin
 very_long_underscored_action = user
 veryLongActionNameAction = user
-public_action = public
 ; ----------------------------------------------------------
 ; TagsController (/admin prefixed route, no plugin)
 ; ----------------------------------------------------------
@@ -61,7 +60,6 @@ edit = user
 delete = admin
 very_long_underscored_action = user
 veryLongActionNameAction = user
-public_action = public
 ; ----------------------------------------------------------
 ; TagsController (plugin Tags, no prefixed route)
 ; ----------------------------------------------------------
@@ -69,7 +67,6 @@ public_action = public
 index = user
 edit,view = user
 delete = admin
-public_action = public
 very_long_underscored_action = user
 veryLongActionNameAction = user
 ; ----------------------------------------------------------
@@ -79,7 +76,6 @@ veryLongActionNameAction = user
 index = user
 view, edit = user
 delete = admin
-public_action = public
 very_long_underscored_action = user
 veryLongActionNameAction = user
 ; ----------------------------------------------------------
@@ -300,7 +296,10 @@ INI;
 				]
 			]
 		];
-		//debug($res);
+		// We don't need the original map
+		foreach ($res as &$r) {
+			unset($r['map']);
+		}
 		$this->assertEquals($expected, $res);
 	}
 

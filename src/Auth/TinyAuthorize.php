@@ -197,10 +197,9 @@ class TinyAuthorize extends BaseAuthorize {
 		$res = [];
 		foreach ($iniArray as $key => $array) {
 			$res[$key] = $this->_deconstructIniKey($key);
+			$res[$key]['map'] = $array;
 
 			foreach ($array as $actions => $roles) {
-				//$res[$key]['actions_string'] = $actions;
-
 				// get all roles used in the current ini section
 				$roles = explode(',', $roles);
 				$actions = explode(',', $actions);
