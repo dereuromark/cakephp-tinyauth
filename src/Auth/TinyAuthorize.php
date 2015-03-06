@@ -13,8 +13,8 @@ use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 
-if (!defined('CLASS_USER')) {
-	define('CLASS_USER', 'Users'); // override if you have it in a plugin: PluginName.Users etc
+if (!defined('CLASS_USERS')) {
+	define('CLASS_USERS', 'Users'); // override if you have it in a plugin: PluginName.Users etc
 }
 if (!defined('AUTH_CACHE')) {
 	define('AUTH_CACHE', '_cake_core_'); // use the most persistent cache by default
@@ -48,7 +48,7 @@ class TinyAuthorize extends BaseAuthorize {
 		'roleColumn' => 'role_id', // name of column in user table holding role id (used for single role/BT only)
 		'rolesTable' => 'Roles', // name of Configure key holding available roles OR class name of roles table
 		'multiRole' => false, // true to enables multirole/HABTM authorization (requires a valid join table)
-
+		'pivotTable' => null, // Use instead of auto-detect for the multi-role pivot table holding the user's roles
 		'adminRole' => null, // id of the admin role (used to give access to all /admin prefixed resources when allowAdmin is enabled)
 		'superAdminRole' => null, // id of super admin role granted access to ALL resources
 		'adminPrefix' => 'admin', // name of the admin prefix route (only used when allowAdmin is enabled)
@@ -68,6 +68,7 @@ class TinyAuthorize extends BaseAuthorize {
 	 * @throws Cake\Core\Exception\Exception
 	 */
 	public function __construct(ComponentRegistry $registry, array $config = []) {
+		$config += (array)Configure::read('TinyAuth');
 		$config += $this->_defaultConfig;
 		parent::__construct($registry, $config);
 
@@ -193,6 +194,8 @@ class TinyAuthorize extends BaseAuthorize {
 			$res[$key] = $this->_deconstructIniKey($key);
 
 			foreach ($array as $actions => $roles) {
+				//$res[$key]['actions_string'] = $actions;
+
 				// get all roles used in the current ini section
 				$roles = explode(',', $roles);
 				$actions = explode(',', $actions);
@@ -341,28 +344,31 @@ class TinyAuthorize extends BaseAuthorize {
 			if (isset($user[$this->_config['roleColumn']])) {
 				return [$user[$this->_config['roleColumn']]];
 			}
-			throw new Exception (sprintf('Missing TinyAuthorize role id (%s) in user session', $this->_config['roleColumn']));
+			throw new Exception(sprintf('Missing TinyAuthorize role id (%s) in user session', $this->_config['roleColumn']));
 		}
 
 		// multi-role: reverse engineer name of the pivot table
-		$rolesTableName = Inflector::tableize($this->_config['rolesTable']);
-		$tables = [
-			Inflector::tableize(CLASS_USER),
-			$rolesTableName
-		];
-		asort($tables);
-		$pivotTableName = implode('_', $tables);
+		$rolesTableName = $this->_config['rolesTable'];
+		$pivotTableName = $this->_config['pivotTable'];
+		if (!$pivotTableName) {
+			$tables = [
+				CLASS_USERS,
+				$rolesTableName
+			];
+			asort($tables);
+			$pivotTableName = implode('', $tables);
+		}
 
 		// fetch roles directly from the pivot table
 		$pivotTable = TableRegistry::get($pivotTableName);
-		$roleColumn = Inflector::singularize($rolesTableName) . '_id';
+		$roleColumn = $this->_config['roleColumn'];
 		$roles = $pivotTable->find('all', [
-			'conditions' => ['user_id =' => $user['id']],
+			'conditions' => ['user_id' => $user['id']],
 			'fields' => $roleColumn
 		])->extract($roleColumn)->toArray();
 
 		if (!count($roles)) {
-			throw new Exception ('Missing TinyAuthorize roles for user in pivot table');
+			throw new Exception('Missing TinyAuthorize roles for user in pivot table');
 		}
 		return $roles;
 	}

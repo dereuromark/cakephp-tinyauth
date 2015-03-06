@@ -662,7 +662,8 @@ INI;
 		$object = new TestTinyAuthorize($this->Collection, [
 			'autoClearCache' => true,
 			'multiRole' => true,
-			'rolesTable' => 'DatabaseRoles'
+			'rolesTable' => 'DatabaseRoles',
+			'roleColumn' => 'database_role_id',
 		]);
 
 		$this->request->params['controller'] = 'Tags';
@@ -1321,7 +1322,8 @@ INI;
 		$object = new TestTinyAuthorize($this->Collection, [
 			'autoClearCache' => true,
 			'multiRole' => true,
-			'rolesTable' => 'DatabaseRoles'
+			'rolesTable' => 'DatabaseRoles',
+			'roleColumn' => 'database_role_id',
 		]);
 		$user = ['id' => 2];
 		$expected = [
@@ -1397,7 +1399,7 @@ class TestTinyAuthorize extends TinyAuthorize {
 	 * @return Cake\ORM\Table The User table
 	 */
 	public function getTable() {
-		$Users = TableRegistry::get(CLASS_USER);
+		$Users = TableRegistry::get(CLASS_USERS);
 		$Users->belongsTo('Roles');
 
 		return $Users;
