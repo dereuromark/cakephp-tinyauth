@@ -30,10 +30,9 @@ public function beforeFilter(Event $event) {
 	$this->loadComponent('Auth', [
 		'authorize' => [
 			'TinyAuth.Tiny' => [
-				'autoClearCache' => true,
 				'allowUser' => false,
-				'allowAdmin' => false,
-				'adminRole' => 'admin',
+				'authorizeByPrefix' => false,
+				'prefixes' => [],
 				'superAdminRole' => null
 			]
 		]
@@ -131,9 +130,9 @@ Option | Type | Description
 roleColumn|string|Name of column in user table holding role id (only used for single-role per user/BT)
 rolesTable|string|Name of Configure key holding all available roles OR class name of roles database table
 multiRole|boolean|True will enable multi-role/HABTM authorization (requires a valid join table)
-adminRole|int|Id of the role you will use as admins. Users with this role are granted access to all actions using `adminPrefix` but only when `allowAdmin` is enabled
 superAdminRole|int|Id of the super admin role. Users with this role will have access to ALL resources.
-adminPrefix|string|Name of the prefix used for admin pages. Defaults to admin.
-allowAdmin|boolean|True will give users with a role id matching `adminRole` access to all resources using the `adminPrefix`
+authorizeByPrefix|boolean|If prefixed routes should be auto-handled by their matching role name.
+prefixes|array|A list of authorizeByPrefix handled prefixes.
 allowUser|boolean|True will give authenticated users access to all resources except those using the `adminPrefix`
+adminPrefix|string|Name of the prefix used for admin pages. Defaults to admin.
 autoClearCache|Boolean|True will generate a new acl cache file every time.

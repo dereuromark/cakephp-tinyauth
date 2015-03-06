@@ -20,7 +20,7 @@ if (!defined('AUTH_CACHE')) {
 	define('AUTH_CACHE', '_cake_core_'); // use the most persistent cache by default
 }
 if (!defined('ACL_FILE')) {
-	define('ACL_FILE', 'acl.ini'); // stored in /app/Config/
+	define('ACL_FILE', 'acl.ini'); // stored in /app/Config/ by default
 }
 
 /**
@@ -49,12 +49,11 @@ class TinyAuthorize extends BaseAuthorize {
 		'rolesTable' => 'Roles', // name of Configure key holding available roles OR class name of roles table
 		'multiRole' => false, // true to enables multirole/HABTM authorization (requires a valid join table)
 		'pivotTable' => null, // Use instead of auto-detect for the multi-role pivot table holding the user's roles
-		'adminRole' => null, // id of the admin role (used to give access to all /admin prefixed resources when allowAdmin is enabled)
 		'superAdminRole' => null, // id of super admin role granted access to ALL resources
-		'adminPrefix' => 'admin', // name of the admin prefix route (only used when allowAdmin is enabled)
-		'allowAdmin' => false, // boolean, true to allow admin role access to all 'adminPrefix' prefixed urls
+		'authorizeByPrefix' => false,
+		'prefixes' => [], // Whitelisted prefixes (only used when allowAdmin is enabled), leave empty to use all available
 		'allowUser' => false, // enable to allow ALL roles access to all actions except prefixed with 'adminPrefix'
-
+		'adminPrefix' => 'admin', // name of the admin prefix route (only used when allowUser is enabled)
 		'cache' => AUTH_CACHE,
 		'cacheKey' => 'tiny_auth_acl',
 		'autoClearCache' => false, // usually done by Cache automatically in debug mode,
@@ -70,6 +69,10 @@ class TinyAuthorize extends BaseAuthorize {
 	public function __construct(ComponentRegistry $registry, array $config = []) {
 		$config += (array)Configure::read('TinyAuth');
 		$config += $this->_defaultConfig;
+		if (!$config['prefixes'] && !empty($config['authorizeByPrefix'])) {
+			throw new Exception('Invalid TinyAuthorization setup for `authorizeByPrefix`. Please declare `prefixes`.');
+		}
+
 		parent::__construct($registry, $config);
 
 		if (!in_array($config['cache'], Cache::configured())) {
@@ -110,16 +113,18 @@ class TinyAuthorize extends BaseAuthorize {
 			if (empty($request->params['prefix'])) {
 				return true;
 			}
-			if ($request->params['prefix'] != $this->_config['adminPrefix']) {
+			if ($request->params['prefix'] !== $this->_config['adminPrefix']) {
 				return true;
 			}
 		}
 
-		// allow access to all /admin prefixed actions for users belonging to
-		// the specified adminRole id.
-		if (!empty($this->_config['allowAdmin']) && !empty($this->_config['adminRole'])) {
-			if (!empty($request->params['prefix']) && $request->params['prefix'] === $this->_config['adminPrefix']) {
-				if (in_array($this->_config['adminRole'], $userRoles)) {
+		// allow access to all  prefixed actions for users belonging to
+		// the specified role that matches the prefix.
+		if (!empty($this->_config['authorizeByPrefix']) && !empty($request->params['prefix'])) {
+			if (in_array($request->params['prefix'], $this->_config['prefixes'])) {
+				$roles = $this->_getAvailableRoles();
+				$role = isset($roles[$request->params['prefix']]) ? $roles[$request->params['prefix']] : null;
+				if ($role && in_array($role, $userRoles)) {
 					return true;
 				}
 			}

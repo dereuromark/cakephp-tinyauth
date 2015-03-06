@@ -122,6 +122,8 @@ INI;
 			'moderator' => 2,
 			'admin' => 3
 		]);
+
+		Configure::write('TinyAuth', ['autoClearCache' => true]);
 	}
 
 	public function tearDown() {
@@ -142,7 +144,7 @@ INI;
 		$object = new TestTinyAuthorize($this->Collection, [
 			'rolesTable' => 'AuthRoles',
 			'roleColumn' => 'auth_role_id',
-			'autoClearCache' => true,
+
 		]);
 		$this->assertEquals('AuthRoles', $object->config('rolesTable'));
 		$this->assertEquals('auth_role_id', $object->config('roleColumn'));
@@ -641,7 +643,7 @@ INI;
 	public function testBasicUserMethodAllowedMultiRole() {
 		// Test against roles array in Configure
 		$object = new TestTinyAuthorize($this->Collection, [
-			'autoClearCache' => true,
+
 			'multiRole' => true,
 			'rolesTable' => 'Roles'
 		]);
@@ -661,7 +663,7 @@ INI;
 
 		// Test against roles array in Database
 		$object = new TestTinyAuthorize($this->Collection, [
-			'autoClearCache' => true,
+
 			'multiRole' => true,
 			'rolesTable' => 'DatabaseRoles',
 			'roleColumn' => 'database_role_id',
@@ -827,7 +829,7 @@ INI;
 	public function testUserMethodsAllowed() {
 		$object = new TestTinyAuthorize($this->Collection, [
 			'allowUser' => true,
-			'autoClearCache' => true,
+
 			'adminPrefix' => 'admin'
 		]);
 
@@ -943,17 +945,18 @@ INI;
 	}
 
 	/**
-	 * Test with enabled configuration settings 'allowAdmin' and 'adminRole'
-	 * giving users having the adminRole ID access to all actions that are
-	 * prefixed using the 'adminPrefix' configuration setting.
+	 * Test with enabled configuration settings - access to all actions that are
+	 * prefixed using the same role configuration setting.
+	 *
+	 * TODO: also allow mapping of "prefix" => "role" for more flexibility
 	 *
 	 * @return void
 	 */
 	public function testAdminMethodsAllowed() {
 		$config = [
-			'allowAdmin' => true,
+			'authorizeByPrefix' => true,
 			'adminRole' => 3,
-			'adminPrefix' => 'admin',
+			'prefixes' => ['admin'],
 			'autoClearCache' => true
 		];
 		$object = new TestTinyAuthorize($this->Collection, $config);
@@ -995,7 +998,7 @@ INI;
 	 */
 	public function testSuperAdminRole() {
 		$object = new TestTinyAuthorize($this->Collection, [
-			'autoClearCache' => true,
+
 			'superAdminRole' => 9
 		]);
 		$res = $object->getAcl();
@@ -1226,7 +1229,7 @@ INI;
 	 */
 	public function testAvailableRoles() {
 		$object = new TestTinyAuthorize($this->Collection, [
-			'autoClearCache' => true,
+
 			'rolesTable' => 'Roles'
 		]);
 
@@ -1247,7 +1250,7 @@ INI;
 		// Test against roles from database
 		Configure::delete('Roles');
 		$object = new TestTinyAuthorize($this->Collection, [
-			'autoClearCache' => true,
+
 			'rolesTable' => 'DatabaseRoles'
 		]);
 		$expected = [
@@ -1267,7 +1270,7 @@ INI;
 	 */
 	public function testAvailableRolesMissingTableException() {
 		$object = new TestTinyAuthorize($this->Collection, [
-			'autoClearCache' => true,
+
 			'rolesTable' => 'NonExistentTable'
 		]);
 
@@ -1286,7 +1289,7 @@ INI;
 	 */
 	public function testAvailableRolesEmptyTableException() {
 		$object = new TestTinyAuthorize($this->Collection, [
-			'autoClearCache' => true,
+
 			'rolesTable' => 'EmptyRoles'
 		]);
 
@@ -1304,7 +1307,7 @@ INI;
 	 */
 	public function testUserRoles() {
 		$object = new TestTinyAuthorize($this->Collection, [
-			'autoClearCache' => true,
+
 			'multiRole' => false,
 			'roleColumn' => 'role_id'
 		]);
@@ -1321,7 +1324,7 @@ INI;
 
 		// Multi-role: lookup roles directly in pivot table
 		$object = new TestTinyAuthorize($this->Collection, [
-			'autoClearCache' => true,
+
 			'multiRole' => true,
 			'rolesTable' => 'DatabaseRoles',
 			'roleColumn' => 'database_role_id',
@@ -1342,7 +1345,7 @@ INI;
 	 */
 	public function testUserRolesCustomPivotTable() {
 		$object = new TestTinyAuthorize($this->Collection, [
-			'autoClearCache' => true,
+
 			'multiRole' => true,
 			'rolesTable' => 'DatabaseRoles',
 			'pivotTable' => 'DatabaseUserRoles',
@@ -1371,7 +1374,7 @@ INI;
 	 */
 	public function testUserRolesMissingRoleColumn() {
 		$object = new TestTinyAuthorize($this->Collection, [
-			'autoClearCache' => true,
+
 			'rolesTable' => 'NonExistentTable',
 			'multiRole' => false
 		]);
@@ -1393,7 +1396,7 @@ INI;
 	 */
 	public function testUserRolesUserWithoutPivotRoles() {
 		$object = new TestTinyAuthorize($this->Collection, [
-			'autoClearCache' => true,
+
 			'rolesTable' => 'Roles',
 			'multiRole' => true
 		]);
