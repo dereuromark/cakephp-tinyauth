@@ -20,8 +20,9 @@ class TinyAuthorizeTest extends TestCase {
 		'plugin.tiny_auth.users',
 		'plugin.tiny_auth.database_roles',
 		'plugin.tiny_auth.empty_roles',
-		'plugin.tiny_auth.roles_users', // pivot table using Configure role ids
-		'plugin.tiny_auth.database_roles_users' // pivot table using Database role ids
+		'plugin.tiny_auth.roles_users', // Pivot table using Configure role ids
+		'plugin.tiny_auth.database_roles_users', // Pivot table using Database role ids
+		'plugin.tiny_auth.database_user_roles' // Custom pivot table using Database role ids
 	];
 
 	public $Collection;
@@ -1325,6 +1326,34 @@ INI;
 			'rolesTable' => 'DatabaseRoles',
 			'roleColumn' => 'database_role_id',
 		]);
+		$user = ['id' => 2];
+		$expected = [
+			0 => 11, // user
+			1 => 13	 // admin
+		];
+		$res = $method->invokeArgs($object, [$user]);
+		$this->assertEquals($expected, $res);
+	}
+
+	/**
+	 * Tests fetching user roles
+	 *
+	 * @return void
+	 */
+	public function testUserRolesCustomPivotTable() {
+		$object = new TestTinyAuthorize($this->Collection, [
+			'autoClearCache' => true,
+			'multiRole' => true,
+			'rolesTable' => 'DatabaseRoles',
+			'pivotTable' => 'DatabaseUserRoles',
+			'roleColumn' => 'role_id',
+		]);
+
+		// Make protected function available
+		$reflection = new \ReflectionClass(get_class($object));
+		$method = $reflection->getMethod('_getUserRoles');
+		$method->setAccessible(true);
+
 		$user = ['id' => 2];
 		$expected = [
 			0 => 11, // user
