@@ -42,7 +42,7 @@ public function beforeFilter(Event $event) {
 
 ## Roles
 
-You need to define some roles for Authorize to work, for example:
+You need to define some roles for TinyAuth to work, for example:
 
 ```php
 // config/app_custom.php
@@ -51,14 +51,14 @@ You need to define some roles for Authorize to work, for example:
 /**
 * Optionally define constants for easy referencing throughout your code
 */
-define('ROLE_USERS', 1);
-define('ROLE_ADMINS', 2);
+define('ROLE_USER', 1);
+define('ROLE_ADMIN', 2);
 define('ROLE_SUPERADMIN', 9);
 
 return [
 	'Roles' => [
-		'user' => ROLE_USERS,
-		'admin' => ROLE_ADMINS,
+		'user' => ROLE_USER,
+		'admin' => ROLE_ADMIN,
 		'superadmin' => ROLE_SUPERADMIN
 	]
 ];
@@ -66,7 +66,7 @@ return [
 
 ## acl.ini
 
-Authorize expects an ``acl.ini`` file in your config directory.
+TinyAuth expects an ``acl.ini`` file in your config directory.
 Use it to specify who gets access to which resources.
 
 The section key syntax follows the CakePHP naming convention for plugins.
@@ -123,7 +123,7 @@ view, edit = user
 
 ## Configuration
 
-Authorize supports the following configuration options.
+TinyAuth supports the following configuration options.
 
 Option | Type | Description
 :----- | :--- | :----------
@@ -135,4 +135,4 @@ authorizeByPrefix|boolean|If prefixed routes should be auto-handled by their mat
 prefixes|array|A list of authorizeByPrefix handled prefixes.
 allowUser|boolean|True will give authenticated users access to all resources except those using the `adminPrefix`
 adminPrefix|string|Name of the prefix used for admin pages. Defaults to admin.
-autoClearCache|Boolean|True will generate a new acl cache file every time.
+autoClearCache|Boolean|True will generate a new ACL cache file every time.

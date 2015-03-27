@@ -39,7 +39,7 @@ Plugin::loadAll(array(
 That's it. It should be up and running.
 
 ## Docs
-See [WIKI](https://github.com/dereuromark/cakephp-tinyauth/wiki).
+See [Docs](/docs).
 
 ## Disclaimer
 Use at your own risk. Please provide any fixes or enhancements via issue or better pull request.
