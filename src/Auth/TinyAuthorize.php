@@ -118,7 +118,7 @@ class TinyAuthorize extends BaseAuthorize {
 			}
 		}
 
-		// allow access to all  prefixed actions for users belonging to
+		// allow access to all prefixed actions for users belonging to
 		// the specified role that matches the prefix.
 		if (!empty($this->_config['authorizeByPrefix']) && !empty($request->params['prefix'])) {
 			if (in_array($request->params['prefix'], $this->_config['prefixes'])) {
