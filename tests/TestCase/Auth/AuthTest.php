@@ -8,36 +8,12 @@ use TinyAuth\Auth\Auth;
  */
 class AuthTest extends TestCase {
 
-	//public $fixtures = array('core.cake_session');
-
 	public function setUp() {
 		parent::setUp();
-
-		//ClassRegistry::init(array('table' => 'cake_sessions', 'class' => 'Session', 'alias' => 'Session'));
 	}
 
 	public function tearDown() {
 		parent::tearDown();
-
-		//ClassRegistry::flush();
-		//CakeSession::delete('Auth');
-	}
-
-	/**
-	 * AuthTest::testId()
-	 *
-	 * @return void
-	 * @deprecated
-	 */
-	public function testId() {
-		$this->skipIf(true, 'Deprecated');
-
-		$id = Auth::id();
-		$this->assertNull($id);
-
-		CakeSession::write('Auth.User.id', 1);
-		$id = Auth::id();
-		$this->assertEquals(1, $id);
 	}
 
 	/**
@@ -71,13 +47,12 @@ class AuthTest extends TestCase {
 		if (!defined('USER_ROLE_KEY')) {
 			define('USER_ROLE_KEY', 'Role');
 		}
-		//CakeSession::write('Auth.User.id', 1);
+
 		$roles = [
 			['id' => '1', 'name' => 'User', 'alias' => 'user'],
 			['id' => '2', 'name' => 'Moderator', 'alias' => 'moderator'],
 			['id' => '3', 'name' => 'Admin', 'alias' => 'admin'],
 		];
-		//CakeSession::write('Auth.User.' . USER_ROLE_KEY, $roles);
 
 		$res = Auth::hasRole(4, $roles);
 		$this->assertFalse($res);
