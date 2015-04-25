@@ -24,18 +24,18 @@ if (!defined('ACL_FILE')) {
 }
 
 /**
- * Probably the most simple and fastest Acl out there.
- * Only one config file `acl.ini` necessary
- * Doesn't even need a Role Model / roles table
- * Uses most persistent _cake_core_ cache by default
+ * Probably the most simple and fastest ACL out there.
+ * Only one config file `acl.ini` necessary,
+ * doesn't even need a Roles Table / roles table.
+ * Uses most persistent _cake_core_ cache by default.
  * @link http://www.dereuromark.de/2011/12/18/tinyauth-the-fastest-and-easiest-authorization-for-cake2
  *
  * Usage:
- * Include it in your beforeFilter() method of the AppController
- * $this->Auth->authorize = array('Tools.Tiny');
+ * Include it in your beforeFilter() method of the AppController with the following config:
+ * 'authorize' => ['Tools.Tiny']
  *
  * Or with admin prefix protection only
- * $this->Auth->authorize = array('Tools.Tiny' => array('allowUser' => true));
+ * 'authorize' => ['Tools.Tiny' => ['allowUser' => true]];
  *
  * @author Mark Scherer
  * @license MIT
