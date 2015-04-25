@@ -11,10 +11,11 @@
 A CakePHP 3.x Plugin to handle user authorization the easy way.
 This plugin requires PHP5.4+
 
-Please note: This plugin is currently still beta and should only be used with caution. A release will be made once CakePHP 3.0 is stable.
+## Demo
+See http://sandbox3.dereuromark.de/auth-sandbox
 
 ## How to include
-Installing the Plugin is pretty much as with every other CakePHP Plugin.
+Installing the plugin is pretty much as with every other CakePHP Plugin.
 
 ```
 "require": {
@@ -25,15 +26,15 @@ Installing the Plugin is pretty much as with every other CakePHP Plugin.
 Then load the plugin:
 
 ```php
-Plugin::load('TinyAuth', array('bootstrap' => true));
+Plugin::load('TinyAuth', ['bootstrap' => true]);
 ```
 
 For `Plugin::loadAll()` it's
 
 ```php
-Plugin::loadAll(array(
-		'TinyAuth' => array('bootstrap' => true)
-));
+Plugin::loadAll([
+		'TinyAuth' => ['bootstrap' => true]
+]);
 ```
 
 That's it. It should be up and running.
