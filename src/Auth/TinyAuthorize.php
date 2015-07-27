@@ -45,7 +45,8 @@ class TinyAuthorize extends BaseAuthorize {
 	protected $_acl = null;
 
 	protected $_defaultConfig = [
-		'roleColumn' => 'role_id', // name of column in user table holding role id (used for single role/BT only)
+		'roleColumn' => 'role_id', // name of column in users table holding role id (used for single role/BT only)
+		'aliasColumn' => 'alias', // name of column in roles table holding role alias/slug
 		'rolesTable' => 'Roles', // name of Configure key holding available roles OR class name of roles table
 		'multiRole' => false, // true to enables multirole/HABTM authorization (requires a valid join table)
 		'pivotTable' => null, // Use instead of auto-detect for the multi-role pivot table holding the user's roles
@@ -221,13 +222,17 @@ class TinyAuthorize extends BaseAuthorize {
 
 				// process actions
 				foreach ($actions as $action) {
-					if (!($action = trim($action))) {
+					$action = trim($action);
+					if (!$action) {
 						continue;
 					}
+
 					foreach ($roles as $role) {
-						if (!($role = trim($role)) || $role === '*') {
+						$role = trim($role);
+						if (!$role || $role === '*') {
 							continue;
 						}
+
 						// lookup role id by name in roles array
 						$newRole = $availableRoles[strtolower($role)];
 						$res[$key]['actions'][$action][] = $newRole;
@@ -235,6 +240,7 @@ class TinyAuthorize extends BaseAuthorize {
 				}
 			}
 		}
+
 		Cache::write($this->_config['cacheKey'], $res, $this->_config['cache']);
 		return $res;
 	}
@@ -321,8 +327,9 @@ class TinyAuthorize extends BaseAuthorize {
 
 		// fetch roles from database
 		$rolesTable = TableRegistry::get($this->_config['rolesTable']);
+
 		$roles = $rolesTable->find('all')->formatResults(function ($results) {
-			return $results->combine('alias', 'id');
+			return $results->combine($this->_config['aliasColumn'], 'id');
 		})->toArray();
 
 		if (!count($roles)) {
