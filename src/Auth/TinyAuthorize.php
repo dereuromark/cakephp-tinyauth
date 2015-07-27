@@ -119,7 +119,7 @@ class TinyAuthorize extends BaseAuthorize {
 			}
 		}
 
-		// allow access to all  prefixed actions for users belonging to
+		// Allow access to all prefixed actions for users belonging to
 		// the specified role that matches the prefix.
 		if (!empty($this->_config['authorizeByPrefix']) && !empty($request->params['prefix'])) {
 			if (in_array($request->params['prefix'], $this->_config['prefixes'])) {
@@ -131,7 +131,7 @@ class TinyAuthorize extends BaseAuthorize {
 			}
 		}
 
-		// allow logged in super admins access to all resources
+		// Allow logged in super admins access to all resources
 		if (!empty($this->_config['superAdminRole'])) {
 			foreach ($userRoles as $userRole) {
 				if ($userRole === $this->_config['superAdminRole']) {
@@ -140,12 +140,12 @@ class TinyAuthorize extends BaseAuthorize {
 			}
 		}
 
-		// generate ACL if not already set
+		// Generate ACL if not already set
 		if ($this->_acl === null) {
 			$this->_acl = $this->_getAcl();
 		}
 
-		// allow access if user has a role with wildcard access to the resource
+		// Allow access if user has a role with wildcard access to the resource
 		$iniKey = $this->_constructIniKey($request);
 		if (isset($this->_acl[$iniKey]['actions']['*'])) {
 			$matchArray = $this->_acl[$iniKey]['actions']['*'];
@@ -156,7 +156,7 @@ class TinyAuthorize extends BaseAuthorize {
 			}
 		}
 
-		// allow access if user has been granted access to the specific resource
+		// Allow access if user has been granted access to the specific resource
 		if (isset($this->_acl[$iniKey]['actions'])) {
 			if(array_key_exists($request->action, $this->_acl[$iniKey]['actions']) && !empty($this->_acl[$iniKey]['actions'][$request->action])) {
 				$matchArray = $this->_acl[$iniKey]['actions'][$request->action];
