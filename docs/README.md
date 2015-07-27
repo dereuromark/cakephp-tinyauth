@@ -47,7 +47,6 @@ You need to define some roles for TinyAuth to work, for example:
 ```php
 // config/app_custom.php
 
-
 /**
 * Optionally define constants for easy referencing throughout your code
 */
@@ -63,6 +62,11 @@ return [
 	]
 ];
 ```
+
+You do not have to configure the Roles array if you use DB driven roles.
+You can however avoid the DB lookups this way if you want to.
+For the DB driven approach make sure you have an "alias" field in your roles table
+as slug identifier for the acl.ini file.
 
 ## acl.ini
 
@@ -128,6 +132,7 @@ TinyAuth supports the following configuration options.
 Option | Type | Description
 :----- | :--- | :----------
 roleColumn|string|Name of column in user table holding role id (only used for single-role per user/BT)
+roleAlias|string|Name of the column for the alias
 rolesTable|string|Name of Configure key holding all available roles OR class name of roles database table
 multiRole|boolean|True will enable multi-role/HABTM authorization (requires a valid join table)
 superAdminRole|int|Id of the super admin role. Users with this role will have access to ALL resources.
