@@ -17,10 +17,8 @@ See http://sandbox3.dereuromark.de/auth-sandbox
 ## How to include
 Installing the plugin is pretty much as with every other CakePHP Plugin.
 
-```
-"require": {
-	"dereuromark/cakephp-tinyauth": "dev-master"
-}
+```bash
+composer require dereuromark/cakephp-tinyauth:dev-master
 ```
 
 Then load the plugin:
