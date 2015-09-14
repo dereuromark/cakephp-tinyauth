@@ -1,18 +1,19 @@
 # TinyAuth Authorization
 The fast and easy way for user authorization in CakePHP 3.x applications.
 
-Enable TinyAuth Authorize adapter if you want to add instant (and easy) role based
-access (RBAC) to your application.
+Enable TinyAuth Authorize adapter if you want to add instant (and easy) role
+based access (RBAC) to your application.
 
 ## Basic Features
-- Singe or multi role
+- Single or multi role
 - DB (dynamic) or Configure based role definition
 - INI file (static) based access rights (controller-action/role setup)
 - Lightweight and incredibly fast
 
 Do NOT use if
 - you need ROW based access
-- you want to dynamically adjust access rights (or enhance it with a web frontend yourself)
+- you want to dynamically adjust access rights (or enhance it with a web
+frontend yourself)
 
 ## Enabling
 
@@ -30,6 +31,7 @@ public function beforeFilter(Event $event) {
 	$this->loadComponent('Auth', [
 		'authorize' => [
 			'TinyAuth.Tiny' => [
+				'multiRole' => false,
 				'allowUser' => false,
 				'authorizeByPrefix' => false,
 				'prefixes' => [],
@@ -39,10 +41,15 @@ public function beforeFilter(Event $event) {
 	]);
 }
 ```
-
 ## Roles
 
-You need to define some roles for TinyAuth to work, for example:
+TinyAuth requires the presence of roles to function so create those first using
+one of the following two options.
+
+### Configure based roles
+
+Define your roles in a Configure array if you want to prevent database role
+lookups, for example:
 
 ```php
 // config/app_custom.php
@@ -63,10 +70,52 @@ return [
 ];
 ```
 
-You do not have to configure the Roles array if you use DB driven roles.
-You can however avoid the DB lookups this way if you want to.
-For the DB driven approach make sure you have an "alias" field in your roles table
-as slug identifier for the acl.ini file.
+### Database roles
+When you choose to store your roles in the database TinyAuth expects a table
+named ``roles``. If you prefer to use another table name simply specify it using the
+``rolesTable`` configuration option.
+
+>**Note:** make sure to add an "alias" field to your roles table (used as slug
+identifier in the acl.ini file)
+
+Example of a record from a valid roles table:
+
+```php
+'id' => '11'
+'name' => 'User'
+'description' => 'Basic authenticated user'
+'alias' => 'user'
+'created' => '2010-01-07 03:36:33'
+'modified' => '2010-01-07 03:36:33'
+```
+
+> Please note that you do NOT need Configure based roles when using database
+> roles. Also make sure to remove (or rename) existing Configure based roles
+> since TinyAuth will always first try to find a matching Configure roles array
+> before falling back to using the database.
+
+## Users
+
+### Single-role
+
+When using the single-role-per-user model TinyAuth expects your Users model to
+contain an column named ``role_id``. If you prefer to use another column name
+simply specify it using the ``roleColumn`` configuration option.
+
+### Multi-role
+When using the multiple-roles-per-user model:
+
+- your database MUST have a ``roles`` table
+- your database MUST have a valid join table (e.g. ``roles_users``)
+- the configuration option ``multiRole`` MUST be set to ``true``
+
+Example of a record from a valid join table:
+
+```php
+'id' => 1
+'user_id' => 1
+'role_id' => 1
+```
 
 ## acl.ini
 
