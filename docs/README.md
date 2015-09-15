@@ -35,7 +35,8 @@ public function beforeFilter(Event $event) {
 				'allowUser' => false,
 				'authorizeByPrefix' => false,
 				'prefixes' => [],
-				'superAdminRole' => null
+				'superAdminRole' => null,
+				'autoClearCache' => false
 			]
 		]
 	]);
@@ -172,6 +173,24 @@ view, edit = user
 ; ----------------------------------------------------------
 [Accounts.admin/Companies]
 * = admin
+```
+
+## Caching
+
+TinyAuth makes heavy use of caching to achieve optimal performance.
+
+You may however want to disable caching while developing RBAC to prevent
+confusing (outdated) results.
+
+To disable caching either:
+
+- pass ``true`` to the ``autoClearCache`` configuration option
+- use the example below to disable caching automatically for CakePHP debug mode
+
+```php
+'TinyAuth.Tiny' => [
+	'autoClearCache' => Configure::read('debug')
+]
 ```
 
 ## Configuration
