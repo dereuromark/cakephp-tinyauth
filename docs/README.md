@@ -42,6 +42,10 @@ public function beforeFilter(Event $event) {
 	]);
 }
 ```
+
+> Please note that TinyAuth Authorize can be used in combination with any
+> [CakePHP Authentication Type](http://book.cakephp.org/3.0/en/controllers/components/authentication.html#choosing-an-authentication-type).
+
 ## Roles
 
 TinyAuth requires the presence of roles to function so create those first using
