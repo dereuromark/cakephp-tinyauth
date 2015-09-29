@@ -6,11 +6,9 @@ use Cake\Cache\Cache;
 use Cake\Controller\ComponentRegistry;
 use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
-use Cake\Database\Schema\Collection;
 use Cake\Datasource\ConnectionManager;
 use Cake\Network\Request;
 use Cake\ORM\TableRegistry;
-use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 
 if (!defined('CLASS_USERS')) {
@@ -65,7 +63,7 @@ class TinyAuthorize extends BaseAuthorize {
 	 *
 	 * @param ComponentRegistry $registry
 	 * @param array $config
-	 * @throws Cake\Core\Exception\Exception
+	 * @throws \Cake\Core\Exception\Exception
 	 */
 	public function __construct(ComponentRegistry $registry, array $config = []) {
 		$config += (array)Configure::read('TinyAuth');
@@ -90,7 +88,7 @@ class TinyAuthorize extends BaseAuthorize {
 	 * - User belongsTo Roles (role_id in User array)
 	 *
 	 * @param array $user The user to authorize
-	 * @param Cake\Network\Request $request The request needing authorization.
+	 * @param \Cake\Network\Request $request The request needing authorization.
 	 * @return bool Success
 	 */
 	public function authorize($user, Request $request) {
@@ -102,9 +100,7 @@ class TinyAuthorize extends BaseAuthorize {
 	 * allows single or multi role based authorization
 	 *
 	 * @param array $userRoles
-	 * @param string $plugin
-	 * @param string $controller
-	 * @param string $action
+	 * @param \Cake\Network\Request $request Request instance
 	 * @return bool Success
 	 */
 	public function validate($userRoles, Request $request) {
@@ -248,8 +244,9 @@ class TinyAuthorize extends BaseAuthorize {
 	/**
 	 * Returns the acl.ini file as an array.
 	 *
+	 * * @param string $ini Full path to the acl.ini file
 	 * @return array List with all available roles
-	 * @throws Cake\Core\Exception\Exception
+	 * @throws \Cake\Core\Exception\Exception
 	 */
 	protected function _parseAclIni($ini) {
 		if (!file_exists($ini)) {
@@ -270,7 +267,7 @@ class TinyAuthorize extends BaseAuthorize {
 	/**
 	 * Deconstructs an ACL ini section key into a named array with ACL parts
 	 *
-	 * @param string INI section key as found in acl.ini
+	 * @param string $key INI section key as found in acl.ini
 	 * @return array Hash with named keys for controller, plugin and prefix
 	 */
 	protected function _deconstructIniKey($key) {
@@ -292,7 +289,7 @@ class TinyAuthorize extends BaseAuthorize {
 	/**
 	 * Constructs an ACL ini section key from a given CakeRequest
 	 *
-	 * @param Cake\Network\Request $request The request needing authorization.
+	 * @param \Cake\Network\Request $request The request needing authorization.
 	 * @return array Hash with named keys for controller, plugin and prefix
 	 */
 	protected function _constructIniKey(Request $request) {
@@ -311,7 +308,7 @@ class TinyAuthorize extends BaseAuthorize {
 	 * Configure first, tries database roles table next.
 	 *
 	 * @return array List with all available roles
-	 * @throws Cake\Core\Exception\Exception
+	 * @throws \Cake\Core\Exception\Exception
 	 */
 	protected function _getAvailableRoles() {
 		$roles = Configure::read($this->_config['rolesTable']);
@@ -347,7 +344,7 @@ class TinyAuthorize extends BaseAuthorize {
 	 *
 	 * @param array $user The user to get the roles for
 	 * @return array List with all role ids belonging to the user
-	 * @throws Cake\Core\Exception\Exception
+	 * @throws \Cake\Core\Exception\Exception
 	 */
 	protected function _getUserRoles($user) {
 		// single-role
