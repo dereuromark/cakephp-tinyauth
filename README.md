@@ -12,6 +12,16 @@ A CakePHP 3.x Plugin to handle user authorization the easy way.
 This plugin requires PHP5.4+
 
 ## Demo
+```ini
+[Users]
+index = *
+add,edit = user, mod
+* = admin
+
+[admin/Users]
+* = admin
+```
+
 See http://sandbox3.dereuromark.de/auth-sandbox
 
 ## How to include
@@ -39,11 +49,6 @@ That's it. It should be up and running.
 
 ## Docs
 See [Docs](/docs).
-
-## Disclaimer
-Use at your own risk. Please provide any fixes or enhancements via issue or better pull request.
-Some classes are still from 1.2 (and are merely upgraded to 2.x) and might still need some serious refactoring.
-If you are able to help on that one, that would be awesome.
 
 ### Branching strategy
 The master branch is the currently active and maintained one and works with the current 3.x stable version.
