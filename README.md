@@ -50,6 +50,8 @@ That's it. It should be up and running.
 ## Docs
 See [Docs](/docs).
 
+Also note the original [blog post](http://www.dereuromark.de/2011/12/18/tinyauth-the-fastest-and-easiest-authorization-for-cake2/) and how it all started.
+
 ### Branching strategy
 The master branch is the currently active and maintained one and works with the current 3.x stable version.
 Please see the original [Tools plugin](https://github.com/dereuromark/cakephp-tools) if you need TinyAuth for CakePHP 2.x versions.
