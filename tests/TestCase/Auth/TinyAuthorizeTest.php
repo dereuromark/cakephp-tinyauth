@@ -149,7 +149,7 @@ INI;
 	/**
 	 * Tests exception thrown when Cache is unavailable.
 	 *
-	 * @expectedException Cake\Core\Exception\Exception
+	 * @expectedException \Cake\Core\Exception\Exception
 	 */
 	public function testConstructorWithoutValidCache() {
 		$object = new TestTinyAuthorize($this->Collection, [
@@ -1037,7 +1037,7 @@ INI;
 	/**
 	 * Tests exception thrown when no acl.ini exists.
 	 *
-	 * @expectedException Cake\Core\Exception\Exception
+	 * @expectedException \Cake\Core\Exception\Exception
 	 */
 	public function testIniParsingMissingFileException() {
 		$object = new TestTinyAuthorize($this->Collection, [
@@ -1049,26 +1049,6 @@ INI;
 		$method = $reflection->getMethod('_parseAclIni');
 		$method->setAccessible(true);
 		$method->invokeArgs($object, [DS . 'non' . DS . 'existent' . DS . 'acl.ini']);
-	}
-
-	/**
-	 * Tests exception thrown when acl.ini is empty.
-	 *
-	 * @expectedException Cake\Core\Exception\Exception
-	 */
-	public function testIniParsingEmptyFileException() {
-		$object = new TestTinyAuthorize($this->Collection, [
-			'autoClearCache' => true
-		]);
-
-		// Make protected function available
-		$reflection = new \ReflectionClass(get_class($object));
-		$method = $reflection->getMethod('_parseAclIni');
-		$method->setAccessible(true);
-
-		// Create temporary empty acl.ini file
-		touch(TMP . 'acl.empty.ini');
-		$method->invokeArgs($object, [TMP . 'acl.empty.ini']);
 	}
 
 	/**
@@ -1265,7 +1245,7 @@ INI;
 	 * Tests exception thrown when no roles are in Configure AND the roles
 	 * database table does not exist.
 	 *
-	 * @expectedException Cake\Core\Exception\Exception
+	 * @expectedException \Cake\Core\Exception\Exception
 	 */
 	public function testAvailableRolesMissingTableException() {
 		$object = new TestTinyAuthorize($this->Collection, [
@@ -1284,7 +1264,7 @@ INI;
 	 * Tests exception thrown when the roles database table exists but contains
 	 * no roles/records.
 	 *
-	 * @expectedException Cake\Core\Exception\Exception
+	 * @expectedException \Cake\Core\Exception\Exception
 	 */
 	public function testAvailableRolesEmptyTableException() {
 		$object = new TestTinyAuthorize($this->Collection, [
@@ -1369,7 +1349,7 @@ INI;
 	 * Tests single-role exception thrown when the roleColumn field is missing
 	 * from the user table.
 	 *
-	 * @expectedException Cake\Core\Exception\Exception
+	 * @expectedException \Cake\Core\Exception\Exception
 	 */
 	public function testUserRolesMissingRoleColumn() {
 		$object = new TestTinyAuthorize($this->Collection, [
@@ -1391,7 +1371,7 @@ INI;
 	/**
 	 * Tests multi-role exception thrown when user has no roles in the pivot table.
 	 *
-	 * @expectedException Cake\Core\Exception\Exception
+	 * @expectedException \Cake\Core\Exception\Exception
 	 */
 	public function testUserRolesUserWithoutPivotRoles() {
 		$object = new TestTinyAuthorize($this->Collection, [
