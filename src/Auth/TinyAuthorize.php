@@ -258,7 +258,8 @@ class TinyAuthorize extends BaseAuthorize {
 		} else {
 			$iniArray = parse_ini_string(file_get_contents($ini), true);
 		}
-		if (!count($iniArray)) {
+
+		if (!is_array($iniArray)) {
 			throw new Exception('Invalid TinyAuthorize ACL file');
 		}
 		return $iniArray;
