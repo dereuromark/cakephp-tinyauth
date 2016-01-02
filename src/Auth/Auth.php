@@ -23,6 +23,7 @@ use Cake\Utility\Hash;
  *
  * @author Mark Scherer
  * @license MIT
+ * @deprecated Stateless access not possible in 3.x in a clean way, Use Tools.AuthUser component and helper instead.
  */
 class Auth {
 
