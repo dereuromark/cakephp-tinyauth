@@ -200,18 +200,18 @@ TinyAuth supports the following configuration options.
 
 Option | Type | Description
 :----- | :--- | :----------
-roleColumn|string|Name of column in user table holding role id (used for foreign key in users table in a single role per user setup, or in the pivot tableon multi-roles setups)
-userColumn|string|Name of column in pivot table holding role id (only used in pivot table on multi-roles setups)
+roleColumn|string|Name of column in user table holding role id (used for foreign key in users table in a single role per user setup, or in the pivot tableon multi-roles setup)
+userColumn|string|Name of column in pivot table holding role id (only used in pivot table on multi-roles setup)
 aliasColumn|string|Name of the column for the alias in the role table
 rolesTable|string|Name of Configure key holding all available roles OR class name of roles database table
 usersTable|string|Class name of the users table.
 pivotTable|string|Name of the pivot table, for a multi-group setup.
 rolesTablePlugin|string|Name of the plugin for the roles table, if any.
 pivotTablePlugin|string|Name of the plugin for the pivot table, if any.
-multiRole|boolean|True will enable multi-role/HABTM authorization (requires a valid join table)
+multiRole|bool|True will enable multi-role/HABTM authorization (requires a valid join table)
 superAdminRole|int|Id of the super admin role. Users with this role will have access to ALL resources.
-authorizeByPrefix|boolean|If prefixed routes should be auto-handled by their matching role name.
+authorizeByPrefix|bool|If prefixed routes should be auto-handled by their matching role name.
 prefixes|array|A list of authorizeByPrefix handled prefixes.
-allowUser|boolean|True will give authenticated users access to all resources except those using the `adminPrefix`
+allowUser|bool|True will give authenticated users access to all resources except those using the `adminPrefix`
 adminPrefix|string|Name of the prefix used for admin pages. Defaults to admin.
-autoClearCache|Boolean|True will generate a new ACL cache file every time.
+autoClearCache|bool|True will generate a new ACL cache file every time.
