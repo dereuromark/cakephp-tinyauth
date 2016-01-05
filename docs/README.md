@@ -31,12 +31,7 @@ public function beforeFilter(Event $event) {
 	$this->loadComponent('Auth', [
 		'authorize' => [
 			'TinyAuth.Tiny' => [
-				'multiRole' => false,
-				'allowUser' => false,
-				'authorizeByPrefix' => false,
-				'prefixes' => [],
-				'superAdminRole' => null,
-				'autoClearCache' => false
+				'multiRole' => false
 			]
 		]
 	]);
