@@ -11,9 +11,6 @@ use Cake\Network\Request;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 
-if (!defined('CLASS_USERS')) {
-	define('CLASS_USERS', 'Users'); // override if you have it in a plugin: PluginName.Users etc
-}
 if (!defined('AUTH_CACHE')) {
 	define('AUTH_CACHE', '_cake_core_'); // use the most persistent cache by default
 }
