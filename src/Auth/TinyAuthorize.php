@@ -383,9 +383,9 @@ class TinyAuthorize extends BaseAuthorize {
 		$pivotTable = TableRegistry::get($pivotTableName);
 		$roleColumn = $this->_config['roleColumn'];
 		$roles = $pivotTable->find('all', [
-					'conditions' => [$this->_config['userColumn'] => $user['id']],
-					'fields' => $roleColumn
-				])->extract($roleColumn)->toArray();
+			'conditions' => [$this->_config['userColumn'] => $user['id']],
+			'fields' => $roleColumn
+		])->extract($roleColumn)->toArray();
 
 		if (!count($roles)) {
 			throw new Exception('Missing TinyAuthorize roles for user in pivot table');
