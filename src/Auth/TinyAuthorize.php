@@ -11,9 +11,6 @@ use Cake\Network\Request;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 
-if (!defined('CLASS_USERS')) {
-	define('CLASS_USERS', 'Users'); // override if you have it in a plugin: PluginName.Users etc
-}
 if (!defined('AUTH_CACHE')) {
 	define('AUTH_CACHE', '_cake_core_'); // use the most persistent cache by default
 }
@@ -44,8 +41,12 @@ class TinyAuthorize extends BaseAuthorize {
 
 	protected $_defaultConfig = [
 		'roleColumn' => 'role_id', // name of column in users table holding role id (used for single role/BT only)
+		'userColumn' => 'user_id',
 		'aliasColumn' => 'alias', // name of column in roles table holding role alias/slug
 		'rolesTable' => 'Roles', // name of Configure key holding available roles OR class name of roles table
+		'usersTable' => 'Users', // name of the Users table
+		'pivotTablePlugin' => '', // Name of the plugin managing the users table
+		'rolesTablePlugin' => '', // Name of the plugin managing the roles table
 		'multiRole' => false, // true to enables multirole/HABTM authorization (requires a valid join table)
 		'pivotTable' => null, // Use instead of auto-detect for the multi-role pivot table holding the user's roles
 		'superAdminRole' => null, // id of super admin role granted access to ALL resources
@@ -154,7 +155,7 @@ class TinyAuthorize extends BaseAuthorize {
 
 		// Allow access if user has been granted access to the specific resource
 		if (isset($this->_acl[$iniKey]['actions'])) {
-			if(array_key_exists($request->action, $this->_acl[$iniKey]['actions']) && !empty($this->_acl[$iniKey]['actions'][$request->action])) {
+			if (array_key_exists($request->action, $this->_acl[$iniKey]['actions']) && !empty($this->_acl[$iniKey]['actions'][$request->action])) {
 				$matchArray = $this->_acl[$iniKey]['actions'][$request->action];
 				foreach ($userRoles as $userRole) {
 					if (in_array((string)$userRole, $matchArray)) {
@@ -324,7 +325,12 @@ class TinyAuthorize extends BaseAuthorize {
 		}
 
 		// fetch roles from database
-		$rolesTable = TableRegistry::get($this->_config['rolesTable']);
+		$rolesPlugin = $this->_config['rolesTablePlugin'];
+		$roleTable = $this->_config['rolesTable'];
+		if (!$rolesPlugin) {
+			$roleTable = $rolesPlugin . '.' . $roleTable;
+		}
+		$rolesTable = TableRegistry::get($roleTable);
 
 		$roles = $rolesTable->find('all')->formatResults(function ($results) {
 			return $results->combine($this->_config['aliasColumn'], 'id');
@@ -359,9 +365,10 @@ class TinyAuthorize extends BaseAuthorize {
 		// multi-role: reverse engineer name of the pivot table
 		$rolesTableName = $this->_config['rolesTable'];
 		$pivotTableName = $this->_config['pivotTable'];
+		$usersTableName = $this->_config['usersTable'];
 		if (!$pivotTableName) {
 			$tables = [
-				CLASS_USERS,
+				$usersTableName,
 				$rolesTableName
 			];
 			asort($tables);
@@ -369,10 +376,14 @@ class TinyAuthorize extends BaseAuthorize {
 		}
 
 		// fetch roles directly from the pivot table
+		$pivotTablePlugin = $this->_config['pivotTablePlugin'];
+		if (!$pivotTablePlugin) {
+			$pivotTableName = $pivotTablePlugin . '.' . $pivotTableName;
+		}
 		$pivotTable = TableRegistry::get($pivotTableName);
 		$roleColumn = $this->_config['roleColumn'];
 		$roles = $pivotTable->find('all', [
-			'conditions' => ['user_id' => $user['id']],
+			'conditions' => [$this->_config['userColumn'] => $user['id']],
 			'fields' => $roleColumn
 		])->extract($roleColumn)->toArray();
 

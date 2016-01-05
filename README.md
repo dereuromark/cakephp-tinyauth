@@ -31,18 +31,16 @@ Installing the plugin is pretty much as with every other CakePHP Plugin.
 composer require dereuromark/cakephp-tinyauth:dev-master
 ```
 
-Then load the plugin:
+Then, to load the plugin either run the following command:
 
-```php
-Plugin::load('TinyAuth', ['bootstrap' => true]);
+```sh
+bin/cake plugin load TinyAuth
 ```
 
-For `Plugin::loadAll()` it's
+or manually add the following line to your app's `config/bootstrap.php` file:
 
 ```php
-Plugin::loadAll([
-		'TinyAuth' => ['bootstrap' => true]
-]);
+Plugin::load('TinyAuth');
 ```
 
 That's it. It should be up and running.
