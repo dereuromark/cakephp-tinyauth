@@ -41,7 +41,7 @@ class TinyAuthorize extends BaseAuthorize {
 
 	protected $_defaultConfig = [
 		'roleColumn' => 'role_id', // name of column in users table holding role id (used for single role/BT only)
-		'userColumn' => 'user_id', 
+		'userColumn' => 'user_id',
 		'aliasColumn' => 'alias', // name of column in roles table holding role alias/slug
 		'rolesTable' => 'Roles', // name of Configure key holding available roles OR class name of roles table
 		'usersTable' => 'Users', // name of the Users table
@@ -67,7 +67,7 @@ class TinyAuthorize extends BaseAuthorize {
 	 * @throws \Cake\Core\Exception\Exception
 	 */
 	public function __construct(ComponentRegistry $registry, array $config = []) {
-		$config += (array)Configure::read('TinyAuth');
+		$config += (array) Configure::read('TinyAuth');
 		$config += $this->_defaultConfig;
 		if (!$config['prefixes'] && !empty($config['authorizeByPrefix'])) {
 			throw new Exception('Invalid TinyAuthorization setup for `authorizeByPrefix`. Please declare `prefixes`.');
@@ -147,7 +147,7 @@ class TinyAuthorize extends BaseAuthorize {
 		if (isset($this->_acl[$iniKey]['actions']['*'])) {
 			$matchArray = $this->_acl[$iniKey]['actions']['*'];
 			foreach ($userRoles as $userRole) {
-				if (in_array((string)$userRole, $matchArray)) {
+				if (in_array((string) $userRole, $matchArray)) {
 					return true;
 				}
 			}
@@ -155,10 +155,10 @@ class TinyAuthorize extends BaseAuthorize {
 
 		// Allow access if user has been granted access to the specific resource
 		if (isset($this->_acl[$iniKey]['actions'])) {
-			if(array_key_exists($request->action, $this->_acl[$iniKey]['actions']) && !empty($this->_acl[$iniKey]['actions'][$request->action])) {
+			if (array_key_exists($request->action, $this->_acl[$iniKey]['actions']) && !empty($this->_acl[$iniKey]['actions'][$request->action])) {
 				$matchArray = $this->_acl[$iniKey]['actions'][$request->action];
 				foreach ($userRoles as $userRole) {
-					if (in_array((string)$userRole, $matchArray)) {
+					if (in_array((string) $userRole, $matchArray)) {
 						return true;
 					}
 				}
@@ -325,12 +325,16 @@ class TinyAuthorize extends BaseAuthorize {
 		}
 
 		// fetch roles from database
-		$rolesPlugin=$this->_config['rolesTablePlugin'];
-		$rolesTable = TableRegistry::get(((!$rolesPlugin)?$rolesPlugin.'.':'').$this->_config['rolesTable']);
+		$rolesPlugin = $this->_config['rolesTablePlugin'];
+		$roleTable = $this->_config['rolesTable'];
+		if (!$rolesPlugin) {
+			$roleTable = $rolesPlugin . '.' . $roleTable;
+		}
+		$rolesTable = TableRegistry::get($roleTable);
 
 		$roles = $rolesTable->find('all')->formatResults(function ($results) {
-			return $results->combine($this->_config['aliasColumn'], 'id');
-		})->toArray();
+					return $results->combine($this->_config['aliasColumn'], 'id');
+				})->toArray();
 
 		if (!count($roles)) {
 			throw new Exception('Invalid TinyAuthorize Role Setup (rolesTable has no roles)');
@@ -364,7 +368,7 @@ class TinyAuthorize extends BaseAuthorize {
 		$usersTableName = $this->_config['usersTable'];
 		if (!$pivotTableName) {
 			$tables = [
-				Inflector::singularize($usersTableName),
+				$usersTableName,
 				$rolesTableName
 			];
 			asort($tables);
@@ -372,13 +376,16 @@ class TinyAuthorize extends BaseAuthorize {
 		}
 
 		// fetch roles directly from the pivot table
-		$pivotTablePlugin=$this->_config['pivotTablePlugin'];
-		$pivotTable = TableRegistry::get(((!$pivotTablePlugin)?$pivotTablePlugin.'.':'').$pivotTableName);
+		$pivotTablePlugin = $this->_config['pivotTablePlugin'];
+		if (!$pivotTablePlugin) {
+			$pivotTableName = $pivotTablePlugin . '.' . $pivotTableName;
+		}
+		$pivotTable = TableRegistry::get($pivotTableName);
 		$roleColumn = $this->_config['roleColumn'];
 		$roles = $pivotTable->find('all', [
-			'conditions' => [$this->_config['userColumn'] => $user['id']],
-			'fields' => $roleColumn
-		])->extract($roleColumn)->toArray();
+					'conditions' => [$this->_config['userColumn'] => $user['id']],
+					'fields' => $roleColumn
+				])->extract($roleColumn)->toArray();
 
 		if (!count($roles)) {
 			throw new Exception('Missing TinyAuthorize roles for user in pivot table');

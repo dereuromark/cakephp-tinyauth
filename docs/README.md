@@ -113,7 +113,7 @@ The ``roleColumn`` option is also used on pivot table in a multi-role setup.
 When using the multiple-roles-per-user model:
 
 - your database MUST have a ``roles`` table
-- your database MUST have a valid join table (e.g. ``user_roles``, by default, it's constructed with users table first in the name). This can be overriden with the ``pivotTable`` option.
+- your database MUST have a valid join table (e.g. ``users_roles``). This can be overriden with the ``pivotTable`` option.
 - the configuration option ``multiRole`` MUST be set to ``true``
 
 Example of a record from a valid join table:
