@@ -333,8 +333,8 @@ class TinyAuthorize extends BaseAuthorize {
 		$rolesTable = TableRegistry::get($roleTable);
 
 		$roles = $rolesTable->find('all')->formatResults(function ($results) {
-					return $results->combine($this->_config['aliasColumn'], 'id');
-				})->toArray();
+			return $results->combine($this->_config['aliasColumn'], 'id');
+		})->toArray();
 
 		if (!count($roles)) {
 			throw new Exception('Invalid TinyAuthorize Role Setup (rolesTable has no roles)');
