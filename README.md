@@ -34,15 +34,7 @@ composer require dereuromark/cakephp-tinyauth:dev-master
 Then load the plugin:
 
 ```php
-Plugin::load('TinyAuth', ['bootstrap' => true]);
-```
-
-For `Plugin::loadAll()` it's
-
-```php
-Plugin::loadAll([
-		'TinyAuth' => ['bootstrap' => true]
-]);
+Plugin::load('TinyAuth');
 ```
 
 That's it. It should be up and running.
