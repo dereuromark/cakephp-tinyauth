@@ -107,11 +107,13 @@ When using the single-role-per-user model TinyAuth expects your Users model to
 contain an column named ``role_id``. If you prefer to use another column name
 simply specify it using the ``roleColumn`` configuration option.
 
+The ``roleColumn`` option is also used on pivot table in a multi-role setup.
+
 ### Multi-role
 When using the multiple-roles-per-user model:
 
 - your database MUST have a ``roles`` table
-- your database MUST have a valid join table (e.g. ``roles_users``)
+- your database MUST have a valid join table (e.g. ``user_roles``, by default, it's constructed with users table first in the name). This can be overriden with the ``pivotTable`` option.
 - the configuration option ``multiRole`` MUST be set to ``true``
 
 Example of a record from a valid join table:
