@@ -215,3 +215,7 @@ prefixes|array|A list of authorizeByPrefix handled prefixes.
 allowUser|bool|True will give authenticated users access to all resources except those using the `adminPrefix`
 adminPrefix|string|Name of the prefix used for admin pages. Defaults to admin.
 autoClearCache|bool|True will generate a new ACL cache file every time.
+
+
+## Auth user data
+For reading auth user data take a look at [Tools plugin AuthUser component/helper](https://github.com/dereuromark/cakephp-tools/blob/master/docs/Auth/Auth.md).
