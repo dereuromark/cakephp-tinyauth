@@ -67,7 +67,7 @@ class TinyAuthorize extends BaseAuthorize {
 	 * @throws \Cake\Core\Exception\Exception
 	 */
 	public function __construct(ComponentRegistry $registry, array $config = []) {
-		$config += (array) Configure::read('TinyAuth');
+		$config += (array)Configure::read('TinyAuth');
 		$config += $this->_defaultConfig;
 		if (!$config['prefixes'] && !empty($config['authorizeByPrefix'])) {
 			throw new Exception('Invalid TinyAuthorization setup for `authorizeByPrefix`. Please declare `prefixes`.');
@@ -147,7 +147,7 @@ class TinyAuthorize extends BaseAuthorize {
 		if (isset($this->_acl[$iniKey]['actions']['*'])) {
 			$matchArray = $this->_acl[$iniKey]['actions']['*'];
 			foreach ($userRoles as $userRole) {
-				if (in_array((string) $userRole, $matchArray)) {
+				if (in_array((string)$userRole, $matchArray)) {
 					return true;
 				}
 			}
@@ -158,7 +158,7 @@ class TinyAuthorize extends BaseAuthorize {
 			if (array_key_exists($request->action, $this->_acl[$iniKey]['actions']) && !empty($this->_acl[$iniKey]['actions'][$request->action])) {
 				$matchArray = $this->_acl[$iniKey]['actions'][$request->action];
 				foreach ($userRoles as $userRole) {
-					if (in_array((string) $userRole, $matchArray)) {
+					if (in_array((string)$userRole, $matchArray)) {
 						return true;
 					}
 				}
