@@ -44,8 +44,12 @@ class TinyAuthorize extends BaseAuthorize {
 
 	protected $_defaultConfig = [
 		'roleColumn' => 'role_id', // name of column in users table holding role id (used for single role/BT only)
+		'userColumn' => 'user_id', 
 		'aliasColumn' => 'alias', // name of column in roles table holding role alias/slug
 		'rolesTable' => 'Roles', // name of Configure key holding available roles OR class name of roles table
+		'usersTable' => 'Users', // name of the Users table
+		'pivotTablePlugin' => '', // Name of the plugin managing the users table
+		'rolesTablePlugin' => '', // Name of the plugin managing the roles table
 		'multiRole' => false, // true to enables multirole/HABTM authorization (requires a valid join table)
 		'pivotTable' => null, // Use instead of auto-detect for the multi-role pivot table holding the user's roles
 		'superAdminRole' => null, // id of super admin role granted access to ALL resources
@@ -324,7 +328,8 @@ class TinyAuthorize extends BaseAuthorize {
 		}
 
 		// fetch roles from database
-		$rolesTable = TableRegistry::get($this->_config['rolesTable']);
+		$rolesPlugin=$this->_config['rolesTablePlugin'];
+		$rolesTable = TableRegistry::get(((!$rolesPlugin)?$rolesPlugin.'.':'').$this->_config['rolesTable']);
 
 		$roles = $rolesTable->find('all')->formatResults(function ($results) {
 			return $results->combine($this->_config['aliasColumn'], 'id');
@@ -359,9 +364,10 @@ class TinyAuthorize extends BaseAuthorize {
 		// multi-role: reverse engineer name of the pivot table
 		$rolesTableName = $this->_config['rolesTable'];
 		$pivotTableName = $this->_config['pivotTable'];
+		$usersTableName = $this->_config['usersTable'];
 		if (!$pivotTableName) {
 			$tables = [
-				CLASS_USERS,
+				Inflector::singularize($usersTableName),
 				$rolesTableName
 			];
 			asort($tables);
@@ -369,10 +375,11 @@ class TinyAuthorize extends BaseAuthorize {
 		}
 
 		// fetch roles directly from the pivot table
-		$pivotTable = TableRegistry::get($pivotTableName);
+		$pivotTablePlugin=$this->_config['pivotTablePlugin'];
+		$pivotTable = TableRegistry::get(((!$pivotTablePlugin)?$pivotTablePlugin.'.':'').$pivotTableName);
 		$roleColumn = $this->_config['roleColumn'];
 		$roles = $pivotTable->find('all', [
-			'conditions' => ['user_id' => $user['id']],
+			'conditions' => [$this->_config['userColumn'] => $user['id']],
 			'fields' => $roleColumn
 		])->extract($roleColumn)->toArray();
 
