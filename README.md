@@ -1,11 +1,11 @@
 # CakePHP TinyAuth Plugin
 
-[![Build Status](https://api.travis-ci.org/dereuromark/cakephp-tinyauth.png?branch=master)](https://travis-ci.org/dereuromark/cakephp-tinyauth)
-[![Latest Stable Version](https://poser.pugx.org/dereuromark/cakephp-tinyauth/v/stable.png)](https://packagist.org/packages/dereuromark/cakephp-tinyauth)
-[![Coverage Status](https://coveralls.io/repos/dereuromark/cakephp-tinyauth/badge.png)](https://coveralls.io/r/dereuromark/cakephp-tinyauth)
+[![Build Status](https://api.travis-ci.org/dereuromark/cakephp-tinyauth.svg?branch=master)](https://travis-ci.org/dereuromark/cakephp-tinyauth)
+[![Latest Stable Version](https://poser.pugx.org/dereuromark/cakephp-tinyauth/v/stable.svg)](https://packagist.org/packages/dereuromark/cakephp-tinyauth)
+[![Coverage Status](https://coveralls.io/repos/dereuromark/cakephp-tinyauth/badge.svg)](https://coveralls.io/r/dereuromark/cakephp-tinyauth)
 [![Minimum PHP Version](http://img.shields.io/badge/php-%3E%3D%205.4-8892BF.svg)](https://php.net/)
-[![License](https://poser.pugx.org/dereuromark/cakephp-tinyauth/license.png)](https://packagist.org/packages/dereuromark/cakephp-tinyauth)
-[![Total Downloads](https://poser.pugx.org/dereuromark/cakephp-tinyauth/d/total.png)](https://packagist.org/packages/dereuromark/cakephp-tinyauth)
+[![License](https://poser.pugx.org/dereuromark/cakephp-tinyauth/license.svg)](https://packagist.org/packages/dereuromark/cakephp-tinyauth)
+[![Total Downloads](https://poser.pugx.org/dereuromark/cakephp-tinyauth/d/total.svg)](https://packagist.org/packages/dereuromark/cakephp-tinyauth)
 [![Coding Standards](https://img.shields.io/badge/cs-PSR--2--R-yellow.svg)](https://github.com/php-fig-rectified/fig-rectified-standards)
 
 A CakePHP 3.x Plugin to handle user authorization the easy way.
