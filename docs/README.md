@@ -200,7 +200,7 @@ TinyAuth supports the following configuration options.
 
 Option | Type | Description
 :----- | :--- | :----------
-roleColumn|string|Name of column in user table holding role id (used for foreign key in users table in a single role per user setup, or in the pivot tableon multi-roles setup)
+roleColumn|string|Name of column in user table holding role id (used for foreign key in users table in a single role per user setup, or in the pivot table on multi-roles setup)
 userColumn|string|Name of column in pivot table holding role id (only used in pivot table on multi-roles setup)
 aliasColumn|string|Name of the column for the alias in the role table
 rolesTable|string|Name of Configure key holding all available roles OR class name of roles database table
