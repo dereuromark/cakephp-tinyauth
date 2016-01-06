@@ -37,8 +37,14 @@ if (!defined('ACL_FILE')) {
  */
 class TinyAuthorize extends BaseAuthorize {
 
+	/**
+	 * @var array|null
+	 */
 	protected $_acl = null;
 
+	/**
+	 * @var array
+	 */
 	protected $_defaultConfig = [
 		'roleColumn' => 'role_id', // Foreign key for the Role ID in users table or in pivot table
 		'userColumn' => 'user_id', // Foreign key for the User id in pivot table. Only for multi-roles setup
@@ -60,7 +66,7 @@ class TinyAuthorize extends BaseAuthorize {
 	/**
 	 * TinyAuthorize::__construct()
 	 *
-	 * @param ComponentRegistry $registry
+	 * @param \Cake\Controller\ComponentRegistry $registry
 	 * @param array $config
 	 * @throws \Cake\Core\Exception\Exception
 	 */
@@ -79,8 +85,9 @@ class TinyAuthorize extends BaseAuthorize {
 	}
 
 	/**
-	 * Authorize a user using the AclComponent.
-	 * allows single or multi role based authorization
+	 * Authorizes a user using the AclComponent.
+	 *
+	 * Allows single or multi role based authorization
 	 *
 	 * Examples:
 	 * - User HABTM Roles (Role array in User array)
@@ -95,8 +102,9 @@ class TinyAuthorize extends BaseAuthorize {
 	}
 
 	/**
-	 * Validate the url to the role(s)
-	 * allows single or multi role based authorization
+	 * Validates the URL to the role(s).
+	 *
+	 * Allows single or multi role based authorization
 	 *
 	 * @param array $userRoles
 	 * @param \Cake\Network\Request $request Request instance
@@ -135,7 +143,6 @@ class TinyAuthorize extends BaseAuthorize {
 			}
 		}
 
-		// Generate ACL if not already set
 		if ($this->_acl === null) {
 			$this->_acl = $this->_getAcl();
 		}
@@ -166,11 +173,12 @@ class TinyAuthorize extends BaseAuthorize {
 	}
 
 	/**
-	 * Parse ini file and returns the allowed roles per action
-	 * - uses cache for maximum performance
-	 * improved speed by several actions before caching:
-	 * - resolves role slugs to their primary key / identifier
-	 * - resolves wildcards to their verbose translation
+	 * Parse ini file and returns the allowed roles per action.
+	 *
+	 * Uses cache for maximum performance.
+	 * Improved speed by several actions before caching:
+	 * - Resolves role slugs to their primary key / identifier
+	 * - Resolves wildcards to their verbose translation
 	 *
 	 * @param string $path
 	 * @return array Roles
@@ -197,7 +205,7 @@ class TinyAuthorize extends BaseAuthorize {
 			$res[$key]['map'] = $array;
 
 			foreach ($array as $actions => $roles) {
-				// get all roles used in the current ini section
+				// Get all roles used in the current ini section
 				$roles = explode(',', $roles);
 				$actions = explode(',', $actions);
 
@@ -205,7 +213,7 @@ class TinyAuthorize extends BaseAuthorize {
 					if (!($role = trim($role))) {
 						continue;
 					}
-					// prevent undefined roles appearing in the iniMap
+					// Prevent undefined roles appearing in the iniMap
 					if (!array_key_exists($role, $availableRoles) && $role !== '*') {
 						unset($roles[$roleId]);
 						continue;
@@ -216,7 +224,6 @@ class TinyAuthorize extends BaseAuthorize {
 					}
 				}
 
-				// process actions
 				foreach ($actions as $action) {
 					$action = trim($action);
 					if (!$action) {
@@ -229,7 +236,7 @@ class TinyAuthorize extends BaseAuthorize {
 							continue;
 						}
 
-						// lookup role id by name in roles array
+						// Lookup role id by name in roles array
 						$newRole = $availableRoles[strtolower($role)];
 						$res[$key]['actions'][$action][] = $newRole;
 					}
@@ -244,7 +251,7 @@ class TinyAuthorize extends BaseAuthorize {
 	/**
 	 * Returns the acl.ini file as an array.
 	 *
-	 * * @param string $ini Full path to the acl.ini file
+	 * @param string $ini Full path to the acl.ini file
 	 * @return array List with all available roles
 	 * @throws \Cake\Core\Exception\Exception
 	 */
@@ -266,10 +273,10 @@ class TinyAuthorize extends BaseAuthorize {
 	}
 
 	/**
-	 * Deconstructs an ACL ini section key into a named array with ACL parts
+	 * Deconstructs an ACL ini section key into a named array with ACL parts.
 	 *
 	 * @param string $key INI section key as found in acl.ini
-	 * @return array Hash with named keys for controller, plugin and prefix
+	 * @return array Array with named keys for controller, plugin and prefix
 	 */
 	protected function _deconstructIniKey($key) {
 		$res = [
@@ -288,10 +295,10 @@ class TinyAuthorize extends BaseAuthorize {
 	}
 
 	/**
-	 * Constructs an ACL ini section key from a given CakeRequest
+	 * Constructs an ACL ini section key from a given Request.
 	 *
 	 * @param \Cake\Network\Request $request The request needing authorization.
-	 * @return array Hash with named keys for controller, plugin and prefix
+	 * @return string Hash with named keys for controller, plugin and prefix
 	 */
 	protected function _constructIniKey(Request $request) {
 		$res = $request->params['controller'];
@@ -305,7 +312,9 @@ class TinyAuthorize extends BaseAuthorize {
 	}
 
 	/**
-	 * Returns a list of all available roles. Will look for a roles array in
+	 * Returns a list of all available roles.
+	 *
+	 * Will look for a roles array in
 	 * Configure first, tries database roles table next.
 	 *
 	 * @return array List with all available roles
@@ -317,28 +326,21 @@ class TinyAuthorize extends BaseAuthorize {
 			return $roles;
 		}
 
-		// no roles in Configure AND rolesTable does not exist
-		$tables = ConnectionManager::get('default')->schemaCollection()->listTables();
-		if (!in_array(Inflector::tableize($this->_config['rolesTable']), $tables)) {
-			throw new Exception('Invalid TinyAuthorize Role Setup (no roles found in Configure or database)');
-		}
-
-		// fetch roles from database
 		$rolesTable = TableRegistry::get($this->_config['rolesTable']);
-
 		$roles = $rolesTable->find()->formatResults(function ($results) {
 			return $results->combine($this->_config['aliasColumn'], 'id');
 		})->toArray();
 
-		if (!count($roles)) {
-			throw new Exception('Invalid TinyAuthorize Role Setup (rolesTable has no roles)');
+		if (count($roles) < 1) {
+			throw new Exception('Invalid TinyAuthorize role setup (roles table `' . $this->_config['rolesTable'] . '` has no roles)');
 		}
 		return $roles;
 	}
 
 	/**
-	 * Returns a list of all roles belonging to the authenticated user in the
-	 * following order:
+	 * Returns a list of all roles belonging to the authenticated user.
+	 *
+	 * Lookup in the following order:
 	 * - single role id using the roleColumn in single-role mode
 	 * - direct lookup in the pivot table (to support both Configure and Model
 	 *   in multi-role mode)
@@ -348,7 +350,7 @@ class TinyAuthorize extends BaseAuthorize {
 	 * @throws \Cake\Core\Exception\Exception
 	 */
 	protected function _getUserRoles($user) {
-		// single-role
+		// Single-role
 		if (!$this->_config['multiRole']) {
 			if (isset($user[$this->_config['roleColumn']])) {
 				return [$user[$this->_config['roleColumn']]];
