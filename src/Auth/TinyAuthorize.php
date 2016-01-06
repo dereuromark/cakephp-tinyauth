@@ -326,7 +326,7 @@ class TinyAuthorize extends BaseAuthorize {
 		// fetch roles from database
 		$rolesTable = TableRegistry::get($this->_config['rolesTable']);
 
-		$roles = $rolesTable->find('all')->formatResults(function ($results) {
+		$roles = $rolesTable->find()->formatResults(function ($results) {
 			return $results->combine($this->_config['aliasColumn'], 'id');
 		})->toArray();
 
@@ -357,17 +357,25 @@ class TinyAuthorize extends BaseAuthorize {
 		}
 
 		// Multi-role case : load the pivot table
-		$pivotTableName = $this->_config['pivotTable'];
+		list(, $rolesTableName) = pluginSplit($this->_config['rolesTable']);
+		list(, $usersTableName) = pluginSplit($this->_config['usersTable']);
+		list($plugin, $pivotTableName) = $this->_config['pivotTable'];
 		if (!$pivotTableName) {
-			throw new Exception('Missing TinyAuthorize pivotTable. Check your configuration');
+			$tables = [
+				$usersTableName,
+				$rolesTableName
+			];
+			asort($tables);
+			$pivotTableName = implode('', $tables);
 		}
-
-		$pivotTable = TableRegistry::get($pivotTableName);
+		$pivotTable = TableRegistry::get(($plugin ? $plugin . '.' : '') . $pivotTableName);
 		$roleColumn = $this->_config['roleColumn'];
-		$roles = $pivotTable->find('all', [
-			'conditions' => [$this->_config['userColumn'] => $user['id']],
-			'fields' => $roleColumn
-		])->extract($roleColumn)->toArray();
+		$roles = $pivotTable->find()
+			->select($roleColumn)
+			->where([$this->_config['userColumn'] => $user['id']])
+			->all()
+			->extract($roleColumn)
+			->toArray();
 
 		if (!count($roles)) {
 			throw new Exception('Missing TinyAuthorize roles for user in pivot table');

@@ -20,8 +20,8 @@ class TinyAuthorizeTest extends TestCase {
 		'plugin.tiny_auth.users',
 		'plugin.tiny_auth.database_roles',
 		'plugin.tiny_auth.empty_roles',
-		'plugin.tiny_auth.roles_users', // Pivot table using Configure role ids
-		'plugin.tiny_auth.database_roles_users', // Pivot table using Database role ids
+		'plugin.tiny_auth.roles_users', // Convention pivot table using Configure role ids
+		'plugin.tiny_auth.database_roles_users', // Custom pivot table using Database role ids
 		'plugin.tiny_auth.database_user_roles' // Custom pivot table using Database role ids
 	];
 
@@ -1407,7 +1407,7 @@ class TestTinyAuthorize extends TinyAuthorize {
 	}
 
 	/**
-	 * @return Cake\ORM\Table The User table
+	 * @return \Cake\ORM\Table The User table
 	 */
 	public function getTable() {
 		$Users = TableRegistry::get($this->_config['usersTable']);
