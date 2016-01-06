@@ -40,16 +40,14 @@ class TinyAuthorize extends BaseAuthorize {
 	protected $_acl = null;
 
 	protected $_defaultConfig = [
-		'roleColumn' => 'role_id', // name of column in users table holding role id (used for single role/BT only)
-		'userColumn' => 'user_id',
-		'aliasColumn' => 'alias', // name of column in roles table holding role alias/slug
+		'roleColumn' => 'role_id', // Foreign key for the Role ID in users table or in pivot table
+		'userColumn' => 'user_id', // Foreign key for the User id in pivot table. Only for multi-roles setup
+		'aliasColumn' => 'alias', // Name of column in roles table holding role alias/slug
 		'rolesTable' => 'Roles', // name of Configure key holding available roles OR class name of roles table
 		'usersTable' => 'Users', // name of the Users table
-		'pivotTablePlugin' => '', // Name of the plugin managing the users table
-		'rolesTablePlugin' => '', // Name of the plugin managing the roles table
-		'multiRole' => false, // true to enables multirole/HABTM authorization (requires a valid join table)
-		'pivotTable' => null, // Use instead of auto-detect for the multi-role pivot table holding the user's roles
-		'superAdminRole' => null, // id of super admin role granted access to ALL resources
+		'pivotTable' => null, // Should be used in multi-roles setups
+		'multiRole' => false, // true to enables multirole/HABTM authorization (requires a valid pivot table)
+		'superAdminRole' => null, // id of super admin role, which grants access to ALL resources
 		'authorizeByPrefix' => false,
 		'prefixes' => [], // Whitelisted prefixes (only used when allowAdmin is enabled), leave empty to use all available
 		'allowUser' => false, // enable to allow ALL roles access to all actions except prefixed with 'adminPrefix'
@@ -326,12 +324,7 @@ class TinyAuthorize extends BaseAuthorize {
 		}
 
 		// fetch roles from database
-		$rolesPlugin = $this->_config['rolesTablePlugin'];
-		$roleTable = $this->_config['rolesTable'];
-		if (!$rolesPlugin) {
-			$roleTable = $rolesPlugin . '.' . $roleTable;
-		}
-		$rolesTable = TableRegistry::get($roleTable);
+		$rolesTable = TableRegistry::get($this->_config['rolesTable']);
 
 		$roles = $rolesTable->find('all')->formatResults(function ($results) {
 			return $results->combine($this->_config['aliasColumn'], 'id');
@@ -363,24 +356,12 @@ class TinyAuthorize extends BaseAuthorize {
 			throw new Exception(sprintf('Missing TinyAuthorize role id (%s) in user session', $this->_config['roleColumn']));
 		}
 
-		// multi-role: reverse engineer name of the pivot table
-		$rolesTableName = $this->_config['rolesTable'];
+		// Multi-role case : load the pivot table
 		$pivotTableName = $this->_config['pivotTable'];
-		$usersTableName = $this->_config['usersTable'];
 		if (!$pivotTableName) {
-			$tables = [
-				$usersTableName,
-				$rolesTableName
-			];
-			asort($tables);
-			$pivotTableName = implode('', $tables);
+			throw new Exception('Missing TinyAuthorize pivotTable. Check your configuration');
 		}
 
-		// fetch roles directly from the pivot table
-		$pivotTablePlugin = $this->_config['pivotTablePlugin'];
-		if (!$pivotTablePlugin) {
-			$pivotTableName = $pivotTablePlugin . '.' . $pivotTableName;
-		}
 		$pivotTable = TableRegistry::get($pivotTableName);
 		$roleColumn = $this->_config['roleColumn'];
 		$roles = $pivotTable->find('all', [
