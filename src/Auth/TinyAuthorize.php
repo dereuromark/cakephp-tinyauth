@@ -182,10 +182,11 @@ class TinyAuthorize extends BaseAuthorize {
 			$path = ROOT . DS . 'config' . DS;
 		}
 
-		if ($this->_config['autoClearCache'] && Configure::read('debug') > 0) {
+		if ($this->_config['autoClearCache'] && Configure::read('debug')) {
 			Cache::delete($this->_config['cacheKey'], $this->_config['cache']);
 		}
-		if (($roles = Cache::read($this->_config['cacheKey'], $this->_config['cache'])) !== false) {
+		$roles = Cache::read($this->_config['cacheKey'], $this->_config['cache']);
+		if ($roles !== false) {
 			return $roles;
 		}
 
