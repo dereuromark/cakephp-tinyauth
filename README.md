@@ -8,8 +8,7 @@
 [![Total Downloads](https://poser.pugx.org/dereuromark/cakephp-tinyauth/d/total.svg)](https://packagist.org/packages/dereuromark/cakephp-tinyauth)
 [![Coding Standards](https://img.shields.io/badge/cs-PSR--2--R-yellow.svg)](https://github.com/php-fig-rectified/fig-rectified-standards)
 
-A CakePHP 3.x Plugin to handle user authorization the easy way.
-This plugin requires PHP5.4+
+A CakePHP 3.x plugin to handle user authorization the easy way.
 
 ## Demo
 ```ini
