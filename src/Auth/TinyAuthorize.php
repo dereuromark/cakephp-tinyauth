@@ -357,10 +357,10 @@ class TinyAuthorize extends BaseAuthorize {
 		}
 
 		// Multi-role case : load the pivot table
-		list(, $rolesTableName) = pluginSplit($this->_config['rolesTable']);
-		list(, $usersTableName) = pluginSplit($this->_config['usersTable']);
-		list($plugin, $pivotTableName) = $this->_config['pivotTable'];
+		$pivotTableName = $this->_config['pivotTable'];
 		if (!$pivotTableName) {
+			list(, $rolesTableName) = pluginSplit($this->_config['rolesTable']);
+			list(, $usersTableName) = pluginSplit($this->_config['usersTable']);
 			$tables = [
 				$usersTableName,
 				$rolesTableName
@@ -368,7 +368,7 @@ class TinyAuthorize extends BaseAuthorize {
 			asort($tables);
 			$pivotTableName = implode('', $tables);
 		}
-		$pivotTable = TableRegistry::get(($plugin ? $plugin . '.' : '') . $pivotTableName);
+		$pivotTable = TableRegistry::get($pivotTableName);
 		$roleColumn = $this->_config['roleColumn'];
 		$roles = $pivotTable->find()
 			->select($roleColumn)
