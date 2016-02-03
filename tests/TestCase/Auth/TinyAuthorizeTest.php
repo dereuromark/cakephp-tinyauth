@@ -445,8 +445,7 @@ INI;
 	 */
 	public function testCaseSensitivity() {
 		$object = new TestTinyAuthorize($this->Collection, [
-			'autoClearCache' => true]
-		);
+			'autoClearCache' => true]);
 
 		// All tests performed against this action
 		$this->request->params['action'] = 'index';
@@ -752,11 +751,11 @@ INI;
 	}
 
 	/**
-	* Tests access to a controller that uses the * wildcard for the action
-	* but combines it with a specific group (here: * = moderators).
-	*
-	* @return void
-	*/
+	 * Tests access to a controller that uses the * wildcard for the action
+	 * but combines it with a specific group (here: * = moderators).
+	 *
+	 * @return void
+	 */
 	public function testBasicUserMethodAllowedWildcardSpecificGroup() {
 		$object = new TestTinyAuthorize($this->Collection, [
 			'autoClearCache' => true
@@ -1069,7 +1068,7 @@ INI;
 		$this->request->params['plugin'] = null;
 
 		$expected = 'Tags';
-		$res =  $method->invokeArgs($object, [$this->request]);
+		$res = $method->invokeArgs($object, [$this->request]);
 		$this->assertEquals($expected, $res);
 
 		// Test standard controller with /admin prefix
@@ -1078,7 +1077,7 @@ INI;
 		$this->request->params['plugin'] = null;
 
 		$expected = 'admin/Tags';
-		$res =  $method->invokeArgs($object, [$this->request]);
+		$res = $method->invokeArgs($object, [$this->request]);
 		$this->assertEquals($expected, $res);
 
 		// Test plugin controller
@@ -1087,7 +1086,7 @@ INI;
 		$this->request->params['plugin'] = 'Tags';
 
 		$expected = 'Tags.Tags';
-		$res =  $method->invokeArgs($object, [$this->request]);
+		$res = $method->invokeArgs($object, [$this->request]);
 		$this->assertEquals($expected, $res);
 
 		// Test plugin controller with /admin prefix
@@ -1096,7 +1095,7 @@ INI;
 		$this->request->params['plugin'] = 'Tags';
 
 		$expected = 'Tags.admin/Tags';
-		$res =  $method->invokeArgs($object, [$this->request]);
+		$res = $method->invokeArgs($object, [$this->request]);
 		$this->assertEquals($expected, $res);
 	}
 
@@ -1223,7 +1222,7 @@ INI;
 			'moderator' => 2,
 			'admin' => 3
 		];
-		$res =  $method->invoke($object);
+		$res = $method->invoke($object);
 		$this->assertEquals($expected, $res);
 
 		// Test against roles from database
@@ -1237,7 +1236,7 @@ INI;
 			'moderator' => 12,
 			'admin' => 13
 		];
-		$res =  $method->invoke($object);
+		$res = $method->invoke($object);
 		$this->assertEquals($expected, $res);
 	}
 
@@ -1311,7 +1310,7 @@ INI;
 		$user = ['id' => 2];
 		$expected = [
 			0 => 11, // user
-			1 => 13	 // admin
+			1 => 13 // admin
 		];
 		$res = $method->invokeArgs($object, [$user]);
 		$this->assertEquals($expected, $res);
@@ -1339,7 +1338,7 @@ INI;
 		$user = ['id' => 2];
 		$expected = [
 			0 => 11, // user
-			1 => 13	 // admin
+			1 => 13 // admin
 		];
 		$res = $method->invokeArgs($object, [$user]);
 		$this->assertEquals($expected, $res);
