@@ -16,6 +16,9 @@
 		"php": ">=5.4",
 		"cakephp/cakephp": "~3.0"
 	},
+	"require-dev": {
+		"fig-r/psr2r-sniffer": "dev-master"
+	},
 	"support": {
 		"source": "https://github.com/dereuromark/cakephp-tinyauth"
 	},
