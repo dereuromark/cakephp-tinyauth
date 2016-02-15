@@ -5,7 +5,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 
 /**
  * EmptyRolesFixture. Used for existing roles table without roles/records.
- *
  */
 class EmptyRolesFixture extends TestFixture {
 

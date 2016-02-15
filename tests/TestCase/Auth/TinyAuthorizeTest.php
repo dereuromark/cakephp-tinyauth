@@ -12,7 +12,6 @@ use TinyAuth\Auth\TinyAuthorize;
 
 /**
  * Test case for TinyAuth Authentication
- *
  */
 class TinyAuthorizeTest extends TestCase {
 
