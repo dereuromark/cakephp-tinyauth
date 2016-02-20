@@ -2,8 +2,8 @@
 namespace TinyAuth\Test\Auth;
 
 use Cake\Cache\Cache;
-use Cake\Controller\Controller;
 use Cake\Controller\ComponentRegistry;
+use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Network\Request;
 use Cake\ORM\TableRegistry;
