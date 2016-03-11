@@ -6,10 +6,8 @@ use Cake\Cache\Cache;
 use Cake\Controller\ComponentRegistry;
 use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
-use Cake\Datasource\ConnectionManager;
 use Cake\Network\Request;
 use Cake\ORM\TableRegistry;
-use Cake\Utility\Inflector;
 
 if (!defined('AUTH_CACHE')) {
 	define('AUTH_CACHE', '_cake_core_'); // use the most persistent cache by default
@@ -180,7 +178,7 @@ class TinyAuthorize extends BaseAuthorize {
 	 * - Resolves role slugs to their primary key / identifier
 	 * - Resolves wildcards to their verbose translation
 	 *
-	 * @param string $path
+	 * @param string|null $path
 	 * @return array Roles
 	 */
 	protected function _getAcl($path = null) {
