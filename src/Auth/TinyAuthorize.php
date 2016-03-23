@@ -21,6 +21,7 @@ if (!defined('ACL_FILE')) {
  * Only one config file `acl.ini` necessary,
  * doesn't even need a Roles Table / roles table.
  * Uses most persistent _cake_core_ cache by default.
+ *
  * @link http://www.dereuromark.de/2011/12/18/tinyauth-the-fastest-and-easiest-authorization-for-cake2
  *
  * Usage:
