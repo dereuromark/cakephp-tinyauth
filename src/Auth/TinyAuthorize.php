@@ -21,6 +21,7 @@ if (!defined('ACL_FILE')) {
  * Only one config file `acl.ini` necessary,
  * doesn't even need a Roles Table / roles table.
  * Uses most persistent _cake_core_ cache by default.
+ *
  * @link http://www.dereuromark.de/2011/12/18/tinyauth-the-fastest-and-easiest-authorization-for-cake2
  *
  * Usage:
@@ -44,7 +45,7 @@ class TinyAuthorize extends BaseAuthorize {
 	 * @var array
 	 */
 	protected $_defaultConfig = [
-		'userIdColumn' => 'id', // ID Column in users table
+		'idColumn' => 'id', // ID Column in users table
 		'roleColumn' => 'role_id', // Foreign key for the Role ID in users table or in pivot table
 		'userColumn' => 'user_id', // Foreign key for the User id in pivot table. Only for multi-roles setup
 		'aliasColumn' => 'alias', // Name of column in roles table holding role alias/slug
@@ -373,7 +374,7 @@ class TinyAuthorize extends BaseAuthorize {
 		$roleColumn = $this->_config['roleColumn'];
 		$roles = $pivotTable->find()
 			->select($roleColumn)
-			->where([$this->_config['userColumn'] => $user[$this->_config['userIdColumn']]])
+			->where([$this->_config['userColumn'] => $user[$this->_config['idColumn']]])
 			->all()
 			->extract($roleColumn)
 			->toArray();
