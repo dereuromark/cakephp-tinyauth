@@ -45,6 +45,7 @@ class TinyAuthorize extends BaseAuthorize {
 	 * @var array
 	 */
 	protected $_defaultConfig = [
+		'idColumn' => 'id', // ID Column in users table
 		'roleColumn' => 'role_id', // Foreign key for the Role ID in users table or in pivot table
 		'userColumn' => 'user_id', // Foreign key for the User id in pivot table. Only for multi-roles setup
 		'aliasColumn' => 'alias', // Name of column in roles table holding role alias/slug
@@ -373,7 +374,7 @@ class TinyAuthorize extends BaseAuthorize {
 		$roleColumn = $this->_config['roleColumn'];
 		$roles = $pivotTable->find()
 			->select($roleColumn)
-			->where([$this->_config['userColumn'] => $user['id']])
+			->where([$this->_config['userColumn'] => $user[$this->_config['idColumn']]])
 			->all()
 			->extract($roleColumn)
 			->toArray();
