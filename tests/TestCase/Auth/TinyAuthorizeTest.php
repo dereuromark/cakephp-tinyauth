@@ -1374,7 +1374,7 @@ INI;
 		$reflection = new ReflectionClass(get_class($object));
 		$method = $reflection->getMethod('_getUserRoles');
 		$method->setAccessible(true);
-		
+
 		$user = [
 		'id' => 1,
 		'profile_id' => 2
@@ -1385,7 +1385,7 @@ INI;
 		];
 		$res = $method->invokeArgs($object, [$user]);
 		$this->assertEquals($expected, $res);
-		
+
 		$user = [
 		'id' => 1,
 		'profile_id' => 1
@@ -1396,7 +1396,7 @@ INI;
 		];
 		$res = $method->invokeArgs($object, [$user]);
 		$this->assertEquals($expected, $res);
-		
+
 		//without id
 		$user = [
 		'profile_id' => 1
@@ -1407,7 +1407,7 @@ INI;
 		];
 		$res = $method->invokeArgs($object, [$user]);
 		$this->assertEquals($expected, $res);
-		
+
 	}
 
 	/**
