@@ -318,6 +318,7 @@ INI;
 		]);
 		$this->assertEquals('Roles', $object->config('rolesTable'));
 		$this->assertEquals('role_id', $object->config('roleColumn'));
+		$this->assertEquals('id', $object->config('idColumn'));
 
 		// All tests performed against this action
 		$this->request->params['action'] = 'add';
@@ -1351,6 +1352,62 @@ INI;
 		];
 		$res = $method->invokeArgs($object, [$user]);
 		$this->assertEquals($expected, $res);
+	}
+
+	/**
+	 * Tests idColumn
+	 *
+	 * @return void
+	 */
+	public function testIdColumnPivotTable() {
+		$object = new TestTinyAuthorize($this->collection, [
+
+			'multiRole' => true,
+			'rolesTable' => 'DatabaseRoles',
+			'pivotTable' => 'DatabaseUserRoles',
+			'roleColumn' => 'role_id',
+			'userColumn' => 'user_id',
+			'idColumn' => 'profile_id',
+		]);
+
+		// Make protected function available
+		$reflection = new ReflectionClass(get_class($object));
+		$method = $reflection->getMethod('_getUserRoles');
+		$method->setAccessible(true);
+		
+		$user = [
+		'id' => 1,
+		'profile_id' => 2
+		];
+		$expected = [
+			0 => 11, // user
+			1 => 13 // admin
+		];
+		$res = $method->invokeArgs($object, [$user]);
+		$this->assertEquals($expected, $res);
+		
+		$user = [
+		'id' => 1,
+		'profile_id' => 1
+		];
+		$expected = [
+			0 => 11, // user
+			1 => 12 // moderator
+		];
+		$res = $method->invokeArgs($object, [$user]);
+		$this->assertEquals($expected, $res);
+		
+		//without id
+		$user = [
+		'profile_id' => 1
+		];
+		$expected = [
+			0 => 11, // user
+			1 => 12 // moderator
+		];
+		$res = $method->invokeArgs($object, [$user]);
+		$this->assertEquals($expected, $res);
+		
 	}
 
 	/**
