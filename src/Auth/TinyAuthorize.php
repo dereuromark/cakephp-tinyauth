@@ -100,14 +100,14 @@ class TinyAuthorize extends BaseAuthorize {
 	 * @return bool Success
 	 */
 	public function authorize($user, Request $request) {
-		if(!empty($this->_config['superAdmin'])) {
-			if(empty($this->_config['superAdminColumn'])) {
+		if (!empty($this->_config['superAdmin'])) {
+			if (empty($this->_config['superAdminColumn'])) {
 				$this->_config['superAdminColumn'] = $this->_config['idColumn'];
 			}
-			if(!isset($user[$this->_config['superAdminColumn']])) {
+			if (!isset($user[$this->_config['superAdminColumn']])) {
 				throw new Exception('Missing super Admin Column in user table');
 			}
-			if($user[$this->_config['superAdminColumn']] === $this->_config['superAdmin']) {
+			if ($user[$this->_config['superAdminColumn']] === $this->_config['superAdmin']) {
 				return true;
 			}
 		}
