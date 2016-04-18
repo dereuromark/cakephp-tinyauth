@@ -54,8 +54,8 @@ class TinyAuthorize extends BaseAuthorize {
 		'pivotTable' => null, // Should be used in multi-roles setups
 		'multiRole' => false, // true to enables multirole/HABTM authorization (requires a valid pivot table)
 		'superAdminRole' => null, // id of super admin role, which grants access to ALL resources
-		'superAdmin'=>null, // super admin, which grants access to ALL resourc
-		'superAdminColumn'=>null, // Column of super admin
+		'superAdmin' => null, // super admin, which grants access to ALL resourc
+		'superAdminColumn' => null, // Column of super admin
 		'authorizeByPrefix' => false,
 		'prefixes' => [], // Whitelisted prefixes (only used when allowAdmin is enabled), leave empty to use all available
 		'allowUser' => false, // enable to allow ALL roles access to all actions except prefixed with 'adminPrefix'
@@ -100,18 +100,17 @@ class TinyAuthorize extends BaseAuthorize {
 	 * @return bool Success
 	 */
 	public function authorize($user, Request $request) {
-		if(!empty($this->_config['superAdmin'])){
-			if(empty($this->_config['superAdminColumn'])){
-				$this->_config['superAdminColumn']=$this->_config['idColumn'];
+		if(!empty($this->_config['superAdmin'])) {
+			if(empty($this->_config['superAdminColumn'])) {
+				$this->_config['superAdminColumn'] = $this->_config['idColumn'];
 			}
-			if(!isset($user[$this->_config['superAdminColumn']])){
+			if(!isset($user[$this->_config['superAdminColumn']])) {
 				throw new Exception('Missing super Admin Column in user table');
 			}
-			if($user[$this->_config['superAdminColumn']]===$this->_config['superAdmin']){
+			if($user[$this->_config['superAdminColumn']] === $this->_config['superAdmin']) {
 				return true;
 			}
 		}
-		
 		return $this->validate($this->_getUserRoles($user), $request);
 	}
 
