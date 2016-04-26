@@ -211,6 +211,8 @@ rolesTablePlugin|string|Name of the plugin for the roles table, if any.
 pivotTablePlugin|string|Name of the plugin for the pivot table, if any.
 multiRole|bool|True will enable multi-role/HABTM authorization (requires a valid join table)
 superAdminRole|int|Id of the super admin role. Users with this role will have access to ALL resources.
+superAdmin|int or string|Id/name of the super admin. Users with this id/name will have access to ALL resources.null/0/"0" take disable it
+superAdminColumn|string|Column of super admin in user table.default use idColumn option
 authorizeByPrefix|bool|If prefixed routes should be auto-handled by their matching role name.
 prefixes|array|A list of authorizeByPrefix handled prefixes.
 allowUser|bool|True will give authenticated users access to all resources except those using the `adminPrefix`
