@@ -1421,78 +1421,77 @@ INI;
 		$this->request->params['controller'] = 'AnyControllers';
 		$this->request->params['prefix'] = null;
 		$this->request->params['plugin'] = null;
-		//single role 
+		//single role
 		$object = new TestTinyAuthorize($this->collection, [
 			'superAdmin' => 1,
 		]);
 
-		$user = ['id' => 1,'role_id'=>999];
+		$user = ['id' => 1, 'role_id' => 999];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
-		
-		$user = ['id' => 2,'role_id'=>999];
+
+		$user = ['id' => 2, 'role_id' => 999];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
-		
-		
+
 		//single role and use idColumn
 		$object = new TestTinyAuthorize($this->collection, [
 			'idColumn' => 'group_id',
 			'superAdmin' => 1
 		]);
-		$user = ['id' => 100,'role_id'=>999,'group_id'=>1];
+		$user = ['id' => 100, 'role_id' => 999, 'group_id' => 1];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
-		
-		$user = ['id' => 101,'role_id'=>999,'group_id'=>2];
+
+		$user = ['id' => 101, 'role_id' => 999, 'group_id' => 2];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
-		
+
 		//single role and use superAdminColumn
 		$object = new TestTinyAuthorize($this->collection, [
 			'idColumn' => 'any_id_column',
 			'superAdminColumn' => 'group_id',
 			'superAdmin' => 1
 		]);
-		$user = ['id' => 100,'role_id'=>999,'group_id'=>1];
+		$user = ['id' => 100, 'role_id' => 999, 'group_id' => 1];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
-		
-		$user = ['id' => 101,'role_id'=>999,'group_id'=>2];
+
+		$user = ['id' => 101, 'role_id' => 999, 'group_id' => 2];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
-		
+
 		//single role and use superAdminColumn without idColumn
 		$object = new TestTinyAuthorize($this->collection, [
 			'superAdminColumn' => 'group_id',
 			'superAdmin' => 1
 		]);
-		$user = ['id' => 100,'role_id'=>999,'group_id'=>1];
+		$user = ['id' => 100, 'role_id' => 999, 'group_id' => 1];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
-		
-		$user = ['id' => 101,'role_id'=>999,'group_id'=>2];
+
+		$user = ['id' => 101, 'role_id' => 999, 'group_id' => 2];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
-		
+
 		//single role and use superAdminColumn (string)
 		$object = new TestTinyAuthorize($this->collection, [
 			'idColumn' => 'any_id_column',
 			'superAdminColumn' => 'group',
 			'superAdmin' => 'Admin'
 		]);
-		$user = ['id' => 100,'role_id'=>999,'group'=>'admin'];
+		$user = ['id' => 100, 'role_id' => 999, 'group' => 'admin'];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
-		
-		$user = ['id' => 100,'role_id'=>999,'group'=>'Admin'];
+
+		$user = ['id' => 100, 'role_id' => 999, 'group' => 'Admin'];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
-		
-		$user = ['id' => 101,'role_id'=>999,'group'=>2,'authors'];
+
+		$user = ['id' => 101, 'role_id' => 999, 'group' => 2, 'authors'];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
-		
+
 		//multi role
 		$object = new TestTinyAuthorize($this->collection, [
 
@@ -1506,11 +1505,11 @@ INI;
 		$user = ['id' => 1];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
-		
+
 		$user = ['id' => 2];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
-		
+
 		//multi role and idColumn
 		$object = new TestTinyAuthorize($this->collection, [
 
@@ -1522,14 +1521,14 @@ INI;
 			'idColumn' => 'profile_id',
 			'superAdmin' => 1
 		]);
-		$user = ['id' => 100,'profile_id'=>1];
+		$user = ['id' => 100, 'profile_id' => 1];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
-		
-		$user = ['id' => 101,'profile_id'=>2];
+
+		$user = ['id' => 101, 'profile_id' => 2];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
-		
+
 		//multi role and superAdminColumn
 		$object = new TestTinyAuthorize($this->collection, [
 
@@ -1543,14 +1542,14 @@ INI;
 			'superAdmin' => 100
 		]);
 
-		$user = ['another_id'=>1,'group_id'=>100];
+		$user = ['another_id' => 1, 'group_id' => 100];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
-		
-		$user = ['another_id'=>2,'group_id'=>102];
+
+		$user = ['another_id' => 2, 'group_id' => 102];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
-		
+
 		//multi role and superAdminColumn without idColumn
 		$object = new TestTinyAuthorize($this->collection, [
 
@@ -1563,11 +1562,11 @@ INI;
 			'superAdmin' => 100
 		]);
 
-		$user = ['id'=>1,'group_id'=>100];
+		$user = ['id' => 1, 'group_id' => 100];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
-		
-		$user = ['id'=>2,'group_id'=>102];
+
+		$user = ['id' => 2, 'group_id' => 102];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 		//single role and use superAdminColumn (string)
@@ -1582,18 +1581,18 @@ INI;
 			'superAdmin' => 'Admin'
 		]);
 
-		$user = ['id'=>1,'group'=>'admin'];
+		$user = ['id' => 1, 'group' => 'admin'];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
-		
-		$user = ['id'=>1,'group'=>'Admin'];
+
+		$user = ['id' => 1, 'group' => 'Admin'];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
-		
-		$user = ['id'=>2,'group'=>'Authors'];
+
+		$user = ['id' => 2, 'group' => 'Authors'];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
-		
+
 	}
 
 	/**
