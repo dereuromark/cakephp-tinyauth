@@ -13,7 +13,7 @@ if (!defined('AUTH_CACHE')) {
 	define('AUTH_CACHE', '_cake_core_'); // use the most persistent cache by default
 }
 if (!defined('ACL_FILE')) {
-	define('ACL_FILE', 'acl.ini'); // stored in /app/Config/ by default
+	define('ACL_FILE', 'acl.ini'); // stored in /config/ by default
 }
 
 /**
