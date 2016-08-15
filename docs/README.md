@@ -108,7 +108,7 @@ The ``roleColumn`` option is also used on pivot table in a multi-role setup.
 When using the multiple-roles-per-user model:
 
 - your database MUST have a ``roles`` table
-- your database MUST have a valid join table (e.g. ``users_roles``). This can be overridden with the ``pivotTable`` option.
+- your database MUST have a valid join table (e.g. ``roles_users``). This can be overridden with the ``pivotTable`` option.
 - the configuration option ``multiRole`` MUST be set to ``true``
 
 Example of a record from a valid join table:
@@ -118,6 +118,12 @@ Example of a record from a valid join table:
 'user_id' => 1
 'role_id' => 1
 ```
+
+If you want to have default database tables here for multi-role auth, you can use the plugin shipped Migrations file:
+```
+bin/cake migrations migrate -p TinyAuth
+```
+Alternatively you can copy and paste this migration file to your `app/Config` folder and adjust the fields and table names and then use that modified version instead.
 
 ## acl.ini
 
