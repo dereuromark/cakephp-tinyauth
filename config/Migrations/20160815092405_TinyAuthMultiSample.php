@@ -3,9 +3,13 @@ use Migrations\AbstractMigration;
 
 class TinyAuthMultiSample extends AbstractMigration
 {
+    /**
+     * Creates tables
+     *
+     * @return void
+     */
     public function up()
     {
-
         $this->table('roles')
             ->addColumn('name', 'string', [
                 'default' => null,
@@ -37,12 +41,12 @@ class TinyAuthMultiSample extends AbstractMigration
         $this->table('users')
             ->addColumn('username', 'string', [
                 'default' => null,
-                'limit' => 256,
+                'limit' => 255,
                 'null' => true,
             ])
             ->addColumn('password', 'string', [
                 'default' => null,
-                'limit' => 256,
+                'limit' => 255,
                 'null' => true,
             ])
             ->addColumn('created', 'timestamp', [
@@ -57,7 +61,7 @@ class TinyAuthMultiSample extends AbstractMigration
             ])
             ->create();
 
-        $this->table('users_roles')
+        $this->table('roles_users')
             ->addColumn('user_id', 'integer', [
                 'default' => null,
                 'limit' => 11,
@@ -71,10 +75,15 @@ class TinyAuthMultiSample extends AbstractMigration
             ->create();
     }
 
+    /**
+     * Drops tables
+     *
+     * @return void
+     */
     public function down()
     {
         $this->dropTable('roles');
         $this->dropTable('users');
-        $this->dropTable('users_roles');
+        $this->dropTable('roles_users');
     }
 }
