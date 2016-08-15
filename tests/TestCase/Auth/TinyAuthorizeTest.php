@@ -1649,7 +1649,7 @@ class TestTinyAuthorize extends TinyAuthorize {
 	 * @return array
 	 */
 	public function getAcl() {
-		return $this->_getAcl();
+		return $this->_getAcl(TMP);
 	}
 
 	/**
