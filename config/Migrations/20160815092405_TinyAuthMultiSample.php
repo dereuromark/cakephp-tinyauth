@@ -22,12 +22,12 @@ class TinyAuthMultiSample extends AbstractMigration
                 'limit' => 20,
                 'null' => false,
             ])
-            ->addColumn('created', 'datetime', [
+            ->addColumn('created', 'timestamp', [
                 'default' => null,
                 'limit' => null,
                 'null' => true,
             ])
-            ->addColumn('modified', 'datetime', [
+            ->addColumn('updated', 'timestamp', [
                 'default' => null,
                 'limit' => null,
                 'null' => true,
