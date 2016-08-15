@@ -1592,7 +1592,6 @@ INI;
 		$user = ['id' => 2, 'group' => 'Authors'];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
-
 	}
 
 	/**
