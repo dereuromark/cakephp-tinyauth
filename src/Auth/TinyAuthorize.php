@@ -63,7 +63,7 @@ class TinyAuthorize extends BaseAuthorize {
 		'cache' => AUTH_CACHE,
 		'cacheKey' => 'tiny_auth_acl',
 		'autoClearCache' => false, // usually done by Cache automatically in debug mode,
-        'aclPath' => null, // possible to locate acl.ini at given path e.g. Plugin::configPath('Admin')
+		'aclPath' => null, // possible to locate acl.ini at given path e.g. Plugin::configPath('Admin')
 	];
 
 	/**
