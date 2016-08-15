@@ -224,6 +224,7 @@ prefixes|array|A list of authorizeByPrefix handled prefixes.
 allowUser|bool|True will give authenticated users access to all resources except those using the `adminPrefix`
 adminPrefix|string|Name of the prefix used for admin pages. Defaults to admin.
 autoClearCache|bool|True will generate a new ACL cache file every time.
+aclPath|string|Full path to the acl.ini. Defaults to `ROOT . DS . 'config' . DS`.
 
 
 ## Auth user data

@@ -63,6 +63,7 @@ class TinyAuthorize extends BaseAuthorize {
 		'cache' => AUTH_CACHE,
 		'cacheKey' => 'tiny_auth_acl',
 		'autoClearCache' => false, // usually done by Cache automatically in debug mode,
+		'aclPath' => null, // possible to locate acl.ini at given path e.g. Plugin::configPath('Admin')
 	];
 
 	/**
@@ -157,7 +158,7 @@ class TinyAuthorize extends BaseAuthorize {
 		}
 
 		if ($this->_acl === null) {
-			$this->_acl = $this->_getAcl();
+			$this->_acl = $this->_getAcl($this->_config['aclPath']);
 		}
 
 		// Allow access if user has a role with wildcard access to the resource
