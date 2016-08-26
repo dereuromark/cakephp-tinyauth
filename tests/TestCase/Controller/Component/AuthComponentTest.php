@@ -16,87 +16,87 @@ use TinyAuth\Controller\Component\AuthComponent;
  */
 class AuthComponentTest extends TestCase {
 
-    /**
-     * @var AuthComponent
-     */
-    protected $AuthComponent;
+	/**
+	 * @var \TinyAuth\Controller\Component\AuthComponent
+	 */
+	protected $AuthComponent;
 
-    /**
-     * @var
-     */
-    protected $componentConfig = [];
-    /**
-     * @return void
-     */
-    public function setUp() {
-        $this->componentConfig = [
-            'authPath' => Plugin::path('TinyAuth') . 'tests' . DS . 'test_files' . DS
-        ];
-    }
+	/**
+	 * @var array
+	 */
+	protected $componentConfig = [];
+	/**
+	 * @return void
+	 */
+	public function setUp() {
+		$this->componentConfig = [
+			'authPath' => Plugin::path('TinyAuth') . 'tests' . DS . 'test_files' . DS
+		];
+	}
 
-    /**
-     * @return void
-     */
-    public function testValid() {
-        $request = new Request(['params' => [
-            'controller' => 'Users',
-            'action' => 'view',
-            'plugin' => null,
-            '_ext' => null,
-            'pass' => [1]
-        ]]);
-        $controller = $this->getControllerMock($request);
+	/**
+	 * @return void
+	 */
+	public function testValid() {
+		$request = new Request(['params' => [
+			'controller' => 'Users',
+			'action' => 'view',
+			'plugin' => null,
+			'_ext' => null,
+			'pass' => [1]
+		]]);
+		$controller = $this->getControllerMock($request);
 
-        $registry = new ComponentRegistry($controller);
-        $this->AuthComponent = new AuthComponent($registry, $this->componentConfig);
+		$registry = new ComponentRegistry($controller);
+		$this->AuthComponent = new AuthComponent($registry, $this->componentConfig);
 
-        $config = [];
-        $this->AuthComponent->initialize($config);
+		$config = [];
+		$this->AuthComponent->initialize($config);
 
-        $event = new Event('Controller.startup', $controller);
-        $response = $this->AuthComponent->startup($event);
-        $this->assertNull($response);
-    }
+		$event = new Event('Controller.startup', $controller);
+		$response = $this->AuthComponent->startup($event);
+		$this->assertNull($response);
+	}
 
-    /**
-     * @return void
-     */
-    public function testInvalid() {
-        $request = new Request(['params' => [
-            'controller' => 'FooBar',
-            'action' => 'index',
-            'plugin' => null,
-            '_ext' => null,
-            'pass' => []
-        ]]);
-        $controller = $this->getControllerMock($request);
+	/**
+	 * @return void
+	 */
+	public function testInvalid() {
+		$request = new Request(['params' => [
+			'controller' => 'FooBar',
+			'action' => 'index',
+			'plugin' => null,
+			'_ext' => null,
+			'pass' => []
+		]]);
+		$controller = $this->getControllerMock($request);
 
-        $registry = new ComponentRegistry($controller);
-        $this->AuthComponent = new AuthComponent($registry, $this->componentConfig);
+		$registry = new ComponentRegistry($controller);
+		$this->AuthComponent = new AuthComponent($registry, $this->componentConfig);
 
-        $config = [];
-        $this->AuthComponent->initialize($config);
+		$config = [];
+		$this->AuthComponent->initialize($config);
 
-        $event = new Event('Controller.startup', $controller);
-        $response = $this->AuthComponent->startup($event);
+		$event = new Event('Controller.startup', $controller);
+		$response = $this->AuthComponent->startup($event);
 
-        $this->assertInstanceOf(Response::class, $response);
-        $this->assertSame(302, $response->statusCode());
-    }
+		$this->assertInstanceOf(Response::class, $response);
+		$this->assertSame(302, $response->statusCode());
+	}
 
-    /**
-     * @param \Cake\Network\Request $request
-     * @return Controller
-     */
-    protected function getControllerMock(Request $request) {
-        $controller = $this->getMockBuilder(Controller::class)
-            ->setConstructorArgs([$request])
-            ->setMethods(['isAction'])
-            ->getMock();
+	/**
+	 * @param \Cake\Network\Request $request
+	 * @return \Cake\Controller\Controller
+	 */
+	protected function getControllerMock(Request $request) {
+		$controller = $this->getMockBuilder(Controller::class)
+			->setConstructorArgs([$request])
+			->setMethods(['isAction'])
+			->getMock();
 
-        $controller->expects($this->once())->method('isAction')->willReturn(true);
+		$controller->expects($this->once())->method('isAction')->willReturn(true);
 
-        return $controller;
-    }
+		return $controller;
+	}
 
 }

@@ -268,25 +268,25 @@ class TinyAuthorize extends BaseAuthorize {
 		return $res;
 	}
 
-    /**
-     * Returns the acl.ini file as an array.
-     *
-     * @param string $ini Full path to the acl.ini file
-     * @return array List with all available roles
-     */
-    protected function _parseFile($ini) {
-        return Utility::parseFile($ini);
-    }
+	/**
+	 * Returns the acl.ini file as an array.
+	 *
+	 * @param string $ini Full path to the acl.ini file
+	 * @return array List with all available roles
+	 */
+	protected function _parseFile($ini) {
+		return Utility::parseFile($ini);
+	}
 
-    /**
-     * Deconstructs an ACL ini section key into a named array with ACL parts.
-     *
-     * @param string $key INI section key as found in acl.ini
-     * @return array Array with named keys for controller, plugin and prefix
-     */
-    protected function _deconstructIniKey($key) {
-        return Utility::deconstructIniKey($key);
-    }
+	/**
+	 * Deconstructs an ACL ini section key into a named array with ACL parts.
+	 *
+	 * @param string $key INI section key as found in acl.ini
+	 * @return array Array with named keys for controller, plugin and prefix
+	 */
+	protected function _deconstructIniKey($key) {
+		return Utility::deconstructIniKey($key);
+	}
 
 	/**
 	 * Constructs an ACL ini section key from a given Request.
