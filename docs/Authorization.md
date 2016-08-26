@@ -1,0 +1,140 @@
+# TinyAuth Authorization
+The fast and easy way for user authorization in CakePHP 3.x applications.
+
+Enable TinyAuth Authorize adapter if you want to add instant (and easy) role
+based access control (RBAC) to your application.
+
+## Basic Features
+- Single or multi role
+- DB (dynamic) or Configure based role definition
+- INI file (static) based access rights (controller-action/role setup)
+- Lightweight and incredibly fast
+
+Do NOT use if
+- you need ROW based access
+- you want to dynamically adjust access rights (or enhance it with a web
+frontend yourself)
+
+## Enabling
+
+Assuming you already have authentication set up correctly you can enable
+authorization in your controller's `beforeFilter` like this example:
+
+```php
+// src/Controller/AppController
+
+use Cake\Event\Event;
+
+public function beforeFilter(Event $event) {
+	parent::beforeFilter($event);
+
+	$this->loadComponent('Auth', [
+		'authFile' => ...
+	]);
+}
+```
+
+## authentication.ini
+
+TinyAuth expects an ``acl.ini`` file in your config directory.
+Use it to specify who gets access to which resources.
+
+The section key syntax follows the CakePHP naming convention for plugins.
+
+Make sure to create an entry for each action you want to expose and use:
+
+- one or more role names (groups granted access)
+- the ``*`` wildcard to allow access to all authenticated users
+
+```ini
+; ----------------------------------------------------------
+; Userscontroller
+; ----------------------------------------------------------
+[Users]
+index = user, admin, undefined-role
+edit, view = user, admin
+* = admin
+; ----------------------------------------------------------
+; UsersController using /api prefixed route
+; ----------------------------------------------------------
+[api/Users]
+view = user
+* = admin
+; ----------------------------------------------------------
+; UsersController using /admin prefixed route
+; ----------------------------------------------------------
+[admin/Users]
+* = admin
+; ----------------------------------------------------------
+; AccountsController in plugin named Accounts
+; ----------------------------------------------------------
+[Accounts.Accounts]
+view, edit = user
+* = admin
+; ----------------------------------------------------------
+; AccountsController in plugin named Accounts using /admin
+; prefixed route
+; ----------------------------------------------------------
+[Accounts.admin/Accounts]
+* = admin
+; ----------------------------------------------------------
+; CompaniesController in plugin named Accounts
+; ----------------------------------------------------------
+[Accounts.Companies]
+view, edit = user
+* = admin
+; ----------------------------------------------------------
+; CompaniesController in plugin named Accounts using /admin
+; prefixed route
+; ----------------------------------------------------------
+[Accounts.admin/Companies]
+* = admin
+```
+
+## Caching
+
+TinyAuth makes heavy use of caching to achieve optimal performance.
+
+You may however want to disable caching while developing RBAC to prevent
+confusing (outdated) results.
+
+To disable caching either:
+
+- pass ``true`` to the ``autoClearCache`` configuration option
+- use the example below to disable caching automatically for CakePHP debug mode
+
+```php
+'TinyAuth' => [
+	'autoClearCache' => Configure::read('debug')
+]
+```
+
+## Configuration
+
+TinyAuth supports the following configuration options.
+
+Option | Type | Description
+:----- | :--- | :----------
+roleColumn|string|Name of column in user table holding role id (used for foreign key in users table in a single role per user setup, or in the pivot table on multi-roles setup)
+userColumn|string|Name of column in pivot table holding role id (only used in pivot table on multi-roles setup)
+aliasColumn|string|Name of the column for the alias in the role table
+idColumn|string|Name of the ID Column in users table
+rolesTable|string|Name of Configure key holding all available roles OR class name of roles database table
+usersTable|string|Class name of the users table.
+pivotTable|string|Name of the pivot table, for a multi-group setup.
+rolesTablePlugin|string|Name of the plugin for the roles table, if any.
+pivotTablePlugin|string|Name of the plugin for the pivot table, if any.
+multiRole|bool|True will enable multi-role/HABTM authorization (requires a valid join table)
+superAdminRole|int|Id of the super admin role. Users with this role will have access to ALL resources.
+superAdmin|int or string|Id/name of the super admin. Users with this id/name will have access to ALL resources.null/0/"0" take disable it
+superAdminColumn|string|Column of super admin in user table.default use idColumn option
+authorizeByPrefix|bool|If prefixed routes should be auto-handled by their matching role name.
+prefixes|array|A list of authorizeByPrefix handled prefixes.
+allowUser|bool|True will give authenticated users access to all resources except those using the `adminPrefix`
+adminPrefix|string|Name of the prefix used for admin pages. Defaults to admin.
+autoClearCache|bool|True will generate a new ACL cache file every time.
+aclPath|string|Full path to the acl.ini. Defaults to `ROOT . DS . 'config' . DS`.
+
+
+## Auth user data
+For reading auth user data take a look at [Tools plugin AuthUser component/helper](https://github.com/dereuromark/cakephp-tools/blob/master/docs/Auth/Auth.md).
