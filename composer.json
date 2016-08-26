@@ -13,8 +13,8 @@
 		}
 	],
 	"require": {
-		"php": ">=5.4",
-		"cakephp/cakephp": "~3.0"
+		"php": ">=5.5",
+		"cakephp/cakephp": "~3.2"
 	},
 	"require-dev": {
 		"fig-r/psr2r-sniffer": "dev-master"
