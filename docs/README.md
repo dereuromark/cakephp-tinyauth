@@ -18,7 +18,7 @@ This is done via TinyAuth Auth Component.
 The component plays well together with the adapter (see below).
 If you do not have any roles and either all are logged in or not logged in you can also use this stand-alone to make certain pages public.
 
-See [Authentication](/docs/Authentication) docs.
+See [Authentication](Authentication.md) docs.
 
 ## Authorization
 For this we have a TinyAuth Authorize adapter.
@@ -27,4 +27,4 @@ The adapter plays well together with the component above.
 But if you prefer to control the action whitelisting for authentication via code and `$this->Auth->allow()` calls, you can
 also just use this adapter stand-alone for the ACL part of your application.
 
-See [Authorization](/docs/Authorization) docs.
+See [Authorization](Authorization.md) docs.
