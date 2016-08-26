@@ -69,9 +69,9 @@ class TinyAuthorize extends BaseAuthorize {
 		'adminPrefix' => 'admin', // name of the admin prefix route (only used when allowUser is enabled)
 		'cache' => '_cake_core_',
 		'cacheKey' => 'tiny_auth_acl',
-		'autoClearCache' => false, // usually done by Cache automatically in debug mode,
+		'autoClearCache' => false, // Set to true to delete cache automatically in debug mode
 		'aclPath' => null, // @deprecated Use filePath
-		'filePath' => null, // possible to locate ini file at given path e.g. Plugin::configPath('Admin')
+		'filePath' => null, // Possible to locate ini file at given path e.g. Plugin::configPath('Admin')
 		'file' => 'acl.ini',
 	];
 

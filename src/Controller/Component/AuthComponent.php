@@ -20,9 +20,9 @@ class AuthComponent extends CakeAuthComponent {
 	 */
 	protected $_defaultTinyAuthConfig = [
 		'cache' => '_cake_core_',
-		'cacheKey' => 'tiny_auth_authentication',
-		'autoClearCache' => false, // usually done by Cache automatically in debug mode,
-		'filePath' => null, // possible to locate ini file at given path e.g. Plugin::configPath('Admin')
+		'cacheKey' => 'tiny_auth_allow',
+		'autoClearCache' => false, // Set to true to delete cache automatically in debug mode
+		'filePath' => null, // Possible to locate ini file at given path e.g. Plugin::configPath('Admin')
 		'file' => 'auth-allow.ini',
 	];
 
@@ -90,7 +90,7 @@ class AuthComponent extends CakeAuthComponent {
 		if ($path === null) {
 			$path = ROOT . DS . 'config' . DS;
 		}
-debug($path);
+
 		if ($this->_config['autoClearCache'] && Configure::read('debug')) {
 			Cache::delete($this->_config['cacheKey'], $this->_config['cache']);
 		}

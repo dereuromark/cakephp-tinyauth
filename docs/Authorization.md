@@ -29,12 +29,103 @@ public function beforeFilter(Event $event) {
 	parent::beforeFilter($event);
 
 	$this->loadComponent('Auth', [
-		'authFile' => ...
+		'authorize' => [
+			'TinyAuth.Tiny' => [
+				'multiRole' => false
+			]
+		]
 	]);
 }
 ```
 
-## authentication.ini
+> Please note that TinyAuth Authorize can be used in combination with any
+> [CakePHP Authentication Type](http://book.cakephp.org/3.0/en/controllers/components/authentication.html#choosing-an-authentication-type).
+
+## Roles
+
+TinyAuth requires the presence of roles to function so create those first using
+one of the following two options.
+
+### Configure based roles
+
+Define your roles in a Configure array if you want to prevent database role
+lookups, for example:
+
+```php
+// config/app_custom.php
+
+/**
+* Optionally define constants for easy referencing throughout your code
+*/
+define('ROLE_USER', 1);
+define('ROLE_ADMIN', 2);
+define('ROLE_SUPERADMIN', 9);
+
+return [
+	'Roles' => [
+		'user' => ROLE_USER,
+		'admin' => ROLE_ADMIN,
+		'superadmin' => ROLE_SUPERADMIN
+	]
+];
+```
+
+### Database roles
+When you choose to store your roles in the database TinyAuth expects a table
+named ``roles``. If you prefer to use another table name simply specify it using the
+``rolesTable`` configuration option.
+
+>**Note:** make sure to add an "alias" field to your roles table (used as slug
+identifier in the acl.ini file)
+
+Example of a record from a valid roles table:
+
+```php
+'id' => '11'
+'name' => 'User'
+'description' => 'Basic authenticated user'
+'alias' => 'user'
+'created' => '2010-01-07 03:36:33'
+'modified' => '2010-01-07 03:36:33'
+```
+
+> Please note that you do NOT need Configure based roles when using database
+> roles. Also make sure to remove (or rename) existing Configure based roles
+> since TinyAuth will always first try to find a matching Configure roles array
+> before falling back to using the database.
+
+## Users
+
+### Single-role
+
+When using the single-role-per-user model TinyAuth expects your Users model to
+contain an column named ``role_id``. If you prefer to use another column name
+simply specify it using the ``roleColumn`` configuration option.
+
+The ``roleColumn`` option is also used on pivot table in a multi-role setup.
+
+### Multi-role
+When using the multiple-roles-per-user model:
+
+- your database MUST have a ``roles`` table
+- your database MUST have a valid join table (e.g. ``roles_users``). This can be overridden with the ``pivotTable`` option.
+- the configuration option ``multiRole`` MUST be set to ``true``
+
+Example of a record from a valid join table:
+
+```php
+'id' => 1
+'user_id' => 1
+'role_id' => 1
+```
+
+If you want to have default database tables here for multi-role auth, you can use the plugin shipped Migrations file:
+```
+bin/cake migrations migrate -p TinyAuth
+```
+Alternatively you can copy and paste this migration file to your `app/Config` folder and adjust the fields and table names and then use that modified version instead.
+
+## acl.ini
 
 TinyAuth expects an ``acl.ini`` file in your config directory.
 Use it to specify who gets access to which resources.
@@ -48,7 +139,7 @@ Make sure to create an entry for each action you want to expose and use:
 
 ```ini
 ; ----------------------------------------------------------
-; Userscontroller
+; UsersController
 ; ----------------------------------------------------------
 [Users]
 index = user, admin, undefined-role
@@ -94,6 +185,7 @@ view, edit = user
 ## Caching
 
 TinyAuth makes heavy use of caching to achieve optimal performance.
+By default it will not use caching in debug mode, though.
 
 You may however want to disable caching while developing RBAC to prevent
 confusing (outdated) results.
@@ -111,7 +203,7 @@ To disable caching either:
 
 ## Configuration
 
-TinyAuth supports the following configuration options.
+TinyAuthorize adapter supports the following configuration options.
 
 Option | Type | Description
 :----- | :--- | :----------
@@ -133,7 +225,10 @@ prefixes|array|A list of authorizeByPrefix handled prefixes.
 allowUser|bool|True will give authenticated users access to all resources except those using the `adminPrefix`
 adminPrefix|string|Name of the prefix used for admin pages. Defaults to admin.
 autoClearCache|bool|True will generate a new ACL cache file every time.
-aclPath|string|Full path to the acl.ini. Defaults to `ROOT . DS . 'config' . DS`.
+filePath|string|Full path to the acl.ini. Defaults to `ROOT . DS . 'config' . DS`.
+file|string|Name of the ini file. Defaults to `acl.ini`.
+cache|string|Cache type. Defaults to `_cake_core_`.
+cacheKey|string|Cache key. Defaults to `tiny_auth_acl`.
 
 
 ## Auth user data
