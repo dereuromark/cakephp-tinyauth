@@ -1034,7 +1034,7 @@ INI;
 
 		// Make protected function available
 		$reflection = new ReflectionClass(get_class($object));
-		$method = $reflection->getMethod('_parseAclIni');
+		$method = $reflection->getMethod('_parseFile');
 		$method->setAccessible(true);
 		$res = $method->invokeArgs($object, [TMP . 'acl.ini']);
 		$this->assertTrue(is_array($res));
@@ -1053,7 +1053,7 @@ INI;
 
 		// Make protected function available
 		$reflection = new ReflectionClass(get_class($object));
-		$method = $reflection->getMethod('_parseAclIni');
+		$method = $reflection->getMethod('_parseFile');
 		$method->setAccessible(true);
 		$method->invokeArgs($object, [DS . 'non' . DS . 'existent' . DS . 'acl.ini']);
 	}

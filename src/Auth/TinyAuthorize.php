@@ -9,9 +9,15 @@ use Cake\Core\Exception\Exception;
 use Cake\Network\Request;
 use Cake\ORM\TableRegistry;
 
+/**
+ * @deprecated Directly use configs
+ */
 if (!defined('AUTH_CACHE')) {
 	define('AUTH_CACHE', '_cake_core_'); // use the most persistent cache by default
 }
+/**
+ * @deprecated Directly use configs
+ */
 if (!defined('ACL_FILE')) {
 	define('ACL_FILE', 'acl.ini'); // stored in /config/ by default
 }
@@ -67,8 +73,6 @@ class TinyAuthorize extends BaseAuthorize {
 	];
 
 	/**
-	 * TinyAuthorize::__construct()
-	 *
 	 * @param \Cake\Controller\ComponentRegistry $registry
 	 * @param array $config
 	 * @throws \Cake\Core\Exception\Exception
@@ -210,7 +214,7 @@ class TinyAuthorize extends BaseAuthorize {
 			return $roles;
 		}
 
-		$iniArray = $this->_parseAclIni($path . ACL_FILE);
+		$iniArray = $this->_parseFile($path . ACL_FILE);
 		$availableRoles = $this->_getAvailableRoles();
 
 		$res = [];
@@ -224,7 +228,8 @@ class TinyAuthorize extends BaseAuthorize {
 				$actions = explode(',', $actions);
 
 				foreach ($roles as $roleId => $role) {
-					if (!($role = trim($role))) {
+					$role = trim($role);
+					if (!$role) {
 						continue;
 					}
 					// Prevent undefined roles appearing in the iniMap
@@ -269,7 +274,7 @@ class TinyAuthorize extends BaseAuthorize {
 	 * @return array List with all available roles
 	 * @throws \Cake\Core\Exception\Exception
 	 */
-	protected function _parseAclIni($ini) {
+	protected function _parseFile($ini) {
 		if (!file_exists($ini)) {
 			throw new Exception(sprintf('Missing TinyAuthorize ACL file (%s)', $ini));
 		}
