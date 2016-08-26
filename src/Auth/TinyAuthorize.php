@@ -11,13 +11,13 @@ use Cake\ORM\TableRegistry;
 use TinyAuth\Utility\Utility;
 
 /**
- * @deprecated Directly use configs
+ * @deprecated Directly use cache config key
  */
 if (!defined('AUTH_CACHE')) {
 	define('AUTH_CACHE', '_cake_core_'); // use the most persistent cache by default
 }
 /**
- * @deprecated Directly use configs
+ * @deprecated Directly use file config key
  */
 if (!defined('ACL_FILE')) {
 	define('ACL_FILE', 'acl.ini'); // stored in /config/ by default
@@ -67,10 +67,12 @@ class TinyAuthorize extends BaseAuthorize {
 		'prefixes' => [], // Whitelisted prefixes (only used when allowAdmin is enabled), leave empty to use all available
 		'allowUser' => false, // enable to allow ALL roles access to all actions except prefixed with 'adminPrefix'
 		'adminPrefix' => 'admin', // name of the admin prefix route (only used when allowUser is enabled)
-		'cache' => AUTH_CACHE,
+		'cache' => '_cake_core_',
 		'cacheKey' => 'tiny_auth_acl',
 		'autoClearCache' => false, // usually done by Cache automatically in debug mode,
-		'aclPath' => null, // possible to locate acl.ini at given path e.g. Plugin::configPath('Admin')
+		'aclPath' => null, // @deprecated Use filePath
+		'filePath' => null, // possible to locate ini file at given path e.g. Plugin::configPath('Admin')
+		'file' => 'acl.ini',
 	];
 
 	/**
@@ -89,6 +91,11 @@ class TinyAuthorize extends BaseAuthorize {
 
 		if (!in_array($config['cache'], Cache::configured())) {
 			throw new Exception(sprintf('Invalid TinyAuthorization cache `%s`', $config['cache']));
+		}
+
+		// BC only
+		if (isset($this->_config['aclPath'])) {
+			$this->_config['filePath'] = $this->_config['aclPath'];
 		}
 	}
 
@@ -215,7 +222,7 @@ class TinyAuthorize extends BaseAuthorize {
 			return $roles;
 		}
 
-		$iniArray = $this->_parseFile($path . ACL_FILE);
+		$iniArray = $this->_parseFile($path . $this->_config['file']);
 		$availableRoles = $this->_getAvailableRoles();
 
 		$res = [];

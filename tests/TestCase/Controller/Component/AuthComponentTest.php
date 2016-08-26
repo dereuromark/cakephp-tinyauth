@@ -30,7 +30,7 @@ class AuthComponentTest extends TestCase {
 	 */
 	public function setUp() {
 		$this->componentConfig = [
-			'authPath' => Plugin::path('TinyAuth') . 'tests' . DS . 'test_files' . DS
+			'filePath' => Plugin::path('TinyAuth') . 'tests' . DS . 'test_files' . DS
 		];
 	}
 

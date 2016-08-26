@@ -22,8 +22,8 @@ class AuthComponent extends CakeAuthComponent {
 		'cache' => '_cake_core_',
 		'cacheKey' => 'tiny_auth_authentication',
 		'autoClearCache' => false, // usually done by Cache automatically in debug mode,
-		'authPath' => null, // possible to locate authentication.ini at given path e.g. Plugin::configPath('Admin')
-		'authFile' => 'authentication.ini'
+		'filePath' => null, // possible to locate ini file at given path e.g. Plugin::configPath('Admin')
+		'file' => 'auth-allow.ini',
 	];
 
 	/**
@@ -55,7 +55,7 @@ class AuthComponent extends CakeAuthComponent {
 	 * @return void
 	 */
 	protected function _prepareAuthentication() {
-		$authentication = $this->_getAuth($this->_config['authPath']);
+		$authentication = $this->_getAuth($this->_config['filePath']);
 
 		$params = $this->request->params;
 		foreach ($authentication as $array) {
@@ -90,7 +90,7 @@ class AuthComponent extends CakeAuthComponent {
 		if ($path === null) {
 			$path = ROOT . DS . 'config' . DS;
 		}
-
+debug($path);
 		if ($this->_config['autoClearCache'] && Configure::read('debug')) {
 			Cache::delete($this->_config['cacheKey'], $this->_config['cache']);
 		}
@@ -99,7 +99,7 @@ class AuthComponent extends CakeAuthComponent {
 			return $roles;
 		}
 
-		$iniArray = Utility::parseFile($path . $this->_config['authFile']);
+		$iniArray = Utility::parseFile($path . $this->_config['file']);
 
 		$res = [];
 		foreach ($iniArray as $key => $actions) {
