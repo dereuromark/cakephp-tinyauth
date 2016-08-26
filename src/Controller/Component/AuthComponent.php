@@ -32,7 +32,6 @@ class AuthComponent extends CakeAuthComponent {
      * @throws \Cake\Core\Exception\Exception
      */
     public function __construct(ComponentRegistry $registry, array $config = []) {
-        $config += (array)Configure::read('TinyAuth');
         $config += $this->_defaultTinyAuthConfig;
 
         parent::__construct($registry, $config);
