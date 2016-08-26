@@ -8,6 +8,7 @@ use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
 use Cake\Network\Request;
 use Cake\ORM\TableRegistry;
+use TinyAuth\Utility\Utility;
 
 /**
  * @deprecated Directly use configs
@@ -219,7 +220,7 @@ class TinyAuthorize extends BaseAuthorize {
 
 		$res = [];
 		foreach ($iniArray as $key => $array) {
-			$res[$key] = $this->_deconstructIniKey($key);
+			$res[$key] = Utility::deconstructIniKey($key);
 			$res[$key]['map'] = $array;
 
 			foreach ($array as $actions => $roles) {
@@ -267,51 +268,25 @@ class TinyAuthorize extends BaseAuthorize {
 		return $res;
 	}
 
-	/**
-	 * Returns the acl.ini file as an array.
-	 *
-	 * @param string $ini Full path to the acl.ini file
-	 * @return array List with all available roles
-	 * @throws \Cake\Core\Exception\Exception
-	 */
-	protected function _parseFile($ini) {
-		if (!file_exists($ini)) {
-			throw new Exception(sprintf('Missing TinyAuthorize ACL file (%s)', $ini));
-		}
+    /**
+     * Returns the acl.ini file as an array.
+     *
+     * @param string $ini Full path to the acl.ini file
+     * @return array List with all available roles
+     */
+    protected function _parseFile($ini) {
+        return Utility::parseFile($ini);
+    }
 
-		if (function_exists('parse_ini_file')) {
-			$iniArray = parse_ini_file($ini, true);
-		} else {
-			$iniArray = parse_ini_string(file_get_contents($ini), true);
-		}
-
-		if (!is_array($iniArray)) {
-			throw new Exception('Invalid TinyAuthorize ACL file');
-		}
-		return $iniArray;
-	}
-
-	/**
-	 * Deconstructs an ACL ini section key into a named array with ACL parts.
-	 *
-	 * @param string $key INI section key as found in acl.ini
-	 * @return array Array with named keys for controller, plugin and prefix
-	 */
-	protected function _deconstructIniKey($key) {
-		$res = [
-			'plugin' => null,
-			'prefix' => null
-		];
-
-		if (strpos($key, '.') !== false) {
-			list($res['plugin'], $key) = explode('.', $key);
-		}
-		if (strpos($key, '/') !== false) {
-			list($res['prefix'], $key) = explode('/', $key);
-		}
-		$res['controller'] = $key;
-		return $res;
-	}
+    /**
+     * Deconstructs an ACL ini section key into a named array with ACL parts.
+     *
+     * @param string $key INI section key as found in acl.ini
+     * @return array Array with named keys for controller, plugin and prefix
+     */
+    protected function _deconstructIniKey($key) {
+        return Utility::deconstructIniKey($key);
+    }
 
 	/**
 	 * Constructs an ACL ini section key from a given Request.
@@ -351,7 +326,7 @@ class TinyAuthorize extends BaseAuthorize {
 		})->toArray();
 
 		if (count($roles) < 1) {
-			throw new Exception('Invalid TinyAuthorize role setup (roles table `' . $this->_config['rolesTable'] . '` has no roles)');
+			throw new Exception('Invalid TinyAuth role setup (roles table `' . $this->_config['rolesTable'] . '` has no roles)');
 		}
 		return $roles;
 	}
@@ -374,7 +349,7 @@ class TinyAuthorize extends BaseAuthorize {
 			if (isset($user[$this->_config['roleColumn']])) {
 				return [$user[$this->_config['roleColumn']]];
 			}
-			throw new Exception(sprintf('Missing TinyAuthorize role id (%s) in user session', $this->_config['roleColumn']));
+			throw new Exception(sprintf('Missing TinyAuth role id (%s) in user session', $this->_config['roleColumn']));
 		}
 
 		// Multi-role case : load the pivot table
@@ -399,7 +374,7 @@ class TinyAuthorize extends BaseAuthorize {
 			->toArray();
 
 		if (!count($roles)) {
-			throw new Exception('Missing TinyAuthorize roles for user in pivot table');
+			throw new Exception('Missing TinyAuth roles for user in pivot table');
 		}
 		return $roles;
 	}

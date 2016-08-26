@@ -8,6 +8,7 @@ use Cake\Controller\ComponentRegistry;
 use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
 use Cake\Event\Event;
+use TinyAuth\Utility\Utility;
 
 /**
  * TinyAuth AuthComponent to handle all authentication in a central ini file.
@@ -37,7 +38,7 @@ class AuthComponent extends CakeAuthComponent {
         parent::__construct($registry, $config);
 
         if (!in_array($config['cache'], Cache::configured())) {
-            throw new Exception(sprintf('Invalid TinyAuthorization cache `%s`', $config['cache']));
+            throw new Exception(sprintf('Invalid TinyAuth cache `%s`', $config['cache']));
         }
     }
 
@@ -75,12 +76,6 @@ class AuthComponent extends CakeAuthComponent {
             }
 
             $this->allow($array['actions']);
-            /*
-            if (in_array($params['action'], $array['actions'])) {
-                $this->allow($params['action']);
-                return;
-            }
-            */
         }
     }
 
@@ -105,17 +100,16 @@ class AuthComponent extends CakeAuthComponent {
             return $roles;
         }
 
-        $iniArray = $this->_parseFile($path . $this->_config['authFile']);
+        $iniArray = Utility::parseFile($path . $this->_config['authFile']);
 
         $res = [];
         foreach ($iniArray as $key => $actions) {
-            $res[$key] = $this->_deconstructIniKey($key);
+            $res[$key] = Utility::deconstructIniKey($key);
             $res[$key]['map'] = $actions;
 
             $actions = explode(',', $actions);
 
             if (in_array('*', $actions)) {
-                //$this->allow();
                 $res[$key]['actions'] = [];
                 continue;
             }
@@ -131,52 +125,6 @@ class AuthComponent extends CakeAuthComponent {
         }
 
         Cache::write($this->_config['cacheKey'], $res, $this->_config['cache']);
-        return $res;
-    }
-
-    /**
-     * Returns the authentication.ini file as an array.
-     *
-     * @param string $ini Full path to the authentication.ini file
-     * @return array List with all available roles
-     * @throws \Cake\Core\Exception\Exception
-     */
-    protected function _parseFile($ini) {
-        if (!file_exists($ini)) {
-            throw new Exception(sprintf('Missing TinyAuthorize authentication file (%s)', $ini));
-        }
-
-        if (function_exists('parse_ini_file')) {
-            $iniArray = parse_ini_file($ini, true);
-        } else {
-            $iniArray = parse_ini_string(file_get_contents($ini), true);
-        }
-
-        if (!is_array($iniArray)) {
-            throw new Exception('Invalid TinyAuthorize authentication file');
-        }
-        return $iniArray;
-    }
-
-    /**
-     * Deconstructs an authentication ini section key into a named array with authentication parts.
-     *
-     * @param string $key INI section key as found in authentication.ini
-     * @return array Array with named keys for controller, plugin and prefix
-     */
-    protected function _deconstructIniKey($key) {
-        $res = [
-            'plugin' => null,
-            'prefix' => null
-        ];
-
-        if (strpos($key, '.') !== false) {
-            list($res['plugin'], $key) = explode('.', $key);
-        }
-        if (strpos($key, '/') !== false) {
-            list($res['prefix'], $key) = explode('/', $key);
-        }
-        $res['controller'] = $key;
         return $res;
     }
 
