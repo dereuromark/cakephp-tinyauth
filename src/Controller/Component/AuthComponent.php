@@ -23,7 +23,7 @@ class AuthComponent extends CakeAuthComponent {
 		'cacheKey' => 'tiny_auth_allow',
 		'autoClearCache' => false, // Set to true to delete cache automatically in debug mode
 		'filePath' => null, // Possible to locate ini file at given path e.g. Plugin::configPath('Admin')
-		'file' => 'auth-allow.ini',
+		'file' => 'auth_allow.ini',
 	];
 
 	/**
