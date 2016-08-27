@@ -226,7 +226,7 @@ allowUser|bool|True will give authenticated users access to all resources except
 adminPrefix|string|Name of the prefix used for admin pages. Defaults to admin.
 autoClearCache|bool|True will generate a new ACL cache file every time.
 filePath|string|Full path to the acl.ini. Defaults to `ROOT . DS . 'config' . DS`.
-file|string|Name of the ini file. Defaults to `acl.ini`.
+file|string|Name of the INI file. Defaults to `acl.ini`.
 cache|string|Cache type. Defaults to `_cake_core_`.
 cacheKey|string|Cache key. Defaults to `tiny_auth_acl`.
 
