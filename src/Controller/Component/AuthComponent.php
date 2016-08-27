@@ -58,23 +58,23 @@ class AuthComponent extends CakeAuthComponent {
 		$authentication = $this->_getAuth($this->_config['filePath']);
 
 		$params = $this->request->params;
-		foreach ($authentication as $array) {
-			if ($params['plugin'] && $params['plugin'] !== $array['plugin']) {
+		foreach ($authentication as $rule) {
+			if ($params['plugin'] && $params['plugin'] !== $rule['plugin']) {
 				continue;
 			}
-			if (!empty($params['prefix']) && $params['prefix'] !== $array['prefix']) {
+			if (!empty($params['prefix']) && $params['prefix'] !== $rule['prefix']) {
 				continue;
 			}
-			if ($params['controller'] !== $array['controller']) {
+			if ($params['controller'] !== $rule['controller']) {
 				continue;
 			}
 
-			if ($array['actions'] === []) {
+			if ($rule['actions'] === []) {
 				$this->allow();
 				return;
 			}
 
-			$this->allow($array['actions']);
+			$this->allow($rule['actions']);
 		}
 	}
 

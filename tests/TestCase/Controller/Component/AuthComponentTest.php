@@ -9,6 +9,7 @@ use Cake\Event\Event;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\TestSuite\TestCase;
+use TestApp\Controller\OffersController;
 use TinyAuth\Controller\Component\AuthComponent;
 
 /**
@@ -30,7 +31,8 @@ class AuthComponentTest extends TestCase {
 	 */
 	public function setUp() {
 		$this->componentConfig = [
-			'filePath' => Plugin::path('TinyAuth') . 'tests' . DS . 'test_files' . DS
+			'filePath' => Plugin::path('TinyAuth') . 'tests' . DS . 'test_files' . DS,
+			'autoClearCache' => true,
 		];
 	}
 
@@ -46,6 +48,30 @@ class AuthComponentTest extends TestCase {
 			'pass' => [1]
 		]]);
 		$controller = $this->getControllerMock($request);
+
+		$registry = new ComponentRegistry($controller);
+		$this->AuthComponent = new AuthComponent($registry, $this->componentConfig);
+
+		$config = [];
+		$this->AuthComponent->initialize($config);
+
+		$event = new Event('Controller.startup', $controller);
+		$response = $this->AuthComponent->startup($event);
+		$this->assertNull($response);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testValidAnyAction() {
+		$request = new Request(['params' => [
+			'controller' => 'Offers',
+			'action' => 'index',
+			'plugin' => 'Extras',
+			'_ext' => null,
+			'pass' => [1]
+		]]);
+		$controller = new OffersController($request);
 
 		$registry = new ComponentRegistry($controller);
 		$this->AuthComponent = new AuthComponent($registry, $this->componentConfig);
