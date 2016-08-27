@@ -8,15 +8,16 @@ use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
 use Cake\Network\Request;
 use Cake\ORM\TableRegistry;
+use TinyAuth\Utility\Utility;
 
 /**
- * @deprecated Directly use configs
+ * @deprecated Directly use cache config key
  */
 if (!defined('AUTH_CACHE')) {
 	define('AUTH_CACHE', '_cake_core_'); // use the most persistent cache by default
 }
 /**
- * @deprecated Directly use configs
+ * @deprecated Directly use file config key
  */
 if (!defined('ACL_FILE')) {
 	define('ACL_FILE', 'acl.ini'); // stored in /config/ by default
@@ -66,10 +67,12 @@ class TinyAuthorize extends BaseAuthorize {
 		'prefixes' => [], // Whitelisted prefixes (only used when allowAdmin is enabled), leave empty to use all available
 		'allowUser' => false, // enable to allow ALL roles access to all actions except prefixed with 'adminPrefix'
 		'adminPrefix' => 'admin', // name of the admin prefix route (only used when allowUser is enabled)
-		'cache' => AUTH_CACHE,
+		'cache' => '_cake_core_',
 		'cacheKey' => 'tiny_auth_acl',
-		'autoClearCache' => false, // usually done by Cache automatically in debug mode,
-		'aclPath' => null, // possible to locate acl.ini at given path e.g. Plugin::configPath('Admin')
+		'autoClearCache' => false, // Set to true to delete cache automatically in debug mode
+		'aclPath' => null, // @deprecated Use filePath
+		'filePath' => null, // Possible to locate ini file at given path e.g. Plugin::configPath('Admin')
+		'file' => 'acl.ini',
 	];
 
 	/**
@@ -88,6 +91,11 @@ class TinyAuthorize extends BaseAuthorize {
 
 		if (!in_array($config['cache'], Cache::configured())) {
 			throw new Exception(sprintf('Invalid TinyAuthorization cache `%s`', $config['cache']));
+		}
+
+		// BC only
+		if (isset($this->_config['aclPath'])) {
+			$this->_config['filePath'] = $this->_config['aclPath'];
 		}
 	}
 
@@ -214,12 +222,12 @@ class TinyAuthorize extends BaseAuthorize {
 			return $roles;
 		}
 
-		$iniArray = $this->_parseFile($path . ACL_FILE);
+		$iniArray = $this->_parseFile($path . $this->_config['file']);
 		$availableRoles = $this->_getAvailableRoles();
 
 		$res = [];
 		foreach ($iniArray as $key => $array) {
-			$res[$key] = $this->_deconstructIniKey($key);
+			$res[$key] = Utility::deconstructIniKey($key);
 			$res[$key]['map'] = $array;
 
 			foreach ($array as $actions => $roles) {
@@ -272,23 +280,9 @@ class TinyAuthorize extends BaseAuthorize {
 	 *
 	 * @param string $ini Full path to the acl.ini file
 	 * @return array List with all available roles
-	 * @throws \Cake\Core\Exception\Exception
 	 */
 	protected function _parseFile($ini) {
-		if (!file_exists($ini)) {
-			throw new Exception(sprintf('Missing TinyAuthorize ACL file (%s)', $ini));
-		}
-
-		if (function_exists('parse_ini_file')) {
-			$iniArray = parse_ini_file($ini, true);
-		} else {
-			$iniArray = parse_ini_string(file_get_contents($ini), true);
-		}
-
-		if (!is_array($iniArray)) {
-			throw new Exception('Invalid TinyAuthorize ACL file');
-		}
-		return $iniArray;
+		return Utility::parseFile($ini);
 	}
 
 	/**
@@ -298,19 +292,7 @@ class TinyAuthorize extends BaseAuthorize {
 	 * @return array Array with named keys for controller, plugin and prefix
 	 */
 	protected function _deconstructIniKey($key) {
-		$res = [
-			'plugin' => null,
-			'prefix' => null
-		];
-
-		if (strpos($key, '.') !== false) {
-			list($res['plugin'], $key) = explode('.', $key);
-		}
-		if (strpos($key, '/') !== false) {
-			list($res['prefix'], $key) = explode('/', $key);
-		}
-		$res['controller'] = $key;
-		return $res;
+		return Utility::deconstructIniKey($key);
 	}
 
 	/**
@@ -351,7 +333,7 @@ class TinyAuthorize extends BaseAuthorize {
 		})->toArray();
 
 		if (count($roles) < 1) {
-			throw new Exception('Invalid TinyAuthorize role setup (roles table `' . $this->_config['rolesTable'] . '` has no roles)');
+			throw new Exception('Invalid TinyAuth role setup (roles table `' . $this->_config['rolesTable'] . '` has no roles)');
 		}
 		return $roles;
 	}
@@ -374,7 +356,7 @@ class TinyAuthorize extends BaseAuthorize {
 			if (isset($user[$this->_config['roleColumn']])) {
 				return [$user[$this->_config['roleColumn']]];
 			}
-			throw new Exception(sprintf('Missing TinyAuthorize role id (%s) in user session', $this->_config['roleColumn']));
+			throw new Exception(sprintf('Missing TinyAuth role id (%s) in user session', $this->_config['roleColumn']));
 		}
 
 		// Multi-role case : load the pivot table
@@ -399,7 +381,7 @@ class TinyAuthorize extends BaseAuthorize {
 			->toArray();
 
 		if (!count($roles)) {
-			throw new Exception('Missing TinyAuthorize roles for user in pivot table');
+			throw new Exception('Missing TinyAuth roles for user in pivot table');
 		}
 		return $roles;
 	}

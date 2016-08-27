@@ -55,7 +55,6 @@ $cache = [
 
 Cake\Cache\Cache::config($cache);
 
-//needed?
 Cake\Core\Plugin::load('TinyAuth', ['path' => ROOT . DS, 'autoload' => true]);
 
 // Ensure default test connection is defined
