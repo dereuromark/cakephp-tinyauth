@@ -3,31 +3,37 @@
 [![Build Status](https://api.travis-ci.org/dereuromark/cakephp-tinyauth.svg?branch=master)](https://travis-ci.org/dereuromark/cakephp-tinyauth)
 [![Latest Stable Version](https://poser.pugx.org/dereuromark/cakephp-tinyauth/v/stable.svg)](https://packagist.org/packages/dereuromark/cakephp-tinyauth)
 [![Coverage Status](https://coveralls.io/repos/dereuromark/cakephp-tinyauth/badge.svg)](https://coveralls.io/r/dereuromark/cakephp-tinyauth)
-[![Minimum PHP Version](http://img.shields.io/badge/php-%3E%3D%205.4-8892BF.svg)](https://php.net/)
+[![Minimum PHP Version](http://img.shields.io/badge/php-%3E%3D%205.5-8892BF.svg)](https://php.net/)
 [![License](https://poser.pugx.org/dereuromark/cakephp-tinyauth/license.svg)](https://packagist.org/packages/dereuromark/cakephp-tinyauth)
 [![Total Downloads](https://poser.pugx.org/dereuromark/cakephp-tinyauth/d/total.svg)](https://packagist.org/packages/dereuromark/cakephp-tinyauth)
 [![Coding Standards](https://img.shields.io/badge/cs-PSR--2--R-yellow.svg)](https://github.com/php-fig-rectified/fig-rectified-standards)
 
-A CakePHP 3.x plugin to handle user authorization the easy way.
+A CakePHP 3.x plugin to handle authentication and user authorization the easy way.
 
 ## Demo
+See http://sandbox3.dereuromark.de/auth-sandbox
+
+### auth-allow.ini
+```ini
+Users = index,view
+PluginName.SomeController = *
+```
+
+### acl.ini
 ```ini
 [Users]
 index = *
-add,edit = user, mod
-* = admin
+add,edit = user,mod
 
 [admin/Users]
 * = admin
 ```
 
-See http://sandbox3.dereuromark.de/auth-sandbox
-
 ## How to include
-Installing the plugin is pretty much as with every other CakePHP Plugin.
+Installing the plugin is pretty much as with every other CakePHP plugin:
 
 ```bash
-composer require dereuromark/cakephp-tinyauth:dev-master
+composer require dereuromark/cakephp-tinyauth
 ```
 
 Then, to load the plugin either run the following command:
@@ -45,7 +51,7 @@ Plugin::load('TinyAuth');
 That's it. It should be up and running.
 
 ## Docs
-See [Docs](/docs).
+For setup and usage see [Docs](/docs).
 
 Also note the original [blog post](http://www.dereuromark.de/2011/12/18/tinyauth-the-fastest-and-easiest-authorization-for-cake2/) and how it all started.
 
