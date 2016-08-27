@@ -8,26 +8,32 @@
 [![Total Downloads](https://poser.pugx.org/dereuromark/cakephp-tinyauth/d/total.svg)](https://packagist.org/packages/dereuromark/cakephp-tinyauth)
 [![Coding Standards](https://img.shields.io/badge/cs-PSR--2--R-yellow.svg)](https://github.com/php-fig-rectified/fig-rectified-standards)
 
-A CakePHP 3.x plugin to handle user authorization the easy way.
+A CakePHP 3.x plugin to handle authentication and user authorization the easy way.
 
 ## Demo
+See http://sandbox3.dereuromark.de/auth-sandbox
+
+### auth-allow.ini
+```ini
+Users = index,view
+PluginName.SomeController = *
+```
+
+### acl.ini
 ```ini
 [Users]
 index = *
 add,edit = user, mod
-* = admin
 
 [admin/Users]
 * = admin
 ```
 
-See http://sandbox3.dereuromark.de/auth-sandbox
-
 ## How to include
 Installing the plugin is pretty much as with every other CakePHP Plugin.
 
 ```bash
-composer require dereuromark/cakephp-tinyauth:dev-master
+composer require dereuromark/cakephp-tinyauth
 ```
 
 Then, to load the plugin either run the following command:
