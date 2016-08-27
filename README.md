@@ -23,14 +23,14 @@ PluginName.SomeController = *
 ```ini
 [Users]
 index = *
-add,edit = user, mod
+add,edit = user,mod
 
 [admin/Users]
 * = admin
 ```
 
 ## How to include
-Installing the plugin is pretty much as with every other CakePHP Plugin.
+Installing the plugin is pretty much as with every other CakePHP plugin:
 
 ```bash
 composer require dereuromark/cakephp-tinyauth
@@ -51,7 +51,7 @@ Plugin::load('TinyAuth');
 That's it. It should be up and running.
 
 ## Docs
-See [Docs](/docs).
+For setup and usage see [Docs](/docs).
 
 Also note the original [blog post](http://www.dereuromark.de/2011/12/18/tinyauth-the-fastest-and-easiest-authorization-for-cake2/) and how it all started.
 
