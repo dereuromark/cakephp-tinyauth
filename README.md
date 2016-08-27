@@ -13,7 +13,7 @@ A CakePHP 3.x plugin to handle authentication and user authorization the easy wa
 ## Demo
 See http://sandbox3.dereuromark.de/auth-sandbox
 
-### auth-allow.ini
+### auth_allow.ini
 ```ini
 Users = index,view
 PluginName.SomeController = *

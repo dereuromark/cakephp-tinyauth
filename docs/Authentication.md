@@ -25,9 +25,9 @@ public function initialize() {
 }
 ```
 
-## auth-allow.ini
+## auth_allow.ini
 
-TinyAuth expects an ``auth-allow.ini`` file in your config directory.
+TinyAuth expects an ``auth_allow.ini`` file in your config directory.
 Use it to specify what actions are not protected by authentication.
 
 The section key syntax follows the CakePHP naming convention for plugins.
@@ -87,7 +87,6 @@ Option | Type | Description
 :----- | :--- | :----------
 autoClearCache|bool|True will generate a new ACL cache file every time.
 filePath|string|Full path to the acl.ini. Defaults to `ROOT . DS . 'config' . DS`.
-file|string|Name of the INI file. Defaults to `auth-allow.ini`.
+file|string|Name of the INI file. Defaults to `auth_allow.ini`.
 cache|string|Cache type. Defaults to `_cake_core_`.
 cacheKey|string|Cache key. Defaults to `tiny_auth_allow`.
-
