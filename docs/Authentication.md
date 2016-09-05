@@ -8,8 +8,7 @@ Use TinyAuth Componont if you want to add instant (and easy) action whitelisting
 - Lightweight and incredibly fast
 
 Do NOT use if
-- you want to dynamically adjust access rights (or enhance it with a web
-frontend yourself)
+- you want to dynamically adjust what pages are public inside controllers
 
 ## Enabling
 
@@ -24,6 +23,8 @@ public function initialize() {
 	]);
 }
 ```
+
+That is basically already all for the code changes :-) Super-easy!
 
 ## auth_allow.ini
 
@@ -86,7 +87,7 @@ TinyAuth AuthComponent supports the following configuration options.
 Option | Type | Description
 :----- | :--- | :----------
 autoClearCache|bool|True will generate a new ACL cache file every time.
-filePath|string|Full path to the acl.ini. Defaults to `ROOT . DS . 'config' . DS`.
+filePath|string|Full path to the INI file. Defaults to `ROOT . DS . 'config' . DS`.
 file|string|Name of the INI file. Defaults to `auth_allow.ini`.
 cache|string|Cache type. Defaults to `_cake_core_`.
 cacheKey|string|Cache key. Defaults to `tiny_auth_allow`.
