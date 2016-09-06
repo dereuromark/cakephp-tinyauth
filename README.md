@@ -16,6 +16,9 @@ This plugin hooks in with a single line of change and manages all that using con
 
 It is also possible to manage the config files without the need of coding skills. And it could with some effort also be moved completely to the DB and managed by CRUD backend.
 
+Ask yourself: Do you need the overhead and complexity involved with the core CakePHP ACL? See also my post [acl-access-control-lists-revised/](http://www.dereuromark.de/2015/01/06/acl-access-control-lists-revised/).
+If not, then this plugin could very well be your answer and a super quick solution to your auth problem :)
+
 ## Demo
 See http://sandbox3.dereuromark.de/auth-sandbox
 
