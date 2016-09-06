@@ -10,6 +10,12 @@
 
 A CakePHP 3.x plugin to handle authentication and user authorization the easy way.
 
+## What's the idea?
+Default CakePHP authentication and authorization depends on code changes in at least each controller, maybe more classes.
+This plugin hooks in with a single line of change and manages all that using config files and there is no need to touch all those controllers.
+
+It is also possible to manage the config files without the need of coding skills. And it could with some effort also be moved completely to the DB and managed by CRUD backend.
+
 ## Demo
 See http://sandbox3.dereuromark.de/auth-sandbox
 
