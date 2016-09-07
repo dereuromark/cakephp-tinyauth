@@ -26,6 +26,7 @@ See http://sandbox3.dereuromark.de/auth-sandbox
 Define the public actions (accessable by anyone) per controller:
 ```ini
 Users = index,view
+admin/Maintenance = pingcheck
 PluginName.SomeController = *
 ```
 
