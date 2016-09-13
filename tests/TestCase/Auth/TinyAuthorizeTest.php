@@ -3,18 +3,17 @@ namespace TinyAuth\Test\Auth;
 
 use Cake\Controller\ComponentRegistry;
 use Cake\Core\Configure;
+use Cake\Core\Plugin;
 use Cake\Network\Request;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use ReflectionClass;
 use TinyAuth\Auth\TinyAuthorize;
-use Cake\Core\Plugin;
 
 /**
  * Test case for TinyAuth Authentication
  */
-class TinyAuthorizeTest extends TestCase
-{
+class TinyAuthorizeTest extends TestCase {
 
 	/**
 	 * @var array
@@ -41,11 +40,11 @@ class TinyAuthorizeTest extends TestCase
 	/**
 	 * @return void
 	 */
-	public function setUp()
-	{
+	public function setUp() {
 		parent::setUp();
 
 		$this->collection = new ComponentRegistry();
+
 		$this->request = new Request();
 
 		Configure::write('Roles', [
@@ -65,11 +64,10 @@ class TinyAuthorizeTest extends TestCase
 	 *
 	 * @return void
 	 */
-	public function testConstructor()
-	{
+	public function testConstructor() {
 		$object = new TestTinyAuthorize($this->collection, [
 			'rolesTable' => 'AuthRoles',
-			'roleColumn' => 'auth_role_id',
+			'roleColumn' => 'auth_role_id'
 		]);
 		$this->assertEquals('AuthRoles', $object->config('rolesTable'));
 		$this->assertEquals('auth_role_id', $object->config('roleColumn'));
@@ -81,8 +79,7 @@ class TinyAuthorizeTest extends TestCase
 	 * @expectedException \Cake\Core\Exception\Exception
 	 * @return void
 	 */
-	public function testConstructorWithoutValidCache()
-	{
+	public function testConstructorWithoutValidCache() {
 		$object = new TestTinyAuthorize($this->collection, [
 			'cache' => 'invalid-cache-config'
 		]);
@@ -91,8 +88,7 @@ class TinyAuthorizeTest extends TestCase
 	/**
 	 * @return void
 	 */
-	public function testGetAcl()
-	{
+	public function testGetAcl() {
 		$object = new TestTinyAuthorize($this->collection, [
 			'autoClearCache' => true
 		]);
@@ -240,8 +236,7 @@ class TinyAuthorizeTest extends TestCase
 	/**
 	 * @return void
 	 */
-	public function testBasicUserMethodDisallowed()
-	{
+	public function testBasicUserMethodDisallowed() {
 		$object = new TestTinyAuthorize($this->collection, [
 			'autoClearCache' => true
 		]);
@@ -308,8 +303,7 @@ class TinyAuthorizeTest extends TestCase
 	/**
 	 * @return void
 	 */
-	public function testBasicUserMethodAllowed()
-	{
+	public function testBasicUserMethodAllowed() {
 		$object = new TestTinyAuthorize($this->collection, [
 			'autoClearCache' => true
 		]);
@@ -380,8 +374,7 @@ class TinyAuthorizeTest extends TestCase
 	 *
 	 * @return void
 	 */
-	public function testCaseSensitivity()
-	{
+	public function testCaseSensitivity() {
 		$object = new TestTinyAuthorize($this->collection, [
 			'autoClearCache' => true
 		]);
@@ -447,8 +440,7 @@ class TinyAuthorizeTest extends TestCase
 	/**
 	 * @return void
 	 */
-	public function testBasicUserMethodAllowedWithLongActionNames()
-	{
+	public function testBasicUserMethodAllowedWithLongActionNames() {
 		$object = new TestTinyAuthorize($this->collection, [
 			'autoClearCache' => true
 		]);
@@ -512,8 +504,7 @@ class TinyAuthorizeTest extends TestCase
 	/**
 	 * @return void
 	 */
-	public function testBasicUserMethodAllowedWithLongActionNamesUnderscored()
-	{
+	public function testBasicUserMethodAllowedWithLongActionNamesUnderscored() {
 		$object = new TestTinyAuthorize($this->collection, [
 			'autoClearCache' => true
 		]);
@@ -579,11 +570,9 @@ class TinyAuthorizeTest extends TestCase
 	 *
 	 * @return void
 	 */
-	public function testBasicUserMethodAllowedMultiRole()
-	{
+	public function testBasicUserMethodAllowedMultiRole() {
 		// Test against roles array in Configure
 		$object = new TestTinyAuthorize($this->collection, [
-
 			'multiRole' => true,
 			'rolesTable' => 'Roles'
 		]);
@@ -603,7 +592,6 @@ class TinyAuthorizeTest extends TestCase
 
 		// Test against roles array in Database
 		$object = new TestTinyAuthorize($this->collection, [
-
 			'multiRole' => true,
 			'rolesTable' => 'DatabaseRoles',
 			'roleColumn' => 'database_role_id',
@@ -631,8 +619,7 @@ class TinyAuthorizeTest extends TestCase
 	 *
 	 * @return void
 	 */
-	public function testBasicUserMethodAllowedWildcard()
-	{
+	public function testBasicUserMethodAllowedWildcard() {
 		$object = new TestTinyAuthorize($this->collection, [
 			'autoClearCache' => true
 		]);
@@ -699,8 +686,7 @@ class TinyAuthorizeTest extends TestCase
 	 *
 	 * @return void
 	 */
-	public function testBasicUserMethodAllowedWildcardSpecificGroup()
-	{
+	public function testBasicUserMethodAllowedWildcardSpecificGroup() {
 		$object = new TestTinyAuthorize($this->collection, [
 			'autoClearCache' => true
 		]);
@@ -768,11 +754,9 @@ class TinyAuthorizeTest extends TestCase
 	 *
 	 * @return void
 	 */
-	public function testUserMethodsAllowed()
-	{
+	public function testUserMethodsAllowed() {
 		$object = new TestTinyAuthorize($this->collection, [
 			'allowUser' => true,
-
 			'adminPrefix' => 'admin'
 		]);
 
@@ -895,8 +879,7 @@ class TinyAuthorizeTest extends TestCase
 	 *
 	 * @return void
 	 */
-	public function testAdminMethodsAllowed()
-	{
+	public function testAdminMethodsAllowed() {
 		$config = [
 			'authorizeByPrefix' => true,
 			'adminRole' => 3,
@@ -940,10 +923,8 @@ class TinyAuthorizeTest extends TestCase
 	 *
 	 * @return void
 	 */
-	public function testSuperAdminRole()
-	{
+	public function testSuperAdminRole() {
 		$object = new TestTinyAuthorize($this->collection, [
-
 			'superAdminRole' => 9
 		]);
 		$res = $object->getAcl();
@@ -967,8 +948,7 @@ class TinyAuthorizeTest extends TestCase
 	 *
 	 * @return void
 	 */
-	public function testIniParsing()
-	{
+	public function testIniParsing() {
 		$object = new TestTinyAuthorize($this->collection, [
 			'autoClearCache' => true
 		]);
@@ -989,8 +969,7 @@ class TinyAuthorizeTest extends TestCase
 	 * @expectedException \Cake\Core\Exception\Exception
 	 * @return void
 	 */
-	public function testIniParsingMissingFileException()
-	{
+	public function testIniParsingMissingFileException() {
 		$object = new TestTinyAuthorize($this->collection, [
 			'autoClearCache' => true
 		]);
@@ -1007,8 +986,7 @@ class TinyAuthorizeTest extends TestCase
 	 *
 	 * @return void
 	 */
-	public function testIniConstruct()
-	{
+	public function testIniConstruct() {
 		// Make protected function accessible
 		$object = new TestTinyAuthorize($this->collection);
 		$reflection = new ReflectionClass(get_class($object));
@@ -1057,8 +1035,7 @@ class TinyAuthorizeTest extends TestCase
 	 *
 	 * @return void
 	 */
-	public function testIniDeconstruct()
-	{
+	public function testIniDeconstruct() {
 		// Make protected function accessible
 		$object = new TestTinyAuthorize($this->collection);
 		$reflection = new ReflectionClass(get_class($object));
@@ -1159,10 +1136,8 @@ class TinyAuthorizeTest extends TestCase
 	 *
 	 * @return void
 	 */
-	public function testAvailableRoles()
-	{
+	public function testAvailableRoles() {
 		$object = new TestTinyAuthorize($this->collection, [
-
 			'rolesTable' => 'Roles'
 		]);
 
@@ -1183,7 +1158,6 @@ class TinyAuthorizeTest extends TestCase
 		// Test against roles from database
 		Configure::delete('Roles');
 		$object = new TestTinyAuthorize($this->collection, [
-
 			'rolesTable' => 'DatabaseRoles'
 		]);
 		$expected = [
@@ -1202,10 +1176,8 @@ class TinyAuthorizeTest extends TestCase
 	 * @expectedException \Cake\Core\Exception\Exception
 	 * @return void
 	 */
-	public function testAvailableRolesMissingTableException()
-	{
+	public function testAvailableRolesMissingTableException() {
 		$object = new TestTinyAuthorize($this->collection, [
-
 			'rolesTable' => 'NonExistentTable'
 		]);
 
@@ -1223,8 +1195,7 @@ class TinyAuthorizeTest extends TestCase
 	 * @expectedException \Cake\Core\Exception\Exception
 	 * @return void
 	 */
-	public function testAvailableRolesEmptyTableException()
-	{
+	public function testAvailableRolesEmptyTableException() {
 		$object = new TestTinyAuthorize($this->collection, [
 
 			'rolesTable' => 'EmptyRoles'
@@ -1242,8 +1213,7 @@ class TinyAuthorizeTest extends TestCase
 	 *
 	 * @return void
 	 */
-	public function testUserRoles()
-	{
+	public function testUserRoles() {
 		$object = new TestTinyAuthorize($this->collection, [
 
 			'multiRole' => false,
@@ -1280,8 +1250,7 @@ class TinyAuthorizeTest extends TestCase
 	 *
 	 * @return void
 	 */
-	public function testUserRolesCustomPivotTable()
-	{
+	public function testUserRolesCustomPivotTable() {
 		$object = new TestTinyAuthorize($this->collection, [
 			'multiRole' => true,
 			'rolesTable' => 'DatabaseRoles',
@@ -1308,8 +1277,7 @@ class TinyAuthorizeTest extends TestCase
 	 *
 	 * @return void
 	 */
-	public function testIdColumnPivotTable()
-	{
+	public function testIdColumnPivotTable() {
 		$object = new TestTinyAuthorize($this->collection, [
 			'multiRole' => true,
 			'rolesTable' => 'DatabaseRoles',
@@ -1363,8 +1331,7 @@ class TinyAuthorizeTest extends TestCase
 	 *
 	 * @return void
 	 */
-	public function testSuperAdmin()
-	{
+	public function testSuperAdmin() {
 		// All tests performed against this action
 		$this->request->params['action'] = 'any_action';
 		$this->request->params['controller'] = 'AnyControllers';
@@ -1545,8 +1512,7 @@ class TinyAuthorizeTest extends TestCase
 	 * @expectedException \Cake\Core\Exception\Exception
 	 * @return void
 	 */
-	public function testUserRolesMissingRoleColumn()
-	{
+	public function testUserRolesMissingRoleColumn() {
 		$object = new TestTinyAuthorize($this->collection, [
 			'rolesTable' => 'NonExistentTable',
 			'multiRole' => false
@@ -1568,8 +1534,7 @@ class TinyAuthorizeTest extends TestCase
 	 * @expectedException \Cake\Core\Exception\Exception
 	 * @return void
 	 */
-	public function testUserRolesUserWithoutPivotRoles()
-	{
+	public function testUserRolesUserWithoutPivotRoles() {
 		$object = new TestTinyAuthorize($this->collection, [
 			'rolesTable' => 'Roles',
 			'multiRole' => true
@@ -1586,14 +1551,12 @@ class TinyAuthorizeTest extends TestCase
 	}
 }
 
-class TestTinyAuthorize extends TinyAuthorize
-{
+class TestTinyAuthorize extends TinyAuthorize {
 
 	/**
 	 * @return array
 	 */
-	public function getAcl()
-	{
+	public function getAcl() {
 		return $this->_getAcl();
 	}
 
@@ -1602,8 +1565,7 @@ class TestTinyAuthorize extends TinyAuthorize
 	 *
 	 * @return array
 	 */
-	protected function _getAcl($path = null)
-	{
+	protected function _getAcl($path = null) {
 		$path = Plugin::path('TinyAuth') . 'tests' . DS . 'test_files' . DS;
 		return parent::_getAcl($path);
 	}
@@ -1611,8 +1573,7 @@ class TestTinyAuthorize extends TinyAuthorize
 	/**
 	 * @return \Cake\ORM\Table The User table
 	 */
-	public function getTable()
-	{
+	public function getTable() {
 		$Users = TableRegistry::get($this->_config['usersTable']);
 		$Users->belongsTo('Roles');
 
