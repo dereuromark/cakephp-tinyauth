@@ -170,7 +170,7 @@ class TinyAuthorize extends BaseAuthorize {
 		}
 
 		if ($this->_acl === null) {
-			$this->_acl = $this->_getAcl($this->_config['aclPath']);
+			$this->_acl = $this->_getAcl($this->_config['filePath']);
 		}
 
 		// Allow access if user has a role with wildcard access to the resource
