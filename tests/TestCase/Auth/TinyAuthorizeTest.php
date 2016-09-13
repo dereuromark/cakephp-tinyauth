@@ -1549,6 +1549,7 @@ class TinyAuthorizeTest extends TestCase {
 		$res = $method->invokeArgs($object, [$user]);
 		$method->invoke($object);
 	}
+
 }
 
 class TestTinyAuthorize extends TinyAuthorize {
@@ -1579,4 +1580,5 @@ class TestTinyAuthorize extends TinyAuthorize {
 
 		return $Users;
 	}
+
 }
