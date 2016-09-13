@@ -3,6 +3,7 @@ namespace TinyAuth\Test\Auth;
 
 use Cake\Controller\ComponentRegistry;
 use Cake\Core\Configure;
+use Cake\Core\Plugin;
 use Cake\Network\Request;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
@@ -46,94 +47,16 @@ class TinyAuthorizeTest extends TestCase {
 
 		$this->request = new Request();
 
-		$aclData = <<<INI
-; ----------------------------------------------------------
-; TagsController (no prefixed route, no plugin)
-; ----------------------------------------------------------
-[Tags]
-index = user, undefined-role
-edit = user
-delete = admin
-very_long_underscored_action = user
-veryLongActionNameAction = user
-; ----------------------------------------------------------
-; TagsController (/admin prefixed route, no plugin)
-; ----------------------------------------------------------
-[admin/Tags]
-index = user, undefined-role
-edit = user
-delete = admin
-very_long_underscored_action = user
-veryLongActionNameAction = user
-; ----------------------------------------------------------
-; TagsController (plugin Tags, no prefixed route)
-; ----------------------------------------------------------
-[Tags.Tags]
-index = user
-edit,view = user
-delete = admin
-very_long_underscored_action = user
-veryLongActionNameAction = user
-; ----------------------------------------------------------
-; TagsController (plugin Tags, /admin prefixed route)
-; ----------------------------------------------------------
-[Tags.admin/Tags]
-index = user
-view, edit = user
-delete = admin
-very_long_underscored_action = user
-veryLongActionNameAction = user
-; ----------------------------------------------------------
-; CommentsController, used for testing 'allowUser' access to
-; non-admin-prefixed routes.
-; ----------------------------------------------------------
-[special/Comments]
-* = admin
-[Comments.special/Comments]
-* = admin
-; ----------------------------------------------------------
-; PostsController, used for testing generic wildcard access
-; ----------------------------------------------------------
-[Posts]
-*=*
-[admin/Posts]
-* = *
-[Posts.Posts]
-* = *
-[Posts.admin/Posts]
-* = *
-; ----------------------------------------------------------
-; BlogsController, used for testing specific wildcard access
-; ----------------------------------------------------------
-[Blogs]
-*= moderator
-[admin/Blogs]
-* = moderator
-[Blogs.Blogs]
-* = moderator
-[Blogs.admin/Blogs]
-* = moderator
-INI;
-
-		file_put_contents(TMP . 'acl.ini', $aclData);
-		$this->assertTrue(file_exists(TMP . 'acl.ini'));
-
 		Configure::write('Roles', [
 			'user' => 1,
 			'moderator' => 2,
 			'admin' => 3
 		]);
 
-		Configure::write('TinyAuth', ['autoClearCache' => true]);
-	}
-
-	public function tearDown() {
-		unlink(TMP . 'acl.ini');
-		if (file_exists(TMP . 'acl.empty.ini')) {
-			unlink(TMP . 'acl.empty.ini');
-		}
-
-		parent::tearDown();
+		Configure::write('TinyAuth', [
+			'filePath' => Plugin::path('TinyAuth') . 'tests' . DS . 'test_files' . DS,
+			'autoClearCache' => true,
+		]);
 	}
 
 	/**
@@ -144,8 +67,7 @@ INI;
 	public function testConstructor() {
 		$object = new TestTinyAuthorize($this->collection, [
 			'rolesTable' => 'AuthRoles',
-			'roleColumn' => 'auth_role_id',
-
+			'roleColumn' => 'auth_role_id'
 		]);
 		$this->assertEquals('AuthRoles', $object->config('rolesTable'));
 		$this->assertEquals('auth_role_id', $object->config('roleColumn'));
@@ -167,7 +89,9 @@ INI;
 	 * @return void
 	 */
 	public function testGetAcl() {
-		$object = new TestTinyAuthorize($this->collection, ['autoClearCache' => true]);
+		$object = new TestTinyAuthorize($this->collection, [
+			'autoClearCache' => true
+		]);
 		$res = $object->getAcl();
 
 		$expected = [
@@ -452,7 +376,8 @@ INI;
 	 */
 	public function testCaseSensitivity() {
 		$object = new TestTinyAuthorize($this->collection, [
-			'autoClearCache' => true]);
+			'autoClearCache' => true
+		]);
 
 		// All tests performed against this action
 		$this->request->params['action'] = 'index';
@@ -648,7 +573,6 @@ INI;
 	public function testBasicUserMethodAllowedMultiRole() {
 		// Test against roles array in Configure
 		$object = new TestTinyAuthorize($this->collection, [
-
 			'multiRole' => true,
 			'rolesTable' => 'Roles'
 		]);
@@ -668,7 +592,6 @@ INI;
 
 		// Test against roles array in Database
 		$object = new TestTinyAuthorize($this->collection, [
-
 			'multiRole' => true,
 			'rolesTable' => 'DatabaseRoles',
 			'roleColumn' => 'database_role_id',
@@ -834,7 +757,6 @@ INI;
 	public function testUserMethodsAllowed() {
 		$object = new TestTinyAuthorize($this->collection, [
 			'allowUser' => true,
-
 			'adminPrefix' => 'admin'
 		]);
 
@@ -1003,7 +925,6 @@ INI;
 	 */
 	public function testSuperAdminRole() {
 		$object = new TestTinyAuthorize($this->collection, [
-
 			'superAdminRole' => 9
 		]);
 		$res = $object->getAcl();
@@ -1036,7 +957,9 @@ INI;
 		$reflection = new ReflectionClass(get_class($object));
 		$method = $reflection->getMethod('_parseFile');
 		$method->setAccessible(true);
-		$res = $method->invokeArgs($object, [TMP . 'acl.ini']);
+		$res = $method->invokeArgs($object, [
+			Plugin::path('TinyAuth') . 'tests' . DS . 'test_files' . DS . 'acl.ini'
+		]);
 		$this->assertTrue(is_array($res));
 	}
 
@@ -1215,7 +1138,6 @@ INI;
 	 */
 	public function testAvailableRoles() {
 		$object = new TestTinyAuthorize($this->collection, [
-
 			'rolesTable' => 'Roles'
 		]);
 
@@ -1236,7 +1158,6 @@ INI;
 		// Test against roles from database
 		Configure::delete('Roles');
 		$object = new TestTinyAuthorize($this->collection, [
-
 			'rolesTable' => 'DatabaseRoles'
 		]);
 		$expected = [
@@ -1257,7 +1178,6 @@ INI;
 	 */
 	public function testAvailableRolesMissingTableException() {
 		$object = new TestTinyAuthorize($this->collection, [
-
 			'rolesTable' => 'NonExistentTable'
 		]);
 
@@ -1312,7 +1232,6 @@ INI;
 
 		// Multi-role: lookup roles directly in pivot table
 		$object = new TestTinyAuthorize($this->collection, [
-
 			'multiRole' => true,
 			'rolesTable' => 'DatabaseRoles',
 			'roleColumn' => 'database_role_id',
@@ -1333,7 +1252,6 @@ INI;
 	 */
 	public function testUserRolesCustomPivotTable() {
 		$object = new TestTinyAuthorize($this->collection, [
-
 			'multiRole' => true,
 			'rolesTable' => 'DatabaseRoles',
 			'pivotTable' => 'DatabaseUserRoles',
@@ -1361,7 +1279,6 @@ INI;
 	 */
 	public function testIdColumnPivotTable() {
 		$object = new TestTinyAuthorize($this->collection, [
-
 			'multiRole' => true,
 			'rolesTable' => 'DatabaseRoles',
 			'pivotTable' => 'DatabaseUserRoles',
@@ -1407,7 +1324,6 @@ INI;
 		];
 		$res = $method->invokeArgs($object, [$user]);
 		$this->assertEquals($expected, $res);
-
 	}
 
 	/**
@@ -1421,7 +1337,7 @@ INI;
 		$this->request->params['controller'] = 'AnyControllers';
 		$this->request->params['prefix'] = null;
 		$this->request->params['plugin'] = null;
-		//single role
+		// Single role
 		$object = new TestTinyAuthorize($this->collection, [
 			'superAdmin' => 1,
 		]);
@@ -1494,7 +1410,6 @@ INI;
 
 		//multi role
 		$object = new TestTinyAuthorize($this->collection, [
-
 			'multiRole' => true,
 			'rolesTable' => 'DatabaseRoles',
 			'pivotTable' => 'DatabaseUserRoles',
@@ -1512,7 +1427,6 @@ INI;
 
 		//multi role and idColumn
 		$object = new TestTinyAuthorize($this->collection, [
-
 			'multiRole' => true,
 			'rolesTable' => 'DatabaseRoles',
 			'pivotTable' => 'DatabaseUserRoles',
@@ -1531,7 +1445,6 @@ INI;
 
 		//multi role and superAdminColumn
 		$object = new TestTinyAuthorize($this->collection, [
-
 			'multiRole' => true,
 			'rolesTable' => 'DatabaseRoles',
 			'pivotTable' => 'DatabaseUserRoles',
@@ -1552,7 +1465,6 @@ INI;
 
 		//multi role and superAdminColumn without idColumn
 		$object = new TestTinyAuthorize($this->collection, [
-
 			'multiRole' => true,
 			'rolesTable' => 'DatabaseRoles',
 			'pivotTable' => 'DatabaseUserRoles',
@@ -1571,7 +1483,6 @@ INI;
 		$this->assertFalse($res);
 		//single role and use superAdminColumn (string)
 		$object = new TestTinyAuthorize($this->collection, [
-
 			'multiRole' => true,
 			'rolesTable' => 'DatabaseRoles',
 			'pivotTable' => 'DatabaseUserRoles',
@@ -1603,7 +1514,6 @@ INI;
 	 */
 	public function testUserRolesMissingRoleColumn() {
 		$object = new TestTinyAuthorize($this->collection, [
-
 			'rolesTable' => 'NonExistentTable',
 			'multiRole' => false
 		]);
@@ -1626,7 +1536,6 @@ INI;
 	 */
 	public function testUserRolesUserWithoutPivotRoles() {
 		$object = new TestTinyAuthorize($this->collection, [
-
 			'rolesTable' => 'Roles',
 			'multiRole' => true
 		]);
@@ -1658,7 +1567,7 @@ class TestTinyAuthorize extends TinyAuthorize {
 	 * @return array
 	 */
 	protected function _getAcl($path = null) {
-		$path = TMP;
+		$path = Plugin::path('TinyAuth') . 'tests' . DS . 'test_files' . DS;
 		return parent::_getAcl($path);
 	}
 
