@@ -28,3 +28,12 @@ But if you prefer to control the action whitelisting for authentication via code
 also just use this adapter stand-alone for the ACL part of your application.
 
 See [Authorization](Authorization.md) docs.
+
+
+## Contributing
+There are a few guidelines that I need contributors to follow:
+
+- Coding standards passing: `vendor/bin/sniff` and `vendor/bin/sniff -f`
+- Tests passing for Windows and Unix: `php phpunit.phar`
+
+
