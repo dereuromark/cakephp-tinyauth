@@ -36,7 +36,7 @@ class Utility {
 	 */
 	public static function parseFile($ini) {
 		if (!file_exists($ini)) {
-			throw new Exception(sprintf('Missing TinyAuth authentication file (%s)', $ini));
+			throw new Exception(sprintf('Missing TinyAuth config file (%s)', $ini));
 		}
 
 		if (function_exists('parse_ini_file')) {
@@ -46,7 +46,7 @@ class Utility {
 		}
 
 		if (!is_array($iniArray)) {
-			throw new Exception('Invalid TinyAuth authentication file');
+			throw new Exception(sprintf('Invalid TinyAuth config file (%s)', $ini));
 		}
 		return $iniArray;
 	}
