@@ -42,7 +42,7 @@ TinyAuth Authorize can be used in combination with any [CakePHP Authentication T
 
 
 Please note that `TinyAuth.Auth` replaces the default CakePHP `Auth` component. Do not try to load both at once.
-You can also use the default one, if you only want to use ACL:
+You can also use the default one, if you only want to use ACL (authorization):
 ```php
 	$this->loadComponent('Auth', [
 		'authorize' => [
