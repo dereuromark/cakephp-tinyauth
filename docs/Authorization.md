@@ -198,17 +198,10 @@ view, edit = user
 TinyAuth makes heavy use of caching to achieve optimal performance.
 By default it will not use caching in debug mode, though.
 
-You may however want to disable caching while developing RBAC to prevent
-confusing (outdated) results.
-
-To disable caching either:
-
-- pass ``true`` to the ``autoClearCache`` configuration option
-- use the example below to disable caching automatically for CakePHP debug mode
-
+To modify the caching behavior set the ``autoClearCache`` configuration option:
 ```php
 'TinyAuth.Tiny' => [
-	'autoClearCache' => Configure::read('debug')
+	'autoClearCache' => true|false
 ]
 ```
 

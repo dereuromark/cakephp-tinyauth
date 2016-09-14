@@ -85,18 +85,12 @@ Once you move such a code based rule into the INI file, you can safely remove th
 ## Caching
 
 TinyAuth makes heavy use of caching to achieve optimal performance.
+By default it will not use caching in debug mode, though.
 
-You may however want to disable caching while developing to prevent
-confusing (outdated) results.
-
-To disable caching either:
-
-- pass ``true`` to the ``autoClearCache`` configuration option
-- use the example below to disable caching automatically for CakePHP debug mode
-
+To modify the caching behavior set the ``autoClearCache`` configuration option:
 ```php
 $this->loadComponent('TinyAuth.Auth', [
-	'autoClearCache' => Configure::read('debug')
+	'autoClearCache' => true|false
 )]
 ```
 
