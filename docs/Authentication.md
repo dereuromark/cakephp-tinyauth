@@ -64,6 +64,24 @@ Accounts.Accounts = view, edit
 Accounts.admin/Accounts = index
 ```
 
+### Mixing with code
+It is possible to have mixed INI and code rules. Those will get merged prior to authentication.
+So in case any of your controllers (or plugin controllers) contain such a statement, it will merge itself with your INI whitelist:
+```php
+// In your controller
+use Cake\Event\Event;
+...
+
+	public function beforeFilter(Event $event) {
+		parent::beforeFilter($event);
+
+		$this->Auth->allow('index', 'view');
+	}
+```
+This can be interested when migrating slowly to TinyAuth, for example.
+Once you move such a code based rule into the INI file, you can safely remove those lines of code in your controller :)
+
+
 ## Caching
 
 TinyAuth makes heavy use of caching to achieve optimal performance.
