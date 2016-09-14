@@ -196,7 +196,7 @@ To disable caching either:
 - use the example below to disable caching automatically for CakePHP debug mode
 
 ```php
-'TinyAuth' => [
+'TinyAuth.Tiny' => [
 	'autoClearCache' => Configure::read('debug')
 ]
 ```
