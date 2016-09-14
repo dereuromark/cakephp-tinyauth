@@ -32,14 +32,28 @@ public function beforeFilter(Event $event) {
 		'authorize' => [
 			'TinyAuth.Tiny' => [
 				'multiRole' => false
-			]
+			],
+			...
 		]
 	]);
 }
 ```
+TinyAuth Authorize can be used in combination with any [CakePHP Authentication Type](http://book.cakephp.org/3.0/en/controllers/components/authentication.html#choosing-an-authentication-type), as well.
 
-> Please note that TinyAuth Authorize can be used in combination with any
-> [CakePHP Authentication Type](http://book.cakephp.org/3.0/en/controllers/components/authentication.html#choosing-an-authentication-type).
+
+Please note that `TinyAuth.Auth` replaces the default CakePHP `Auth` component. Do not try to load both at once.
+You can also use the default one, if you only want to use ACL:
+```php
+	$this->loadComponent('Auth', [
+		'authorize' => [
+			'TinyAuth.Tiny' => [
+				'multiRole' => false
+			],
+			...
+		]
+	]);
+```
+
 
 ## Roles
 
