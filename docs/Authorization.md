@@ -23,10 +23,8 @@ authorization in your controller's `beforeFilter` like this example:
 ```php
 // src/Controller/AppController
 
-use Cake\Event\Event;
-
-public function beforeFilter(Event $event) {
-	parent::beforeFilter($event);
+public function initialize() {
+	parent::initialize();
 
 	$this->loadComponent('TinyAuth.Auth', [
 		'authorize' => [
