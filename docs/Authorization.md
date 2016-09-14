@@ -28,7 +28,7 @@ use Cake\Event\Event;
 public function beforeFilter(Event $event) {
 	parent::beforeFilter($event);
 
-	$this->loadComponent('Auth', [
+	$this->loadComponent('TinyAuth.Auth', [
 		'authorize' => [
 			'TinyAuth.Tiny' => [
 				'multiRole' => false
