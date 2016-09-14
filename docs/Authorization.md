@@ -31,7 +31,7 @@ public function beforeFilter(Event $event) {
 	$this->loadComponent('TinyAuth.Auth', [
 		'authorize' => [
 			'TinyAuth.Tiny' => [
-				'multiRole' => false
+				'autoClearCache' => ...
 			],
 			...
 		]
@@ -47,9 +47,8 @@ You can also use the default one, if you only want to use ACL (authorization):
 	$this->loadComponent('Auth', [
 		'authorize' => [
 			'TinyAuth.Tiny' => [
-				'multiRole' => false
-			],
-			...
+				'autoClearCache' => ...
+			]
 		]
 	]);
 ```
