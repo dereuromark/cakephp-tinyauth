@@ -19,7 +19,7 @@ Authentication is set up in your controller's `initialize` method:
 
 public function initialize() {
 	$this->loadComponent('TinyAuth.Auth', [
-		'filePath' => ...
+		'autoClearCache' => ...
 	]);
 }
 ```
