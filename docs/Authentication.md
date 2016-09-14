@@ -18,6 +18,8 @@ Authentication is set up in your controller's `initialize` method:
 // src/Controller/AppController
 
 public function initialize() {
+	parent::initialize();
+
 	$this->loadComponent('TinyAuth.Auth', [
 		'autoClearCache' => ...
 	]);
