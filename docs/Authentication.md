@@ -20,9 +20,7 @@ Authentication is set up in your controller's `initialize` method:
 public function initialize() {
 	parent::initialize();
 
-	$this->loadComponent('TinyAuth.Auth', [
-		'autoClearCache' => ...
-	]);
+	$this->loadComponent('TinyAuth.Auth');
 }
 ```
 
@@ -64,6 +62,10 @@ Accounts.Accounts = view, edit
 Accounts.admin/Accounts = index
 ```
 
+### Multiple files and merging
+You can specify multiple paths in your config, e.g. when you have plugins and separated the definitions across them.
+Make sure you are using each key only once, though. The first definition will be kept and all others for the same key are ignored.
+
 ### Mixing with code
 It is possible to have mixed INI and code rules. Those will get merged prior to authentication.
 So in case any of your controllers (or plugin controllers) contain such a statement, it will merge itself with your INI whitelist:
@@ -101,7 +103,7 @@ TinyAuth AuthComponent supports the following configuration options.
 Option | Type | Description
 :----- | :--- | :----------
 autoClearCache|bool|True will generate a new ACL cache file every time.
-filePath|string|Full path to the INI file. Defaults to `ROOT . DS . 'config' . DS`.
+filePath|string|Full path to the INI file. Can also be an array of paths. Defaults to `ROOT . DS . 'config' . DS`.
 file|string|Name of the INI file. Defaults to `auth_allow.ini`.
 cache|string|Cache type. Defaults to `_cake_core_`.
 cacheKey|string|Cache key. Defaults to `tiny_auth_allow`.

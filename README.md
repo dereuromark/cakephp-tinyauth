@@ -19,6 +19,9 @@ It is also possible to manage the config files without the need of coding skills
 Ask yourself: Do you need the overhead and complexity involved with the core CakePHP ACL? See also my post [acl-access-control-lists-revised/](http://www.dereuromark.de/2015/01/06/acl-access-control-lists-revised/).
 If not, then this plugin could very well be your answer and a super quick solution to your auth problem :)
 
+But even if you don't leverage the authentication or authorization, the available AuthUserComponent and AuthUserHelper
+can be very useful when dealing with role based decisions in your controller or view level.
+
 ## Demo
 See http://sandbox3.dereuromark.de/auth-sandbox
 
