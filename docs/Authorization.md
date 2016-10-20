@@ -326,8 +326,8 @@ For basic single-role setup, the session is expected to be filled like
 ```php
 'Auth' => [
 	'User' => [
-		'id => 1,
-		'role_id' => 1,
+		'id' => '1',
+		'role_id' => '1',
 		...
 	]	
 ];
@@ -338,10 +338,10 @@ For a multi-role setup it can be either the normalized array form
 ```php
 'Auth' => [
 	'User' => [
-		'id => 1,
+		'id' => '1',
 		...
 		'Roles' => [
-			'id => 1,
+			'id => '1',
 			...
 		],
 	]	
@@ -351,11 +351,11 @@ or the simplified numeric list form
 ```php
 'Auth' => [
 	'User' => [
-		'id => 1,
+		'id' => '1',
 		...
 		'Roles' => [
-			1, 
-			2,
+			'1', 
+			'2',
 			...
 		]
 	]	
