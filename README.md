@@ -20,7 +20,7 @@ Ask yourself: Do you need the overhead and complexity involved with the core Cak
 If not, then this plugin could very well be your answer and a super quick solution to your auth problem :)
 
 But even if you don't leverage the authentication or authorization, the available AuthUserComponent and AuthUserHelper
-can be very useful when dealing with role based decisions in your controller or view level.
+can be very useful when dealing with role based decisions in your controller or view level. They also work standa-alone.
 
 ## Demo
 See http://sandbox3.dereuromark.de/auth-sandbox
@@ -42,6 +42,23 @@ add,edit = user,mod
 
 [admin/Users]
 * = admin
+```
+
+### AuthUser component and helper
+```php
+$currentId = $this->AuthUser->id();
+
+$isMe = $this->AuthUser->isMe($userEntity->id);
+
+if ($this->AuthUser->hasRole('mod') {
+} 
+
+if ($this->Auth->hasAccess(['action' => 'secretArea'])) {
+}
+
+// Helper only
+echo $this->Auth->link('Admin Backend', ['prefix' => 'admin', 'action' => 'index']);
+echo $this->Auth->postLink('Delete', ['action' => 'delete', $id], ['confirm' => 'Sure?']);
 ```
 
 ## How to include
