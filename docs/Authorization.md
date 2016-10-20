@@ -283,18 +283,18 @@ But on top, if you want to display certain content or a link for specific roles,
 
 Let's say we only want to print an admin backend link if the role can access it:
 ```php
-echo $this->Auth->link('Admin Backend', ['prefix' => 'admin', 'action' => 'index']);
+echo $this->AuthUser->link('Admin Backend', ['prefix' => 'admin', 'action' => 'index']);
 ```
 It will not show anything for all others.
 
 Let's say we only want to print the delete link if the role is actually allowed to do that:
 ```php
-echo $this->Auth->postLink('Delete this', ['action' => 'delete', $id], ['confirm' => 'Sure?']);
+echo $this->AuthUser->postLink('Delete this', ['action' => 'delete', $id], ['confirm' => 'Sure?']);
 ```
 
 You can also do more complex things:
 ```php
-if ($this->Auth->hasAccess(['action' => 'secretArea'])) {
+if ($this->AuthUser->hasAccess(['action' => 'secretArea'])) {
 	echo 'Only for you: ';
 	echo $this->Html->link('admin/index', ['action' => 'secretArea']);
 	echo ' (do not tell anyone else!);

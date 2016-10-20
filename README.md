@@ -53,12 +53,12 @@ $isMe = $this->AuthUser->isMe($userEntity->id);
 if ($this->AuthUser->hasRole('mod') {
 } 
 
-if ($this->Auth->hasAccess(['action' => 'secretArea'])) {
+if ($this->AuthUser->hasAccess(['action' => 'secretArea'])) {
 }
 
 // Helper only
-echo $this->Auth->link('Admin Backend', ['prefix' => 'admin', 'action' => 'index']);
-echo $this->Auth->postLink('Delete', ['action' => 'delete', $id], ['confirm' => 'Sure?']);
+echo $this->AuthUser->link('Admin Backend', ['prefix' => 'admin', 'action' => 'index']);
+echo $this->AuthUser->postLink('Delete', ['action' => 'delete', $id], ['confirm' => 'Sure?']);
 ```
 
 ## How to include
