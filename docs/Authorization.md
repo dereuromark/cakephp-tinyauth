@@ -302,6 +302,8 @@ if ($this->AuthUser->hasAccess(['action' => 'secretArea'])) {
 ```
 
 ## Tips
+
+### Use constants instead of magic strings
 If you are using the `hasRole()` or `hasRoles()` checks with a DB roles table, it is always better to use the aliases than the IDs (as the IDs can change).
 But even so, it is better not to use magic strings like `'moderator'`, but define constants in your bootstrap for each:
 ````php
@@ -314,3 +316,58 @@ if ($this->AuthUser->hasRole(ROLE_MOD)) {
 }
 ```
 This way, if you ever refactor them, it will be easier to adjust all occurrences, it will also be possible to use auto-completion type-hinting.
+
+### Leverage session
+Especially when working with multi-role setup, it can be useful to not every time read the current user's roles from the database.
+When logging in a user you can write the roles to the session right away. 
+If available here, TinyAuth will use those and will not try to query the roles table (or the `roles_users` pivot table).
+
+For basic single-role setup, the session is expected to be filled like
+```php
+'Auth' => [
+	'User' => [
+		'id => 1,
+		'role_id' => 1,
+		...
+	]	
+];
+```
+The expected `'role_id'` session key is configurable via `roleColumn` config key.
+
+For a multi-role setup it can be either the normalized array form
+```php
+'Auth' => [
+	'User' => [
+		'id => 1,
+		...
+		'Roles' => [
+			'id => 1,
+			...
+		],
+	]	
+];
+```
+or the simplified numeric list form
+```php
+'Auth' => [
+	'User' => [
+		'id => 1,
+		...
+		'Roles' => [
+			1, 
+			2,
+			...
+		]
+	]	
+];
+```
+The expected `'Roles'` session key is configurable via `rolesTable` config key.
+
+When logging the user in you can have a custom handler modifying your input accordingly, prior to calling
+```php
+// Modify or add roles in $user
+$this->Auth->setUser($user);
+```
+
+The easiest way here to contain the roles, however, is to have your custom `findAuth()` finder which also fetches those.
+See [customizing-find-query](http://book.cakephp.org/3.0/en/controllers/components/authentication.html#customizing-find-query).

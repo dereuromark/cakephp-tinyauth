@@ -45,13 +45,6 @@ This way you keep it DRY.
 
 
 ## Contributing
-There are a few guidelines that I need contributors to follow:
-
-- Coding standards passing: `vendor/bin/sniff` and `vendor/bin/sniff -f`
-- Tests passing for Windows and Unix: `php phpunit.phar`
-
-
-## Contribution
 Feel free to fork and pull request.
 
 There are a few guidelines:
