@@ -29,7 +29,7 @@ public function initialize() {
 	$this->loadComponent('TinyAuth.Auth', [
 		'authorize' => [
 			'TinyAuth.Tiny' => [
-				'autoClearCache' => ...
+				...
 			],
 			...
 		]
@@ -45,7 +45,7 @@ You can also use the default one, if you only want to use ACL (authorization):
 	$this->loadComponent('Auth', [
 		'authorize' => [
 			'TinyAuth.Tiny' => [
-				'autoClearCache' => ...
+				...
 			]
 		]
 	]);
@@ -63,11 +63,11 @@ Define your roles in a Configure array if you want to prevent database role
 lookups, for example:
 
 ```php
-// config/app_custom.php
+// config/app.php
 
-/**
-* Optionally define constants for easy referencing throughout your code
-*/
+/*
+ * Optionally define constants for easy referencing throughout your code
+ */
 define('ROLE_USER', 1);
 define('ROLE_ADMIN', 2);
 define('ROLE_SUPERADMIN', 9);
@@ -193,6 +193,11 @@ view, edit = user
 * = admin
 ```
 
+### Multiple files and merging
+You can specify multiple paths in your config, e.g. when you have plugins and separated the definitions across them.
+Make sure you are using each section key only once, though. The first definition will be kept and all others for the same section key are ignored.
+
+
 ## Caching
 
 TinyAuth makes heavy use of caching to achieve optimal performance.
@@ -229,11 +234,140 @@ prefixes|array|A list of authorizeByPrefix handled prefixes.
 allowUser|bool|True will give authenticated users access to all resources except those using the `adminPrefix`
 adminPrefix|string|Name of the prefix used for admin pages. Defaults to admin.
 autoClearCache|bool|True will generate a new ACL cache file every time.
-filePath|string|Full path to the acl.ini. Defaults to `ROOT . DS . 'config' . DS`.
+filePath|string|Full path to the acl.ini. Can also be an array of multiple paths. Defaults to `ROOT . DS . 'config' . DS`.
 file|string|Name of the INI file. Defaults to `acl.ini`.
 cache|string|Cache type. Defaults to `_cake_core_`.
 cacheKey|string|Cache key. Defaults to `tiny_auth_acl`.
 
 
-## Auth user data
-For reading auth user data take a look at [Tools plugin AuthUser component/helper](https://github.com/dereuromark/cakephp-tools/blob/master/docs/Auth/Auth.md).
+## AuthUserComponent
+Add the AuthUserComponent and you can easily check permissions inside your controller scope:
+```php
+$this->loadComponent('TinyAuth.AuthUser');
+```
+
+Maybe you only want to redirect to a certain action if that is accessible for this user (role):
+```php
+if ($this->AuthUser->hasAccess(['action' => 'forModeratorOnly'])) {
+	return $this->redirect(['action' => 'forModeratorOnly']);
+}
+// Do something else
+```
+
+Or if that person is of a certain role in general:
+```php
+if ($this->AuthUser->hasRole('mod') { // Either by alias or id
+	// OK, do something now
+}
+```
+
+For any action that get's the user id passed, you can also ask:
+```php
+$isMe = $this->AuthUser->isMe($userEntity->id);
+// This would be equal to
+$isMe = $this->AuthUser->id() == $userEntity->id;
+```
+
+## AuthHelper
+The helper assists with the same in the templates.
+
+Include the helper in your `AppView.php`:
+```php
+$this->loadHelper('TinyAuth.AuthUser');
+```
+
+Note that this helper only works if you also enabled the above component, as it needs some data to be passed down.
+
+All the above gotchas also are available in the views and helpers now (id, isMe, roles, hasRole, hasRoles, hasAccess).
+But on top, if you want to display certain content or a link for specific roles, you can do that, too.
+
+Let's say we only want to print an admin backend link if the role can access it:
+```php
+echo $this->AuthUser->link('Admin Backend', ['prefix' => 'admin', 'action' => 'index']);
+```
+It will not show anything for all others.
+
+Let's say we only want to print the delete link if the role is actually allowed to do that:
+```php
+echo $this->AuthUser->postLink('Delete this', ['action' => 'delete', $id], ['confirm' => 'Sure?']);
+```
+
+You can also do more complex things:
+```php
+if ($this->AuthUser->hasAccess(['action' => 'secretArea'])) {
+	echo 'Only for you: ';
+	echo $this->Html->link('admin/index', ['action' => 'secretArea']);
+	echo ' (do not tell anyone else!);
+}
+```
+
+## Tips
+
+### Use constants instead of magic strings
+If you are using the `hasRole()` or `hasRoles()` checks with a DB roles table, it is always better to use the aliases than the IDs (as the IDs can change).
+But even so, it is better not to use magic strings like `'moderator'`, but define constants in your bootstrap for each:
+````php
+// In your bootstrap
+define('ROLE_MOD', 'moderator');
+
+// In your template
+if ($this->AuthUser->hasRole(ROLE_MOD)) {
+	...
+}
+```
+This way, if you ever refactor them, it will be easier to adjust all occurrences, it will also be possible to use auto-completion type-hinting.
+
+### Leverage session
+Especially when working with multi-role setup, it can be useful to not every time read the current user's roles from the database.
+When logging in a user you can write the roles to the session right away. 
+If available here, TinyAuth will use those and will not try to query the roles table (or the `roles_users` pivot table).
+
+For basic single-role setup, the session is expected to be filled like
+```php
+'Auth' => [
+	'User' => [
+		'id' => '1',
+		'role_id' => '1',
+		...
+	]	
+];
+```
+The expected `'role_id'` session key is configurable via `roleColumn` config key.
+
+For a multi-role setup it can be either the normalized array form
+```php
+'Auth' => [
+	'User' => [
+		'id' => '1',
+		...
+		'Roles' => [
+			'id' => '1',
+			...
+		],
+	]	
+];
+```
+or the simplified numeric list form
+```php
+'Auth' => [
+	'User' => [
+		'id' => '1',
+		...
+		'Roles' => [
+			'1', 
+			'2',
+			...
+		]
+	]	
+];
+```
+The expected `'Roles'` session key is configurable via `rolesTable` config key.
+
+When logging the user in you can have a custom handler modifying your input accordingly, prior to calling
+```php
+// Modify or add roles in $user
+$this->Auth->setUser($user);
+```
+
+The easiest way here to contain the roles, however, is to have your custom `findAuth()` finder which also fetches those.
+See [customizing-find-query](http://book.cakephp.org/3.0/en/controllers/components/authentication.html#customizing-find-query).

@@ -6,14 +6,15 @@ use Cake\Cache\Cache;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\AuthComponent as CakeAuthComponent;
 use Cake\Core\Configure;
-use Cake\Core\Exception\Exception;
 use Cake\Event\Event;
-use TinyAuth\Utility\Utility;
+use TinyAuth\Auth\AclTrait;
 
 /**
  * TinyAuth AuthComponent to handle all authentication in a central ini file.
  */
 class AuthComponent extends CakeAuthComponent {
+
+	use AclTrait;
 
 	/**
 	 * @var array
@@ -35,14 +36,17 @@ class AuthComponent extends CakeAuthComponent {
 		$config += $this->_defaultTinyAuthConfig;
 
 		parent::__construct($registry, $config);
+	}
 
-		if (!in_array($config['cache'], Cache::configured())) {
-			throw new Exception(sprintf('Invalid TinyAuth cache `%s`', $config['cache']));
-		}
-
-		if ($this->_config['autoClearCache'] === null) {
-			$this->_config['autoClearCache'] = Configure::read('debug');
-		}
+	/**
+	 * Events supported by this component.
+	 *
+	 * @return array
+	 */
+	public function implementedEvents() {
+		return [
+			'Controller.beforeRender' => 'beforeRender',
+		] + parent::implementedEvents();
 	}
 
 	/**
@@ -53,6 +57,17 @@ class AuthComponent extends CakeAuthComponent {
 		$this->_prepareAuthentication();
 
 		return parent::startup($event);
+	}
+
+	/**
+	 * @param \Cake\Event\Event $event
+	 * @return \Cake\Network\Response|null
+	 */
+	public function beforeRender(Event $event) {
+		$controller = $event->subject();
+
+		$authUser = (array)$this->user();
+		$controller->set('_authUser', $authUser);
 	}
 
 	/**
@@ -91,10 +106,6 @@ class AuthComponent extends CakeAuthComponent {
 	 * @return array Actions
 	 */
 	protected function _getAuth($path = null) {
-		if ($path === null) {
-			$path = ROOT . DS . 'config' . DS;
-		}
-
 		if ($this->_config['autoClearCache'] && Configure::read('debug')) {
 			Cache::delete($this->_config['cacheKey'], $this->_config['cache']);
 		}
@@ -103,11 +114,11 @@ class AuthComponent extends CakeAuthComponent {
 			return $roles;
 		}
 
-		$iniArray = Utility::parseFile($path . $this->_config['file']);
+		$iniArray = $this->_parseFiles($path, $this->_config['file']);
 
 		$res = [];
 		foreach ($iniArray as $key => $actions) {
-			$res[$key] = Utility::deconstructIniKey($key);
+			$res[$key] = $this->_deconstructIniKey($key);
 			$res[$key]['map'] = $actions;
 
 			$actions = explode(',', $actions);
