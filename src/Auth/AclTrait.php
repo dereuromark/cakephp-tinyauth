@@ -339,7 +339,7 @@ trait AclTrait {
 	 * @return array List with all role ids belonging to the user
 	 * @throws \Cake\Core\Exception\Exception
 	 */
-	protected function _getUserRoles($user) {//unset($user['role_id']);
+	protected function _getUserRoles($user) {
 		// Single-role from session
 		if (!$this->_config['multiRole']) {
 			if (isset($user[$this->_config['roleColumn']])) {

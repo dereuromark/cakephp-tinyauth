@@ -82,13 +82,15 @@ trait AuthUserTrait {
 	 * It will return the single role for single role setup, and a flat
 	 * list of roles for multi role setup.
 	 *
-	 * @return mixed String or array of roles or null if inexistent.
+	 * @return array Array of roles
 	 */
 	public function roles() {
-		$roles = $this->_getUserRoles($this->user());
-		if (!is_array($roles)) {
-			return $roles;
+		$user = $this->user();
+		if (!$user) {
+			return [];
 		}
+
+		$roles = $this->_getUserRoles($user);
 
 		return $roles;
 	}
@@ -104,7 +106,7 @@ trait AuthUserTrait {
 		if ($providedRoles !== null) {
 			$roles = (array)$providedRoles;
 		} else {
-			$roles = (array)$this->roles();
+			$roles = $this->roles();
 		}
 
 		if (!$roles) {
