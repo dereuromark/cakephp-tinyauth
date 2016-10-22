@@ -363,6 +363,22 @@ or the simplified numeric list form
 ```
 The expected `'Roles'` session key is configurable via `rolesTable` config key.
 
+Alternatively, instead of manually adding the Roles into the session, you can also just join in the pivot table (`roles_users` usually), and if those are added to the session in either normalized or numeric list it will also read from those instead of asking the database:
+```php
+'Auth' => [
+	'User' => [
+		'id' => '1',
+		...
+		'roles_users' => [
+			...
+			'role_id' => '1',
+			...
+		],
+	]	
+];
+```
+Note that in this case the role definitions will have to contain a `role_id`, though (as the pivot table only contains `user_id` and that field).
+
 When logging the user in you can have a custom handler modifying your input accordingly, prior to calling
 ```php
 // Modify or add roles in $user
