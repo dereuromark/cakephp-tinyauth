@@ -20,7 +20,7 @@ Ask yourself: Do you need the overhead and complexity involved with the core Cak
 If not, then this plugin could very well be your answer and a super quick solution to your auth problem :)
 
 But even if you don't leverage the authentication or authorization, the available AuthUserComponent and AuthUserHelper
-can be very useful when dealing with role based decisions in your controller or view level. They also work standa-alone.
+can be very useful when dealing with role based decisions in your controller or view level. They also work stand-alone.
 
 ## Demo
 See http://sandbox3.dereuromark.de/auth-sandbox
