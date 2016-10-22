@@ -357,7 +357,7 @@ trait AclTrait {
 			return $this->_mapped((array)$userRoles);
 		}
 
-		// Multi-role from DB: load the pivot table
+		// Multi-role from session via pivot table
 		$pivotTableName = $this->_config['pivotTable'];
 		if (!$pivotTableName) {
 			list(, $rolesTableName) = pluginSplit($this->_config['rolesTable']);
@@ -369,6 +369,15 @@ trait AclTrait {
 			asort($tables);
 			$pivotTableName = implode('', $tables);
 		}
+		if (isset($user[$pivotTableName])) {
+			$userRoles = $user[$pivotTableName];
+			if (isset($userRoles[0][$this->_config['roleColumn']])) {
+				$userRoles = Hash::extract($userRoles, '{n}.' . $this->_config['roleColumn']);
+			}
+			return $this->_mapped((array)$userRoles);
+		}
+
+		// Multi-role from DB: load the pivot table
 		$pivotTable = TableRegistry::get($pivotTableName);
 		$roleColumn = $this->_config['roleColumn'];
 		$roles = $pivotTable->find()

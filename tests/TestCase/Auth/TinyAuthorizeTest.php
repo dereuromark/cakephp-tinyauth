@@ -32,7 +32,7 @@ class TinyAuthorizeTest extends TestCase {
 	public $collection;
 
 	/**
-	 * @var \Cake\Network\Request
+	 * @var \Cake\Http\ServerRequest|\Cake\Network\Request
 	 */
 	public $request;
 
