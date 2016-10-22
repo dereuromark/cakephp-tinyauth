@@ -730,7 +730,6 @@ class TinyAuthorizeTest extends TestCase {
 		$this->assertFalse($res);
 	}
 
-
 	/**
 	 * Tests with configuration setting 'allowUser' set to true, giving user
 	 * access to all controller/actions except when prefixed with /admin
