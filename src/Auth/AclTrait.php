@@ -341,10 +341,13 @@ trait AclTrait {
 	protected function _getUserRoles($user) {
 		// Single-role from session
 		if (!$this->_config['multiRole']) {
-			if (isset($user[$this->_config['roleColumn']])) {
-				return $this->_mapped([$user[$this->_config['roleColumn']]]);
+			if (!array_key_exists($this->_config['roleColumn'], $user)) {
+				throw new Exception(sprintf('Missing TinyAuth role id field (%s) in user session', 'Auth.User.' . $this->_config['roleColumn']));
 			}
-			throw new Exception(sprintf('Missing TinyAuth role id field (%s) in user session', 'Auth.User.' . $this->_config['roleColumn']));
+			if (!isset($user[$this->_config['roleColumn']])) {
+				return [];
+			}
+			return $this->_mapped([$user[$this->_config['roleColumn']]]);
 		}
 
 		// Multi-role from session

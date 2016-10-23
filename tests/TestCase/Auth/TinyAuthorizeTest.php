@@ -1512,8 +1512,7 @@ class TinyAuthorizeTest extends TestCase {
 		$method->setAccessible(true);
 
 		$user = ['id' => 1];
-		$res = $method->invokeArgs($object, [$user]);
-		$method->invoke($object);
+		$method->invokeArgs($object, [$user]);
 	}
 
 	/**
