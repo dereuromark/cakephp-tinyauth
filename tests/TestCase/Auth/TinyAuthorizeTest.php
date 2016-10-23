@@ -233,7 +233,6 @@ class TinyAuthorizeTest extends TestCase {
 	}
 
 	/**
-	 * @expectedException \RuntimeException
 	 * @return void
 	 */
 	public function testBasicUserMethodInexistentRole() {
@@ -241,11 +240,9 @@ class TinyAuthorizeTest extends TestCase {
 			'autoClearCache' => true
 		]);
 
-		$user = ['role_id' => 4]; // invalid non-existing role
-
-		//$this->expectException(\RuntimeException::class);
-
-		$object->authorize($user, $this->request);
+		$user = ['role_id' => 99]; // invalid non-existing role
+		$result = $object->authorize($user, $this->request);
+		$this->assertFalse($result);
 	}
 
 	/**
@@ -1516,14 +1513,12 @@ class TinyAuthorizeTest extends TestCase {
 		$method->setAccessible(true);
 
 		$user = ['id' => 1];
-		$res = $method->invokeArgs($object, [$user]);
-		$method->invoke($object);
+		$method->invokeArgs($object, [$user]);
 	}
 
 	/**
-	 * Tests multi-role exception thrown when user has no roles in the pivot table.
+	 * Tests multi-role when user has no roles in the pivot table.
 	 *
-	 * @expectedException \Cake\Core\Exception\Exception
 	 * @return void
 	 */
 	public function testUserRolesUserWithoutPivotRoles() {
@@ -1538,8 +1533,8 @@ class TinyAuthorizeTest extends TestCase {
 		$method->setAccessible(true);
 
 		$user = ['id' => 5];
-		$res = $method->invokeArgs($object, [$user]);
-		$method->invoke($object);
+		$result = $method->invokeArgs($object, [$user]);
+		$this->assertSame([], $result);
 	}
 
 }

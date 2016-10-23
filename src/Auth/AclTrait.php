@@ -6,7 +6,6 @@ use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
-use RuntimeException;
 use TinyAuth\Utility\Utility;
 
 trait AclTrait {
@@ -342,10 +341,13 @@ trait AclTrait {
 	protected function _getUserRoles($user) {
 		// Single-role from session
 		if (!$this->_config['multiRole']) {
-			if (isset($user[$this->_config['roleColumn']])) {
-				return $this->_mapped([$user[$this->_config['roleColumn']]]);
+			if (!array_key_exists($this->_config['roleColumn'], $user)) {
+				throw new Exception(sprintf('Missing TinyAuth role id field (%s) in user session', 'Auth.User.' . $this->_config['roleColumn']));
 			}
-			throw new Exception(sprintf('Missing TinyAuth role id field (%s) in user session', 'Auth.User.' . $this->_config['roleColumn']));
+			if (!isset($user[$this->_config['roleColumn']])) {
+				return [];
+			}
+			return $this->_mapped([$user[$this->_config['roleColumn']]]);
 		}
 
 		// Multi-role from session
@@ -388,7 +390,7 @@ trait AclTrait {
 			->toArray();
 
 		if (!count($roles)) {
-			throw new Exception('Missing TinyAuth roles for user in pivot table');
+			return [];
 		}
 
 		return $this->_mapped($roles);
@@ -406,7 +408,7 @@ trait AclTrait {
 			$alias = array_keys($availableRoles, $role);
 			$alias = array_shift($alias);
 			if (!$alias || !is_string($alias)) {
-				throw new RuntimeException('Cannot find role alias for role ' . $role);
+				continue;
 			}
 
 			$array[$alias] = $role;
