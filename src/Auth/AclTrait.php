@@ -387,7 +387,7 @@ trait AclTrait {
 			->toArray();
 
 		if (!count($roles)) {
-			throw new Exception('Missing TinyAuth roles for user in pivot table');
+			return [];
 		}
 
 		return $this->_mapped($roles);

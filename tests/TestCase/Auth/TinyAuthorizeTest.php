@@ -1517,9 +1517,8 @@ class TinyAuthorizeTest extends TestCase {
 	}
 
 	/**
-	 * Tests multi-role exception thrown when user has no roles in the pivot table.
+	 * Tests multi-role when user has no roles in the pivot table.
 	 *
-	 * @expectedException \Cake\Core\Exception\Exception
 	 * @return void
 	 */
 	public function testUserRolesUserWithoutPivotRoles() {
@@ -1534,8 +1533,8 @@ class TinyAuthorizeTest extends TestCase {
 		$method->setAccessible(true);
 
 		$user = ['id' => 5];
-		$res = $method->invokeArgs($object, [$user]);
-		$method->invoke($object);
+		$result = $method->invokeArgs($object, [$user]);
+		$this->assertSame([], $result);
 	}
 
 }
