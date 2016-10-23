@@ -233,7 +233,6 @@ class TinyAuthorizeTest extends TestCase {
 	}
 
 	/**
-	 * @expectedException \RuntimeException
 	 * @return void
 	 */
 	public function testBasicUserMethodInexistentRole() {
@@ -241,11 +240,9 @@ class TinyAuthorizeTest extends TestCase {
 			'autoClearCache' => true
 		]);
 
-		$user = ['role_id' => 4]; // invalid non-existing role
-
-		//$this->expectException(\RuntimeException::class);
-
-		$object->authorize($user, $this->request);
+		$user = ['role_id' => 99]; // invalid non-existing role
+		$result = $object->authorize($user, $this->request);
+		$this->assertFalse($result);
 	}
 
 	/**

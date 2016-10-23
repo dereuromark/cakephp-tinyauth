@@ -6,7 +6,6 @@ use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
-use RuntimeException;
 use TinyAuth\Utility\Utility;
 
 trait AclTrait {
@@ -406,7 +405,7 @@ trait AclTrait {
 			$alias = array_keys($availableRoles, $role);
 			$alias = array_shift($alias);
 			if (!$alias || !is_string($alias)) {
-				throw new RuntimeException('Cannot find role alias for role ' . $role);
+				continue;
 			}
 
 			$array[$alias] = $role;
