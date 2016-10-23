@@ -1395,7 +1395,7 @@ class TinyAuthorizeTest extends TestCase {
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
-		$user = ['id' => 101, 'role_id' => 1, 'group' => 2, 'authors'];
+		$user = ['id' => 101, 'role_id' => 1, 'group' => 'authors'];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 
@@ -1472,6 +1472,7 @@ class TinyAuthorizeTest extends TestCase {
 		$user = ['id' => 2, 'group_id' => 102];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
+
 		//single role and use superAdminColumn (string)
 		$object = new TestTinyAuthorize($this->collection, [
 			'multiRole' => true,
