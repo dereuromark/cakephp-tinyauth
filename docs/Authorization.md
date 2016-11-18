@@ -341,7 +341,10 @@ For a multi-role setup it can be either the normalized array form
 		'id' => '1',
 		...
 		'Roles' => [
-			'id' => '1',
+			[
+				'id' => '1',
+				...
+			],
 			...
 		],
 	]	
