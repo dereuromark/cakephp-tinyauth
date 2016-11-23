@@ -61,8 +61,8 @@ echo $this->AuthUser->link('Admin Backend', ['prefix' => 'admin', 'action' => 'i
 echo $this->AuthUser->postLink('Delete', ['action' => 'delete', $id], ['confirm' => 'Sure?']);
 ```
 
-## How to include
-Installing the plugin is pretty much as with every other CakePHP plugin:
+## Installation
+Including the plugin is pretty much as with every other CakePHP plugin:
 
 ```bash
 composer require dereuromark/cakephp-tinyauth
