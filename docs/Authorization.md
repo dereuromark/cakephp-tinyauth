@@ -278,7 +278,7 @@ $this->loadHelper('TinyAuth.AuthUser');
 
 Note that this helper only works if you also enabled the above component, as it needs some data to be passed down.
 
-All the above gotchas also are available in the views and helpers now (id, isMe, roles, hasRole, hasRoles, hasAccess).
+All the above gotchas also are available in the views and helpers now (`->id()`, `->isMe()`, `->roles()`, `->hasRole()`, `->hasRoles()`).
 But on top, if you want to display certain content or a link for specific roles, you can do that, too.
 
 Let's say we only want to print an admin backend link if the role can access it:
