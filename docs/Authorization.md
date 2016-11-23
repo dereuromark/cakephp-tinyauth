@@ -268,7 +268,7 @@ $isMe = $this->AuthUser->isMe($userEntity->id);
 $isMe = $this->AuthUser->id() == $userEntity->id;
 ```
 
-## AuthHelper
+## AuthUserHelper
 The helper assists with the same in the templates.
 
 Include the helper in your `AppView.php`:
