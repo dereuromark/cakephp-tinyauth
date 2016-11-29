@@ -50,6 +50,7 @@ If you want to use both, first attach authentication and make sure you can log i
 You just verified: authentication is working now fine - it doesn't matter who logged in as long as someone did.
 
 Only if that is working, attach an Auth adapter (which now means authorization comes into play), in this case probably `Tiny`. Make sure that the session contains the correct data structure, also make sure the roles are configured or in the database and can be found as expected.
+By default it will now deny you any access to any protected action. Only by specifically whitelisting actions/controllers now in the ACL definition, a specific user can access a specific action again.
 
 ## Contributing
 Feel free to fork and pull request.
