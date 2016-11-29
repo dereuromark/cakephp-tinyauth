@@ -46,11 +46,13 @@ This way you keep it DRY.
 ## Troubleshooting
 First of all: Isolate the issue. Never mix **authentication** and **authorization** (read the top part again).
 
-If you want to use both, first attach authentication and make sure you can log in and you can log out. Also make sure the non-public action is not accessible without being logged in and it is afterwards.
+If you want to use both, first attach authentication and make sure you can log in and you can log out. By default all actions are now protected unless you make them "public". So make sure the non-public actions are not accessible without being logged in and they are afterwards.
 You just verified: authentication is working now fine - it doesn't matter who logged in as long as someone did.
 
-Only if that is working, attach an Auth adapter (which now means authorization comes into play), in this case probably `Tiny`. Make sure that the session contains the correct data structure, also make sure the roles are configured or in the database and can be found as expected.
-By default it will now deny you any access to any protected action. Only by specifically whitelisting actions/controllers now in the ACL definition, a specific user can access a specific action again.
+Only if that is working, attach an Auth adapter (which now means authorization comes into play), in this case probably `Tiny`.
+By default it will now deny all logged in users any access to any protected action. Only by specifically whitelisting actions/controllers now in the ACL definition, a specific user can access a specific action again.
+Make sure that the session contains the correct data structure, also make sure the roles are configured or in the database and can be found as expected. The user with the right role should get access now to the corresponding action (make also sure cache is cleared).
+You then verified: authorization is working fine, as well - only with the correct role a user can now access protected actions.
 
 ## Contributing
 Feel free to fork and pull request.
