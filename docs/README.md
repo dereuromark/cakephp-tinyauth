@@ -43,6 +43,13 @@ Those classes most likely share quite a few configs, in that case you definitely
 ```
 This way you keep it DRY.
 
+## Troubleshooting
+First of all: Isolate the issue. Never mix **authentication** and **authorization** (read the top part again).
+
+If you want to use both, first attach authentication and make sure you can log in and you can log out. Also make sure the non-public action is not accessible without being logged in and it is afterwards.
+You just verified: authentication is working now fine - it doesn't matter who logged in as long as someone did.
+
+Only if that is working, attach an Auth adapter (which now means authorization comes into play), in this case probably `Tiny`. Make sure that the session contains the correct data structure, also make sure the roles are configured or in the database and can be found as expected.
 
 ## Contributing
 Feel free to fork and pull request.
