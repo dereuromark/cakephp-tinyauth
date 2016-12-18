@@ -53,10 +53,10 @@ class AuthComponent extends CakeAuthComponent {
 	 * @param \Cake\Event\Event $event Event instance.
 	 * @return \Cake\Network\Response|null
 	 */
-	public function startup(Event $event) {
+	public function authCheck(Event $event) {
 		$this->_prepareAuthentication();
 
-		return parent::startup($event);
+		return parent::authCheck($event);
 	}
 
 	/**
@@ -106,7 +106,7 @@ class AuthComponent extends CakeAuthComponent {
 	 * @return array Actions
 	 */
 	protected function _getAuth($path = null) {
-		if ($this->_config['autoClearCache'] && Configure::read('debug')) {
+		if ($this->config('autoClearCache') && Configure::read('debug')) {
 			Cache::delete($this->_config['cacheKey'], $this->_config['cache']);
 		}
 		$roles = Cache::read($this->_config['cacheKey'], $this->_config['cache']);
