@@ -21,6 +21,11 @@ trait AclTrait {
 	protected $_roles = null;
 
 	/**
+	 * @var array|null
+	 */
+	protected $_userRoles = null;
+
+	/**
 	 * @return array
 	 */
 	protected function _defaultConfig() {
@@ -380,20 +385,36 @@ trait AclTrait {
 		}
 
 		// Multi-role from DB: load the pivot table
-		$pivotTable = TableRegistry::get($pivotTableName);
-		$roleColumn = $this->_config['roleColumn'];
-		$roles = $pivotTable->find()
-			->select($roleColumn)
-			->where([$this->_config['userColumn'] => $user[$this->_config['idColumn']]])
-			->all()
-			->extract($roleColumn)
-			->toArray();
-
-		if (!count($roles)) {
+		$roles = $this->_getRolesFromDb($pivotTableName, $user[$this->_config['idColumn']]);
+		if (!$roles) {
 			return [];
 		}
 
 		return $this->_mapped($roles);
+	}
+
+	/**
+	 * @param string $pivotTableName
+	 * @param int $id User ID
+	 * @return array
+	 */
+	protected function _getRolesFromDb($pivotTableName, $id) {
+		if (isset($this->_userRoles[$id])) {
+			return $this->_userRoles[$id];
+		}
+
+		$pivotTable = TableRegistry::get($pivotTableName);
+		$roleColumn = $this->_config['roleColumn'];
+		$roles = $pivotTable->find()
+			->select($roleColumn)
+			->where([$this->_config['userColumn'] => $id])
+			->all()
+			->extract($roleColumn)
+			->toArray();
+
+		$this->_userRoles[$id] = $roles;
+
+		return $roles;
 	}
 
 	/**
