@@ -10,6 +10,19 @@
 
 A CakePHP 3.x plugin to handle authentication and user authorization the easy way.
 
+## Features
+### Authentication
+What are public actions, which ones need login?
+
+### Authorization
+Once you are logged in, what actions can you see with your role(s)?
+
+- Single-role: 1 user has 1 role (users and roles table for example)
+- Multi-role: 1 user can have 1...n roles (users, roles and a "roles_users" pivat table for example)
+
+### Useful helpers
+AuthUser Component and Helper for stateful and stateless "auth data" access.
+
 ## What's the idea?
 Default CakePHP authentication and authorization depends on code changes in at least each controller, maybe more classes.
 This plugin hooks in with a single line of change and manages all that using config files and there is no need to touch all those controllers, including plugin controllers.
@@ -22,15 +35,6 @@ If not, then this plugin could very well be your answer and a super quick soluti
 But even if you don't leverage the authentication or authorization, the available AuthUserComponent and AuthUserHelper
 can be very useful when dealing with role based decisions in your controller or view level. They also work stand-alone.
 
-## Features
-### Authentication
-What are public actions, which ones need login?
-
-### Authorization
-Once you are logged in, what actions can you see with your role(s)?
-
-- Single-role: 1 user has 1 role (users and roles table for example)
-- Multi-role: 1 user can have 1...n roles (users, roles and a "roles_users" pivat table for example)
 
 ## Demo
 See http://sandbox3.dereuromark.de/auth-sandbox
