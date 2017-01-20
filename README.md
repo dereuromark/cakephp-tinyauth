@@ -22,6 +22,16 @@ If not, then this plugin could very well be your answer and a super quick soluti
 But even if you don't leverage the authentication or authorization, the available AuthUserComponent and AuthUserHelper
 can be very useful when dealing with role based decisions in your controller or view level. They also work stand-alone.
 
+## Features
+### Authentication
+What are public actions, which ones need login?
+
+### Authorization
+Once you are logged in, what actions can you see with your role(s)?
+
+- Single-role: 1 user has 1 role (users and roles table for example)
+- Multi-role: 1 user can have 1...n roles (users, roles and a "roles_users" pivat table for example)
+
 ## Demo
 See http://sandbox3.dereuromark.de/auth-sandbox
 
