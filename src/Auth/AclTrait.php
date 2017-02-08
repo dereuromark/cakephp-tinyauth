@@ -4,6 +4,7 @@ namespace TinyAuth\Auth;
 use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
+use Cake\Datasource\ResultSetInterface;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
 use TinyAuth\Utility\Utility;
@@ -134,7 +135,7 @@ trait AclTrait {
 		// Allow logged in super admins access to all resources
 		if ($this->config('superAdminRole')) {
 			foreach ($userRoles as $userRole) {
-				if ($userRole === $this->config('superAdminRole')) {
+				if ((string)$userRole === (string)$this->config('superAdminRole')) {
 					return true;
 				}
 			}
@@ -313,7 +314,7 @@ trait AclTrait {
 		}
 
 		$rolesTable = TableRegistry::get($this->_config['rolesTable']);
-		$roles = $rolesTable->find()->formatResults(function ($results) {
+		$roles = $rolesTable->find()->formatResults(function (ResultSetInterface $results) {
 			return $results->combine($this->_config['aliasColumn'], 'id');
 		})->toArray();
 
