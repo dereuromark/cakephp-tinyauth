@@ -37,7 +37,7 @@ can be very useful when dealing with role based decisions in your controller or 
 
 
 ## Demo
-See http://sandbox3.dereuromark.de/auth-sandbox
+See http://sandbox.dereuromark.de/auth-sandbox
 
 ### auth_allow.ini
 Define the public actions (accessable by anyone) per controller:
