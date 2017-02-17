@@ -6,6 +6,7 @@ php:
   - 5.5
   - 5.6
   - 7.0
+  - 7.1
 
 env:
   matrix:
@@ -40,7 +41,7 @@ script:
   - sh -c "if [ '$COVERALLS' = '1' ]; then phpunit --coverage-clover build/logs/clover.xml; fi"
   - sh -c "if [ '$COVERALLS' = '1' ]; then php vendor/bin/coveralls -c .coveralls.yml -v; fi"
   - sh -c "if [ '$DEFAULT' = '1' ]; then phpunit; fi"
-  - sh -c "if [ '$PHPCS' = '1' ]; then vendor/bin/phpcs -p --extensions=php --standard=vendor/fig-r/psr2r-sniffer/PSR2R/ruleset.xml --ignore=vendor --ignore=docs --ignore=config/Migrations -v . ; fi"
+  - sh -c "if [ '$PHPCS' = '1' ]; then vendor/bin/phpcs -p --extensions=php --standard=vendor/fig-r/psr2r-sniffer/PSR2R/ruleset.xml --ignore=vendor/,docs/,config/Migrations/ -v . ; fi"
 
 notifications:
   email: false

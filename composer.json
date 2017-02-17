@@ -14,7 +14,7 @@
 	],
 	"require": {
 		"php": ">=5.5",
-		"cakephp/cakephp": "~3.2"
+		"cakephp/cakephp": "^3.2"
 	},
 	"require-dev": {
 		"fig-r/psr2r-sniffer": "dev-master"
@@ -33,5 +33,9 @@
 			"Cake\\Test\\": "vendor/cakephp/cakephp/tests",
 			"TestApp\\": "tests/TestApp"
 		}
+	},
+	"scripts": {
+		"cs-check": "phpcs -p --standard=vendor/fig-r/psr2r-sniffer/PSR2R/ruleset.xml --ignore=/cakephp-tinyauth/vendor/,/tmp/,/logs/,tests/test_files/,config/Migrations/ --extensions=php ./",
+		"cs-fix": "phpcbf -f --standard=vendor/fig-r/psr2r-sniffer/PSR2R/ruleset.xml --ignore=/cakephp-tinyauth/vendor/,/tmp/,/logs/,tests/test_files/,config/Migrations/ --extensions=php ./"
 	}
 }
