@@ -29,6 +29,8 @@ before_script:
   - composer install --prefer-source --no-interaction
 
   - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'CREATE DATABASE cakephp_test;'; fi"
+  
+  - if [[ $PHPCS != 1 ]]; then composer require phpunit/phpunit; fi
 
   - sh -c "if [ '$COVERALLS' = '1' ]; then composer require --dev satooshi/php-coveralls:dev-master; fi"
   - sh -c "if [ '$COVERALLS' = '1' ]; then mkdir -p build/logs; fi"
@@ -38,9 +40,9 @@ before_script:
   - cp phpunit.xml.dist phpunit.xml
 
 script:
-  - sh -c "if [ '$COVERALLS' = '1' ]; then phpunit --coverage-clover build/logs/clover.xml; fi"
+  - sh -c "if [ '$COVERALLS' = '1' ]; then vendor/bin/phpunit --coverage-clover build/logs/clover.xml; fi"
   - sh -c "if [ '$COVERALLS' = '1' ]; then php vendor/bin/coveralls -c .coveralls.yml -v; fi"
-  - sh -c "if [ '$DEFAULT' = '1' ]; then phpunit; fi"
+  - sh -c "if [ '$DEFAULT' = '1' ]; then vendor/bin/phpunit; fi"
   - sh -c "if [ '$PHPCS' = '1' ]; then vendor/bin/phpcs -p --extensions=php --standard=vendor/fig-r/psr2r-sniffer/PSR2R/ruleset.xml --ignore=vendor/,docs/,config/Migrations/ -v . ; fi"
 
 notifications:
