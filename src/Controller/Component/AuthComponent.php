@@ -11,6 +11,9 @@ use TinyAuth\Auth\AclTrait;
 
 /**
  * TinyAuth AuthComponent to handle all authentication in a central ini file.
+ *
+ * @property \Cake\Controller\Component\RequestHandlerComponent $RequestHandler
+ * @property \Cake\Controller\Component\FlashComponent $Flash
  */
 class AuthComponent extends CakeAuthComponent {
 
