@@ -10,6 +10,8 @@ use TinyAuth\Auth\AuthUserTrait;
 
 /**
  * TinyAuth component to handle all authorization.
+ *
+ * @property \Cake\Controller\Component\AuthComponent $Auth
  */
 class AuthUserComponent extends Component {
 
