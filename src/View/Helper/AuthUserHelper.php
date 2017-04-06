@@ -9,6 +9,10 @@ use RuntimeException;
 use TinyAuth\Auth\AclTrait;
 use TinyAuth\Auth\AuthUserTrait;
 
+/**
+ * @property \Cake\View\Helper\HtmlHelper $Html
+ * @property \Cake\View\Helper\FormHelper $Form
+ */
 class AuthUserHelper extends Helper {
 
 	use AclTrait, AuthUserTrait;
