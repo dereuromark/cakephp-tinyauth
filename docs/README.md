@@ -59,5 +59,5 @@ Feel free to fork and pull request.
 
 There are a few guidelines:
 
-- Coding standards passing: `./sniff` to check and `./sniff -f` to fix.
+- Coding standards passing: `composer cs-check` to check and `composer cs-fix` to fix.
 - Tests passing: `php phpunit.phar` to run them.
