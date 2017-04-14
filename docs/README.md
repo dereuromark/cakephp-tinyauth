@@ -34,7 +34,7 @@ See [Authorization](Authorization.md) docs.
 
 ## Configuration
 Those classes most likely share quite a few configs, in that case you definitely should use Configure to define those centrally:
-````php
+```php
 // in your app.php
 	'TinyAuth' => [
 		'multiRole' => true,
