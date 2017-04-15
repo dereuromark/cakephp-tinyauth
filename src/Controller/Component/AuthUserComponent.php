@@ -35,7 +35,7 @@ class AuthUserComponent extends Component {
 
 	/**
 	 * @param \Cake\Event\Event $event
-	 * @return \Cake\Network\Response|null
+	 * @return \Cake\Http\Response|null
 	 */
 	public function beforeRender(Event $event) {
 		$controller = $event->subject();

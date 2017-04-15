@@ -54,7 +54,7 @@ class AuthComponent extends CakeAuthComponent {
 
 	/**
 	 * @param \Cake\Event\Event $event Event instance.
-	 * @return \Cake\Network\Response|null
+	 * @return \Cake\Http\Response|null
 	 */
 	public function authCheck(Event $event) {
 		$this->_prepareAuthentication();
@@ -64,7 +64,7 @@ class AuthComponent extends CakeAuthComponent {
 
 	/**
 	 * @param \Cake\Event\Event $event
-	 * @return \Cake\Network\Response|null
+	 * @return \Cake\Http\Response|null
 	 */
 	public function beforeRender(Event $event) {
 		$controller = $event->subject();
