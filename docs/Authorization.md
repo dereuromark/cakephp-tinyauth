@@ -306,7 +306,7 @@ if ($this->AuthUser->hasAccess(['action' => 'secretArea'])) {
 ### Use constants instead of magic strings
 If you are using the `hasRole()` or `hasRoles()` checks with a DB roles table, it is always better to use the aliases than the IDs (as the IDs can change).
 But even so, it is better not to use magic strings like `'moderator'`, but define constants in your bootstrap for each:
-````php
+```php
 // In your bootstrap
 define('ROLE_MOD', 'moderator');
 
