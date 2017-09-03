@@ -36,6 +36,6 @@
 	},
 	"scripts": {
 		"cs-check": "phpcs -p --standard=vendor/fig-r/psr2r-sniffer/PSR2R/ruleset.xml --ignore=/cakephp-tinyauth/vendor/,/tmp/,/logs/,tests/test_files/,config/Migrations/ --extensions=php ./",
-		"cs-fix": "phpcbf -f --standard=vendor/fig-r/psr2r-sniffer/PSR2R/ruleset.xml --ignore=/cakephp-tinyauth/vendor/,/tmp/,/logs/,tests/test_files/,config/Migrations/ --extensions=php ./"
+		"cs-fix": "phpcbf --standard=vendor/fig-r/psr2r-sniffer/PSR2R/ruleset.xml --ignore=/cakephp-tinyauth/vendor/,/tmp/,/logs/,tests/test_files/,config/Migrations/ --extensions=php ./"
 	}
 }
