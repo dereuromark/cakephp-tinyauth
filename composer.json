@@ -13,8 +13,8 @@
 		}
 	],
 	"require": {
-		"php": ">=5.5",
-		"cakephp/cakephp": "^3.2"
+		"php": ">=5.6",
+		"cakephp/cakephp": "^3.4"
 	},
 	"require-dev": {
 		"fig-r/psr2r-sniffer": "dev-master"
@@ -24,14 +24,14 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"TinyAuth\\": "src"
+			"TinyAuth\\": "src/"
 		}
 	},
 	"autoload-dev": {
 		"psr-4": {
-			"TinyAuth\\Test\\": "tests",
-			"Cake\\Test\\": "vendor/cakephp/cakephp/tests",
-			"TestApp\\": "tests/TestApp"
+			"TinyAuth\\Test\\": "tests/",
+			"TestApp\\": "tests/TestApp/",
+			"Cake\\Test\\": "vendor/cakephp/cakephp/tests/"
 		}
 	},
 	"scripts": {
