@@ -91,7 +91,7 @@ edit, index, logout = author
 * = admin
 ```
 
-### Helper
+### AuthUser Helper
 ```php
 // in your AppView.php
 $this->loadHelper('TinyAuth.AuthUser');
@@ -100,4 +100,19 @@ $this->loadHelper('TinyAuth.AuthUser');
 if ($this->AuthUser->hasRole('admin') { // Either by alias or id
 	// OK, do something now
 }
+
+echo $this->AuthUser->link('Admin Backend', ['prefix' => 'admin', 'action' => 'index']);
+```
+
+### AuthUser Component
+```php
+// in your Controller
+$this->loadComponent('TinyAuth.AuthUser');
+
+// e.g
+if ($this->AuthUser->hasRole('mod') { // Either by alias or id
+	// OK, do something now
+}
+
+$isMe = $this->AuthUser->id() == $userEntity->id;
 ```
