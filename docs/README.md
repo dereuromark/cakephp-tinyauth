@@ -88,7 +88,8 @@ bin/cake migrations migrate -p TinyAuth
 // in your AppController.php
 $this->loadComponent('TinyAuth.Auth', [
 	'autoClearCache' => Configure::read('debug'),
-	'authorize' => ['TinyAuth.Tiny' => [
+	'authorize' => [
+		'TinyAuth.Tiny' => [
 			'autoClearCache' => Configure::read('debug')
 		]
 	],
