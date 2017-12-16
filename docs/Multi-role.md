@@ -95,12 +95,16 @@ edit, index, logout = author
 ```php
 // in your AppView.php
 $this->loadHelper('TinyAuth.AuthUser');
+```
 
-// e.g
-if ($this->AuthUser->hasRole('admin') { // Either by alias or id
-	// OK, do something now
+```php
+// e.g Template - Element - menu
+if ($this->AuthUser->hasRole('admin')) {
+	<li class="nav-item"><?= $this->Html->link(__('Settings'), ['controller' => 'Settings', 'action' => 'index'], ['class' => $this->AsideActive->activeClass('Settings') . ' nav-link', 'escape' => false]) ?></li>
 }
+```
 
+```php
 echo $this->AuthUser->link('Admin Backend', ['prefix' => 'admin', 'action' => 'index']);
 ```
 
@@ -108,11 +112,14 @@ echo $this->AuthUser->link('Admin Backend', ['prefix' => 'admin', 'action' => 'i
 ```php
 // in your Controller
 $this->loadComponent('TinyAuth.AuthUser');
+```
 
-// e.g
-if ($this->AuthUser->hasRole('mod') { // Either by alias or id
-	// OK, do something now
+```php
+// e.g ArticleController - edit
+if ($this->AuthUser->hasRole('author')) {
+	if (!$this->AuthUser->isMe($article->user_id)){
+		$this->Flash->error(__('You are not authorized to access that location.'));
+		return $this->redirect(['action' => 'index']);
+	}
 }
-
-$isMe = $this->AuthUser->id() == $userEntity->id;
 ```
