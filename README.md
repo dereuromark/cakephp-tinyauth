@@ -64,7 +64,7 @@ $currentId = $this->AuthUser->id();
 
 $isMe = $this->AuthUser->isMe($userEntity->id);
 
-if ($this->AuthUser->hasRole('mod') {
+if ($this->AuthUser->hasRole('mod')) {
 } 
 
 if ($this->AuthUser->hasAccess(['action' => 'secretArea'])) {
