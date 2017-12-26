@@ -114,7 +114,6 @@ $this->loadComponent('TinyAuth.AuthUser');
 // e.g ArticlesController - edit
 if ($this->AuthUser->hasRole('author')) {
 	if (!$this->AuthUser->isMe($article->user_id)){
-		...
 		$this->Flash->error(__('You are not authorized to access that location.'));
 		return $this->redirect(['action' => 'index']);
 	}
