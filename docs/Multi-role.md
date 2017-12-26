@@ -8,10 +8,12 @@ composer require dereuromark/cakephp-tinyauth
 Plugin::load('TinyAuth');
 ```
 
+#### for Multi-role
 ```bash
 bin/cake migrations migrate -p TinyAuth
 ```
 
+#### for Multi-role
 ```php
 // in your app.php
 'TinyAuth' => [
