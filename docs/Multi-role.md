@@ -22,12 +22,8 @@ bin/cake migrations migrate -p TinyAuth
 ```php
 // in your AppController.php
 $this->loadComponent('TinyAuth.Auth', [
-	'autoClearCache' => Configure::read('debug'),
-	'authorize' => [
-		'TinyAuth.Tiny' => [
-			'autoClearCache' => Configure::read('debug')
-		]
-	],
+	'autoClearCache' => true,
+	'authorize' => ['TinyAuth.Tiny'],
 	...
 ]);
 ```
@@ -100,7 +96,7 @@ $this->loadHelper('TinyAuth.AuthUser');
 ```php
 // e.g Template - Element - menu
 if ($this->AuthUser->hasRole('admin')) {
-	<li class="nav-item"><?= $this->Html->link(__('Settings'), ['controller' => 'Settings', 'action' => 'index'], ['class' => $this->AsideActive->activeClass('Settings') . ' nav-link', 'escape' => false]) ?></li>
+	<li class="nav-item"><?= $this->Html->link(__('Settings'), ['controller' => 'Settings', 'action' => 'index'], ['class' => 'nav-link']) ?></li>
 }
 ```
 
@@ -115,9 +111,10 @@ $this->loadComponent('TinyAuth.AuthUser');
 ```
 
 ```php
-// e.g ArticleController - edit
+// e.g ArticlesController - edit
 if ($this->AuthUser->hasRole('author')) {
 	if (!$this->AuthUser->isMe($article->user_id)){
+		...
 		$this->Flash->error(__('You are not authorized to access that location.'));
 		return $this->redirect(['action' => 'index']);
 	}
