@@ -244,11 +244,11 @@ trait AclTrait {
 	}
 
 	/**
-	 * Returns the acl.ini file(s) as an array.
+	 * Returns the found INI file(s) as an array.
 	 *
-	 * @param array|string|null $paths Paths to look for INI file
-	 * @param string $file Full path to the INI file
-	 * @return array List with all available roles
+	 * @param array|string|null $paths Paths to look for INI files.
+	 * @param string $file INI file name.
+	 * @return array List with all found files.
 	 */
 	protected function _parseFiles($paths, $file) {
 		if ($paths === null) {
