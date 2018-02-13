@@ -256,7 +256,7 @@ if ($this->AuthUser->hasAccess(['action' => 'forModeratorOnly'])) {
 
 Or if that person is of a certain role in general:
 ```php
-if ($this->AuthUser->hasRole('mod') { // Either by alias or id
+if ($this->AuthUser->hasRole('mod')) { // Either by alias or id
 	// OK, do something now
 }
 ```
