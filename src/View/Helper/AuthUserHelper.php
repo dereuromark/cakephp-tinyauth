@@ -99,14 +99,14 @@ class AuthUserHelper extends Helper {
 	 * @param array $options
 	 * @return string
 	 */
-	protected function _default($title, $options) {
+	protected function _default($title, array $options) {
 		$options += [
 			'default' => '',
 			'escape' => true,
 		];
 
 		if ($options['default'] === true) {
-			return $options['escape'] === false ? $title : h($title);
+			return ($options['escape'] === false) ? $title : h($title);
 		}
 
 		return $options['default'];

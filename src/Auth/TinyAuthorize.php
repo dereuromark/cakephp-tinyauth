@@ -3,7 +3,7 @@ namespace TinyAuth\Auth;
 
 use Cake\Auth\BaseAuthorize;
 use Cake\Controller\ComponentRegistry;
-use Cake\Network\Request;
+use Cake\Http\ServerRequest;
 
 /**
  * Probably the most simple and fastest ACL out there.
@@ -47,12 +47,12 @@ class TinyAuthorize extends BaseAuthorize {
 	 * - User HABTM Roles (Role array in User array)
 	 * - User belongsTo Roles (role_id in User array)
 	 *
-	 * @param array $user The user to authorize
-	 * @param \Cake\Network\Request $request The request needing authorization.
+	 * @param array|\ArrayObject $user The user to authorize
+	 * @param \Cake\Http\ServerRequest $request The request needing authorization.
 	 * @return bool Success
 	 */
-	public function authorize($user, Request $request) {
-		return $this->_check($user, $request->params);
+	public function authorize($user, ServerRequest $request) {
+		return $this->_check((array)$user, $request->params);
 	}
 
 }
