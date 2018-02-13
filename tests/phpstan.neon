@@ -1,0 +1,5 @@
+parameters:
+    autoload_files:
+        - %rootDir%/../../../tests/bootstrap.php
+    ignoreErrors:
+        - '#Method TinyAuth\View\Helper\AuthUserHelper::_default() should return string but returns array|string.#'

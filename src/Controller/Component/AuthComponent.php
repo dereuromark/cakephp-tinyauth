@@ -67,6 +67,7 @@ class AuthComponent extends CakeAuthComponent {
 	 * @return \Cake\Http\Response|null
 	 */
 	public function beforeRender(Event $event) {
+		/** @var \Cake\Controller\Controller $controller */
 		$controller = $event->subject();
 
 		$authUser = (array)$this->user();
