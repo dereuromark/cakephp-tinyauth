@@ -205,36 +205,6 @@ class AuthUserHelperTest extends TestCase {
 	}
 
 	/**
-	 * ACL links are basically free, they are as fast as normal links.
-	 *
-	 * @return void
-	 */
-	public function testLinkSpeed() {
-		$this->skipIf(env('COVERALLS'));
-
-		$user = [
-			'id' => 1,
-			'role_id' => 1
-		];
-		$this->View->set('_authUser', $user);
-
-		$url = [
-			'controller' => 'Tags',
-			'action' => 'edit',
-		];
-
-		$before = microtime(true);
-
-		for ($i = 0; $i < 1000; $i++) {
-			$this->AuthUserHelper->link('Foo', $url);
-		}
-
-		$after = microtime(true);
-		$diff = round($after - $before, 4);
-		$this->assertWithinRange(0.3, $diff, 0.3, '1000 iterations should be as fast as around 0.1-0.2 sek, but are ' . number_format($diff, 2) . 'sek.');
-	}
-
-	/**
 	 * @return void
 	 */
 	public function testIsMe() {
