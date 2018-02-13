@@ -28,15 +28,11 @@ matrix:
   fast_finish: true
 
 before_script:
-  - composer self-update
   - composer install --prefer-source --no-interaction
 
-  - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'CREATE DATABASE cakephp_test;'; fi"
+  - if [[ $DB == 'mysql' ]]; then mysql -e 'CREATE DATABASE cakephp_test;' ; fi
 
-  - if [[ $PHPCS != 1 ]]; then composer require phpunit/phpunit:"^5.0|^6.0"; fi
-
-  - sh -c "if [ '$COVERALLS' = '1' ]; then composer require --dev satooshi/php-coveralls:dev-master; fi"
-  - sh -c "if [ '$COVERALLS' = '1' ]; then mkdir -p build/logs; fi"
+  - if [[ $PHPCS != 1 ]]; then composer require phpunit/phpunit:"^5.0|^6.0" ; fi
 
   - phpenv rehash
   - set +H
