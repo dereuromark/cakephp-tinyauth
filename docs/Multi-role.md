@@ -1,19 +1,5 @@
-## Installation & Configuration Multi-role
+## Configuration Multi-role
 
-```bash
-composer require dereuromark/cakephp-tinyauth
-```
-
-```php
-Plugin::load('TinyAuth');
-```
-
-#### for Multi-role
-```bash
-bin/cake migrations migrate -p TinyAuth
-```
-
-#### for Multi-role
 ```php
 // in your app.php
 'TinyAuth' => [
