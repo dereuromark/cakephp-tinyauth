@@ -17,7 +17,8 @@
 		"cakephp/cakephp": "^3.4"
 	},
 	"require-dev": {
-		"fig-r/psr2r-sniffer": "dev-master"
+		"fig-r/psr2r-sniffer": "dev-master",
+		"phpstan/phpstan": "^0.9"
 	},
 	"support": {
 		"source": "https://github.com/dereuromark/cakephp-tinyauth"
@@ -35,6 +36,11 @@
 		}
 	},
 	"scripts": {
+		"test": "php phpunit.phar",
+		"test-setup": "[ ! -f phpunit.phar ] && wget https://phar.phpunit.de/phpunit-5.7.20.phar && mv phpunit-5.7.20.phar phpunit.phar || true",
+		"test-coverage" : "php phpunit.phar --log-junit tmp/coverage/unitreport.xml --coverage-html tmp/coverage --coverage-clover tmp/coverage/coverage.xml",
+		"phpstan": "phpstan analyse -c tests/phpstan.neon -l 6 src",
+		"phpstan-setup": "cp composer.json composer.backup && composer require --dev phpstan/phpstan && mv composer.backup composer.json",
 		"cs-check": "phpcs -p --standard=vendor/fig-r/psr2r-sniffer/PSR2R/ruleset.xml --ignore=/cakephp-tinyauth/vendor/,/tmp/,/logs/,tests/test_files/,config/Migrations/ --extensions=php ./",
 		"cs-fix": "phpcbf --standard=vendor/fig-r/psr2r-sniffer/PSR2R/ruleset.xml --ignore=/cakephp-tinyauth/vendor/,/tmp/,/logs/,tests/test_files/,config/Migrations/ --extensions=php ./"
 	}
