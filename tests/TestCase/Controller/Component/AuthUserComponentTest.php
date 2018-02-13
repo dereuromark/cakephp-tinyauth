@@ -39,7 +39,7 @@ class AuthUserComponentTest extends TestCase {
 			'moderator' => 2,
 			'admin' => 3
 		]);
-		$this->AuthUser->config('autoClearCache', true);
+		$this->AuthUser->setConfig('autoClearCache', true);
 	}
 
 	/**
@@ -173,7 +173,7 @@ class AuthUserComponentTest extends TestCase {
 	 * @return void
 	 */
 	public function testRoles() {
-		$this->AuthUser->config('multiRole', true);
+		$this->AuthUser->setConfig('multiRole', true);
 
 		$this->AuthUser->Auth->expects($this->once())
 			->method('user')
@@ -186,7 +186,7 @@ class AuthUserComponentTest extends TestCase {
 	 * @return void
 	 */
 	public function testRolesDeep() {
-		$this->AuthUser->config('multiRole', true);
+		$this->AuthUser->setConfig('multiRole', true);
 
 		$this->AuthUser->Auth->expects($this->once())
 			->method('user')
@@ -200,7 +200,7 @@ class AuthUserComponentTest extends TestCase {
 	 * @return void
 	 */
 	public function testHasRole() {
-		$this->AuthUser->config('multiRole', true);
+		$this->AuthUser->setConfig('multiRole', true);
 
 		$this->AuthUser->Auth->expects($this->exactly(3))
 			->method('user')
@@ -219,7 +219,7 @@ class AuthUserComponentTest extends TestCase {
 	 * @return void
 	 */
 	public function testHasRoles() {
-		$this->AuthUser->config('multiRole', true);
+		$this->AuthUser->setConfig('multiRole', true);
 
 		$this->AuthUser->Auth->expects($this->exactly(6))
 			->method('user')

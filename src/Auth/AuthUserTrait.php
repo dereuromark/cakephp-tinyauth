@@ -45,7 +45,7 @@ trait AuthUserTrait {
 	 * @return mixed User id if existent, null otherwise.
 	 */
 	public function id() {
-		$field = $this->config('idColumn');
+		$field = $this->getConfig('idColumn');
 
 		return $this->user($field);
 	}
@@ -58,7 +58,7 @@ trait AuthUserTrait {
 	 * @return bool
 	 */
 	public function isMe($userId) {
-		$field = $this->config('idColumn');
+		$field = $this->getConfig('idColumn');
 		return $userId && (string)$userId === (string)$this->user($field);
 	}
 

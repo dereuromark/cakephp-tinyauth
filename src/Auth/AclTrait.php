@@ -94,26 +94,26 @@ trait AclTrait {
 			return false;
 		}
 
-		if ($this->config('superAdmin')) {
-			$superAdminColumn = $this->config('superAdminColumn');
+		if ($this->getConfig('superAdmin')) {
+			$superAdminColumn = $this->getConfig('superAdminColumn');
 			if (!$superAdminColumn) {
-				$superAdminColumn = $this->config('idColumn');
+				$superAdminColumn = $this->getConfig('idColumn');
 			}
 			if (!isset($user[$superAdminColumn])) {
 				throw new Exception('Missing super Admin Column in user table');
 			}
-			if ($user[$superAdminColumn] === $this->config('superAdmin')) {
+			if ($user[$superAdminColumn] === $this->getConfig('superAdmin')) {
 				return true;
 			}
 		}
 
 		// Give any logged in user access to ALL actions when `allowUser` is
 		// enabled except when the `adminPrefix` is being used.
-		if ($this->config('allowUser')) {
+		if ($this->getConfig('allowUser')) {
 			if (empty($params['prefix'])) {
 				return true;
 			}
-			if ($params['prefix'] !== $this->config('adminPrefix')) {
+			if ($params['prefix'] !== $this->getConfig('adminPrefix')) {
 				return true;
 			}
 		}
@@ -122,8 +122,8 @@ trait AclTrait {
 
 		// Allow access to all prefixed actions for users belonging to
 		// the specified role that matches the prefix.
-		if ($this->config('authorizeByPrefix') && !empty($params['prefix'])) {
-			if (in_array($params['prefix'], $this->config('prefixes'))) {
+		if ($this->getConfig('authorizeByPrefix') && !empty($params['prefix'])) {
+			if (in_array($params['prefix'], $this->getConfig('prefixes'))) {
 				$roles = $this->_getAvailableRoles();
 				$role = isset($roles[$params['prefix']]) ? $roles[$params['prefix']] : null;
 				if ($role && in_array($role, $userRoles)) {
@@ -133,16 +133,16 @@ trait AclTrait {
 		}
 
 		// Allow logged in super admins access to all resources
-		if ($this->config('superAdminRole')) {
+		if ($this->getConfig('superAdminRole')) {
 			foreach ($userRoles as $userRole) {
-				if ((string)$userRole === (string)$this->config('superAdminRole')) {
+				if ((string)$userRole === (string)$this->getConfig('superAdminRole')) {
 					return true;
 				}
 			}
 		}
 
 		if ($this->_acl === null) {
-			$this->_acl = $this->_getAcl($this->config('filePath'));
+			$this->_acl = $this->_getAcl($this->getConfig('filePath'));
 		}
 
 		// Allow access if user has a role with wildcard access to the resource
@@ -182,15 +182,15 @@ trait AclTrait {
 	 * @return array Roles
 	 */
 	protected function _getAcl($path = null) {
-		if ($this->config('autoClearCache') && Configure::read('debug')) {
-			Cache::delete($this->config('cacheKey'), $this->config('cache'));
+		if ($this->getConfig('autoClearCache') && Configure::read('debug')) {
+			Cache::delete($this->getConfig('cacheKey'), $this->getConfig('cache'));
 		}
-		$roles = Cache::read($this->config('cacheKey'), $this->config('cache'));
+		$roles = Cache::read($this->getConfig('cacheKey'), $this->getConfig('cache'));
 		if ($roles !== false) {
 			return $roles;
 		}
 
-		$iniArray = $this->_parseFiles($path, $this->config('file'));
+		$iniArray = $this->_parseFiles($path, $this->getConfig('file'));
 		$availableRoles = $this->_getAvailableRoles();
 
 		$res = [];
@@ -239,7 +239,7 @@ trait AclTrait {
 			}
 		}
 
-		Cache::write($this->config('cacheKey'), $res, $this->config('cache'));
+		Cache::write($this->getConfig('cacheKey'), $res, $this->getConfig('cache'));
 		return $res;
 	}
 
@@ -306,9 +306,9 @@ trait AclTrait {
 
 		$roles = Configure::read($this->_config['rolesTable']);
 		if (is_array($roles)) {
-			if ($this->config('superAdminRole')) {
-				$key = $this->config('superAdmin') ?: 'superadmin';
-				$roles[$key] = $this->config('superAdminRole');
+			if ($this->getConfig('superAdminRole')) {
+				$key = $this->getConfig('superAdmin') ?: 'superadmin';
+				$roles[$key] = $this->getConfig('superAdminRole');
 			}
 			return $roles;
 		}
@@ -318,9 +318,9 @@ trait AclTrait {
 			return $results->combine($this->_config['aliasColumn'], 'id');
 		})->toArray();
 
-		if ($this->config('superAdminRole')) {
-			$key = $this->config('superAdmin') ?: 'superadmin';
-			$roles[$key] = $this->config('superAdminRole');
+		if ($this->getConfig('superAdminRole')) {
+			$key = $this->getConfig('superAdmin') ?: 'superadmin';
+			$roles[$key] = $this->getConfig('superAdminRole');
 		}
 
 		if (count($roles) < 1) {
