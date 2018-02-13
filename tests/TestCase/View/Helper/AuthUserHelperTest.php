@@ -231,7 +231,7 @@ class AuthUserHelperTest extends TestCase {
 	 * @return void
 	 */
 	public function testRoles() {
-		$this->AuthUserHelper->config('multiRole', true);
+		$this->AuthUserHelper->setConfig('multiRole', true);
 		$user = ['id' => '1', 'Roles' => ['1', '2']];
 		$this->View->set('_authUser', $user);
 

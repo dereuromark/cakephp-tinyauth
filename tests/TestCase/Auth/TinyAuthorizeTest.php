@@ -68,8 +68,8 @@ class TinyAuthorizeTest extends TestCase {
 			'rolesTable' => 'AuthRoles',
 			'roleColumn' => 'auth_role_id'
 		]);
-		$this->assertEquals('AuthRoles', $object->config('rolesTable'));
-		$this->assertEquals('auth_role_id', $object->config('roleColumn'));
+		$this->assertEquals('AuthRoles', $object->getConfig('rolesTable'));
+		$this->assertEquals('auth_role_id', $object->getConfig('roleColumn'));
 	}
 
 	/**
@@ -252,9 +252,9 @@ class TinyAuthorizeTest extends TestCase {
 		$object = new TestTinyAuthorize($this->collection, [
 			'autoClearCache' => true
 		]);
-		$this->assertEquals('Roles', $object->config('rolesTable'));
-		$this->assertEquals('role_id', $object->config('roleColumn'));
-		$this->assertEquals('id', $object->config('idColumn'));
+		$this->assertEquals('Roles', $object->getConfig('rolesTable'));
+		$this->assertEquals('role_id', $object->getConfig('roleColumn'));
+		$this->assertEquals('id', $object->getConfig('idColumn'));
 
 		// All tests performed against this action
 		$this->request->params['action'] = 'add';

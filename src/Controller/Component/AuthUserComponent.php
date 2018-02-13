@@ -39,7 +39,7 @@ class AuthUserComponent extends Component {
 	 */
 	public function beforeRender(Event $event) {
 		/** @var \Cake\Controller\Controller $controller */
-		$controller = $event->subject();
+		$controller = $event->getSubject();
 
 		$authUser = $this->_getUser();
 		$controller->set('_authUser', $authUser);
