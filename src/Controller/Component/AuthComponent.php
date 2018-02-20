@@ -78,7 +78,7 @@ class AuthComponent extends CakeAuthComponent {
 	 * @return void
 	 */
 	protected function _prepareAuthentication() {
-		$authentication = $this->_getAuth($this->_config['filePath']);
+		$authentication = $this->_getAuth($this->getConfig('filePath'));
 
 		$params = $this->request->params;
 		foreach ($authentication as $rule) {
@@ -111,14 +111,14 @@ class AuthComponent extends CakeAuthComponent {
 	 */
 	protected function _getAuth($path = null) {
 		if ($this->getConfig('autoClearCache') && Configure::read('debug')) {
-			Cache::delete($this->_config['cacheKey'], $this->_config['cache']);
+			Cache::delete($this->getConfig('cacheKey'), $this->getConfig('cache'));
 		}
-		$roles = Cache::read($this->_config['cacheKey'], $this->_config['cache']);
+		$roles = Cache::read($this->getConfig('cacheKey'), $this->getConfig('cache'));
 		if ($roles !== false) {
 			return $roles;
 		}
 
-		$iniArray = $this->_parseFiles($path, $this->_config['file']);
+		$iniArray = $this->_parseFiles($path, $this->getConfig('file'));
 
 		$res = [];
 		foreach ($iniArray as $key => $actions) {
@@ -142,7 +142,7 @@ class AuthComponent extends CakeAuthComponent {
 			}
 		}
 
-		Cache::write($this->_config['cacheKey'], $res, $this->_config['cache']);
+		Cache::write($this->getConfig('cacheKey'), $res, $this->getConfig('cache'));
 		return $res;
 	}
 

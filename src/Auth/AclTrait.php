@@ -304,7 +304,7 @@ trait AclTrait {
 			return $this->_roles;
 		}
 
-		$roles = Configure::read($this->_config['rolesTable']);
+		$roles = Configure::read($this->getConfig('rolesTable'));
 		if (is_array($roles)) {
 			if ($this->getConfig('superAdminRole')) {
 				$key = $this->getConfig('superAdmin') ?: 'superadmin';
@@ -313,9 +313,9 @@ trait AclTrait {
 			return $roles;
 		}
 
-		$rolesTable = TableRegistry::get($this->_config['rolesTable']);
+		$rolesTable = TableRegistry::get($this->getConfig('rolesTable'));
 		$roles = $rolesTable->find()->formatResults(function (ResultSetInterface $results) {
-			return $results->combine($this->_config['aliasColumn'], 'id');
+			return $results->combine($this->getConfig('aliasColumn'), 'id');
 		})->toArray();
 
 		if ($this->getConfig('superAdminRole')) {
@@ -324,7 +324,7 @@ trait AclTrait {
 		}
 
 		if (count($roles) < 1) {
-			throw new Exception('Invalid TinyAuth role setup (roles table `' . $this->_config['rolesTable'] . '` has no roles)');
+			throw new Exception('Invalid TinyAuth role setup (roles table `' . $this->getConfig('rolesTable') . '` has no roles)');
 		}
 
 		$this->_roles = $roles;
@@ -346,19 +346,19 @@ trait AclTrait {
 	 */
 	protected function _getUserRoles($user) {
 		// Single-role from session
-		if (!$this->_config['multiRole']) {
-			if (!array_key_exists($this->_config['roleColumn'], $user)) {
-				throw new Exception(sprintf('Missing TinyAuth role id field (%s) in user session', 'Auth.User.' . $this->_config['roleColumn']));
+		if (!$this->getConfig('multiRole')) {
+			if (!array_key_exists($this->getConfig('roleColumn'), $user)) {
+				throw new Exception(sprintf('Missing TinyAuth role id field (%s) in user session', 'Auth.User.' . $this->getConfig('roleColumn')));
 			}
-			if (!isset($user[$this->_config['roleColumn']])) {
+			if (!isset($user[$this->getConfig('roleColumn')])) {
 				return [];
 			}
-			return $this->_mapped([$user[$this->_config['roleColumn']]]);
+			return $this->_mapped([$user[$this->getConfig('roleColumn')]]);
 		}
 
 		// Multi-role from session
-		if (isset($user[$this->_config['rolesTable']])) {
-			$userRoles = $user[$this->_config['rolesTable']];
+		if (isset($user[$this->getConfig('rolesTable')])) {
+			$userRoles = $user[$this->getConfig('rolesTable')];
 			if (isset($userRoles[0]['id'])) {
 				$userRoles = Hash::extract($userRoles, '{n}.id');
 			}
@@ -366,10 +366,10 @@ trait AclTrait {
 		}
 
 		// Multi-role from session via pivot table
-		$pivotTableName = $this->_config['pivotTable'];
+		$pivotTableName = $this->getConfig('pivotTable');
 		if (!$pivotTableName) {
-			list(, $rolesTableName) = pluginSplit($this->_config['rolesTable']);
-			list(, $usersTableName) = pluginSplit($this->_config['usersTable']);
+			list(, $rolesTableName) = pluginSplit($this->getConfig('rolesTable'));
+			list(, $usersTableName) = pluginSplit($this->getConfig('usersTable'));
 			$tables = [
 				$usersTableName,
 				$rolesTableName
@@ -379,14 +379,14 @@ trait AclTrait {
 		}
 		if (isset($user[$pivotTableName])) {
 			$userRoles = $user[$pivotTableName];
-			if (isset($userRoles[0][$this->_config['roleColumn']])) {
-				$userRoles = Hash::extract($userRoles, '{n}.' . $this->_config['roleColumn']);
+			if (isset($userRoles[0][$this->getConfig('roleColumn')])) {
+				$userRoles = Hash::extract($userRoles, '{n}.' . $this->getConfig('roleColumn'));
 			}
 			return $this->_mapped((array)$userRoles);
 		}
 
 		// Multi-role from DB: load the pivot table
-		$roles = $this->_getRolesFromDb($pivotTableName, $user[$this->_config['idColumn']]);
+		$roles = $this->_getRolesFromDb($pivotTableName, $user[$this->getConfig('idColumn')]);
 		if (!$roles) {
 			return [];
 		}
@@ -405,10 +405,10 @@ trait AclTrait {
 		}
 
 		$pivotTable = TableRegistry::get($pivotTableName);
-		$roleColumn = $this->_config['roleColumn'];
+		$roleColumn = $this->getConfig('roleColumn');
 		$roles = $pivotTable->find()
 			->select($roleColumn)
-			->where([$this->_config['userColumn'] => $id])
+			->where([$this->getConfig('userColumn') => $id])
 			->all()
 			->extract($roleColumn)
 			->toArray();
