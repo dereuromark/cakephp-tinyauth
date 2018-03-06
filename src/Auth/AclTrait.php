@@ -6,8 +6,8 @@ use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
 use Cake\Datasource\ResultSetInterface;
 use Cake\ORM\TableRegistry;
-use Cake\Utility\Inflector;
 use Cake\Utility\Hash;
+use Cake\Utility\Inflector;
 use TinyAuth\Utility\Utility;
 
 trait AclTrait {
@@ -351,9 +351,10 @@ trait AclTrait {
 	protected function _getUserRoles($user) {
 		$autorizeData = $user;
 
-		if($this->getConfig('accountsTable') !== null) {
-			// If multipleAccounts === true, 
-			$autorizeData = $this->getConfig('multipleAccounts') === true ? $user[mb_strtolower($this->getConfig('accountsTable'))][0] 
+		if ($this->getConfig('accountsTable') !== null) {
+			// If multipleAccounts === true, treat as indexed array and use index 0.
+			// Else, treat as associative and singularize the table name.
+			$autorizeData = $this->getConfig('multipleAccounts') === true ? $user[mb_strtolower($this->getConfig('accountsTable'))][0]
 				: $user[mb_strtolower(Inflector::singularize($this->getConfig('accountsTable')))];
 		}
 
