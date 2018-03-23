@@ -43,8 +43,9 @@ See http://sandbox.dereuromark.de/auth-sandbox
 Define the public actions (accessable by anyone) per controller:
 ```ini
 Users = index,view
-admin/Maintenance = pingcheck
+admin/Maintenance = pingCheck
 PluginName.SomeController = *
+MyPlugin.api/V1 = *
 ```
 
 ### acl.ini
@@ -56,6 +57,9 @@ add,edit = user,mod
 
 [admin/Users]
 * = admin
+
+[Translate.admin/Languages]]
+* = *
 ```
 
 ### AuthUser component and helper
