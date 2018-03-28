@@ -7,6 +7,7 @@ use Cake\Core\Exception\Exception;
 use Cake\Datasource\ResultSetInterface;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
+use Cake\Utility\Inflector;
 use TinyAuth\Utility\Utility;
 
 trait AclTrait {
@@ -32,11 +33,14 @@ trait AclTrait {
 	protected function _defaultConfig() {
 		$defaults = [
 			'idColumn' => 'id', // ID Column in users table
+			'accountsIdColumn' => 'id', //ID Column in accounts table if accounts table is not null
 			'roleColumn' => 'role_id', // Foreign key for the Role ID in users table or in pivot table
 			'userColumn' => 'user_id', // Foreign key for the User id in pivot table. Only for multi-roles setup
 			'aliasColumn' => 'alias', // Name of column in roles table holding role alias/slug
 			'rolesTable' => 'Roles', // name of Configure key holding available roles OR class name of roles table
 			'usersTable' => 'Users', // name of the Users table
+			'accountsTable' => null, // name of the Accounts table, used for authorization. If null, usersTable is used.
+			'multipleAccounts' => true, // if true, tiny expects accountsTable to be a indexed array.
 			'pivotTable' => null, // Should be used in multi-roles setups
 			'multiRole' => false, // true to enables multirole/HABTM authorization (requires a valid pivot table)
 			'superAdminRole' => null, // id of super admin role, which grants access to ALL resources
@@ -345,20 +349,29 @@ trait AclTrait {
 	 * @throws \Cake\Core\Exception\Exception
 	 */
 	protected function _getUserRoles($user) {
+		$autorizeData = $user;
+
+		if ($this->getConfig('accountsTable') !== null) {
+			// If multipleAccounts === true, treat as indexed array and use index 0.
+			// Else, treat as associative and singularize the table name.
+			$autorizeData = $this->getConfig('multipleAccounts') === true ? $user[mb_strtolower($this->getConfig('accountsTable'))][0]
+				: $user[mb_strtolower(Inflector::singularize($this->getConfig('accountsTable')))];
+		}
+
 		// Single-role from session
 		if (!$this->getConfig('multiRole')) {
-			if (!array_key_exists($this->getConfig('roleColumn'), $user)) {
+			if (!array_key_exists($this->getConfig('roleColumn'), $autorizeData)) {
 				throw new Exception(sprintf('Missing TinyAuth role id field (%s) in user session', 'Auth.User.' . $this->getConfig('roleColumn')));
 			}
-			if (!isset($user[$this->getConfig('roleColumn')])) {
+			if (!isset($autorizeData[$this->getConfig('roleColumn')])) {
 				return [];
 			}
-			return $this->_mapped([$user[$this->getConfig('roleColumn')]]);
+			return $this->_mapped([$autorizeData[$this->getConfig('roleColumn')]]);
 		}
 
 		// Multi-role from session
-		if (isset($user[$this->getConfig('rolesTable')])) {
-			$userRoles = $user[$this->getConfig('rolesTable')];
+		if (isset($autorizeData[$this->getConfig('rolesTable')])) {
+			$userRoles = $autorizeData[$this->getConfig('rolesTable')];
 			if (isset($userRoles[0]['id'])) {
 				$userRoles = Hash::extract($userRoles, '{n}.id');
 			}
@@ -369,7 +382,7 @@ trait AclTrait {
 		$pivotTableName = $this->getConfig('pivotTable');
 		if (!$pivotTableName) {
 			list(, $rolesTableName) = pluginSplit($this->getConfig('rolesTable'));
-			list(, $usersTableName) = pluginSplit($this->getConfig('usersTable'));
+			list(, $usersTableName) = $this->getConfig('accountsTable') === null ? pluginSplit($this->getConfig('usersTable')) : pluginSplit($this->getConfig('accountsTable'));
 			$tables = [
 				$usersTableName,
 				$rolesTableName
@@ -377,8 +390,8 @@ trait AclTrait {
 			asort($tables);
 			$pivotTableName = implode('', $tables);
 		}
-		if (isset($user[$pivotTableName])) {
-			$userRoles = $user[$pivotTableName];
+		if (isset($autorizeData[$pivotTableName])) {
+			$userRoles = $autorizeData[$pivotTableName];
 			if (isset($userRoles[0][$this->getConfig('roleColumn')])) {
 				$userRoles = Hash::extract($userRoles, '{n}.' . $this->getConfig('roleColumn'));
 			}
@@ -386,7 +399,8 @@ trait AclTrait {
 		}
 
 		// Multi-role from DB: load the pivot table
-		$roles = $this->_getRolesFromDb($pivotTableName, $user[$this->getConfig('idColumn')]);
+		$idColumn = $this->getConfig('accountsTable') === null ? $this->getConfig('idColumn') : $this->getConfig('accountsIdColumn');
+		$roles = $this->_getRolesFromDb($pivotTableName, $autorizeData[$idColumn]);
 		if (!$roles) {
 			return [];
 		}
