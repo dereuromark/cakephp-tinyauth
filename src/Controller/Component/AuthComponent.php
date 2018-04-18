@@ -80,7 +80,7 @@ class AuthComponent extends CakeAuthComponent {
 	protected function _prepareAuthentication() {
 		$authentication = $this->_getAuth($this->getConfig('filePath'));
 
-		$params = $this->request->params;
+		$params = $this->request->getAttribute('params');
 		foreach ($authentication as $rule) {
 			if ($params['plugin'] && $params['plugin'] !== $rule['plugin']) {
 				continue;

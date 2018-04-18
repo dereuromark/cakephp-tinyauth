@@ -52,7 +52,7 @@ class TinyAuthorize extends BaseAuthorize {
 	 * @return bool Success
 	 */
 	public function authorize($user, ServerRequest $request) {
-		return $this->_check((array)$user, $request->params);
+		return $this->_check((array)$user, $request->getAttribute('params'));
 	}
 
 }
