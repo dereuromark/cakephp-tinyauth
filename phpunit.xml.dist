@@ -1,5 +1,4 @@
-<phpunit backupGlobals="false"
-	backupStaticAttributes="false"
+<phpunit
 	bootstrap="./tests/bootstrap.php"
 	colors="true"
 	convertErrorsToExceptions="true"
@@ -11,9 +10,14 @@
 	stopOnIncomplete="false"
 	stopOnSkipped="false"
 	syntaxCheck="false">
+	<php>
+		<!-- E_ALL => 32767 -->
+		<!-- E_ALL & ~E_USER_DEPRECATED => 16383 -->
+		<ini name="error_reporting" value="16383"/>
+	</php>
 	<testsuites>
-		<testsuite name="TinyAuth">
-			<directory>./tests/</directory>
+		<testsuite name="tiny-auth">
+			<directory>tests/</directory>
 		</testsuite>
 	</testsuites>
 
@@ -27,7 +31,7 @@
 
 	<filter>
 		<whitelist>
-			<directory suffix=".php">./src</directory>
+			<directory suffix=".php">src/</directory>
 		</whitelist>
 	</filter>
 
