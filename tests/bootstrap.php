@@ -2,6 +2,7 @@
 /**
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+
 require dirname(__DIR__) . '/vendor/cakephp/cakephp/src/basics.php';
 require dirname(__DIR__) . '/vendor/autoload.php';
 
@@ -25,6 +26,30 @@ define('CACHE', TMP . 'cache' . DS);
 
 define('CAKE_CORE_INCLUDE_PATH', ROOT . '/vendor/cakephp/cakephp');
 define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
+
+use Composer\Json\JsonFile;
+
+$jsonFile = new JsonFile(ROOT . DIRECTORY_SEPARATOR . 'composer.json');
+$lockFile = new JsonFile(ROOT . DIRECTORY_SEPARATOR . 'composer.lock');
+if ($jsonFile->exists() && $lockFile->exists()) {
+		$jsonContent = $jsonFile->read();
+		$lockContent = $lockFile->read();
+
+		$minVer = $jsonContent['require']['cakephp/cakephp'];
+		$packages = $lockContent['packages'];
+		$minVer = trim($minVer, '\^\~');
+		$minVer = (substr_count($minVer, '.') == 1) ? $minVer . '.0' : $minVer;
+		foreach ($packages as $package) {
+				if ($package['name'] == 'cakephp/cakephp') {
+						$cakeVer = $package['version'];
+						$cakeVer = (substr_count($cakeVer, '.') == 1) ? $cakeVer . '.0' : $cakeVer;
+						if (version_compare($minVer, $cakeVer) < 0) {
+								error_reporting(E_ALL ^ E_USER_DEPRECATED);
+						}
+						break;
+				}
+		}
+}
 
 Cake\Core\Configure::write('App', [
 	'namespace' => 'App'
