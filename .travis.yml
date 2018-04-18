@@ -36,7 +36,7 @@ before_script:
 
   - if [[ $DB == 'mysql' ]]; then mysql -e 'CREATE DATABASE cakephp_test;' ; fi
 
-  - if [[ $PHPCS != 1 ]]; then composer require phpunit/phpunit:"^5.0|^6.0" ; fi
+  - if [[ $PHPCS != 1 ]]; then composer require phpunit/phpunit:"^5.0|^6.0" composer/composer ; fi
 
   - phpenv rehash
   - set +H
