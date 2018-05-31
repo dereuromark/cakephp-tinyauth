@@ -9,6 +9,7 @@ based access control (RBAC) to your application.
 - DB (dynamic) or Configure based role definition
 - INI file (static) based access rights (controller-action/role setup)
 - Lightweight and incredibly fast
+- Syncing Command for acl INI file
 
 Do NOT use if
 - you need ROW based access
@@ -300,6 +301,18 @@ if ($this->AuthUser->hasAccess(['action' => 'secretArea'])) {
 	echo ' (do not tell anyone else!);
 }
 ```
+
+## Sync Command
+The plugin offers a convenience CLI command (CakePHP 3.6+) to sync ACL for any new controller.
+It will automatically skip controllers that are whitelisted as public (non authenticated).
+In a future version this could also be broken down to action level.
+
+```
+bin/cake tiny_auth_sync {your default roles, comma separated}
+```
+This will then add any missing controller with `* = ...` for all actions and you can then manually fine-tune.
+
+Use with `-d -v` to just output the changes it would do to your ACL INI file.
 
 ## Tips
 

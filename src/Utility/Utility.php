@@ -51,4 +51,37 @@ class Utility {
 		return $iniArray;
 	}
 
+	/**
+	 * @param string $file
+	 * @param array $content
+	 *
+	 * @return bool
+	 */
+	public static function generateFile($file, array $content) {
+		$string = static::buildIniString($content);
+
+		return (bool)file_put_contents($file, $string);
+	}
+
+	/**
+	 * @param array $a
+	 *
+	 * @return string
+	 */
+	public static function buildIniString(array $a) {
+		$out = [];
+		foreach ($a as $rootkey => $rootvalue) {
+			$out[] = "[$rootkey]";
+
+			// loop through items under a section heading
+			foreach ($rootvalue as $key => $value) {
+				$out[] = "$key = $value";
+			}
+
+			$out[] = '';
+		}
+
+		return implode(PHP_EOL, $out);
+	}
+
 }
