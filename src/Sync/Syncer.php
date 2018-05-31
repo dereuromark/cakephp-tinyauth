@@ -12,6 +12,11 @@ use TinyAuth\Utility\Utility;
 class Syncer {
 
 	/**
+	 * @var array|null
+	 */
+	protected $authAllow;
+
+	/**
 	 * @param \Cake\Console\Arguments $args
 	 * @param \Cake\Console\ConsoleIo $io
 	 * @return void
@@ -25,7 +30,7 @@ class Syncer {
 		$file = ROOT . DS . 'config' . DS . $config['file'];
 		$content = Utility::parseFile($file);
 
-		$controllers = $this->getControllers($args->getOption('plugin'));
+		$controllers = $this->getControllers((string)$args->getOption('plugin'));
 		foreach ($controllers as $controller) {
 			if (isset($content[$controller])) {
 				continue;
