@@ -15,6 +15,9 @@ class TinyAuthSyncCommandTest extends ConsoleIntegrationTestCase {
 	 */
 	public function setUp() {
 		parent::setUp();
+
+		$this->skipIf(version_compare(Configure::version(), '3.6.0', '<'), 'Commands added in CakePHP 3.6+');
+
 		$this->setAppNamespace();
 		$this->useCommandRunner();
 	}
