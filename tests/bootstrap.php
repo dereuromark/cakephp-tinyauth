@@ -12,6 +12,7 @@ define('APP', rtrim(sys_get_temp_dir(), DS) . DS . APP_DIR . DS);
 if (!is_dir(APP)) {
 	mkdir(APP, 0770, true);
 }
+define('TESTS', ROOT . DS . 'tests' . DS);
 
 define('CONFIG', dirname(__FILE__) . DS . 'config' . DS);
 
@@ -27,7 +28,7 @@ define('CAKE_CORE_INCLUDE_PATH', ROOT . '/vendor/cakephp/cakephp');
 define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
 
 Cake\Core\Configure::write('App', [
-	'namespace' => 'App'
+	'namespace' => 'TestApp'
 ]);
 
 Cake\Core\Configure::write('debug', true);
