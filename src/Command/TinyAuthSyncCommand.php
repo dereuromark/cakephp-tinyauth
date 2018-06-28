@@ -23,20 +23,6 @@ class TinyAuthSyncCommand extends Command implements CommandCollectionAwareInter
 	protected $commands;
 
 	/**
-	 * @return \Cake\Console\ConsoleOptionParser
-	 */
-	public function getOptionParser() {
-		$this->setName('foo bar');
-
-		return parent::getOptionParser();
-	}
-
-	public function __construct() {
-		parent::__construct();
-		$this->setName('foo bar');
-	}
-
-	/**
 	 * @param \Cake\Console\CommandCollection $commands The commands to use.
 	 * @return void
 	 */
@@ -74,7 +60,7 @@ class TinyAuthSyncCommand extends Command implements CommandCollectionAwareInter
 	 */
 	protected function buildOptionParser(ConsoleOptionParser $parser) {
 		$parser->setDescription(
-			'Get the list of '
+			'Get the list of controllers and make sure, they are synced into the ACL file.'
 		)->addArgument('roles', [
 			'help' => 'String of comma separated roles',
 			'required' => true,

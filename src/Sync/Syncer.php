@@ -92,7 +92,7 @@ class Syncer {
 				continue;
 			}
 
-			if ($this->noAuthentication($name, $plugin, $prefix)) {
+			if ($this->noAuthenticationNeeded($name, $plugin, $prefix)) {
 				continue;
 			}
 
@@ -118,7 +118,7 @@ class Syncer {
 	 * @param string $prefix
 	 * @return bool
 	 */
-	protected function noAuthentication($name, $plugin, $prefix) {
+	protected function noAuthenticationNeeded($name, $plugin, $prefix) {
 		if (!isset($this->authAllow)) {
 			$this->authAllow = $this->parseAuthAllow();
 		}
@@ -128,8 +128,12 @@ class Syncer {
 			return false;
 		}
 
+		if ($this->authAllow[$key] === '*') {
+			return true;
+		}
+
 		//TODO: specific actions?
-		return true;
+		return false;
 	}
 
 	/**
