@@ -6,6 +6,7 @@ use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
 use Cake\Core\App;
 use Cake\Core\Configure;
+use Cake\Core\Plugin;
 use Cake\Filesystem\Folder;
 use TinyAuth\Utility\Utility;
 
@@ -60,6 +61,17 @@ class Syncer {
 	 * @return array
 	 */
 	protected function getControllers($plugin) {
+		if ($plugin === 'all') {
+			$plugins = Plugin::loaded();
+
+			$controllers = [];
+			foreach ($plugins as $plugin) {
+				$controllers = array_merge($controllers, $this->getControllers($plugin));
+			}
+
+			return $controllers;
+		}
+
 		$folders = App::path('Controller', $plugin);
 
 		$controllers = [];
@@ -96,7 +108,7 @@ class Syncer {
 				continue;
 			}
 
-			$controllers[] = ($plugin ? strtolower($plugin) . '.' : '') . ($prefix ? strtolower($prefix) . '/' : '') . $name;
+			$controllers[] = ($plugin ? $plugin . '.' : '') . ($prefix ? strtolower($prefix) . '/' : '') . $name;
 		}
 
 		foreach ($folderContent[0] as $subFolder) {

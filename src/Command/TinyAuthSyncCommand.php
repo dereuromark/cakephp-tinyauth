@@ -62,15 +62,15 @@ class TinyAuthSyncCommand extends Command implements CommandCollectionAwareInter
 		$parser->setDescription(
 			'Get the list of controllers and make sure, they are synced into the ACL file.'
 		)->addArgument('roles', [
-			'help' => 'String of comma separated roles',
+			'help' => 'Role names, comma separated, e.g. `user,admin`.',
 			'required' => true,
 		])->addOption('plugin', [
 			'short' => 'p',
-			'help' => 'Plugin',
+			'help' => 'Plugin, use `all` to include all loaded plugins.',
 			'default' => null,
 		])->addOption('dry-run', [
 			'short' => 'd',
-			'help' => 'Dry Run (only output, do not modify ini files)',
+			'help' => 'Dry Run (only output, do not modify ini files).',
 			'boolean' => true,
 		]);
 
