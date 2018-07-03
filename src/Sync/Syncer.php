@@ -62,7 +62,7 @@ class Syncer {
 	 */
 	protected function getControllers($plugin) {
 		if ($plugin === 'all') {
-			$plugins = Plugin::loaded() ?: [];
+			$plugins = (array)Plugin::loaded();
 
 			$controllers = [];
 			foreach ($plugins as $plugin) {
