@@ -7,6 +7,8 @@ use Cake\Core\Exception\Exception;
 use Cake\Datasource\ResultSetInterface;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
+use \InvalidArgumentException;
+use TinyAuth\Auth\AclAdapter\AclAdapterInterface;
 use TinyAuth\Utility\Utility;
 
 trait AclTrait {
@@ -26,11 +28,24 @@ trait AclTrait {
 	 */
 	protected $_userRoles = null;
 
+    /**
+     * @var AclAdapterInterface|null
+     */
+	protected $_aclAdapter = null;
+
+    /**
+     * @var array A map of acl adapter identifiers to their class names.
+     */
+	protected $_aclAdaptersMap = [
+	    'ini' => AclAdapter\IniAclAdapter::class
+    ];
+
 	/**
 	 * @return array
 	 */
 	protected function _defaultConfig() {
 		$defaults = [
+		    'aclAdapter' => 'ini',
 			'idColumn' => 'id', // ID Column in users table
 			'roleColumn' => 'role_id', // Foreign key for the Role ID in users table or in pivot table
 			'userColumn' => 'user_id', // Foreign key for the User id in pivot table. Only for multi-roles setup
@@ -75,9 +90,39 @@ trait AclTrait {
 		if ($config['autoClearCache'] === null) {
 			$config['autoClearCache'] = Configure::read('debug');
 		}
+		$this->_aclAdapter = $this->_loadAclAdapter($config['aclAdapter']);
 
 		return $config;
 	}
+
+    /**
+     * Finds the Acl adapter to use for this request.
+     *
+     * @param string $adapter Acl adapter to load.
+     *
+     * @return AclAdapterInterface
+     *
+     * @throws Exception
+     */
+	protected function _loadAclAdapter($adapter)
+    {
+        if (array_key_exists($adapter, $this->_aclAdaptersMap)) {
+            $adapter = $this->_aclAdaptersMap[$adapter];
+        }
+
+        if (!class_exists($adapter)) {
+            throw new Exception(sprintf('The Acl Adapter class "%s" was not found.', $adapter));
+        }
+
+        $adapterInstance = new $adapter;
+        if (!($adapterInstance instanceof AclAdapterInterface)) {
+            throw new InvalidArgumentException(sprintf(
+                'TinyAuth Acl adapters have to implement %s.', AclAdapterInterface::class
+            ));
+        }
+
+        return $adapterInstance;
+    }
 
 	/**
 	 * Checks the URL to the role(s).
@@ -190,57 +235,15 @@ trait AclTrait {
 			return $roles;
 		}
 
-		$iniArray = $this->_parseFiles($path, $this->getConfig('file'));
-		$availableRoles = $this->_getAvailableRoles();
+		// for BC
+        $config = $this->getConfig();
+		if (!is_null($path)) {
+		    $config['filePath'] = $path;
+        }
+		$roles = $this->_aclAdapter->getAcl($this->_getAvailableRoles(), $config);
+		Cache::write($this->getConfig('cacheKey'), $roles, $this->getConfig('cache'));
 
-		$res = [];
-		foreach ($iniArray as $key => $array) {
-			$res[$key] = Utility::deconstructIniKey($key);
-			$res[$key]['map'] = $array;
-
-			foreach ($array as $actions => $roles) {
-				// Get all roles used in the current INI section
-				$roles = explode(',', $roles);
-				$actions = explode(',', $actions);
-
-				foreach ($roles as $roleId => $role) {
-					$role = trim($role);
-					if (!$role) {
-						continue;
-					}
-					// Prevent undefined roles appearing in the iniMap
-					if (!array_key_exists($role, $availableRoles) && $role !== '*') {
-						unset($roles[$roleId]);
-						continue;
-					}
-					if ($role === '*') {
-						unset($roles[$roleId]);
-						$roles = array_merge($roles, array_keys($availableRoles));
-					}
-				}
-
-				foreach ($actions as $action) {
-					$action = trim($action);
-					if (!$action) {
-						continue;
-					}
-
-					foreach ($roles as $role) {
-						$role = trim($role);
-						if (!$role || $role === '*') {
-							continue;
-						}
-
-						// Lookup role id by name in roles array
-						$newRole = $availableRoles[strtolower($role)];
-						$res[$key]['actions'][$action][] = $newRole;
-					}
-				}
-			}
-		}
-
-		Cache::write($this->getConfig('cacheKey'), $res, $this->getConfig('cache'));
-		return $res;
+		return $roles;
 	}
 
 	/**
@@ -251,16 +254,7 @@ trait AclTrait {
 	 * @return array List with all found files.
 	 */
 	protected function _parseFiles($paths, $file) {
-		if ($paths === null) {
-			$paths = ROOT . DS . 'config' . DS;
-		}
-
-		$list = [];
-		foreach ((array)$paths as $path) {
-			$list += Utility::parseFile($path . $file);
-		}
-
-		return $list;
+		return Utility::parseFiles($paths, $file);
 	}
 
 	/**
