@@ -88,11 +88,22 @@ class TinyAuthorizeTest extends TestCase {
     /**
      * Tests loading an invalid acl adapter fails.
      *
-     * @expectedException \Cake\Core\Exception\Exception
+     * @expectedException \InvalidArgumentException
      */
     public function testLoadingInvalidAclAdapter() {
 	    $object = new TestTinyAuthorize($this->collection, [
 	        'aclAdapter' => Configure::class
+        ]);
+    }
+
+    /**
+     * Tests setting a non-existent class as the acl adapter fails.
+     *
+     * @expectedException \Cake\Core\Exception\Exception
+     */
+    public function testLoadingNonExistentAclAdapter() {
+        $object = new TestTinyAuthorize($this->collection, [
+            'aclAdapter' => 'Non\\Existent\\Acl\\Adapter'
         ]);
     }
 
