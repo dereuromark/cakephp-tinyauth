@@ -7,8 +7,9 @@ use Cake\Core\Exception\Exception;
 use Cake\Datasource\ResultSetInterface;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
-use \InvalidArgumentException;
+use InvalidArgumentException;
 use TinyAuth\Auth\AclAdapter\AclAdapterInterface;
+use TinyAuth\Auth\AclAdapter\IniAclAdapter;
 use TinyAuth\Utility\Utility;
 
 trait AclTrait {
@@ -29,7 +30,7 @@ trait AclTrait {
 	protected $_userRoles = null;
 
 	/**
-	 * @var AclAdapterInterface|null
+	 * @var \TinyAuth\Auth\AclAdapter\AclAdapterInterface|null
 	 */
 	protected $_aclAdapter = null;
 
@@ -37,7 +38,7 @@ trait AclTrait {
 	 * @var array A map of acl adapter identifiers to their class names.
 	 */
 	protected $_aclAdaptersMap = [
-		'ini' => AclAdapter\IniAclAdapter::class
+		'ini' => IniAclAdapter::class
 	];
 
 	/**
@@ -100,12 +101,11 @@ trait AclTrait {
 	 *
 	 * @param string $adapter Acl adapter to load.
 	 *
-	 * @return AclAdapterInterface
+	 * @return \TinyAuth\Auth\AclAdapter\AclAdapterInterface
 	 *
-	 * @throws Exception
+	 * @throws \Cake\Core\Exception\Exception
 	 */
-	protected function _loadAclAdapter($adapter)
-	{
+	protected function _loadAclAdapter($adapter) {
 		if (array_key_exists($adapter, $this->_aclAdaptersMap)) {
 			$adapter = $this->_aclAdaptersMap[$adapter];
 		}
@@ -114,7 +114,7 @@ trait AclTrait {
 			throw new Exception(sprintf('The Acl Adapter class "%s" was not found.', $adapter));
 		}
 
-		$adapterInstance = new $adapter;
+		$adapterInstance = new $adapter();
 		if (!($adapterInstance instanceof AclAdapterInterface)) {
 			throw new InvalidArgumentException(sprintf(
 				'TinyAuth Acl adapters have to implement %s.', AclAdapterInterface::class
@@ -237,7 +237,7 @@ trait AclTrait {
 
 		// for BC
 		$config = $this->getConfig();
-		if (!is_null($path)) {
+		if (!($path === null)) {
 			$config['filePath'] = $path;
 		}
 		$roles = $this->_aclAdapter->getAcl($this->_getAvailableRoles(), $config);

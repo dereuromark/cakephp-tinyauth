@@ -4,13 +4,13 @@ namespace TinyAuth\Auth\AclAdapter;
 
 use TinyAuth\Utility\Utility;
 
-class IniAclAdapter implements AclAdapterInterface
-{
+class IniAclAdapter implements AclAdapterInterface {
 	/**
 	 * {@inheritdoc}
+	 *
+	 * @return array
 	 */
-	public function getAcl($availableRoles, $tinyConfig)
-	{
+	public function getAcl($availableRoles, $tinyConfig) {
 		$iniArray = Utility::parseFiles($tinyConfig['filePath'], $tinyConfig['file']);
 
 		$res = [];
@@ -61,4 +61,5 @@ class IniAclAdapter implements AclAdapterInterface
 
 		return $res;
 	}
+
 }

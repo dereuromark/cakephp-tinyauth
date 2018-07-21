@@ -13,4 +13,5 @@ interface AclAdapterInterface
 	 * @return array
 	 */
 	public function getAcl($availableRoles, $tinyConfig);
+
 }

@@ -41,7 +41,7 @@ class Utility {
 
 		$list = [];
 		foreach ((array)$paths as $path) {
-			$list += self::parseFile($path . $file);
+			$list += static::parseFile($path . $file);
 		}
 
 		return $list;
