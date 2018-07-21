@@ -28,24 +28,24 @@ trait AclTrait {
 	 */
 	protected $_userRoles = null;
 
-    /**
-     * @var AclAdapterInterface|null
-     */
+	/**
+	 * @var AclAdapterInterface|null
+	 */
 	protected $_aclAdapter = null;
 
-    /**
-     * @var array A map of acl adapter identifiers to their class names.
-     */
+	/**
+	 * @var array A map of acl adapter identifiers to their class names.
+	 */
 	protected $_aclAdaptersMap = [
-	    'ini' => AclAdapter\IniAclAdapter::class
-    ];
+		'ini' => AclAdapter\IniAclAdapter::class
+	];
 
 	/**
 	 * @return array
 	 */
 	protected function _defaultConfig() {
 		$defaults = [
-		    'aclAdapter' => 'ini',
+			'aclAdapter' => 'ini',
 			'idColumn' => 'id', // ID Column in users table
 			'roleColumn' => 'role_id', // Foreign key for the Role ID in users table or in pivot table
 			'userColumn' => 'user_id', // Foreign key for the User id in pivot table. Only for multi-roles setup
@@ -95,34 +95,34 @@ trait AclTrait {
 		return $config;
 	}
 
-    /**
-     * Finds the Acl adapter to use for this request.
-     *
-     * @param string $adapter Acl adapter to load.
-     *
-     * @return AclAdapterInterface
-     *
-     * @throws Exception
-     */
+	/**
+	 * Finds the Acl adapter to use for this request.
+	 *
+	 * @param string $adapter Acl adapter to load.
+	 *
+	 * @return AclAdapterInterface
+	 *
+	 * @throws Exception
+	 */
 	protected function _loadAclAdapter($adapter)
-    {
-        if (array_key_exists($adapter, $this->_aclAdaptersMap)) {
-            $adapter = $this->_aclAdaptersMap[$adapter];
-        }
+	{
+		if (array_key_exists($adapter, $this->_aclAdaptersMap)) {
+			$adapter = $this->_aclAdaptersMap[$adapter];
+		}
 
-        if (!class_exists($adapter)) {
-            throw new Exception(sprintf('The Acl Adapter class "%s" was not found.', $adapter));
-        }
+		if (!class_exists($adapter)) {
+			throw new Exception(sprintf('The Acl Adapter class "%s" was not found.', $adapter));
+		}
 
-        $adapterInstance = new $adapter;
-        if (!($adapterInstance instanceof AclAdapterInterface)) {
-            throw new InvalidArgumentException(sprintf(
-                'TinyAuth Acl adapters have to implement %s.', AclAdapterInterface::class
-            ));
-        }
+		$adapterInstance = new $adapter;
+		if (!($adapterInstance instanceof AclAdapterInterface)) {
+			throw new InvalidArgumentException(sprintf(
+				'TinyAuth Acl adapters have to implement %s.', AclAdapterInterface::class
+			));
+		}
 
-        return $adapterInstance;
-    }
+		return $adapterInstance;
+	}
 
 	/**
 	 * Checks the URL to the role(s).
@@ -236,10 +236,10 @@ trait AclTrait {
 		}
 
 		// for BC
-        $config = $this->getConfig();
+		$config = $this->getConfig();
 		if (!is_null($path)) {
-		    $config['filePath'] = $path;
-        }
+			$config['filePath'] = $path;
+		}
 		$roles = $this->_aclAdapter->getAcl($this->_getAvailableRoles(), $config);
 		Cache::write($this->getConfig('cacheKey'), $roles, $this->getConfig('cache'));
 
