@@ -7,6 +7,7 @@ use Cake\Core\Plugin;
 use Cake\Network\Request;
 use Cake\TestSuite\TestCase;
 use ReflectionClass;
+use TestApp\Auth\AclAdapter\CustomAclAdapter;
 use TestApp\Auth\TestTinyAuthorize;
 
 /**
@@ -71,6 +72,29 @@ class TinyAuthorizeTest extends TestCase {
 		$this->assertEquals('AuthRoles', $object->getConfig('rolesTable'));
 		$this->assertEquals('auth_role_id', $object->getConfig('roleColumn'));
 	}
+
+    /**
+     * Tests loading a valid, custom acl adapter works.
+     *
+     * @return void
+     */
+	public function testLoadingAclAdapter() {
+	    $object = new TestTinyAuthorize($this->collection, [
+	        'aclAdapter' => CustomAclAdapter::class
+        ]);
+	    $this->assertInstanceOf(CustomAclAdapter::class, $object->getAclAdapter());
+    }
+
+    /**
+     * Tests loading an invalid acl adapter fails.
+     *
+     * @expectedException \Cake\Core\Exception\Exception
+     */
+    public function testLoadingInvalidAclAdapter() {
+	    $object = new TestTinyAuthorize($this->collection, [
+	        'aclAdapter' => Configure::class
+        ]);
+    }
 
 	/**
 	 * Tests exception thrown when Cache is unavailable.
