@@ -35,18 +35,11 @@ trait AclTrait {
 	protected $_aclAdapter = null;
 
 	/**
-	 * @var array A map of acl adapter identifiers to their class names.
-	 */
-	protected $_aclAdaptersMap = [
-		'ini' => IniAclAdapter::class
-	];
-
-	/**
 	 * @return array
 	 */
 	protected function _defaultConfig() {
 		$defaults = [
-			'aclAdapter' => 'ini',
+			'aclAdapter' => IniAclAdapter::class,
 			'idColumn' => 'id', // ID Column in users table
 			'roleColumn' => 'role_id', // Foreign key for the Role ID in users table or in pivot table
 			'userColumn' => 'user_id', // Foreign key for the User id in pivot table. Only for multi-roles setup
@@ -106,10 +99,6 @@ trait AclTrait {
 	 * @throws \Cake\Core\Exception\Exception
 	 */
 	protected function _loadAclAdapter($adapter) {
-		if (array_key_exists($adapter, $this->_aclAdaptersMap)) {
-			$adapter = $this->_aclAdaptersMap[$adapter];
-		}
-
 		if (!class_exists($adapter)) {
 			throw new Exception(sprintf('The Acl Adapter class "%s" was not found.', $adapter));
 		}
