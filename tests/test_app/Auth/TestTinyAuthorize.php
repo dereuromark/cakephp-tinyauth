@@ -8,6 +8,13 @@ use TinyAuth\Auth\TinyAuthorize;
 class TestTinyAuthorize extends TinyAuthorize {
 
 	/**
+	 * @return null|\TinyAuth\Auth\AclAdapter\AclAdapterInterface
+	 */
+	public function getAclAdapter() {
+		return $this->_aclAdapter;
+	}
+
+	/**
 	 * @return array
 	 */
 	public function getAcl() {

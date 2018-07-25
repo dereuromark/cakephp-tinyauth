@@ -28,6 +28,26 @@ class Utility {
 	}
 
 	/**
+	 * Returns the found INI file(s) as an array.
+	 *
+	 * @param array|string|null $paths Paths to look for INI files.
+	 * @param string $file INI file name.
+	 * @return array List with all found files.
+	 */
+	public static function parseFiles($paths, $file) {
+		if ($paths === null) {
+			$paths = ROOT . DS . 'config' . DS;
+		}
+
+		$list = [];
+		foreach ((array)$paths as $path) {
+			$list += static::parseFile($path . $file);
+		}
+
+		return $list;
+	}
+
+	/**
 	 * Returns the ini file as an array.
 	 *
 	 * @param string $ini Full path to the ini file

@@ -7,6 +7,7 @@ use Cake\Core\Plugin;
 use Cake\Network\Request;
 use Cake\TestSuite\TestCase;
 use ReflectionClass;
+use TestApp\Auth\AclAdapter\CustomAclAdapter;
 use TestApp\Auth\TestTinyAuthorize;
 
 /**
@@ -70,6 +71,42 @@ class TinyAuthorizeTest extends TestCase {
 		]);
 		$this->assertEquals('AuthRoles', $object->getConfig('rolesTable'));
 		$this->assertEquals('auth_role_id', $object->getConfig('roleColumn'));
+	}
+
+	/**
+	 * Tests loading a valid, custom acl adapter works.
+	 *
+	 * @return void
+	 */
+	public function testLoadingAclAdapter() {
+		$object = new TestTinyAuthorize($this->collection, [
+			'aclAdapter' => CustomAclAdapter::class
+		]);
+		$this->assertInstanceOf(CustomAclAdapter::class, $object->getAclAdapter());
+	}
+
+	/**
+	 * Tests loading an invalid acl adapter fails.
+	 *
+	 * @expectedException \InvalidArgumentException
+	 * @return void
+	 */
+	public function testLoadingInvalidAclAdapter() {
+		$object = new TestTinyAuthorize($this->collection, [
+			'aclAdapter' => Configure::class
+		]);
+	}
+
+	/**
+	 * Tests setting a non-existent class as the acl adapter fails.
+	 *
+	 * @expectedException \Cake\Core\Exception\Exception
+	 * @return void
+	 */
+	public function testLoadingNonExistentAclAdapter() {
+		$object = new TestTinyAuthorize($this->collection, [
+			'aclAdapter' => 'Non\\Existent\\Acl\\Adapter'
+		]);
 	}
 
 	/**
@@ -1281,8 +1318,8 @@ class TinyAuthorizeTest extends TestCase {
 		$method->setAccessible(true);
 
 		$user = [
-		'id' => 1,
-		'profile_id' => 2
+			'id' => 1,
+			'profile_id' => 2
 		];
 		$expected = [
 			'user' => 11,
@@ -1292,8 +1329,8 @@ class TinyAuthorizeTest extends TestCase {
 		$this->assertEquals($expected, $res);
 
 		$user = [
-		'id' => 1,
-		'profile_id' => 1
+			'id' => 1,
+			'profile_id' => 1
 		];
 		$expected = [
 			'user' => 11,
@@ -1304,7 +1341,7 @@ class TinyAuthorizeTest extends TestCase {
 
 		//without id
 		$user = [
-		'profile_id' => 1
+			'profile_id' => 1
 		];
 		$expected = [
 			'user' => 11,
