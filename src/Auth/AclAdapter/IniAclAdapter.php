@@ -5,6 +5,7 @@ namespace TinyAuth\Auth\AclAdapter;
 use TinyAuth\Utility\Utility;
 
 class IniAclAdapter implements AclAdapterInterface {
+
 	/**
 	 * {@inheritdoc}
 	 *

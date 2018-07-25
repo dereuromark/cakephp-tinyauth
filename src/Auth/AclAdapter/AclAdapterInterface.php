@@ -3,6 +3,7 @@
 namespace TinyAuth\Auth\AclAdapter;
 
 interface AclAdapterInterface {
+
 	/**
 	 * Generates and returns a TinyAuth access control list.
 	 *

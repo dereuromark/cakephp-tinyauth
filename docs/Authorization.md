@@ -198,6 +198,9 @@ view, edit = user
 You can specify multiple paths in your config, e.g. when you have plugins and separated the definitions across them.
 Make sure you are using each section key only once, though. The first definition will be kept and all others for the same section key are ignored.
 
+## Adapters
+By default INI files and the IniAdapter will be used.
+See [AuthorizationAdapter](AuthorizationAdapter.md) for how to change the strategy and maybe built your own adapter solution.
 
 ## Caching
 
