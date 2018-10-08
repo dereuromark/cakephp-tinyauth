@@ -58,7 +58,7 @@ trait AclTrait {
 			'cache' => '_cake_core_',
 			'aclCacheKey' => 'tiny_auth_acl',
 			'autoClearCache' => null, // Set to true to delete cache automatically in debug mode, keep null for auto-detect
-			'aclFilePath' => null, // Possible to locate INI file at given path e.g. Plugin::configPath('Admin')
+			'aclFilePath' => null, // Possible to locate INI file at given path e.g. Plugin::configPath('Admin'), filePath is also available for shared config
 			'aclFile' => 'acl.ini',
 			'includeAuthentication' => false, // Set to true to include public auth access into hasAccess() checks. Note, that this requires Configure configuration.
 		];
@@ -269,8 +269,11 @@ trait AclTrait {
 			return $roles;
 		}
 
+		if ($path === null) {
+			$path = $this->getConfig('filePath');
+		}
 		$config = $this->getConfig();
-		$config['filePath'] = $path ?: $config['aclFilePath'];
+		$config['filePath'] = $path;
 		$config['file'] = $config['aclFile'];
 		unset($config['aclFilePath']);
 		unset($config['aclFile']);

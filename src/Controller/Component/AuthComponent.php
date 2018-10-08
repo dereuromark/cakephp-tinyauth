@@ -26,14 +26,13 @@ class AuthComponent extends CakeAuthComponent {
 		'cache' => '_cake_core_',
 		'cacheKey' => 'tiny_auth_allow',
 		'autoClearCache' => null, // Set to true to delete cache automatically in debug mode, keep null for auto-detect
-		'authFilePath' => null, // Possible to locate ini file at given path e.g. Plugin::configPath('Admin')
+		'authFilePath' => null, // Possible to locate ini file at given path e.g. Plugin::configPath('Admin'), filePath is also available for shared config
 		'authFile' => 'auth_allow.ini',
 	];
 
 	/**
 	 * @param \Cake\Controller\ComponentRegistry $registry
 	 * @param array $config
-	 * @throws \Cake\Core\Exception\Exception
 	 */
 	public function __construct(ComponentRegistry $registry, array $config = []) {
 		$config += $this->_defaultTinyAuthConfig;
