@@ -37,7 +37,7 @@ class AuthUserHelperTest extends TestCase {
 			'admin' => 3
 		]);
 		$this->config = [
-			'filePath' => Plugin::path('TinyAuth') . 'tests' . DS . 'test_files' . DS,
+			'aclFilePath' => Plugin::path('TinyAuth') . 'tests' . DS . 'test_files' . DS,
 			'autoClearCache' => true,
 		];
 		$this->View = new View();

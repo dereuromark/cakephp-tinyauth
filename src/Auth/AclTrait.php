@@ -56,10 +56,11 @@ trait AclTrait {
 			'allowUser' => false, // enable to allow ALL roles access to all actions except prefixed with 'adminPrefix'
 			'adminPrefix' => 'admin', // name of the admin prefix route (only used when allowUser is enabled)
 			'cache' => '_cake_core_',
-			'cacheKey' => 'tiny_auth_acl',
+			'aclCacheKey' => 'tiny_auth_acl',
 			'autoClearCache' => null, // Set to true to delete cache automatically in debug mode, keep null for auto-detect
-			'filePath' => null, // Possible to locate INI file at given path e.g. Plugin::configPath('Admin')
-			'file' => 'acl.ini',
+			'aclFilePath' => null, // Possible to locate INI file at given path e.g. Plugin::configPath('Admin')
+			'aclFile' => 'acl.ini',
+			'includeAuthentication' => false, // Set to true to include public auth access into hasAccess() checks. Note, that this requires Configure configuration.
 		];
 		$config = (array)Configure::read('TinyAuth') + $defaults;
 
@@ -93,10 +94,9 @@ trait AclTrait {
 	 * Finds the Acl adapter to use for this request.
 	 *
 	 * @param string $adapter Acl adapter to load.
-	 *
 	 * @return \TinyAuth\Auth\AclAdapter\AclAdapterInterface
-	 *
 	 * @throws \Cake\Core\Exception\Exception
+	 * @throws \InvalidArgumentException
 	 */
 	protected function _loadAclAdapter($adapter) {
 		if (!class_exists($adapter)) {
@@ -126,6 +126,10 @@ trait AclTrait {
 	protected function _check(array $user, array $params) {
 		if (!$user) {
 			return false;
+		}
+
+		if ($this->getConfig('includeAuthentication') && $this->_isPublic($params)) { //cacheKey
+
 		}
 
 		if ($this->getConfig('superAdmin')) {
@@ -176,7 +180,7 @@ trait AclTrait {
 		}
 
 		if ($this->_acl === null) {
-			$this->_acl = $this->_getAcl($this->getConfig('filePath'));
+			$this->_acl = $this->_getAcl($this->getConfig('aclFilePath'));
 		}
 
 		// Allow access if user has a role with wildcard access to the resource
@@ -205,6 +209,47 @@ trait AclTrait {
 	}
 
 	/**
+	 * @param array $params
+	 *
+	 * @return bool
+	 */
+	protected function _isPublic(array $params) {
+		$authentication = $this->_getAuth();
+
+		foreach ($authentication as $rule) {
+			if ($params['plugin'] && $params['plugin'] !== $rule['plugin']) {
+				continue;
+			}
+			if (!empty($params['prefix']) && $params['prefix'] !== $rule['prefix']) {
+				continue;
+			}
+			if ($params['controller'] !== $rule['controller']) {
+				continue;
+			}
+
+			if ($rule['actions'] === []) {
+				return true;
+			}
+
+			return in_array($params['action'], $rule['actions']);
+		}
+
+		return false;
+	}
+
+	/**
+	 * Hack to get the auth data here for hasAccess().
+	 * We re-use the cached data for performance reasons.
+	 *
+	 * @return array
+	 */
+	protected function _getAuth() {
+		$authAllow = Cache::read($this->getConfig('cacheKey'), $this->getConfig('cache')) ?: [];
+
+		return $authAllow;
+	}
+
+	/**
 	 * Parses INI file and returns the allowed roles per action.
 	 *
 	 * Uses cache for maximum performance.
@@ -217,20 +262,21 @@ trait AclTrait {
 	 */
 	protected function _getAcl($path = null) {
 		if ($this->getConfig('autoClearCache') && Configure::read('debug')) {
-			Cache::delete($this->getConfig('cacheKey'), $this->getConfig('cache'));
+			Cache::delete($this->getConfig('aclCacheKey'), $this->getConfig('cache'));
 		}
-		$roles = Cache::read($this->getConfig('cacheKey'), $this->getConfig('cache'));
+		$roles = Cache::read($this->getConfig('aclCacheKey'), $this->getConfig('cache'));
 		if ($roles !== false) {
 			return $roles;
 		}
 
-		// for BC
 		$config = $this->getConfig();
-		if (!($path === null)) {
-			$config['filePath'] = $path;
-		}
+		$config['filePath'] = $path ?: $config['aclFilePath'];
+		$config['file'] = $config['aclFile'];
+		unset($config['aclFilePath']);
+		unset($config['aclFile']);
+
 		$roles = $this->_aclAdapter->getAcl($this->_getAvailableRoles(), $config);
-		Cache::write($this->getConfig('cacheKey'), $roles, $this->getConfig('cache'));
+		Cache::write($this->getConfig('aclCacheKey'), $roles, $this->getConfig('cache'));
 
 		return $roles;
 	}
