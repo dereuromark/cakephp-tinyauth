@@ -33,6 +33,12 @@ class AuthUserHelper extends Helper {
 	}
 
 	/**
+	 * This is only for usage with already logged in persons as this uses the ACL (not allow) data.
+	 *
+	 * If you need to support also public methods (via Controller or allow INI etc), you could make a fake
+	 * "public" role that copies over the public actions into such a dummy role.
+	 * This is a workaround for the time being until we can find a cleaner solution.
+	 *
 	 * @param array $url
 	 * @return bool
 	 * @throws \Cake\Core\Exception\Exception
