@@ -128,8 +128,8 @@ trait AclTrait {
 			return false;
 		}
 
-		if ($this->getConfig('includeAuthentication') && $this->_isPublic($params)) { //cacheKey
-
+		if ($this->getConfig('includeAuthentication') && $this->_isPublic($params)) {
+			return true;
 		}
 
 		if ($this->getConfig('superAdmin')) {
