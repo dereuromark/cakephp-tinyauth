@@ -5,7 +5,6 @@ namespace TinyAuth\View\Helper;
 use Cake\Core\Exception\Exception;
 use Cake\View\Helper;
 use Cake\View\View;
-use RuntimeException;
 use TinyAuth\Auth\AclTrait;
 use TinyAuth\Auth\AuthUserTrait;
 
@@ -35,9 +34,8 @@ class AuthUserHelper extends Helper {
 	/**
 	 * This is only for usage with already logged in persons as this uses the ACL (not allow) data.
 	 *
-	 * If you need to support also public methods (via Controller or allow INI etc), you could make a fake
-	 * "public" role that copies over the public actions into such a dummy role.
-	 * This is a workaround for the time being until we can find a cleaner solution.
+	 * If you need to support also public methods (via Controller or allow INI etc), you need to enable
+	 * `includeAuthentication` config and make sure all actions are whitelisted in auth allow INI file.
 	 *
 	 * @param array $url
 	 * @return bool
@@ -52,14 +50,12 @@ class AuthUserHelper extends Helper {
 			'action' => 'index',
 		];
 
-		if (!isset($this->_View->viewVars['_authUser'])) {
+		$authuser = isset($this->_View->viewVars['_authUser']) ? $this->_View->viewVars['_authUser'] : null;
+		if ($authuser === null && !$this->getConfig('includeAuthentication')) {
 			throw new Exception('Variable _authUser containing the user data needs to be passed down. The TinyAuth.Auth component does it automatically, if loaded.');
 		}
-		if (empty($this->_View->viewVars['_authUser'])) {
-			return false;
-		}
 
-		return $this->_check($this->_View->viewVars['_authUser'], $url);
+		return $this->_check((array)$authuser, $url);
 	}
 
 	/**
@@ -122,11 +118,13 @@ class AuthUserHelper extends Helper {
 
 	/**
 	 * @return array
+	 * @throws \Cake\Core\Exception\Exception
 	 */
 	protected function _getUser() {
 		if (!isset($this->_View->viewVars['_authUser'])) {
-			throw new RuntimeException('AuthUser helper needs AuthUser component to function');
+			throw new Exception('AuthUser helper needs AuthUser component to function');
 		}
+
 		return $this->_View->viewVars['_authUser'];
 	}
 

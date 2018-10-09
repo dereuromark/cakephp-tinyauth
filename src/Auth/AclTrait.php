@@ -35,6 +35,11 @@ trait AclTrait {
 	protected $_aclAdapter = null;
 
 	/**
+	 * @var array|null
+	 */
+	protected $auth = null;
+
+	/**
 	 * @return array
 	 */
 	protected function _defaultConfig() {
@@ -124,12 +129,12 @@ trait AclTrait {
 	 * @throws \Cake\Core\Exception\Exception
 	 */
 	protected function _check(array $user, array $params) {
-		if (!$user) {
-			return false;
-		}
-
 		if ($this->getConfig('includeAuthentication') && $this->_isPublic($params)) {
 			return true;
+		}
+
+		if (!$user) {
+			return false;
 		}
 
 		if ($this->getConfig('superAdmin')) {
@@ -242,9 +247,20 @@ trait AclTrait {
 	 * We re-use the cached data for performance reasons.
 	 *
 	 * @return array
+	 * @throws \Cake\Core\Exception\Exception
 	 */
 	protected function _getAuth() {
-		$authAllow = Cache::read($this->getConfig('cacheKey'), $this->getConfig('cache')) ?: [];
+		if ($this->auth) {
+			return $this->auth;
+		}
+
+		$authAllow = Cache::read($this->getConfig('cacheKey'), $this->getConfig('cache'));
+		if (!$authAllow) {
+			//TOOD make refactor to collect data at runtime? Should not be necessary if AuthComponent is used properly.
+			throw new Exception('Cache for Authentication data not found. This is required for `includeAuthentication` as true. Make sure you enabled TinyAuth.AuthComponent.');
+		}
+
+		$this->auth = $authAllow;
 
 		return $authAllow;
 	}

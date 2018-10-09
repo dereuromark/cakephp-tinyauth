@@ -108,12 +108,12 @@ class AuthComponentTest extends TestCase {
 		$response = $this->AuthComponent->startup($event);
 
 		$this->assertInstanceOf(Response::class, $response);
-		$this->assertSame(302, $response->statusCode());
+		$this->assertSame(302, $response->getStatusCode());
 	}
 
 	/**
 	 * @param \Cake\Network\Request $request
-	 * @return \Cake\Controller\Controller
+	 * @return \Cake\Controller\Controller|\PHPUnit_Framework_MockObject_MockObject
 	 */
 	protected function getControllerMock(Request $request) {
 		$controller = $this->getMockBuilder(Controller::class)

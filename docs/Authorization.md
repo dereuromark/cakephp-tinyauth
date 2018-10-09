@@ -305,6 +305,17 @@ if ($this->AuthUser->hasAccess(['action' => 'secretArea'])) {
 }
 ```
 
+## Including Authentication
+Please note that by default `hasAccess()` only checks the ACL INI, not the allow auth INI.
+Those links and access checks are meant to be used for logged in users.
+
+If you need to build a navigation that includes publicly accessible actions, you need to enable
+`includeAuthentication` config. This will then also include the Authentication data from your allow config.
+But this only checks/uses the INI config, it can not work on controller authentication. So make sure
+you transformed everything fully to the INI file here. Any custom `->allow()` call in controllers
+can not be taken into account.
+
+
 ## Sync Command
 The plugin offers a convenience CLI command (CakePHP 3.6+) to sync ACL for any new controller.
 It will automatically skip controllers that are whitelisted as public (non authenticated).
