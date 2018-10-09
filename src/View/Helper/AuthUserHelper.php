@@ -55,10 +55,7 @@ class AuthUserHelper extends Helper {
 		if (!isset($this->_View->viewVars['_authUser'])) {
 			throw new Exception('Variable _authUser containing the user data needs to be passed down. The TinyAuth.Auth component does it automatically, if loaded.');
 		}
-		if (empty($this->_View->viewVars['_authUser'])) {
-			return false;
-		}
-
+				
 		return $this->_check($this->_View->viewVars['_authUser'], $url);
 	}
 
