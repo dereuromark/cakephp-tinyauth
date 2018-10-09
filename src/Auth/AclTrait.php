@@ -57,6 +57,7 @@ trait AclTrait {
 			'adminPrefix' => 'admin', // name of the admin prefix route (only used when allowUser is enabled)
 			'cache' => '_cake_core_',
 			'aclCacheKey' => 'tiny_auth_acl',
+			'authAllowCacheKey' => 'tiny_auth_allow',	//Must be the same as in AuthComponent I think. Should perhaps be copied from there if possible
 			'autoClearCache' => null, // Set to true to delete cache automatically in debug mode, keep null for auto-detect
 			'aclFilePath' => null, // Possible to locate INI file at given path e.g. Plugin::configPath('Admin'), filePath is also available for shared config
 			'aclFile' => 'acl.ini',
@@ -124,12 +125,13 @@ trait AclTrait {
 	 * @throws \Cake\Core\Exception\Exception
 	 */
 	protected function _check(array $user, array $params) {
-		if (!$user) {
-			return false;
-		}
-
+		// Check first if action is public
 		if ($this->getConfig('includeAuthentication') && $this->_isPublic($params)) {
 			return true;
+		}
+		// Then check if a user is logged in
+		if (!$user) {
+			return false;
 		}
 
 		if ($this->getConfig('superAdmin')) {
@@ -244,8 +246,7 @@ trait AclTrait {
 	 * @return array
 	 */
 	protected function _getAuth() {
-		$authAllow = Cache::read($this->getConfig('cacheKey'), $this->getConfig('cache')) ?: [];
-
+		$authAllow = Cache::read($this->getConfig('authAllowCacheKey'), $this->getConfig('cache')) ?: [];
 		return $authAllow;
 	}
 
