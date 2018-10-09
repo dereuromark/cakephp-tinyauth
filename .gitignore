@@ -4,3 +4,4 @@
 /composer.lock
 /composer.phar
 /.idea
+/.remote-sync.json
