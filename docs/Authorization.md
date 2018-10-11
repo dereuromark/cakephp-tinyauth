@@ -242,7 +242,7 @@ cache|string|Cache type. Defaults to `_cake_core_`.
 aclCacheKey|string|Cache key. Defaults to `tiny_auth_acl`.
 aclFilePath|string|Full path to the acl.ini. Can also be an array of multiple paths. Defaults to `ROOT . DS . 'config' . DS`.
 aclFile|string|Name of the INI file. Defaults to `acl.ini`.
-includeAuthentication'|bool|Set to true to include public auth access into hasAccess() checks. Note, that this requires Configure configuration.
+includeAuthentication|bool|Set to true to include public auth access into hasAccess() checks. Note, that this requires Configure configuration.
 allowCacheKey|string|Cache key. Defaults to `tiny_auth_allow`. Needed to fetch allow info from the correct cache. Must be the same as set in AuthComponent.
 
 ## AuthUserComponent
