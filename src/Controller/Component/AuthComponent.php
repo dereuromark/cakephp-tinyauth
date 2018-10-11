@@ -24,10 +24,10 @@ class AuthComponent extends CakeAuthComponent {
 	 */
 	protected $_defaultTinyAuthConfig = [
 		'cache' => '_cake_core_',
-		'cacheKey' => 'tiny_auth_allow',
 		'autoClearCache' => null, // Set to true to delete cache automatically in debug mode, keep null for auto-detect
-		'authFilePath' => null, // Possible to locate ini file at given path e.g. Plugin::configPath('Admin'), filePath is also available for shared config
-		'authFile' => 'auth_allow.ini',
+		'allowCacheKey' => 'tiny_auth_allow',
+		'allowFilePath' => null, // Possible to locate ini file at given path e.g. Plugin::configPath('Admin'), filePath is also available for shared config
+		'allowFile' => 'auth_allow.ini',
 	];
 
 	/**
@@ -38,6 +38,17 @@ class AuthComponent extends CakeAuthComponent {
 		$config += $this->_defaultTinyAuthConfig;
 
 		parent::__construct($registry, $config);
+
+		// BC config check
+		if ($this->getConfig('cacheKey')) {
+			$this->setConfig('allowCacheKey', $this->getConfig('cacheKey'));
+		}
+		if ($this->getConfig('file')) {
+			$this->setConfig('allowFile', $this->getConfig('file'));
+		}
+		if ($this->getConfig('filePath')) {
+			$this->setConfig('allowFilePath', $this->getConfig('filePath'));
+		}
 	}
 
 	/**
@@ -77,7 +88,7 @@ class AuthComponent extends CakeAuthComponent {
 	 * @return void
 	 */
 	protected function _prepareAuthentication() {
-		$authentication = $this->_getAuth($this->getConfig('authFilePath'));
+		$authentication = $this->_getAuth($this->getConfig('allowFilePath'));
 
 		$params = $this->request->getAttribute('params');
 		foreach ($authentication as $rule) {
@@ -110,17 +121,17 @@ class AuthComponent extends CakeAuthComponent {
 	 */
 	protected function _getAuth($path = null) {
 		if ($this->getConfig('autoClearCache') && Configure::read('debug')) {
-			Cache::delete($this->getConfig('cacheKey'), $this->getConfig('cache'));
+			Cache::delete($this->getConfig('allowCacheKey'), $this->getConfig('cache'));
 		}
-		$roles = Cache::read($this->getConfig('cacheKey'), $this->getConfig('cache'));
+		$roles = Cache::read($this->getConfig('allowCacheKey'), $this->getConfig('cache'));
 		if ($roles !== false) {
 			return $roles;
 		}
 
 		if ($path === null) {
-			$path = $this->getConfig('filePath');
+			$path = $this->getConfig('allowFilePath');
 		}
-		$iniArray = $this->_parseFiles($path, $this->getConfig('authFile'));
+		$iniArray = $this->_parseFiles($path, $this->getConfig('allowFile'));
 
 		$res = [];
 		foreach ($iniArray as $key => $actions) {
@@ -144,7 +155,7 @@ class AuthComponent extends CakeAuthComponent {
 			}
 		}
 
-		Cache::write($this->getConfig('cacheKey'), $res, $this->getConfig('cache'));
+		Cache::write($this->getConfig('allowCacheKey'), $res, $this->getConfig('cache'));
 		return $res;
 	}
 

@@ -62,7 +62,7 @@ trait AclTrait {
 			'adminPrefix' => 'admin', // name of the admin prefix route (only used when allowUser is enabled)
 			'cache' => '_cake_core_',
 			'aclCacheKey' => 'tiny_auth_acl',
-			'allowCacheKey' => 'tiny_auth_allow',	//this is needed to fetch allow info from the correct cache. Must be the same as set in AuthComponent.php
+			'allowCacheKey' => 'tiny_auth_allow', // This is needed to fetch allow info from the correct cache. Must be the same as set in AuthComponent.
 			'autoClearCache' => null, // Set to true to delete cache automatically in debug mode, keep null for auto-detect
 			'aclFilePath' => null, // Possible to locate INI file at given path e.g. Plugin::configPath('Admin'), filePath is also available for shared config
 			'aclFile' => 'acl.ini',
@@ -92,6 +92,16 @@ trait AclTrait {
 			$config['autoClearCache'] = Configure::read('debug');
 		}
 		$this->_aclAdapter = $this->_loadAclAdapter($config['aclAdapter']);
+
+		if ($this->getConfig('cacheKey')) {
+			$this->setConfig('aclCacheKey', $this->getConfig('cacheKey'));
+		}
+		if ($this->getConfig('file')) {
+			$this->setConfig('aclFile', $this->getConfig('file'));
+		}
+		if ($this->getConfig('filePath')) {
+			$this->setConfig('aclFilePath', $this->getConfig('filePath'));
+		}
 
 		return $config;
 	}
@@ -287,7 +297,7 @@ trait AclTrait {
 		}
 
 		if ($path === null) {
-			$path = $this->getConfig('filePath');
+			$path = $this->getConfig('aclFilePath');
 		}
 		$config = $this->getConfig();
 		$config['filePath'] = $path;
