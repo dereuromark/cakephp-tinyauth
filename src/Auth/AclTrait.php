@@ -62,6 +62,7 @@ trait AclTrait {
 			'adminPrefix' => 'admin', // name of the admin prefix route (only used when allowUser is enabled)
 			'cache' => '_cake_core_',
 			'aclCacheKey' => 'tiny_auth_acl',
+			'allowCacheKey' => 'tiny_auth_allow',	//this is needed to fetch allow info from the correct cache. Must be the same as set in AuthComponent.php
 			'autoClearCache' => null, // Set to true to delete cache automatically in debug mode, keep null for auto-detect
 			'aclFilePath' => null, // Possible to locate INI file at given path e.g. Plugin::configPath('Admin'), filePath is also available for shared config
 			'aclFile' => 'acl.ini',
@@ -254,7 +255,7 @@ trait AclTrait {
 			return $this->auth;
 		}
 
-		$authAllow = Cache::read($this->getConfig('cacheKey'), $this->getConfig('cache'));
+		$authAllow = Cache::read($this->getConfig('allowCacheKey'), $this->getConfig('cache'));
 		if (!$authAllow) {
 			//TOOD make refactor to collect data at runtime? Should not be necessary if AuthComponent is used properly.
 			throw new Exception('Cache for Authentication data not found. This is required for `includeAuthentication` as true. Make sure you enabled TinyAuth.AuthComponent.');
