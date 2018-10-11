@@ -2,6 +2,7 @@
 
 namespace TinyAuth\Test\TestCase\Controller\Component;
 
+use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
@@ -37,7 +38,7 @@ class AuthUserHelperTest extends TestCase {
 			'admin' => 3
 		]);
 		$this->config = [
-			'filePath' => Plugin::path('TinyAuth') . 'tests' . DS . 'test_files' . DS,
+			'aclFilePath' => Plugin::path('TinyAuth') . 'tests' . DS . 'test_files' . DS,
 			'autoClearCache' => true,
 		];
 		$this->View = new View();
@@ -236,6 +237,32 @@ class AuthUserHelperTest extends TestCase {
 		$this->View->set('_authUser', $user);
 
 		$this->assertSame(['user' => '1', 'moderator' => '2'], $this->AuthUserHelper->roles());
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testHasAccessPublic() {
+		$this->AuthUserHelper->setConfig('includeAuthentication', true);
+		$cache = '_cake_core_';
+		$cacheKey = 'tiny_auth_allow';
+		$this->AuthUserHelper->setConfig('cache', $cache);
+		$this->AuthUserHelper->setConfig('cacheKey', $cacheKey);
+
+		$data = [
+			'Users' => [
+				'controller' => 'Users',
+				'actions' => ['view'],
+			]
+		];
+		Cache::write($cacheKey, $data, $cache);
+
+		$request = [
+			'controller' => 'Users',
+			'action' => 'view',
+		];
+		$result = $this->AuthUserHelper->hasAccess($request);
+		$this->assertTrue($result);
 	}
 
 }

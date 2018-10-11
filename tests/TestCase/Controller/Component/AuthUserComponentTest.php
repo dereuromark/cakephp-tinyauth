@@ -2,6 +2,7 @@
 
 namespace TinyAuth\Test\TestCase\Controller\Component;
 
+use Cake\Cache\Cache;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\AuthComponent;
 use Cake\Controller\Controller;
@@ -98,6 +99,58 @@ class AuthUserComponentTest extends TestCase {
 		$request = [
 			'controller' => 'Tags',
 			'action' => 'edit',
+		];
+		$result = $this->AuthUser->hasAccess($request);
+		$this->assertFalse($result);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testHasAccessPublic() {
+		$this->AuthUser->setConfig('includeAuthentication', true);
+		$cache = '_cake_core_';
+		$cacheKey = 'tiny_auth_allow';
+		$this->AuthUser->setConfig('cache', $cache);
+		$this->AuthUser->setConfig('cacheKey', $cacheKey);
+
+		$data = [
+			'Users' => [
+				'controller' => 'Users',
+				'actions' => ['view'],
+			]
+		];
+		Cache::write($cacheKey, $data, $cache);
+
+		$request = [
+			'controller' => 'Users',
+			'action' => 'view',
+		];
+		$result = $this->AuthUser->hasAccess($request);
+		$this->assertTrue($result);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testHasAccessPublicInvalid() {
+		$this->AuthUser->setConfig('includeAuthentication', true);
+		$cache = '_cake_core_';
+		$cacheKey = 'tiny_auth_allow';
+		$this->AuthUser->setConfig('cache', $cache);
+		$this->AuthUser->setConfig('cacheKey', $cacheKey);
+
+		$data = [
+			'Users' => [
+				'controller' => 'Users',
+				'actions' => ['index'],
+			]
+		];
+		Cache::write($cacheKey, $data, $cache);
+
+		$request = [
+			'controller' => 'Users',
+			'action' => 'view',
 		];
 		$result = $this->AuthUser->hasAccess($request);
 		$this->assertFalse($result);

@@ -103,7 +103,7 @@ TinyAuth AuthComponent supports the following configuration options.
 Option | Type | Description
 :----- | :--- | :----------
 autoClearCache|bool|True will generate a new ACL cache file every time.
-filePath|string|Full path to the INI file. Can also be an array of paths. Defaults to `ROOT . DS . 'config' . DS`.
-file|string|Name of the INI file. Defaults to `auth_allow.ini`.
 cache|string|Cache type. Defaults to `_cake_core_`.
-cacheKey|string|Cache key. Defaults to `tiny_auth_allow`.
+allowCacheKey|string|Cache key. Defaults to `tiny_auth_allow`.
+allowFilePath|string|Full path to the INI file. Can also be an array of paths. Defaults to `ROOT . DS . 'config' . DS`.
+allowFile|string|Name of the INI file. Defaults to `auth_allow.ini`.

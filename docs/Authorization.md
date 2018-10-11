@@ -238,11 +238,12 @@ prefixes|array|A list of authorizeByPrefix handled prefixes.
 allowUser|bool|True will give authenticated users access to all resources except those using the `adminPrefix`
 adminPrefix|string|Name of the prefix used for admin pages. Defaults to admin.
 autoClearCache|bool|True will generate a new ACL cache file every time.
-filePath|string|Full path to the acl.ini. Can also be an array of multiple paths. Defaults to `ROOT . DS . 'config' . DS`.
-file|string|Name of the INI file. Defaults to `acl.ini`.
 cache|string|Cache type. Defaults to `_cake_core_`.
-cacheKey|string|Cache key. Defaults to `tiny_auth_acl`.
-
+aclCacheKey|string|Cache key. Defaults to `tiny_auth_acl`.
+aclFilePath|string|Full path to the acl.ini. Can also be an array of multiple paths. Defaults to `ROOT . DS . 'config' . DS`.
+aclFile|string|Name of the INI file. Defaults to `acl.ini`.
+includeAuthentication|bool|Set to true to include public auth access into hasAccess() checks. Note, that this requires Configure configuration.
+allowCacheKey|string|Cache key. Defaults to `tiny_auth_allow`. Needed to fetch allow info from the correct cache. Must be the same as set in AuthComponent.
 
 ## AuthUserComponent
 Add the AuthUserComponent and you can easily check permissions inside your controller scope:
@@ -304,6 +305,17 @@ if ($this->AuthUser->hasAccess(['action' => 'secretArea'])) {
 	echo ' (do not tell anyone else!);
 }
 ```
+
+## Including Authentication
+Please note that by default `hasAccess()` only checks the ACL INI, not the allow auth INI.
+Those links and access checks are meant to be used for logged in users.
+
+If you need to build a navigation that includes publicly accessible actions, you need to enable
+`includeAuthentication` config. This will then also include the Authentication data from your allow config.
+But this only checks/uses the INI config, it can not work on controller authentication. So make sure
+you transformed everything fully to the INI file here. Any custom `->allow()` call in controllers
+can not be taken into account.
+
 
 ## Sync Command
 The plugin offers a convenience CLI command (CakePHP 3.6+) to sync ACL for any new controller.
