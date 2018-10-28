@@ -62,7 +62,11 @@ class Utility {
 		if (function_exists('parse_ini_file')) {
 			$iniArray = parse_ini_file($ini, true);
 		} else {
-			$iniArray = parse_ini_string(file_get_contents($ini), true);
+			$content = file_get_contents($ini);
+			if ($content === false) {
+				throw new Exception('Cannot load INI file.');
+			}
+			$iniArray = parse_ini_string($content, true);
 		}
 
 		if (!is_array($iniArray)) {

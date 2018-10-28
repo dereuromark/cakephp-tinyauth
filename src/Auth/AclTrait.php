@@ -373,9 +373,10 @@ trait AclTrait {
 		}
 
 		$rolesTable = TableRegistry::get($this->getConfig('rolesTable'));
-		$roles = $rolesTable->find()->formatResults(function (ResultSetInterface $results) {
+		$result = $rolesTable->find()->formatResults(function (ResultSetInterface $results) {
 			return $results->combine($this->getConfig('aliasColumn'), 'id');
-		})->toArray();
+		});
+		$roles = $result->toArray();
 
 		if ($this->getConfig('superAdminRole')) {
 			$key = $this->getConfig('superAdmin') ?: 'superadmin';
