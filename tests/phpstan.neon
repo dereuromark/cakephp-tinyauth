@@ -1,3 +1,6 @@
 parameters:
     autoload_files:
         - %rootDir%/../../../tests/bootstrap.php
+
+    ignoreErrors:
+    	- '#Cannot call method toArray\(\) on array|Cake\ORM\Query#'
