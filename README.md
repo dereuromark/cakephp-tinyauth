@@ -10,9 +10,10 @@
 
 A CakePHP plugin to handle authentication and user authorization the easy way.
 
-**This branch is for CakePHP 3.5+**
+**This branch is for CakePHP 3.7+**
 
 ## Features
+
 ### Authentication
 What are public actions, which ones need login?
 

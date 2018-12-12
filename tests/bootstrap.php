@@ -56,8 +56,7 @@ $cache = [
 
 Cake\Cache\Cache::setConfig($cache);
 
-//For 3.7: Cake\Core\Plugin::getCollection()->add(new TinyAuth\Plugin());
-Cake\Core\Plugin::load('TinyAuth', ['path' => ROOT . DS, 'autoload' => true]);
+Cake\Core\Plugin::getCollection()->add(new TinyAuth\Plugin());
 
 // Ensure default test connection is defined
 if (!getenv('db_class')) {
