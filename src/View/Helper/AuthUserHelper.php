@@ -42,7 +42,7 @@ class AuthUserHelper extends Helper {
 	 * @throws \Cake\Core\Exception\Exception
 	 */
 	public function hasAccess(array $url) {
-		$params = $this->request->getAttribute('params');
+		$params = $this->_View->getRequest()->getAttribute('params');
 		$url += [
 			'prefix' => !empty($params['prefix']) ? $params['prefix'] : null,
 			'plugin' => !empty($params['plugin']) ? $params['plugin'] : null,
