@@ -19,7 +19,9 @@ class AuthUserComponentTest extends TestCase {
 	/**
 	 * @var array
 	 */
-	public $fixtures = ['core.sessions'];
+	public $fixtures = [
+		'core.Sessions'
+	];
 
 	/**
 	 * @var \TinyAuth\Controller\Component\AuthUserComponent
