@@ -55,8 +55,7 @@ class AuthComponent extends CakeAuthComponent {
 	 * @param array $config The config data.
 	 * @return void
 	 */
-	public function initialize(array $config)
-	{
+	public function initialize(array $config) {
 		parent::initialize($config);
 
 		$this->_prepareAuthentication();
