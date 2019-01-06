@@ -3,6 +3,7 @@ namespace TestApp\Controller;
 
 use Cake\Controller\Controller;
 use Cake\Event\Event;
+use Exception;
 
 class OffersController extends Controller {
 
@@ -25,7 +26,7 @@ class OffersController extends Controller {
 	 * @throws \Exception
 	 */
 	public function denied() {
-		throw new \Exception('Should not be reached!');
+		throw new Exception('Should not be reached!');
 	}
 
 }
