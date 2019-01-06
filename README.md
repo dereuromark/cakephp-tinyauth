@@ -3,7 +3,7 @@
 [![Build Status](https://api.travis-ci.org/dereuromark/cakephp-tinyauth.svg?branch=master)](https://travis-ci.org/dereuromark/cakephp-tinyauth)
 [![Latest Stable Version](https://poser.pugx.org/dereuromark/cakephp-tinyauth/v/stable.svg)](https://packagist.org/packages/dereuromark/cakephp-tinyauth)
 [![Coverage Status](https://img.shields.io/codecov/c/github/dereuromark/cakephp-tinyauth/master.svg)](https://codecov.io/github/dereuromark/cakephp-tinyauth?branch=master)
-[![Minimum PHP Version](http://img.shields.io/badge/php-%3E%3D%205.6-8892BF.svg)](https://php.net/)
+[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%205.6-8892BF.svg)](https://php.net/)
 [![License](https://poser.pugx.org/dereuromark/cakephp-tinyauth/license.svg)](https://packagist.org/packages/dereuromark/cakephp-tinyauth)
 [![Total Downloads](https://poser.pugx.org/dereuromark/cakephp-tinyauth/d/total.svg)](https://packagist.org/packages/dereuromark/cakephp-tinyauth)
 [![Coding Standards](https://img.shields.io/badge/cs-PSR--2--R-yellow.svg)](https://github.com/php-fig-rectified/fig-rectified-standards)
@@ -32,7 +32,7 @@ This plugin hooks in with a single line of change and manages all that using con
 
 It is also possible to manage the config files without the need of coding skills. And it could with some effort also be moved completely to the DB and managed by CRUD backend.
 
-Ask yourself: Do you need the overhead and complexity involved with the core CakePHP ACL? See also my post [acl-access-control-lists-revised/](http://www.dereuromark.de/2015/01/06/acl-access-control-lists-revised/).
+Ask yourself: Do you need the overhead and complexity involved with the core CakePHP ACL? See also my post [acl-access-control-lists-revised/](https://www.dereuromark.de/2015/01/06/acl-access-control-lists-revised/).
 If not, then this plugin could very well be your answer and a super quick solution to your auth problem :)
 
 But even if you don't leverage the authentication or authorization, the available AuthUserComponent and AuthUserHelper
@@ -40,7 +40,7 @@ can be very useful when dealing with role based decisions in your controller or 
 
 
 ## Demo
-See http://sandbox.dereuromark.de/auth-sandbox
+See https://sandbox.dereuromark.de/auth-sandbox
 
 ### auth_allow.ini
 Define the public actions (accessable by anyone) per controller:
@@ -106,7 +106,7 @@ That's it. It should be up and running.
 ## Docs
 For setup and usage see [Docs](/docs).
 
-Also note the original [blog post](http://www.dereuromark.de/2011/12/18/tinyauth-the-fastest-and-easiest-authorization-for-cake2/) and how it all started.
+Also note the original [blog post](https://www.dereuromark.de/2011/12/18/tinyauth-the-fastest-and-easiest-authorization-for-cake2/) and how it all started.
 
 ### Branching strategy
 The master branch is the currently active and maintained one and works with the current 3.x stable version.

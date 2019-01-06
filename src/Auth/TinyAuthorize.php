@@ -11,7 +11,7 @@ use Cake\Http\ServerRequest;
  * doesn't even need a Roles Table / roles table.
  * Uses most persistent _cake_core_ cache by default.
  *
- * @link http://www.dereuromark.de/2011/12/18/tinyauth-the-fastest-and-easiest-authorization-for-cake2
+ * @link https://www.dereuromark.de/2011/12/18/tinyauth-the-fastest-and-easiest-authorization-for-cake2
  *
  * Usage:
  * Include it in your beforeFilter() method of the AppController with the following config:
