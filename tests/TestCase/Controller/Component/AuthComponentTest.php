@@ -32,7 +32,7 @@ class AuthComponentTest extends TestCase {
 	 */
 	public function setUp() {
 		$this->componentConfig = [
-			'filePath' => Plugin::path('TinyAuth') . 'tests' . DS . 'test_files' . DS,
+			'allowFilePath' => Plugin::path('TinyAuth') . 'tests' . DS . 'test_files' . DS,
 			'autoClearCache' => true,
 		];
 	}
@@ -83,6 +83,32 @@ class AuthComponentTest extends TestCase {
 		$event = new Event('Controller.startup', $controller);
 		$response = $this->AuthComponent->startup($event);
 		$this->assertNull($response);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testDeniedAction() {
+		$request = new Request(['params' => [
+			'controller' => 'Offers',
+			'action' => 'denied',
+			'plugin' => 'Extras',
+			'_ext' => null,
+			'pass' => [1]
+		]]);
+		$controller = new OffersController($request);
+		$controller->loadComponent('TinyAuth.Auth', $this->componentConfig);
+
+		$config = [];
+		$controller->Auth->initialize($config);
+
+		$event = new Event('Controller.beforeFilter', $controller);
+		$controller->beforeFilter($event);
+
+		$event = new Event('Controller.startup', $controller);
+		$response = $controller->Auth->startup($event);
+		$this->assertInstanceOf(Response::class, $response);
+		$this->assertSame(302, $response->getStatusCode());
 	}
 
 	/**

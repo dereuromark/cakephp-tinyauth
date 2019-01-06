@@ -52,6 +52,17 @@ class AuthComponent extends CakeAuthComponent {
 	}
 
 	/**
+	 * @param array $config The config data.
+	 * @return void
+	 */
+	public function initialize(array $config)
+	{
+		parent::initialize($config);
+
+		$this->_prepareAuthentication();
+	}
+
+	/**
 	 * Events supported by this component.
 	 *
 	 * @return array
@@ -60,16 +71,6 @@ class AuthComponent extends CakeAuthComponent {
 		return [
 			'Controller.beforeRender' => 'beforeRender',
 		] + parent::implementedEvents();
-	}
-
-	/**
-	 * @param \Cake\Event\Event $event Event instance.
-	 * @return \Cake\Http\Response|null
-	 */
-	public function authCheck(Event $event) {
-		$this->_prepareAuthentication();
-
-		return parent::authCheck($event);
 	}
 
 	/**

@@ -83,6 +83,10 @@ use Cake\Event\Event;
 This can be interested when migrating slowly to TinyAuth, for example.
 Once you move such a code based rule into the INI file, you can safely remove those lines of code in your controller :)
 
+### allow() vs deny()
+Since 1.11.0 you can also mix it with deny() calls. From how the AuthComponent works, all allow() calls need be done before calling deny(). 
+As such TinyAuth injects its list now before `Controller::beforeFilter()` gets called.
+
 
 ## Caching
 
