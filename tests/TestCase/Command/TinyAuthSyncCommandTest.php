@@ -26,7 +26,7 @@ class TinyAuthSyncCommandTest extends ConsoleIntegrationTestCase {
 	 * @return void
 	 */
 	public function testSync() {
-		Configure::write('TinyAuth.file', '../tests/test_files/subfolder/acl.ini');
+		Configure::write('TinyAuth.file', '../tests/test_files/subfolder/tinyauth_acl.ini');
 
 		$folder = new Folder();
 		$folder->copy(['from' => TESTS . 'test_app' . DS . 'Controller' . DS, 'to' => '/tmp' . DS . 'src' . DS . 'Controller' . DS]);
