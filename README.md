@@ -95,10 +95,10 @@ Then, to load the plugin either run the following command:
 bin/cake plugin load TinyAuth
 ```
 
-or manually add the following line to your app's `config/bootstrap.php` file:
+or manually add the following line to your app's `src/Application.php` file's `bootstrap()` function:
 
 ```php
-Plugin::load('TinyAuth');
+$this->addPlugin('TinyAuth');
 ```
 
 That's it. It should be up and running.
