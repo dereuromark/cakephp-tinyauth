@@ -11,7 +11,7 @@ class CustomAclAdapter implements AclAdapterInterface {
 	 *
 	 * @return array
 	 */
-	public function getAcl(array $availableRoles, array $tinyConfig) {
+	public function getAcl(array $availableRoles, array $config) {
 		return [];
 	}
 

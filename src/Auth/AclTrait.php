@@ -107,7 +107,7 @@ trait AclTrait {
 	}
 
 	/**
-	 * Finds the Acl adapter to use for this request.
+	 * Finds the authorization adapter to use for this request.
 	 *
 	 * @param string $adapter Acl adapter to load.
 	 * @return \TinyAuth\Auth\AclAdapter\AclAdapterInterface
@@ -298,15 +298,15 @@ trait AclTrait {
 	 * - Resolves wildcards to their verbose translation
 	 *
 	 * @param string|array|null $path
-	 * @return array Roles
+	 * @return array
 	 */
 	protected function _getAcl($path = null) {
 		if ($this->getConfig('autoClearCache') && Configure::read('debug')) {
 			Cache::delete($this->getConfig('aclCacheKey'), $this->getConfig('cache'));
 		}
-		$roles = Cache::read($this->getConfig('aclCacheKey'), $this->getConfig('cache'));
-		if ($roles !== false) {
-			return $roles;
+		$acl = Cache::read($this->getConfig('aclCacheKey'), $this->getConfig('cache'));
+		if ($acl !== false) {
+			return $acl;
 		}
 
 		if ($path === null) {
@@ -318,10 +318,10 @@ trait AclTrait {
 		unset($config['aclFilePath']);
 		unset($config['aclFile']);
 
-		$roles = $this->_aclAdapter->getAcl($this->_getAvailableRoles(), $config);
-		Cache::write($this->getConfig('aclCacheKey'), $roles, $this->getConfig('cache'));
+		$acl = $this->_aclAdapter->getAcl($this->_getAvailableRoles(), $config);
+		Cache::write($this->getConfig('aclCacheKey'), $acl, $this->getConfig('cache'));
 
-		return $roles;
+		return $acl;
 	}
 
 	/**

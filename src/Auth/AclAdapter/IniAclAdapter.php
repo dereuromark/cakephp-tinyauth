@@ -11,8 +11,8 @@ class IniAclAdapter implements AclAdapterInterface {
 	 *
 	 * @return array
 	 */
-	public function getAcl(array $availableRoles, array $tinyConfig) {
-		$iniArray = Utility::parseFiles($tinyConfig['filePath'], $tinyConfig['file']);
+	public function getAcl(array $availableRoles, array $config) {
+		$iniArray = Utility::parseFiles($config['filePath'], $config['file']);
 
 		$res = [];
 		foreach ($iniArray as $key => $array) {

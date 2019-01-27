@@ -6,8 +6,12 @@ use Cake\Cache\Cache;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\AuthComponent as CakeAuthComponent;
 use Cake\Core\Configure;
+use Cake\Core\Exception\Exception;
 use Cake\Event\Event;
+use InvalidArgumentException;
 use TinyAuth\Auth\AclTrait;
+use TinyAuth\Auth\AllowAdapter\AllowAdapterInterface;
+use TinyAuth\Auth\AllowAdapter\IniAllowAdapter;
 
 /**
  * TinyAuth AuthComponent to handle all authentication in a central ini file.
@@ -23,6 +27,7 @@ class AuthComponent extends CakeAuthComponent {
 	 * @var array
 	 */
 	protected $_defaultTinyAuthConfig = [
+		'allowAdapter' => IniAllowAdapter::class,
 		'cache' => '_cake_core_',
 		'autoClearCache' => null, // Set to true to delete cache automatically in debug mode, keep null for auto-detect
 		'allowCacheKey' => 'tiny_auth_allow',
@@ -119,58 +124,54 @@ class AuthComponent extends CakeAuthComponent {
 	 * Uses cache for maximum performance.
 	 *
 	 * @param string|null $path
-	 * @return array Actions
+	 * @return array
 	 */
 	protected function _getAuth($path = null) {
 		if ($this->getConfig('autoClearCache') && Configure::read('debug')) {
 			Cache::delete($this->getConfig('allowCacheKey'), $this->getConfig('cache'));
 		}
-		$roles = Cache::read($this->getConfig('allowCacheKey'), $this->getConfig('cache'));
-		if ($roles !== false) {
-			return $roles;
+		$auth = Cache::read($this->getConfig('allowCacheKey'), $this->getConfig('cache'));
+		if ($auth !== false) {
+			return $auth;
 		}
 
 		if ($path === null) {
 			$path = $this->getConfig('allowFilePath');
 		}
-		$iniArray = $this->_parseFiles($path, $this->getConfig('allowFile'));
 
-		$res = [];
-		foreach ($iniArray as $key => $actions) {
-			$res[$key] = $this->_deconstructIniKey($key);
+		$config = $this->getConfig();
+		$config['filePath'] = $path;
+		$config['file'] = $config['allowFile'];
+		unset($config['allowFilePath']);
+		unset($config['allowFile']);
 
-			$actions = explode(',', $actions);
-			foreach ($actions as $k => $action) {
-				$action = trim($action);
-				if ($action === '') {
-					unset($actions[$k]);
-					continue;
-				}
-				$actions[$k] = $action;
-			}
+		$auth = $this->_loadAllowAdapter($config['allowAdapter'])->getAllow($this->_getAvailableRoles(), $config);
 
-			$res[$key]['map'] = $actions;
-			$res[$key]['all'] = false;
-			$res[$key]['deny'] = [];
-			$res[$key]['allow'] = [];
+		Cache::write($this->getConfig('allowCacheKey'), $auth, $this->getConfig('cache'));
+		return $auth;
+	}
 
-			foreach ($actions as $action) {
-				$denied = mb_substr($action, 0, 1) === '!';
-				if ($denied) {
-					$res[$key]['deny'][] = mb_substr($action, 1);
-					continue;
-				}
-
-				if ($action === '*') {
-					$res[$key]['all'] = true;
-				}
-
-				$res[$key]['allow'][] = $action;
-			}
+	/**
+	 * Finds the authentication adapter to use for this request.
+	 *
+	 * @param string $adapter Acl adapter to load.
+	 * @return \TinyAuth\Auth\AllowAdapter\AllowAdapterInterface
+	 * @throws \Cake\Core\Exception\Exception
+	 * @throws \InvalidArgumentException
+	 */
+	protected function _loadAllowAdapter($adapter) {
+		if (!class_exists($adapter)) {
+			throw new Exception(sprintf('The Acl Adapter class "%s" was not found.', $adapter));
 		}
 
-		Cache::write($this->getConfig('allowCacheKey'), $res, $this->getConfig('cache'));
-		return $res;
+		$adapterInstance = new $adapter();
+		if (!($adapterInstance instanceof AllowAdapterInterface)) {
+			throw new InvalidArgumentException(sprintf(
+				'TinyAuth Acl adapters have to implement %s.', AllowAdapterInterface::class
+			));
+		}
+
+		return $adapterInstance;
 	}
 
 }
