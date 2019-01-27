@@ -978,7 +978,7 @@ class TinyAuthorizeTest extends TestCase {
 				Plugin::path('TinyAuth') . 'tests' . DS . 'test_files' . DS,
 				Plugin::path('TinyAuth') . 'tests' . DS . 'test_files' . DS . 'subfolder' . DS,
 			],
-			'acl.ini'
+			'tinyauth_acl.ini'
 		]);
 		$this->assertTrue(is_array($res));
 
@@ -1003,7 +1003,7 @@ class TinyAuthorizeTest extends TestCase {
 		$method->setAccessible(true);
 		$method->invokeArgs($object, [
 			Plugin::path('TinyAuth') . 'non' . DS . 'existent' . DS,
-			'acl.ini']);
+			'tinyauth_acl.ini']);
 	}
 
 	/**

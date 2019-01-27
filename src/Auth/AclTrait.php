@@ -65,7 +65,7 @@ trait AclTrait {
 			'allowCacheKey' => 'tiny_auth_allow', // This is needed to fetch allow info from the correct cache. Must be the same as set in AuthComponent.
 			'autoClearCache' => null, // Set to true to delete cache automatically in debug mode, keep null for auto-detect
 			'aclFilePath' => null, // Possible to locate INI file at given path e.g. Plugin::configPath('Admin'), filePath is also available for shared config
-			'aclFile' => 'acl.ini',
+			'aclFile' => 'tinyauth_acl.ini',
 			'includeAuthentication' => false, // Set to true to include public auth access into hasAccess() checks. Note, that this requires Configure configuration.
 		];
 		$config = (array)Configure::read('TinyAuth') + $defaults;
