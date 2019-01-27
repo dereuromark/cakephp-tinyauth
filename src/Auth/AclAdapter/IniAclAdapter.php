@@ -14,11 +14,12 @@ class IniAclAdapter implements AclAdapterInterface {
 	public function getAcl(array $availableRoles, array $config) {
 		$iniArray = Utility::parseFiles($config['filePath'], $config['file']);
 
-		$res = [];
+		$acl = [];
 		foreach ($iniArray as $key => $array) {
-			$res[$key] = Utility::deconstructIniKey($key);
-			$res[$key]['map'] = $array;
-			$res[$key]['actions'] = [];
+			$acl[$key] = Utility::deconstructIniKey($key);
+			$acl[$key]['map'] = $array;
+			$acl[$key]['deny'] = [];
+			$acl[$key]['allow'] = [];
 
 			foreach ($array as $actions => $roles) {
 				// Get all roles used in the current INI section
@@ -39,6 +40,7 @@ class IniAclAdapter implements AclAdapterInterface {
 							continue;
 						}
 
+						unset($roles[$roleId]);
 						$deniedRoles[] = $role;
 
 						continue;
@@ -69,7 +71,7 @@ class IniAclAdapter implements AclAdapterInterface {
 
 						// Lookup role id by name in roles array
 						$newRole = $availableRoles[strtolower($role)];
-						$res[$key]['actions'][$action][] = $newRole;
+						$acl[$key]['allow'][$action][] = $newRole;
 					}
 					foreach ($deniedRoles as $role) {
 						$role = trim($role);
@@ -79,13 +81,13 @@ class IniAclAdapter implements AclAdapterInterface {
 
 						// Lookup role id by name in roles array
 						$newRole = $availableRoles[strtolower($role)];
-						$res[$key]['deny'][$action][] = $newRole;
+						$acl[$key]['deny'][$action][] = $newRole;
 					}
 				}
 			}
 		}
 
-		return $res;
+		return $acl;
 	}
 
 }

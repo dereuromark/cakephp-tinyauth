@@ -204,6 +204,7 @@ secret = !user
 ```
 Meaning: Allow all Users actions by default for user/admin role, but only allow admins to access "secret" action.
 
+Note that deny always trumps allow, if both are declared for an action and role.
 
 ### Multiple files and merging
 You can specify multiple paths in your config, e.g. when you have plugins and separated the definitions across them.

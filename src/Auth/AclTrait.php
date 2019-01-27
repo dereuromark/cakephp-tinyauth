@@ -206,7 +206,7 @@ trait AclTrait {
 
 		$action = $params['action'];
 		if (!empty($this->_acl[$iniKey]['deny'][$action])) {
-			$matchArray = $this->_acl[$iniKey]['actions'][$action];
+			$matchArray = $this->_acl[$iniKey]['deny'][$action];
 			foreach ($userRoles as $userRole) {
 				if (in_array($userRole, $matchArray, true)) {
 					return false;
@@ -215,8 +215,8 @@ trait AclTrait {
 		}
 
 		// Allow access if user has a role with wildcard access to the resource
-		if (isset($this->_acl[$iniKey]['actions']['*'])) {
-			$matchArray = $this->_acl[$iniKey]['actions']['*'];
+		if (isset($this->_acl[$iniKey]['allow']['*'])) {
+			$matchArray = $this->_acl[$iniKey]['allow']['*'];
 			foreach ($userRoles as $userRole) {
 				if (in_array($userRole, $matchArray, true)) {
 					return true;
@@ -225,8 +225,8 @@ trait AclTrait {
 		}
 
 		// Allow access if user has been granted access to the specific resource
-		if (array_key_exists($action, $this->_acl[$iniKey]['actions']) && !empty($this->_acl[$iniKey]['actions'][$action])) {
-			$matchArray = $this->_acl[$iniKey]['actions'][$action];
+		if (array_key_exists($action, $this->_acl[$iniKey]['allow']) && !empty($this->_acl[$iniKey]['allow'][$action])) {
+			$matchArray = $this->_acl[$iniKey]['allow'][$action];
 			foreach ($userRoles as $userRole) {
 				if (in_array($userRole, $matchArray, true)) {
 					return true;
@@ -256,11 +256,14 @@ trait AclTrait {
 				continue;
 			}
 
-			if ($rule['actions'] === []) {
+			if (!empty($rule['all'])) {
 				return true;
 			}
+			if (!empty($rule['deny']) && in_array($params['action'], $rule['deny'], true)) {
+				return false;
+			}
 
-			return in_array($params['action'], $rule['actions'], true);
+			return in_array($params['action'], $rule['allow'], true);
 		}
 
 		return false;

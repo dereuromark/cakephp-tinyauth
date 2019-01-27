@@ -71,6 +71,7 @@ Users = "!secret",*
 ```
 Meaning: Allow all Users actions by default, but keep authentication required for "secret" action.
 
+Note that deny always trumps allow, if both are declared for an action.
 
 ### Multiple files and merging
 You can specify multiple paths in your config, e.g. when you have plugins and separated the definitions across them.

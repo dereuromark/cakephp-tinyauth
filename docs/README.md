@@ -11,11 +11,9 @@ The second only gets invoked once the person is already logged in.
 In that case the role of this logged in user decides if that action is allowed to be accessed.
 
 ## Authentication
-NEW since version 1.4.0
-
 This is done via TinyAuth AuthComponent.
 
-The component plays well together with the adapter (see below).
+The component plays well together with the authorization part (see below).
 If you do not have any roles and either all are logged in or not logged in you can also use this stand-alone to make certain pages public.
 
 See [Authentication](Authentication.md) docs.
@@ -42,6 +40,10 @@ Those classes most likely share quite a few configs, in that case you definitely
 	],
 ```
 This way you keep it DRY.
+
+## Custom Allow or ACL adapters
+You can easily switch out the INI file adapters for both using `allowAdapter` and `aclAdapter` config.
+This way you can also read from DB or provide any other API driven backend to read the data from for your authentication or authorization.
 
 ## Troubleshooting
 First of all: Isolate the issue. Never mix **authentication** and **authorization** (read the top part again).

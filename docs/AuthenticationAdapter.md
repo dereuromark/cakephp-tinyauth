@@ -7,6 +7,7 @@ Implement the AllowAdapterInterface and make sure your getAllow() method returns
     "plugin" => null,
     "prefix" => null,
     "controller" => "Posts",
+    "all" => false, // or true
     "allow" => [
     	// action to role id mapping
     ],

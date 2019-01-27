@@ -252,7 +252,7 @@ class AuthUserHelperTest extends TestCase {
 		$data = [
 			'Users' => [
 				'controller' => 'Users',
-				'actions' => ['view'],
+				'allow' => ['view'],
 			]
 		];
 		Cache::write($cacheKey, $data, $cache);
