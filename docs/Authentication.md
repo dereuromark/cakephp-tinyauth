@@ -37,6 +37,7 @@ Make sure to create an entry for each action you want to expose and use:
 
 - one or more action names
 - the ``*`` wildcard to allow access to all actions of that controller
+- use `"!actionName"` (quotes are important then) to deny certain actions
 
 ```ini
 ; ----------------------------------------------------------
@@ -61,6 +62,15 @@ Accounts.Accounts = view, edit
 ; ----------------------------------------------------------
 Accounts.admin/Accounts = index
 ```
+
+Using only allowing is recommended.
+Careful with denying, as this can accidentally open up more than desired actions. If you really want to use it:
+
+```ini
+Users = "!secret",* 
+```
+Meaning: Allow all Users actions by default, but keep authentication required for "secret" action.
+
 
 ### Multiple files and merging
 You can specify multiple paths in your config, e.g. when you have plugins and separated the definitions across them.

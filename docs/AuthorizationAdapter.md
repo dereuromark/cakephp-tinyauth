@@ -7,16 +7,19 @@ Implement the AclAdapterInterface and make sure your getAcl() method returns an 
     "plugin" => null,
     "prefix" => null,
     "controller" => "Posts",
-    "actions" => [
+    "allow" => [
     	// action to role id mapping
     ],
+    "deny => [
+    	// action to role id mapping
+    ]
   ],
   // or plugin with admin prefix
   "Queue.admin/QueuedJobs" => [
     "plugin" => "Queue",
     "prefix" => "admin",
     "controller" => "QueuedJobs",
-    "actions" => [
+    "allow" => [
       "index" => [
         1
       ],

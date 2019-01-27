@@ -194,6 +194,17 @@ view, edit = user
 * = admin
 ```
 
+Using only allowing is recommended.
+Careful with denying, as this can accidentally open up more than desired actions. If you really want to use it:
+
+```ini
+[Users]
+* = user, admin
+secret = !user
+```
+Meaning: Allow all Users actions by default for user/admin role, but only allow admins to access "secret" action.
+
+
 ### Multiple files and merging
 You can specify multiple paths in your config, e.g. when you have plugins and separated the definitions across them.
 Make sure you are using each section key only once, though. The first definition will be kept and all others for the same section key are ignored.

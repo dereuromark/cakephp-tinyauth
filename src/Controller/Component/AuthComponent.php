@@ -102,12 +102,14 @@ class AuthComponent extends CakeAuthComponent {
 				continue;
 			}
 
-			if ($rule['actions'] === []) {
+			if ($rule['all']) {
 				$this->allow();
-				return;
+			} elseif (!empty($rule['allow'])) {
+				$this->allow($rule['allow']);
 			}
-
-			$this->allow($rule['actions']);
+			if (!empty($rule['deny'])) {
+				$this->deny($rule['deny']);
+			}
 		}
 	}
 
@@ -136,22 +138,34 @@ class AuthComponent extends CakeAuthComponent {
 		$res = [];
 		foreach ($iniArray as $key => $actions) {
 			$res[$key] = $this->_deconstructIniKey($key);
-			$res[$key]['map'] = $actions;
 
 			$actions = explode(',', $actions);
-
-			if (in_array('*', $actions)) {
-				$res[$key]['actions'] = [];
-				continue;
+			foreach ($actions as $k => $action) {
+				$action = trim($action);
+				if ($action === '') {
+					unset($actions[$k]);
+					continue;
+				}
+				$actions[$k] = $action;
 			}
 
+			$res[$key]['map'] = $actions;
+			$res[$key]['all'] = false;
+			$res[$key]['deny'] = [];
+			$res[$key]['allow'] = [];
+
 			foreach ($actions as $action) {
-				$action = trim($action);
-				if (!$action) {
+				$denied = mb_substr($action, 0, 1) === '!';
+				if ($denied) {
+					$res[$key]['deny'][] = mb_substr($action, 1);
 					continue;
 				}
 
-				$res[$key]['actions'][] = $action;
+				if ($action === '*') {
+					$res[$key]['all'] = true;
+				}
+
+				$res[$key]['allow'][] = $action;
 			}
 		}
 

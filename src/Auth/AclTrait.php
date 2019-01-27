@@ -84,7 +84,7 @@ trait AclTrait {
 			throw new Exception('Invalid TinyAuthorization setup for `authorizeByPrefix`. Please declare `prefixes`.');
 		}
 
-		if (!in_array($config['cache'], Cache::configured())) {
+		if (!in_array($config['cache'], Cache::configured(), true)) {
 			throw new Exception(sprintf('Invalid TinyAuth cache `%s`', $config['cache']));
 		}
 
@@ -177,7 +177,7 @@ trait AclTrait {
 		// Allow access to all prefixed actions for users belonging to
 		// the specified role that matches the prefix.
 		if ($this->getConfig('authorizeByPrefix') && !empty($params['prefix'])) {
-			if (in_array($params['prefix'], $this->getConfig('prefixes'))) {
+			if (in_array($params['prefix'], $this->getConfig('prefixes'), true)) {
 				$roles = $this->_getAvailableRoles();
 				$role = isset($roles[$params['prefix']]) ? $roles[$params['prefix']] : null;
 				if ($role && in_array($role, $userRoles)) {
@@ -189,7 +189,7 @@ trait AclTrait {
 		// Allow logged in super admins access to all resources
 		if ($this->getConfig('superAdminRole')) {
 			foreach ($userRoles as $userRole) {
-				if ((string)$userRole === (string)$this->getConfig('superAdminRole')) {
+				if ($userRole === $this->getConfig('superAdminRole')) {
 					return true;
 				}
 			}
@@ -199,28 +199,41 @@ trait AclTrait {
 			$this->_acl = $this->_getAcl($this->getConfig('aclFilePath'));
 		}
 
-		// Allow access if user has a role with wildcard access to the resource
 		$iniKey = $this->_constructIniKey($params);
+		if (empty($this->_acl[$iniKey])) {
+			return false;
+		}
+
+		$action = $params['action'];
+		if (!empty($this->_acl[$iniKey]['deny'][$action])) {
+			$matchArray = $this->_acl[$iniKey]['actions'][$action];
+			foreach ($userRoles as $userRole) {
+				if (in_array($userRole, $matchArray, true)) {
+					return false;
+				}
+			}
+		}
+
+		// Allow access if user has a role with wildcard access to the resource
 		if (isset($this->_acl[$iniKey]['actions']['*'])) {
 			$matchArray = $this->_acl[$iniKey]['actions']['*'];
 			foreach ($userRoles as $userRole) {
-				if (in_array((string)$userRole, $matchArray)) {
+				if (in_array($userRole, $matchArray, true)) {
 					return true;
 				}
 			}
 		}
 
 		// Allow access if user has been granted access to the specific resource
-		if (isset($this->_acl[$iniKey]['actions'])) {
-			if (array_key_exists($params['action'], $this->_acl[$iniKey]['actions']) && !empty($this->_acl[$iniKey]['actions'][$params['action']])) {
-				$matchArray = $this->_acl[$iniKey]['actions'][$params['action']];
-				foreach ($userRoles as $userRole) {
-					if (in_array((string)$userRole, $matchArray)) {
-						return true;
-					}
+		if (array_key_exists($action, $this->_acl[$iniKey]['actions']) && !empty($this->_acl[$iniKey]['actions'][$action])) {
+			$matchArray = $this->_acl[$iniKey]['actions'][$action];
+			foreach ($userRoles as $userRole) {
+				if (in_array($userRole, $matchArray, true)) {
+					return true;
 				}
 			}
 		}
+
 		return false;
 	}
 
@@ -247,7 +260,7 @@ trait AclTrait {
 				return true;
 			}
 
-			return in_array($params['action'], $rule['actions']);
+			return in_array($params['action'], $rule['actions'], true);
 		}
 
 		return false;
