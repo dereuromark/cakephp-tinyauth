@@ -786,8 +786,7 @@ class TinyAuthorizeTest extends TestCase {
 	 *
 	 * @return void
 	 */
-	public function testDeny()
-	{
+	public function testDeny() {
 		$object = new TestTinyAuthorize($this->collection, [
 		]);
 
