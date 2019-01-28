@@ -41,8 +41,7 @@ class AuthenticationComponent extends CakeAuthenticationComponent {
 	 *
 	 * @return void
 	 */
-	public function startup()
-	{
+	public function startup() {
 		$this->_prepareAuthentication();
 
 		parent::startup();
@@ -51,8 +50,7 @@ class AuthenticationComponent extends CakeAuthenticationComponent {
 	/**
 	 * @return void
 	 */
-	protected function _prepareAuthentication()
-	{
+	protected function _prepareAuthentication() {
 		$rule = $this->_getRule($this->_registry->getController()->getRequest()->getAttribute('params'));
 		if (!$rule) {
 			return;
@@ -76,10 +74,12 @@ class AuthenticationComponent extends CakeAuthenticationComponent {
 			return;
 		}
 
-		if (false) {
+		/*
+		if ($allowAll) {
 			$this->setConfig('requireIdentity', false);
 			return;
 		}
+		*/
 
 		$this->allowUnauthenticated($allowed);
 	}
@@ -88,8 +88,7 @@ class AuthenticationComponent extends CakeAuthenticationComponent {
 	 * @param array $params
 	 * @return array
 	 */
-	protected function _getRule(array $params)
-	{
+	protected function _getRule(array $params) {
 		$rules = $this->_getAllow($this->getConfig('allowFilePath'));
 		foreach ($rules as $rule) {
 			if ($params['plugin'] && $params['plugin'] !== $rule['plugin']) {
@@ -111,12 +110,10 @@ class AuthenticationComponent extends CakeAuthenticationComponent {
 	/**
 	 * @return array
 	 */
-	protected function _getAllActions()
-	{
+	protected function _getAllActions() {
 		$controller = $this->_registry->getController();
 
 		return get_class_methods($controller);
 	}
-
 
 }

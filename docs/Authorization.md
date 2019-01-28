@@ -339,6 +339,7 @@ bin/cake tiny_auth_sync {your default roles, comma separated}
 ```
 This will then add any missing controller with `* = ...` for all actions and you can then manually fine-tune.
 
+Note: Use `'*'` as wildcard role if you just want to generate all possible controllers.
 Use with `-d -v` to just output the changes it would do to your ACL INI file.
 
 ## Tips
