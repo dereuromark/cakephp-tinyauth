@@ -25,4 +25,87 @@ class AuthenticationComponent extends CakeAuthenticationComponent {
 		'allowFile' => 'tinyauth_allow.ini',
 	];
 
+	/**
+	 * {inheritDoc}
+	 *
+	 * @return void
+	 */
+	public function startup()
+	{
+		$this->_prepareAuthentication();
+
+		parent::startup();
+	}
+
+	/**
+	 * @return void
+	 */
+	protected function _prepareAuthentication()
+	{
+		$rule = $this->_getRule($this->_registry->getController()->getRequest()->getAttribute('params'));
+		if (!$rule) {
+			return;
+		}
+
+		if (in_array('*', $rule['deny'], true)) {
+			return;
+		}
+
+		$allowed = [];
+		if (in_array('*', $rule['allow'], true)) {
+			$allowed = $this->_getAllActions();
+		} elseif (!empty($rule['allow'])) {
+			$allowed = $rule['allow'];
+		}
+		if (!empty($rule['deny'])) {
+			$allowed = array_diff($allowed, $rule['deny']);
+		}
+
+		if (!$allowed) {
+			return;
+		}
+
+		if (false) {
+			$this->setConfig('requireIdentity', false);
+			return;
+		}
+
+		$this->allowUnauthenticated($allowed);
+	}
+
+	/**
+	 * @param array $params
+	 * @return array
+	 */
+	protected function _getRule(array $params)
+	{
+		$rules = $this->_getAllow($this->getConfig('allowFilePath'));
+		foreach ($rules as $rule) {
+			if ($params['plugin'] && $params['plugin'] !== $rule['plugin']) {
+				continue;
+			}
+			if (!empty($params['prefix']) && $params['prefix'] !== $rule['prefix']) {
+				continue;
+			}
+			if ($params['controller'] !== $rule['controller']) {
+				continue;
+			}
+
+			return $rule;
+		}
+
+		return [];
+	}
+
+	/**
+	 * @return array
+	 */
+	protected function _getAllActions()
+	{
+		$controller = $this->_registry->getController();
+
+		return get_class_methods($controller);
+	}
+
+
 }

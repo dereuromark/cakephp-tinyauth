@@ -12,6 +12,7 @@ use InvalidArgumentException;
 use TinyAuth\Auth\AclTrait;
 use TinyAuth\Auth\AllowAdapter\AllowAdapterInterface;
 use TinyAuth\Auth\AllowAdapter\IniAllowAdapter;
+use TinyAuth\Auth\AllowTrait;
 
 /**
  * TinyAuth AuthComponent to handle all authentication in a central ini file.
@@ -22,6 +23,7 @@ use TinyAuth\Auth\AllowAdapter\IniAllowAdapter;
 class AuthComponent extends CakeAuthComponent {
 
 	use AclTrait;
+	use AllowTrait;
 
 	/**
 	 * @var array
@@ -93,10 +95,10 @@ class AuthComponent extends CakeAuthComponent {
 	 * @return void
 	 */
 	protected function _prepareAuthentication() {
-		$authentication = $this->_getAuth($this->getConfig('allowFilePath'));
+		$rules = $this->_getAllow($this->getConfig('allowFilePath'));
 
 		$params = $this->request->getAttribute('params');
-		foreach ($authentication as $rule) {
+		foreach ($rules as $rule) {
 			if ($params['plugin'] && $params['plugin'] !== $rule['plugin']) {
 				continue;
 			}
@@ -147,7 +149,7 @@ class AuthComponent extends CakeAuthComponent {
 		unset($config['allowFilePath']);
 		unset($config['allowFile']);
 
-		$auth = $this->_loadAllowAdapter($config['allowAdapter'])->getAllow($this->_getAvailableRoles(), $config);
+		$auth = $this->_loadAllowAdapter($config['allowAdapter'])->getAllow($config);
 
 		Cache::write($this->getConfig('allowCacheKey'), $auth, $this->getConfig('cache'));
 		return $auth;
