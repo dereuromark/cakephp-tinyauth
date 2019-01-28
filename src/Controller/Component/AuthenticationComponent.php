@@ -3,6 +3,7 @@
 namespace TinyAuth\Controller\Component;
 
 use Authentication\Controller\Component\AuthenticationComponent as CakeAuthenticationComponent;
+use Cake\Controller\ComponentRegistry;
 use TinyAuth\Auth\AllowAdapter\IniAllowAdapter;
 use TinyAuth\Auth\AllowTrait;
 
@@ -24,6 +25,16 @@ class AuthenticationComponent extends CakeAuthenticationComponent {
 		'allowFilePath' => null, // Possible to locate ini file at given path e.g. Plugin::configPath('Admin'), filePath is also available for shared config
 		'allowFile' => 'tinyauth_allow.ini',
 	];
+
+	/**
+	 * @param \Cake\Controller\ComponentRegistry $registry
+	 * @param array $config
+	 */
+	public function __construct(ComponentRegistry $registry, array $config = []) {
+		$config += $this->_defaultTinyAuthConfig;
+
+		parent::__construct($registry, $config);
+	}
 
 	/**
 	 * {inheritDoc}
