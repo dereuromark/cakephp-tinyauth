@@ -29,7 +29,6 @@ class IniAllowAdapter implements AllowAdapterInterface {
 			}
 
 			$auth[$key]['map'] = $actions;
-			$auth[$key]['all'] = false;
 			$auth[$key]['deny'] = [];
 			$auth[$key]['allow'] = [];
 
@@ -38,10 +37,6 @@ class IniAllowAdapter implements AllowAdapterInterface {
 				if ($denied) {
 					$auth[$key]['deny'][] = mb_substr($action, 1);
 					continue;
-				}
-
-				if ($action === '*') {
-					$auth[$key]['all'] = true;
 				}
 
 				$auth[$key]['allow'][] = $action;

@@ -256,11 +256,14 @@ trait AclTrait {
 				continue;
 			}
 
-			if (!empty($rule['all'])) {
-				return true;
-			}
-			if (!empty($rule['deny']) && in_array($params['action'], $rule['deny'], true)) {
+			$action = $params['action'];
+
+			if (!empty($rule['deny']) && in_array($action, $rule['deny'], true)) {
 				return false;
+			}
+
+			if (in_array('*', $rule['allow'], true)) {
+				return true;
 			}
 
 			return in_array($params['action'], $rule['allow'], true);

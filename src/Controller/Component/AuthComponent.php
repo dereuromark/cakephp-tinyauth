@@ -107,12 +107,14 @@ class AuthComponent extends CakeAuthComponent {
 				continue;
 			}
 
-			if ($rule['all']) {
+			if (in_array('*', $rule['allow'], true)) {
 				$this->allow();
 			} elseif (!empty($rule['allow'])) {
 				$this->allow($rule['allow']);
 			}
-			if (!empty($rule['deny'])) {
+			if (in_array('*', $rule['deny'], true)) {
+				$this->deny();
+			} elseif (!empty($rule['deny'])) {
 				$this->deny($rule['deny']);
 			}
 		}
