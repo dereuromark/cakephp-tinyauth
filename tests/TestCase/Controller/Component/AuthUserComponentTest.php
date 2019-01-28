@@ -119,7 +119,7 @@ class AuthUserComponentTest extends TestCase {
 		$data = [
 			'Users' => [
 				'controller' => 'Users',
-				'actions' => ['view'],
+				'allow' => ['view'],
 			]
 		];
 		Cache::write($cacheKey, $data, $cache);
@@ -145,7 +145,7 @@ class AuthUserComponentTest extends TestCase {
 		$data = [
 			'Users' => [
 				'controller' => 'Users',
-				'actions' => ['index'],
+				'allow' => ['index'],
 			]
 		];
 		Cache::write($cacheKey, $data, $cache);

@@ -29,4 +29,10 @@ class OffersController extends Controller {
 		throw new Exception('Should not be reached!');
 	}
 
+	/**
+	 * @return void
+	 */
+	public function superPrivate() {
+	}
+
 }

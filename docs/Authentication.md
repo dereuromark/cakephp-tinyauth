@@ -18,9 +18,9 @@ Authentication is set up in your controller's `initialize` method:
 // src/Controller/AppController
 
 public function initialize() {
-	parent::initialize();
+    parent::initialize();
 
-	$this->loadComponent('TinyAuth.Auth');
+    $this->loadComponent('TinyAuth.Auth');
 }
 ```
 
@@ -37,6 +37,7 @@ Make sure to create an entry for each action you want to expose and use:
 
 - one or more action names
 - the ``*`` wildcard to allow access to all actions of that controller
+- use `"!actionName"` (quotes are important then) to deny certain actions
 
 ```ini
 ; ----------------------------------------------------------
@@ -62,6 +63,16 @@ Accounts.Accounts = view, edit
 Accounts.admin/Accounts = index
 ```
 
+Using only allowing is recommended.
+Careful with denying, as this can accidentally open up more than desired actions. If you really want to use it:
+
+```ini
+Users = "!secret",* 
+```
+Meaning: Allow all Users actions by default, but keep authentication required for "secret" action.
+
+Note that deny always trumps allow, if both are declared for an action.
+
 ### Multiple files and merging
 You can specify multiple paths in your config, e.g. when you have plugins and separated the definitions across them.
 Make sure you are using each key only once, though. The first definition will be kept and all others for the same key are ignored.
@@ -74,11 +85,11 @@ So in case any of your controllers (or plugin controllers) contain such a statem
 use Cake\Event\Event;
 ...
 
-	public function beforeFilter(Event $event) {
-		parent::beforeFilter($event);
+    public function beforeFilter(Event $event) {
+        parent::beforeFilter($event);
 
-		$this->Auth->allow('index', 'view');
-	}
+        $this->Auth->allow('index', 'view');
+    }
 ```
 This can be interested when migrating slowly to TinyAuth, for example.
 Once you move such a code based rule into the INI file, you can safely remove those lines of code in your controller :)
@@ -96,7 +107,7 @@ By default it will not use caching in debug mode, though.
 To modify the caching behavior set the ``autoClearCache`` configuration option:
 ```php
 $this->loadComponent('TinyAuth.Auth', [
-	'autoClearCache' => true|false
+    'autoClearCache' => true|false
 )]
 ```
 

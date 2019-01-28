@@ -66,9 +66,9 @@ class AuthComponentTest extends TestCase {
 	 */
 	public function testValidAnyAction() {
 		$request = new Request(['params' => [
+			'plugin' => 'Extras',
 			'controller' => 'Offers',
 			'action' => 'index',
-			'plugin' => 'Extras',
 			'_ext' => null,
 			'pass' => [1]
 		]]);
@@ -88,13 +88,39 @@ class AuthComponentTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testDeniedAction() {
+	public function testDeniedActionInController() {
 		$request = new Request(['params' => [
+			'plugin' => 'Extras',
 			'controller' => 'Offers',
 			'action' => 'denied',
-			'plugin' => 'Extras',
 			'_ext' => null,
-			'pass' => [1]
+			'pass' => [1],
+		]]);
+		$controller = new OffersController($request);
+		$controller->loadComponent('TinyAuth.Auth', $this->componentConfig);
+
+		$config = [];
+		$controller->Auth->initialize($config);
+
+		$event = new Event('Controller.beforeFilter', $controller);
+		$controller->beforeFilter($event);
+
+		$event = new Event('Controller.startup', $controller);
+		$response = $controller->Auth->startup($event);
+		$this->assertInstanceOf(Response::class, $response);
+		$this->assertSame(302, $response->getStatusCode());
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testDeniedAction() {
+		$request = new Request(['params' => [
+			'plugin' => 'Extras',
+			'controller' => 'Offers',
+			'action' => 'superPrivate',
+			'_ext' => null,
+			'pass' => [1],
 		]]);
 		$controller = new OffersController($request);
 		$controller->loadComponent('TinyAuth.Auth', $this->componentConfig);
@@ -120,7 +146,7 @@ class AuthComponentTest extends TestCase {
 			'action' => 'index',
 			'plugin' => null,
 			'_ext' => null,
-			'pass' => []
+			'pass' => [],
 		]]);
 		$controller = $this->getControllerMock($request);
 

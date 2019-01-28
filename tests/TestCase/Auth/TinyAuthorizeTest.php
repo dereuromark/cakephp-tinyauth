@@ -92,7 +92,7 @@ class TinyAuthorizeTest extends TestCase {
 	 * @return void
 	 */
 	public function testLoadingInvalidAclAdapter() {
-		$object = new TestTinyAuthorize($this->collection, [
+		new TestTinyAuthorize($this->collection, [
 			'aclAdapter' => Configure::class
 		]);
 	}
@@ -104,7 +104,7 @@ class TinyAuthorizeTest extends TestCase {
 	 * @return void
 	 */
 	public function testLoadingNonExistentAclAdapter() {
-		$object = new TestTinyAuthorize($this->collection, [
+		new TestTinyAuthorize($this->collection, [
 			'aclAdapter' => 'Non\\Existent\\Acl\\Adapter'
 		]);
 	}
@@ -119,6 +119,7 @@ class TinyAuthorizeTest extends TestCase {
 		$object = new TestTinyAuthorize($this->collection, [
 			'cache' => 'invalid-cache-config'
 		]);
+		$this->assertTrue(is_object($object));
 	}
 
 	/**
@@ -135,131 +136,147 @@ class TinyAuthorizeTest extends TestCase {
 				'controller' => 'Tags',
 				'prefix' => null,
 				'plugin' => null,
-				'actions' => [
+				'allow' => [
 					'index' => [1],
 					'edit' => [1],
 					'delete' => [3],
 					'very_long_underscored_action' => [1],
 					'veryLongActionNameAction' => [1]
-				]
+				],
+				'deny' => [],
 			],
 			'admin/Tags' => [
 				'controller' => 'Tags',
 				'prefix' => 'admin',
 				'plugin' => null,
-				'actions' => [
+				'allow' => [
 					'index' => [1],
 					'edit' => [1],
 					'delete' => [3],
 					'very_long_underscored_action' => [1],
 					'veryLongActionNameAction' => [1]
-				]
+				],
+				'deny' => [],
 			],
 			'Tags.Tags' => [
 				'controller' => 'Tags',
 				'prefix' => null,
 				'plugin' => 'Tags',
-				'actions' => [
+				'allow' => [
 					'index' => [1],
 					'edit' => [1],
 					'view' => [1],
 					'delete' => [3],
 					'very_long_underscored_action' => [1],
 					'veryLongActionNameAction' => [1]
-				]
+				],
+				'deny' => [],
 			],
 			'Tags.admin/Tags' => [
 				'controller' => 'Tags',
 				'prefix' => 'admin',
 				'plugin' => 'Tags',
-				'actions' => [
+				'allow' => [
 					'index' => [1],
 					'edit' => [1],
 					'view' => [1],
 					'delete' => [3],
 					'very_long_underscored_action' => [1],
 					'veryLongActionNameAction' => [1]
-				]
+				],
+				'deny' => [],
 			],
 			'special/Comments' => [
 				'controller' => 'Comments',
 				'prefix' => 'special',
 				'plugin' => null,
-				'actions' => [
+				'allow' => [
 					'*' => [3]
-				]
+				],
+				'deny' => [],
 			],
 			'Comments.special/Comments' => [
 				'controller' => 'Comments',
 				'prefix' => 'special',
 				'plugin' => 'Comments',
-				'actions' => [
+				'allow' => [
 					'*' => [3]
-				]
+				],
+				'deny' => [],
 			],
 			'Posts' => [
 				'controller' => 'Posts',
 				'prefix' => null,
 				'plugin' => null,
-				'actions' => [
+				'allow' => [
 					'*' => [1, 2, 3]
-				]
+				],
+				'deny' => [],
 			],
 			'admin/Posts' => [
 				'controller' => 'Posts',
 				'prefix' => 'admin',
 				'plugin' => null,
-				'actions' => [
+				'allow' => [
 					'*' => [1, 2, 3]
-				]
+				],
+				'deny' => [],
 			],
 			'Posts.Posts' => [
 				'controller' => 'Posts',
 				'prefix' => null,
 				'plugin' => 'Posts',
-				'actions' => [
+				'allow' => [
 					'*' => [1, 2, 3]
-				]
+				],
+				'deny' => [],
 			],
 			'Posts.admin/Posts' => [
 				'controller' => 'Posts',
 				'prefix' => 'admin',
 				'plugin' => 'Posts',
-				'actions' => [
+				'allow' => [
 					'*' => [1, 2, 3]
-				]
+				],
+				'deny' => [],
 			],
 			'Blogs' => [
 				'controller' => 'Blogs',
 				'prefix' => null,
 				'plugin' => null,
-				'actions' => [
-					'*' => [2]
-				]
+				'allow' => [
+					'*' => [1, 2]
+				],
+				'deny' => [
+					'foo' => [1]
+				],
 			],
 			'admin/Blogs' => [
 				'controller' => 'Blogs',
 				'prefix' => 'admin',
 				'plugin' => null,
-				'actions' => [
+				'allow' => [
 					'*' => [2]
-				]
+				],
+				'deny' => [],
 			],
 			'Blogs.Blogs' => [
 				'controller' => 'Blogs',
 				'prefix' => null,
 				'plugin' => 'Blogs',
-				'actions' => [
+				'allow' => [
 					'*' => [2]
-				]
+				],
+				'deny' => [],
 			],
 			'Blogs.admin/Blogs' => [
 				'controller' => 'Blogs',
 				'prefix' => 'admin',
 				'plugin' => 'Blogs',
-				'actions' => [
+				'allow' => [
 					'*' => [2]
-				]
+				],
+				'deny' => [],
 			]
 		];
 		// We don't need the original map
@@ -765,6 +782,32 @@ class TinyAuthorizeTest extends TestCase {
 	}
 
 	/**
+	 * Tests with deny even though wildcard allows all for this role.
+	 *
+	 * @return void
+	 */
+	public function testDeny() {
+		$object = new TestTinyAuthorize($this->collection, [
+		]);
+
+		// All tests performed against this action
+		$this->request->params['action'] = 'foo';
+
+		// Test standard controller
+		$this->request->params['controller'] = 'Blogs';
+		$this->request->params['prefix'] = null;
+		$this->request->params['plugin'] = null;
+
+		$user = ['role_id' => 2];
+		$res = $object->authorize($user, $this->request);
+		$this->assertTrue($res);
+
+		$user = ['role_id' => 1];
+		$res = $object->authorize($user, $this->request);
+		$this->assertFalse($res);
+	}
+
+	/**
 	 * Tests with configuration setting 'allowUser' set to true, giving user
 	 * access to all controller/actions except when prefixed with /admin
 	 *
@@ -949,7 +992,7 @@ class TinyAuthorizeTest extends TestCase {
 		];
 
 		foreach ($acl as $resource) {
-			foreach ($resource['actions'] as $action => $allowed) {
+			foreach ($resource['allow'] as $action => $allowed) {
 				$this->request->params['controller'] = $resource['controller'];
 				$this->request->params['prefix'] = $resource['prefix'];
 				$this->request->params['action'] = $action;
