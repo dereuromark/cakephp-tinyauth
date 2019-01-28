@@ -25,16 +25,16 @@ authorization in your controller's `beforeFilter` like this example:
 // src/Controller/AppController
 
 public function initialize() {
-	parent::initialize();
+    parent::initialize();
 
-	$this->loadComponent('TinyAuth.Auth', [
-		'authorize' => [
-			'TinyAuth.Tiny' => [
-				...
-			],
-			...
-		]
-	]);
+    $this->loadComponent('TinyAuth.Auth', [
+        'authorize' => [
+            'TinyAuth.Tiny' => [
+                ...
+            ],
+            ...
+        ]
+    ]);
 }
 ```
 TinyAuth Authorize can be used in combination with any [CakePHP Authentication Type](http://book.cakephp.org/3.0/en/controllers/components/authentication.html#choosing-an-authentication-type), as well.
@@ -43,13 +43,13 @@ TinyAuth Authorize can be used in combination with any [CakePHP Authentication T
 Please note that `TinyAuth.Auth` replaces the default CakePHP `Auth` component. Do not try to load both at once.
 You can also use the default one, if you only want to use ACL (authorization):
 ```php
-	$this->loadComponent('Auth', [
-		'authorize' => [
-			'TinyAuth.Tiny' => [
-				...
-			]
-		]
-	]);
+    $this->loadComponent('Auth', [
+        'authorize' => [
+            'TinyAuth.Tiny' => [
+                ...
+            ]
+        ]
+    ]);
 ```
 
 
@@ -74,11 +74,11 @@ define('ROLE_ADMIN', 2);
 define('ROLE_SUPERADMIN', 9);
 
 return [
-	'Roles' => [
-		'user' => ROLE_USER,
-		'admin' => ROLE_ADMIN,
-		'superadmin' => ROLE_SUPERADMIN
-	]
+    'Roles' => [
+        'user' => ROLE_USER,
+        'admin' => ROLE_ADMIN,
+        'superadmin' => ROLE_SUPERADMIN
+    ]
 ];
 ```
 
@@ -222,7 +222,7 @@ By default it will not use caching in debug mode, though.
 To modify the caching behavior set the ``autoClearCache`` configuration option:
 ```php
 'TinyAuth.Tiny' => [
-	'autoClearCache' => true|false
+    'autoClearCache' => true|false
 ]
 ```
 
@@ -266,7 +266,7 @@ $this->loadComponent('TinyAuth.AuthUser');
 Maybe you only want to redirect to a certain action if that is accessible for this user (role):
 ```php
 if ($this->AuthUser->hasAccess(['action' => 'forModeratorOnly'])) {
-	return $this->redirect(['action' => 'forModeratorOnly']);
+    return $this->redirect(['action' => 'forModeratorOnly']);
 }
 // Do something else
 ```
@@ -274,7 +274,7 @@ if ($this->AuthUser->hasAccess(['action' => 'forModeratorOnly'])) {
 Or if that person is of a certain role in general:
 ```php
 if ($this->AuthUser->hasRole('mod')) { // Either by alias or id
-	// OK, do something now
+    // OK, do something now
 }
 ```
 
@@ -312,9 +312,9 @@ echo $this->AuthUser->postLink('Delete this', ['action' => 'delete', $id], ['con
 You can also do more complex things:
 ```php
 if ($this->AuthUser->hasAccess(['action' => 'secretArea'])) {
-	echo 'Only for you: ';
-	echo $this->Html->link('admin/index', ['action' => 'secretArea']);
-	echo ' (do not tell anyone else!);
+    echo 'Only for you: ';
+    echo $this->Html->link('admin/index', ['action' => 'secretArea']);
+    echo ' (do not tell anyone else!);
 }
 ```
 
@@ -352,7 +352,7 @@ define('ROLE_MOD', 'moderator');
 
 // In your template
 if ($this->AuthUser->hasRole(ROLE_MOD)) {
-	...
+    ...
 }
 ```
 This way, if you ever refactor them, it will be easier to adjust all occurrences, it will also be possible to use auto-completion type-hinting.
@@ -365,11 +365,11 @@ If available here, TinyAuth will use those and will not try to query the roles t
 For basic single-role setup, the session is expected to be filled like
 ```php
 'Auth' => [
-	'User' => [
-		'id' => '1',
-		'role_id' => '1',
-		...
-	]	
+    'User' => [
+        'id' => '1',
+        'role_id' => '1',
+        ...
+    ]    
 ];
 ```
 The expected `'role_id'` session key is configurable via `roleColumn` config key.
@@ -377,31 +377,31 @@ The expected `'role_id'` session key is configurable via `roleColumn` config key
 For a multi-role setup it can be either the normalized array form
 ```php
 'Auth' => [
-	'User' => [
-		'id' => '1',
-		...
-		'Roles' => [
-			[
-				'id' => '1',
-				...
-			],
-			...
-		],
-	]	
+    'User' => [
+        'id' => '1',
+        ...
+        'Roles' => [
+            [
+                'id' => '1',
+                ...
+            ],
+            ...
+        ],
+    ]    
 ];
 ```
 or the simplified numeric list form
 ```php
 'Auth' => [
-	'User' => [
-		'id' => '1',
-		...
-		'Roles' => [
-			'1', 
-			'2',
-			...
-		]
-	]	
+    'User' => [
+        'id' => '1',
+        ...
+        'Roles' => [
+            '1', 
+            '2',
+            ...
+        ]
+    ]    
 ];
 ```
 The expected `'Roles'` session key is configurable via `rolesTable` config key.
@@ -409,15 +409,15 @@ The expected `'Roles'` session key is configurable via `rolesTable` config key.
 Alternatively, instead of manually adding the Roles into the session, you can also just join in the pivot table (`roles_users` usually), and if those are added to the session in either normalized or numeric list it will also read from those instead of asking the database:
 ```php
 'Auth' => [
-	'User' => [
-		'id' => '1',
-		...
-		'roles_users' => [
-			...
-			'role_id' => '1',
-			...
-		],
-	]	
+    'User' => [
+        'id' => '1',
+        ...
+        'roles_users' => [
+            ...
+            'role_id' => '1',
+            ...
+        ],
+    ]    
 ];
 ```
 Note that in this case the role definitions will have to contain a `role_id`, though (as the pivot table only contains `user_id` and that field).

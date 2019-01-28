@@ -8,10 +8,10 @@ Implement the AclAdapterInterface and make sure your getAcl() method returns an 
         "prefix" => null,
         "controller" => "Posts",
         "allow" => [
-        	// action to role id mapping
+            // action to role id mapping
         ],
         "deny => [
-        	// action to role id mapping
+            // action to role id mapping
         ]
     ],
     // or plugin with admin prefix

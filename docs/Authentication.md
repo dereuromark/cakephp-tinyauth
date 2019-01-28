@@ -18,9 +18,9 @@ Authentication is set up in your controller's `initialize` method:
 // src/Controller/AppController
 
 public function initialize() {
-	parent::initialize();
+    parent::initialize();
 
-	$this->loadComponent('TinyAuth.Auth');
+    $this->loadComponent('TinyAuth.Auth');
 }
 ```
 
@@ -85,11 +85,11 @@ So in case any of your controllers (or plugin controllers) contain such a statem
 use Cake\Event\Event;
 ...
 
-	public function beforeFilter(Event $event) {
-		parent::beforeFilter($event);
+    public function beforeFilter(Event $event) {
+        parent::beforeFilter($event);
 
-		$this->Auth->allow('index', 'view');
-	}
+        $this->Auth->allow('index', 'view');
+    }
 ```
 This can be interested when migrating slowly to TinyAuth, for example.
 Once you move such a code based rule into the INI file, you can safely remove those lines of code in your controller :)
@@ -107,7 +107,7 @@ By default it will not use caching in debug mode, though.
 To modify the caching behavior set the ``autoClearCache`` configuration option:
 ```php
 $this->loadComponent('TinyAuth.Auth', [
-	'autoClearCache' => true|false
+    'autoClearCache' => true|false
 )]
 ```
 
