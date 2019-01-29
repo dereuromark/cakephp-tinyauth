@@ -15,6 +15,30 @@ trait AllowTrait {
 	protected $_allowAdapter;
 
 	/**
+	 * @param array $params
+	 * @return array
+	 */
+	protected function _getAllowRule(array $params) {
+		$rules = $this->_getAllow($this->getConfig('allowFilePath'));
+
+		foreach ($rules as $rule) {
+			if ($params['plugin'] && $params['plugin'] !== $rule['plugin']) {
+				continue;
+			}
+			if (!empty($params['prefix']) && $params['prefix'] !== $rule['prefix']) {
+				continue;
+			}
+			if ($params['controller'] !== $rule['controller']) {
+				continue;
+			}
+
+			return $rule;
+		}
+
+		return [];
+	}
+
+	/**
 	 * @param string|null $path
 	 * @return array
 	 */

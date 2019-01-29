@@ -51,7 +51,7 @@ class AuthenticationComponent extends CakeAuthenticationComponent {
 	 * @return void
 	 */
 	protected function _prepareAuthentication() {
-		$rule = $this->_getRule($this->_registry->getController()->getRequest()->getAttribute('params'));
+		$rule = $this->_getAllowRule($this->_registry->getController()->getRequest()->getAttribute('params'));
 		if (!$rule) {
 			return;
 		}
@@ -60,11 +60,11 @@ class AuthenticationComponent extends CakeAuthenticationComponent {
 			return;
 		}
 
-		$allowed = [];
+		$allowed = $this->unauthenticatedActions;
 		if (in_array('*', $rule['allow'], true)) {
 			$allowed = $this->_getAllActions();
 		} elseif (!empty($rule['allow'])) {
-			$allowed = $rule['allow'];
+			$allowed = array_merge($allowed, $rule['allow']);
 		}
 		if (!empty($rule['deny'])) {
 			$allowed = array_diff($allowed, $rule['deny']);
@@ -74,37 +74,7 @@ class AuthenticationComponent extends CakeAuthenticationComponent {
 			return;
 		}
 
-		/*
-		if ($allowAll) {
-			$this->setConfig('requireIdentity', false);
-			return;
-		}
-		*/
-
 		$this->allowUnauthenticated($allowed);
-	}
-
-	/**
-	 * @param array $params
-	 * @return array
-	 */
-	protected function _getRule(array $params) {
-		$rules = $this->_getAllow($this->getConfig('allowFilePath'));
-		foreach ($rules as $rule) {
-			if ($params['plugin'] && $params['plugin'] !== $rule['plugin']) {
-				continue;
-			}
-			if (!empty($params['prefix']) && $params['prefix'] !== $rule['prefix']) {
-				continue;
-			}
-			if ($params['controller'] !== $rule['controller']) {
-				continue;
-			}
-
-			return $rule;
-		}
-
-		return [];
 	}
 
 	/**

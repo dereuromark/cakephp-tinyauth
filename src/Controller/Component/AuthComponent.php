@@ -2,10 +2,8 @@
 
 namespace TinyAuth\Controller\Component;
 
-use Cake\Cache\Cache;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\AuthComponent as CakeAuthComponent;
-use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
 use Cake\Event\Event;
 use InvalidArgumentException;
@@ -84,64 +82,21 @@ class AuthComponent extends CakeAuthComponent {
 	 * @return void
 	 */
 	protected function _prepareAuthentication() {
-		$rules = $this->_getAllow($this->getConfig('allowFilePath'));
-
-		$params = $this->request->getAttribute('params');
-		foreach ($rules as $rule) {
-			if ($params['plugin'] && $params['plugin'] !== $rule['plugin']) {
-				continue;
-			}
-			if (!empty($params['prefix']) && $params['prefix'] !== $rule['prefix']) {
-				continue;
-			}
-			if ($params['controller'] !== $rule['controller']) {
-				continue;
-			}
-
-			if (in_array('*', $rule['allow'], true)) {
-				$this->allow();
-			} elseif (!empty($rule['allow'])) {
-				$this->allow($rule['allow']);
-			}
-			if (in_array('*', $rule['deny'], true)) {
-				$this->deny();
-			} elseif (!empty($rule['deny'])) {
-				$this->deny($rule['deny']);
-			}
-		}
-	}
-
-	/**
-	 * Parse ini file and returns the allowed actions.
-	 *
-	 * Uses cache for maximum performance.
-	 *
-	 * @param string|null $path
-	 * @return array
-	 */
-	protected function _getAuth($path = null) {
-		if ($this->getConfig('autoClearCache') && Configure::read('debug')) {
-			Cache::delete($this->getConfig('allowCacheKey'), $this->getConfig('cache'));
-		}
-		$auth = Cache::read($this->getConfig('allowCacheKey'), $this->getConfig('cache'));
-		if ($auth !== false) {
-			return $auth;
+		$rule = $this->_getAllowRule($this->_registry->getController()->getRequest()->getAttribute('params'));
+		if (!$rule) {
+			return;
 		}
 
-		if ($path === null) {
-			$path = $this->getConfig('allowFilePath');
+		if (in_array('*', $rule['allow'], true)) {
+			$this->allow();
+		} elseif (!empty($rule['allow'])) {
+			$this->allow($rule['allow']);
 		}
-
-		$config = $this->getConfig();
-		$config['filePath'] = $path;
-		$config['file'] = $config['allowFile'];
-		unset($config['allowFilePath']);
-		unset($config['allowFile']);
-
-		$auth = $this->_loadAllowAdapter($config['allowAdapter'])->getAllow($config);
-
-		Cache::write($this->getConfig('allowCacheKey'), $auth, $this->getConfig('cache'));
-		return $auth;
+		if (in_array('*', $rule['deny'], true)) {
+			$this->deny();
+		} elseif (!empty($rule['deny'])) {
+			$this->deny($rule['deny']);
+		}
 	}
 
 	/**

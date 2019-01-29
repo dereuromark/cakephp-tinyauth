@@ -38,7 +38,7 @@ class TinyAuthSyncCommand extends Command implements CommandCollectionAwareInter
 	 * @return int
 	 */
 	public function execute(Arguments $args, ConsoleIo $io) {
-		$syncer = $this->getSyncer();
+		$syncer = $this->_getSyncer();
 		$syncer->syncAcl($args, $io);
 		$io->out('Controllers and ACL synced.');
 
@@ -48,7 +48,7 @@ class TinyAuthSyncCommand extends Command implements CommandCollectionAwareInter
 	/**
 	 * @return \TinyAuth\Sync\Syncer
 	 */
-	protected function getSyncer() {
+	protected function _getSyncer() {
 		return new Syncer();
 	}
 
