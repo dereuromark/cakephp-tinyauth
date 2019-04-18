@@ -7,6 +7,7 @@ use Cake\View\Helper;
 use Cake\View\View;
 use TinyAuth\Auth\AclTrait;
 use TinyAuth\Auth\AuthUserTrait;
+use Cake\Routing\Router;
 
 /**
  * @property \Cake\View\Helper\HtmlHelper $Html
@@ -42,6 +43,10 @@ class AuthUserHelper extends Helper {
 	 * @throws \Cake\Core\Exception\Exception
 	 */
 	public function hasAccess(array $url) {
+        if (isset($url['_name'])) {
+            $url = Router::parse(Router::url($url));
+        }
+        
 		$params = $this->_View->getRequest()->getAttribute('params');
 		$url += [
 			'prefix' => !empty($params['prefix']) ? $params['prefix'] : null,
