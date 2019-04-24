@@ -5,6 +5,7 @@ namespace TinyAuth\View\Helper;
 use Cake\Core\Exception\Exception;
 use Cake\View\Helper;
 use Cake\View\View;
+use Cake\Routing\Router;
 use TinyAuth\Auth\AclTrait;
 use TinyAuth\Auth\AuthUserTrait;
 
@@ -42,6 +43,13 @@ class AuthUserHelper extends Helper {
 	 * @throws \Cake\Core\Exception\Exception
 	 */
 	public function hasAccess(array $url) {
+		if (isset($url['_name'])) {
+            $routes = Router::getRouteCollection()->named();
+            if (isset($routes[$url['_name']])) {
+                $url = $routes[$url['_name']]->defaults;
+            }
+        }
+		
 		$params = $this->_View->getRequest()->getAttribute('params');
 		$url += [
 			'prefix' => !empty($params['prefix']) ? $params['prefix'] : null,
