@@ -46,17 +46,26 @@ class AuthUserHelper extends Helper {
 		if (isset($url['_name'])) {
             $routes = Router::getRouteCollection()->named();
             if (isset($routes[$url['_name']])) {
-                $url = $routes[$url['_name']]->defaults;
+				$defaults = $routes[$url['_name']]->defaults;
+				if (!isset($defaults['action']) || !isset($defaults['controller'])) {
+					throw new Exception('Controller or action name could not be null.');
+				}
+				$url = [
+					'prefix' => !empty($defaults['prefix']) ? $defaults['prefix'] : null,
+					'plugin' => !empty($defaults['plugin']) ? $defaults['plugin'] : null,
+					'controller' => $defaults['controller'],
+					'action' => $defaults['action'],
+				];
             }
-        }
-		
-		$params = $this->_View->getRequest()->getAttribute('params');
-		$url += [
-			'prefix' => !empty($params['prefix']) ? $params['prefix'] : null,
-			'plugin' => !empty($params['plugin']) ? $params['plugin'] : null,
-			'controller' => $params['controller'],
-			'action' => 'index',
-		];
+        } else {
+			$params = $this->_View->getRequest()->getAttribute('params');
+			$url += [
+				'prefix' => !empty($params['prefix']) ? $params['prefix'] : null,
+				'plugin' => !empty($params['plugin']) ? $params['plugin'] : null,
+				'controller' => $params['controller'],
+				'action' => 'index',
+			];
+		}
 
 		$authuser = isset($this->_View->viewVars['_authUser']) ? $this->_View->viewVars['_authUser'] : null;
 		if ($authuser === null && !$this->getConfig('includeAuthentication')) {
