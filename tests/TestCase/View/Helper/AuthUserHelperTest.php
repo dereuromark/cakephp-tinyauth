@@ -141,6 +141,31 @@ class AuthUserHelperTest extends TestCase {
 	}
 
 	/**
+	 * Test that missing controller or action in named route causes exceptions.
+	 *
+	 * @return void
+	 */
+	public function testNamedRouteMissingControllerActionException()
+	{
+		$user = [
+			'id' => 1,
+			'role_id' => 1
+		];
+		$this->View->set('_authUser', $user);
+
+		Router::connect(
+			'/edit/*',
+			['action' => 'edit'],
+			['_name' => 'Tags::edit']
+		);
+
+		$request = ['_name' => 'Tags::edit'];
+		$this->expectException(\Cake\Core\Exception\Exception::class);
+		$this->expectExceptionMessage('Controller or action name could not be null.');
+		$result = $this->AuthUserHelper->hasAccess($request);
+	}
+
+	/**
 	 * @return void
 	 */
 	public function testLinkNotLoggedIn() {
