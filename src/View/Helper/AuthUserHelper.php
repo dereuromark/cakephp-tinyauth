@@ -5,6 +5,7 @@ namespace TinyAuth\View\Helper;
 use Cake\Core\Exception\Exception;
 use Cake\View\Helper;
 use Cake\View\View;
+use Cake\Routing\Exception\MissingRouteException;
 use Cake\Routing\Router;
 use TinyAuth\Auth\AclTrait;
 use TinyAuth\Auth\AuthUserTrait;
@@ -56,7 +57,9 @@ class AuthUserHelper extends Helper {
 					'controller' => $defaults['controller'],
 					'action' => $defaults['action'],
 				];
-            }
+            } else {
+				throw new MissingRouteException(['url' => $url['_name']]);
+			}
         } else {
 			$params = $this->_View->getRequest()->getAttribute('params');
 			$url += [

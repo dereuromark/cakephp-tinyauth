@@ -166,6 +166,32 @@ class AuthUserHelperTest extends TestCase {
 	}
 
 	/**
+	 * Test that using invalid names causes exceptions.
+	 *
+	 * @return void
+	 */
+	public function testInvalidNamedRouteException()
+	{
+		$user = [
+			'id' => 1,
+			'role_id' => 1
+		];
+		$this->View->set('_authUser', $user);
+
+		Router::connect(
+			'/edit/*',
+			['action' => 'edit'],
+			['_name' => 'Tags::edit']
+		);
+
+		$request = ['_name' => 'InvalidName'];
+
+		$this->expectException(\Cake\Routing\Exception\MissingRouteException::class);
+
+		$result = $this->AuthUserHelper->hasAccess($request);
+	}
+
+	/**
 	 * @return void
 	 */
 	public function testLinkNotLoggedIn() {
