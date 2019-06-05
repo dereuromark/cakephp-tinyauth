@@ -4,7 +4,9 @@ namespace TinyAuth\Test\TestCase\Controller\Component;
 
 use Cake\Cache\Cache;
 use Cake\Core\Configure;
+use Cake\Core\Exception\Exception;
 use Cake\Core\Plugin;
+use Cake\Routing\Exception\MissingRouteException;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\View\View;
@@ -52,8 +54,7 @@ class AuthUserHelperTest extends TestCase {
 	 *
 	 * @return void
 	 */
-	public function tearDown()
-	{
+	public function tearDown() {
 		parent::tearDown();
 		Router::reload();
 	}
@@ -159,7 +160,7 @@ class AuthUserHelperTest extends TestCase {
 		);
 
 		$request = ['_name' => 'Tags::edit'];
-		$this->expectException(\Cake\Core\Exception\Exception::class);
+		$this->expectException(Exception::class);
 		$this->expectExceptionMessage('Controller or action name could not be null.');
 		$result = $this->AuthUserHelper->hasAccess($request);
 	}
@@ -184,7 +185,7 @@ class AuthUserHelperTest extends TestCase {
 
 		$request = ['_name' => 'InvalidName'];
 
-		$this->expectException(\Cake\Routing\Exception\MissingRouteException::class);
+		$this->expectException(MissingRouteException::class);
 
 		$this->AuthUserHelper->hasAccess($request);
 	}

@@ -3,10 +3,10 @@
 namespace TinyAuth\View\Helper;
 
 use Cake\Core\Exception\Exception;
-use Cake\View\Helper;
-use Cake\View\View;
 use Cake\Routing\Exception\MissingRouteException;
 use Cake\Routing\Router;
+use Cake\View\Helper;
+use Cake\View\View;
 use TinyAuth\Auth\AclTrait;
 use TinyAuth\Auth\AuthUserTrait;
 
@@ -45,8 +45,8 @@ class AuthUserHelper extends Helper {
 	 */
 	public function hasAccess(array $url) {
 		if (isset($url['_name'])) {
-            $routes = Router::getRouteCollection()->named();
-            if (isset($routes[$url['_name']])) {
+			$routes = Router::getRouteCollection()->named();
+			if (isset($routes[$url['_name']])) {
 				$defaults = $routes[$url['_name']]->defaults;
 				if (!isset($defaults['action']) || !isset($defaults['controller'])) {
 					throw new Exception('Controller or action name could not be null.');
@@ -57,10 +57,10 @@ class AuthUserHelper extends Helper {
 					'controller' => $defaults['controller'],
 					'action' => $defaults['action'],
 				];
-            } else {
+			} else {
 				throw new MissingRouteException(['url' => $url['_name']]);
 			}
-        } else {
+		} else {
 			$params = $this->_View->getRequest()->getAttribute('params');
 			$url += [
 				'prefix' => !empty($params['prefix']) ? $params['prefix'] : null,
