@@ -145,8 +145,7 @@ class AuthUserHelperTest extends TestCase {
 	 *
 	 * @return void
 	 */
-	public function testNamedRouteMissingControllerActionException()
-	{
+	public function testNamedRouteMissingControllerActionException() {
 		$user = [
 			'id' => 1,
 			'role_id' => 1
@@ -170,8 +169,7 @@ class AuthUserHelperTest extends TestCase {
 	 *
 	 * @return void
 	 */
-	public function testInvalidNamedRouteException()
-	{
+	public function testInvalidNamedRouteException() {
 		$user = [
 			'id' => 1,
 			'role_id' => 1
@@ -188,7 +186,7 @@ class AuthUserHelperTest extends TestCase {
 
 		$this->expectException(\Cake\Routing\Exception\MissingRouteException::class);
 
-		$result = $this->AuthUserHelper->hasAccess($request);
+		$this->AuthUserHelper->hasAccess($request);
 	}
 
 	/**
