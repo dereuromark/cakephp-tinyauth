@@ -5,6 +5,8 @@ namespace TinyAuth\View\Helper;
 use Cake\Core\Exception\Exception;
 use Cake\View\Helper;
 use Cake\View\View;
+use Cake\Routing\Exception\MissingRouteException;
+use Cake\Routing\Router;
 use TinyAuth\Auth\AclTrait;
 use TinyAuth\Auth\AuthUserTrait;
 
@@ -42,13 +44,31 @@ class AuthUserHelper extends Helper {
 	 * @throws \Cake\Core\Exception\Exception
 	 */
 	public function hasAccess(array $url) {
-		$params = $this->_View->getRequest()->getAttribute('params');
-		$url += [
-			'prefix' => !empty($params['prefix']) ? $params['prefix'] : null,
-			'plugin' => !empty($params['plugin']) ? $params['plugin'] : null,
-			'controller' => $params['controller'],
-			'action' => 'index',
-		];
+		if (isset($url['_name'])) {
+            $routes = Router::getRouteCollection()->named();
+            if (isset($routes[$url['_name']])) {
+				$defaults = $routes[$url['_name']]->defaults;
+				if (!isset($defaults['action']) || !isset($defaults['controller'])) {
+					throw new Exception('Controller or action name could not be null.');
+				}
+				$url = [
+					'prefix' => !empty($defaults['prefix']) ? $defaults['prefix'] : null,
+					'plugin' => !empty($defaults['plugin']) ? $defaults['plugin'] : null,
+					'controller' => $defaults['controller'],
+					'action' => $defaults['action'],
+				];
+            } else {
+				throw new MissingRouteException(['url' => $url['_name']]);
+			}
+        } else {
+			$params = $this->_View->getRequest()->getAttribute('params');
+			$url += [
+				'prefix' => !empty($params['prefix']) ? $params['prefix'] : null,
+				'plugin' => !empty($params['plugin']) ? $params['plugin'] : null,
+				'controller' => $params['controller'],
+				'action' => 'index',
+			];
+		}
 
 		$authuser = isset($this->_View->viewVars['_authUser']) ? $this->_View->viewVars['_authUser'] : null;
 		if ($authuser === null && !$this->getConfig('includeAuthentication')) {

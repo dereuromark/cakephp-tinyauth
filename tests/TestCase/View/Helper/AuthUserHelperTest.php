@@ -5,6 +5,7 @@ namespace TinyAuth\Test\TestCase\Controller\Component;
 use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
+use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\View\View;
 use TinyAuth\View\Helper\AuthUserHelper;
@@ -32,6 +33,7 @@ class AuthUserHelperTest extends TestCase {
 	 * @return void
 	 */
 	public function setUp() {
+		parent::setUp();
 		Configure::write('Roles', [
 			'user' => 1,
 			'moderator' => 2,
@@ -43,6 +45,17 @@ class AuthUserHelperTest extends TestCase {
 		];
 		$this->View = new View();
 		$this->AuthUserHelper = new AuthUserHelper($this->View, $this->config);
+	}
+
+	/**
+	 * tearDown method
+	 *
+	 * @return void
+	 */
+	public function tearDown()
+	{
+		parent::tearDown();
+		Router::reload();
 	}
 
 	/**
@@ -59,6 +72,16 @@ class AuthUserHelperTest extends TestCase {
 			'controller' => 'Tags',
 			'action' => 'edit',
 		];
+		$result = $this->AuthUserHelper->hasAccess($request);
+		$this->assertTrue($result);
+
+		Router::connect(
+			'/edit/*',
+			['controller' => 'Tags', 'action' => 'edit'],
+			['_name' => 'Tags::edit']
+		);
+
+		$request = ['_name' => 'Tags::edit'];
 		$result = $this->AuthUserHelper->hasAccess($request);
 		$this->assertTrue($result);
 	}
@@ -79,6 +102,16 @@ class AuthUserHelperTest extends TestCase {
 		];
 		$result = $this->AuthUserHelper->hasAccess($request);
 		$this->assertFalse($result);
+
+		Router::connect(
+			'/delete/*',
+			['controller' => 'Tags', 'action' => 'delete'],
+			['_name' => 'Tags::delete']
+		);
+
+		$request = ['_name' => 'Tags::delete'];
+		$result = $this->AuthUserHelper->hasAccess($request);
+		$this->assertFalse($result);
 	}
 
 	/**
@@ -95,6 +128,65 @@ class AuthUserHelperTest extends TestCase {
 		];
 		$result = $this->AuthUserHelper->hasAccess($request);
 		$this->assertFalse($result);
+
+		Router::connect(
+			'/edit/*',
+			['controller' => 'Tags', 'action' => 'edit'],
+			['_name' => 'Tags::edit']
+		);
+
+		$request = ['_name' => 'Tags::edit'];
+		$result = $this->AuthUserHelper->hasAccess($request);
+		$this->assertFalse($result);
+	}
+
+	/**
+	 * Test that missing controller or action in named route causes exceptions.
+	 *
+	 * @return void
+	 */
+	public function testNamedRouteMissingControllerActionException() {
+		$user = [
+			'id' => 1,
+			'role_id' => 1
+		];
+		$this->View->set('_authUser', $user);
+
+		Router::connect(
+			'/edit/*',
+			['action' => 'edit'],
+			['_name' => 'Tags::edit']
+		);
+
+		$request = ['_name' => 'Tags::edit'];
+		$this->expectException(\Cake\Core\Exception\Exception::class);
+		$this->expectExceptionMessage('Controller or action name could not be null.');
+		$result = $this->AuthUserHelper->hasAccess($request);
+	}
+
+	/**
+	 * Test that using invalid names causes exceptions.
+	 *
+	 * @return void
+	 */
+	public function testInvalidNamedRouteException() {
+		$user = [
+			'id' => 1,
+			'role_id' => 1
+		];
+		$this->View->set('_authUser', $user);
+
+		Router::connect(
+			'/edit/*',
+			['action' => 'edit'],
+			['_name' => 'Tags::edit']
+		);
+
+		$request = ['_name' => 'InvalidName'];
+
+		$this->expectException(\Cake\Routing\Exception\MissingRouteException::class);
+
+		$this->AuthUserHelper->hasAccess($request);
 	}
 
 	/**
