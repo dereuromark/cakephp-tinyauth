@@ -162,7 +162,7 @@ class AuthUserHelperTest extends TestCase {
 		$request = ['_name' => 'Tags::edit'];
 		$this->expectException(Exception::class);
 		$this->expectExceptionMessage('Controller or action name could not be null.');
-		$result = $this->AuthUserHelper->hasAccess($request);
+		$this->AuthUserHelper->hasAccess($request);
 	}
 
 	/**
@@ -186,6 +186,34 @@ class AuthUserHelperTest extends TestCase {
 		$request = ['_name' => 'InvalidName'];
 
 		$this->expectException(MissingRouteException::class);
+
+		$this->AuthUserHelper->hasAccess($request);
+	}
+
+	/**
+	 * Test that using incomplete names causes exceptions.
+	 *
+	 * @return void
+	 */
+	public function testIncompleteNamedRouteException() {
+		$user = [
+			'id' => 1,
+			'role_id' => 1
+		];
+		$this->View->set('_authUser', $user);
+
+		Router::connect(
+			'/view/{id}',
+			['controller' =>'Posts', 'action' => 'view'],
+			['_name' => 'Posts::view']
+		);
+
+		$request = ['_name' => 'Posts::view', 'id' => 1];
+		$result = $this->AuthUserHelper->hasAccess($request);
+		$this->assertTrue($result);
+
+		$this->expectException(MissingRouteException::class);
+		$request = ['_name' => 'Posts::view'];//missing id
 
 		$this->AuthUserHelper->hasAccess($request);
 	}
