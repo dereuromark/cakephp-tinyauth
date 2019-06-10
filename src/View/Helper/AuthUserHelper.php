@@ -45,21 +45,19 @@ class AuthUserHelper extends Helper {
 	 */
 	public function hasAccess(array $url) {
 		if (isset($url['_name'])) {
+			//throw MissingRouteException if necessary
+			Router::url($url);
 			$routes = Router::getRouteCollection()->named();
-			if (isset($routes[$url['_name']])) {
-				$defaults = $routes[$url['_name']]->defaults;
-				if (!isset($defaults['action']) || !isset($defaults['controller'])) {
-					throw new Exception('Controller or action name could not be null.');
-				}
-				$url = [
-					'prefix' => !empty($defaults['prefix']) ? $defaults['prefix'] : null,
-					'plugin' => !empty($defaults['plugin']) ? $defaults['plugin'] : null,
-					'controller' => $defaults['controller'],
-					'action' => $defaults['action'],
-				];
-			} else {
-				throw new MissingRouteException(['url' => $url['_name']]);
+			$defaults = $routes[$url['_name']]->defaults;
+			if (!isset($defaults['action']) || !isset($defaults['controller'])) {
+				throw new Exception('Controller or action name could not be null.');
 			}
+			$url = [
+				'prefix' => !empty($defaults['prefix']) ? $defaults['prefix'] : null,
+				'plugin' => !empty($defaults['plugin']) ? $defaults['plugin'] : null,
+				'controller' => $defaults['controller'],
+				'action' => $defaults['action'],
+			];
 		} else {
 			$params = $this->_View->getRequest()->getAttribute('params');
 			$url += [
