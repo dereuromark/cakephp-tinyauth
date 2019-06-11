@@ -3,7 +3,6 @@
 namespace TinyAuth\View\Helper;
 
 use Cake\Core\Exception\Exception;
-use Cake\Routing\Exception\MissingRouteException;
 use Cake\Routing\Router;
 use Cake\View\Helper;
 use Cake\View\View;

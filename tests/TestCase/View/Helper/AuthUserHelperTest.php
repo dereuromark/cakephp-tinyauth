@@ -204,7 +204,7 @@ class AuthUserHelperTest extends TestCase {
 
 		Router::connect(
 			'/view/{id}',
-			['controller' =>'Posts', 'action' => 'view'],
+			['controller' => 'Posts', 'action' => 'view'],
 			['_name' => 'Posts::view']
 		);
 
