@@ -47,4 +47,25 @@ class UtilityTest extends TestCase {
 		$this->assertEquals($expected, $result);
 	}
 
+	/**
+	 * @return void
+	 */
+	public function testBuildIniString() {
+		$array = [
+			'root-one' => [
+				'k1' => 'v1',
+				'k2' => 'v2',
+			],
+		];
+		$result = Utility::buildIniString($array);
+
+		$expected = <<<TXT
+[root-one]
+k1 = v1
+k2 = v2
+
+TXT;
+		$this->assertTextEquals($expected, $result);
+	}
+
 }
