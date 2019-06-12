@@ -22,4 +22,50 @@ class UtilityTest extends TestCase {
 		$this->assertTrue($result);
 	}
 
+	/**
+	 * @return void
+	 */
+	public function testDeconstructIniKey() {
+		$key = 'api/foo/bar/MyController';
+		$result = Utility::deconstructIniKey($key);
+
+		$expected = [
+			'plugin' => null,
+			'prefix' => 'api/foo/bar',
+			'controller' => 'MyController',
+		];
+		$this->assertEquals($expected, $result);
+
+		$key = 'My/Foo/Bar.admin/MyController';
+		$result = Utility::deconstructIniKey($key);
+
+		$expected = [
+			'plugin' => 'My/Foo/Bar',
+			'prefix' => 'admin',
+			'controller' => 'MyController',
+		];
+		$this->assertEquals($expected, $result);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testBuildIniString() {
+		$array = [
+			'root-one' => [
+				'k1' => 'v1',
+				'k2' => 'v2',
+			],
+		];
+		$result = Utility::buildIniString($array);
+
+		$expected = <<<TXT
+[root-one]
+k1 = v1
+k2 = v2
+
+TXT;
+		$this->assertTextEquals($expected, $result);
+	}
+
 }
