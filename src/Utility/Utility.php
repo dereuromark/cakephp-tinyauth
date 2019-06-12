@@ -21,7 +21,9 @@ class Utility {
 			list($res['plugin'], $key) = explode('.', $key);
 		}
 		if (strpos($key, '/') !== false) {
-			list($res['prefix'], $key) = explode('/', $key);
+			$pos = strrpos($key, '/');
+			$res['prefix'] = substr($key, 0, $pos);
+			$key = substr($key, $pos + 1);
 		}
 		$res['controller'] = $key;
 		return $res;
