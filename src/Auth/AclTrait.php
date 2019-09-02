@@ -61,8 +61,8 @@ trait AclTrait {
 			'allowUser' => false, // enable to allow ALL roles access to all actions except prefixed with 'adminPrefix'
 			'adminPrefix' => 'admin', // name of the admin prefix route (only used when allowUser is enabled)
 			'cache' => '_cake_core_',
-			'aclCacheKey' => 'tiny_auth_acl',
-			'allowCacheKey' => 'tiny_auth_allow', // This is needed to fetch allow info from the correct cache. Must be the same as set in AuthComponent.
+			'aclCacheKey' => 'tinyauth_acl',
+			'allowCacheKey' => 'tinyauth_allow', // This is needed to fetch allow info from the correct cache. Must be the same as set in AuthComponent.
 			'autoClearCache' => null, // Set to true to delete cache automatically in debug mode, keep null for auto-detect
 			'aclFilePath' => null, // Possible to locate INI file at given path e.g. Plugin::configPath('Admin'), filePath is also available for shared config
 			'aclFile' => 'tinyauth_acl.ini',

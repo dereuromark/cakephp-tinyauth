@@ -112,7 +112,7 @@ class AuthUserComponentTest extends TestCase {
 	public function testHasAccessPublic() {
 		$this->AuthUser->setConfig('includeAuthentication', true);
 		$cache = '_cake_core_';
-		$cacheKey = 'tiny_auth_allow';
+		$cacheKey = 'tinyauth_allow';
 		$this->AuthUser->setConfig('cache', $cache);
 		$this->AuthUser->setConfig('cacheKey', $cacheKey);
 
@@ -138,7 +138,7 @@ class AuthUserComponentTest extends TestCase {
 	public function testHasAccessPublicInvalid() {
 		$this->AuthUser->setConfig('includeAuthentication', true);
 		$cache = '_cake_core_';
-		$cacheKey = 'tiny_auth_allow';
+		$cacheKey = 'tinyauth_allow';
 		$this->AuthUser->setConfig('cache', $cache);
 		$this->AuthUser->setConfig('cacheKey', $cacheKey);
 

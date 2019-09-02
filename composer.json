@@ -17,6 +17,8 @@
 		"cakephp/cakephp": "^3.7.0"
 	},
 	"require-dev": {
+		"cakephp/authentication": "dev-master",
+		"cakephp/authorization": "dev-master",
 		"fig-r/psr2r-sniffer": "dev-master"
 	},
 	"support": {

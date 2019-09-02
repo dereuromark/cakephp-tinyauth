@@ -245,7 +245,7 @@ class AuthUserHelperTest extends TestCase {
 	public function testHasAccessPublic() {
 		$this->AuthUserHelper->setConfig('includeAuthentication', true);
 		$cache = '_cake_core_';
-		$cacheKey = 'tiny_auth_allow';
+		$cacheKey = 'tinyauth_allow';
 		$this->AuthUserHelper->setConfig('cache', $cache);
 		$this->AuthUserHelper->setConfig('cacheKey', $cacheKey);
 

@@ -56,6 +56,15 @@ By default it will now deny all logged in users any access to any protected acti
 Make sure that the session contains the correct data structure, also make sure the roles are configured or in the database and can be found as expected. The user with the right role should get access now to the corresponding action (make also sure cache is cleared).
 You then verified: authorization is working fine, as well - only with the correct role a user can now access protected actions.
 
+## Working with new plugins
+If you are using [Authentication](https://github.com/cakephp/authentication) or [Authorization](https://github.com/cakephp/authorization) plugin, you will need to use the
+Authentication/Authorization components of this plugin instead for them to work with TinyAuth.
+
+See the docs for details:
+- [TinyAuth and Authentication plugin](AuthenticationPlugin.md)
+- [TinyAuth and Authorization plugin](AuthorizationPlugin.md)
+
+
 ## Contributing
 Feel free to fork and pull request.
 

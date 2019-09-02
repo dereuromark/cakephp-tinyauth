@@ -2,16 +2,15 @@
 
 namespace TinyAuth\Controller\Component;
 
-use Cake\Cache\Cache;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\AuthComponent as CakeAuthComponent;
-use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
 use Cake\Event\Event;
 use InvalidArgumentException;
 use TinyAuth\Auth\AclTrait;
 use TinyAuth\Auth\AllowAdapter\AllowAdapterInterface;
 use TinyAuth\Auth\AllowAdapter\IniAllowAdapter;
+use TinyAuth\Auth\AllowTrait;
 
 /**
  * TinyAuth AuthComponent to handle all authentication in a central ini file.
@@ -22,6 +21,7 @@ use TinyAuth\Auth\AllowAdapter\IniAllowAdapter;
 class AuthComponent extends CakeAuthComponent {
 
 	use AclTrait;
+	use AllowTrait;
 
 	/**
 	 * @var array
@@ -30,7 +30,7 @@ class AuthComponent extends CakeAuthComponent {
 		'allowAdapter' => IniAllowAdapter::class,
 		'cache' => '_cake_core_',
 		'autoClearCache' => null, // Set to true to delete cache automatically in debug mode, keep null for auto-detect
-		'allowCacheKey' => 'tiny_auth_allow',
+		'allowCacheKey' => 'tinyauth_allow',
 		'allowFilePath' => null, // Possible to locate ini file at given path e.g. Plugin::configPath('Admin'), filePath is also available for shared config
 		'allowFile' => 'tinyauth_allow.ini',
 	];
@@ -43,17 +43,6 @@ class AuthComponent extends CakeAuthComponent {
 		$config += $this->_defaultTinyAuthConfig;
 
 		parent::__construct($registry, $config);
-
-		// BC config check
-		if ($this->getConfig('cacheKey')) {
-			$this->setConfig('allowCacheKey', $this->getConfig('cacheKey'));
-		}
-		if ($this->getConfig('file')) {
-			$this->setConfig('allowFile', $this->getConfig('file'));
-		}
-		if ($this->getConfig('filePath')) {
-			$this->setConfig('allowFilePath', $this->getConfig('filePath'));
-		}
 	}
 
 	/**
@@ -93,64 +82,21 @@ class AuthComponent extends CakeAuthComponent {
 	 * @return void
 	 */
 	protected function _prepareAuthentication() {
-		$authentication = $this->_getAuth($this->getConfig('allowFilePath'));
-
-		$params = $this->request->getAttribute('params');
-		foreach ($authentication as $rule) {
-			if ($params['plugin'] && $params['plugin'] !== $rule['plugin']) {
-				continue;
-			}
-			if (!empty($params['prefix']) && $params['prefix'] !== $rule['prefix']) {
-				continue;
-			}
-			if ($params['controller'] !== $rule['controller']) {
-				continue;
-			}
-
-			if (in_array('*', $rule['allow'], true)) {
-				$this->allow();
-			} elseif (!empty($rule['allow'])) {
-				$this->allow($rule['allow']);
-			}
-			if (in_array('*', $rule['deny'], true)) {
-				$this->deny();
-			} elseif (!empty($rule['deny'])) {
-				$this->deny($rule['deny']);
-			}
-		}
-	}
-
-	/**
-	 * Parse ini file and returns the allowed actions.
-	 *
-	 * Uses cache for maximum performance.
-	 *
-	 * @param string|null $path
-	 * @return array
-	 */
-	protected function _getAuth($path = null) {
-		if ($this->getConfig('autoClearCache') && Configure::read('debug')) {
-			Cache::delete($this->getConfig('allowCacheKey'), $this->getConfig('cache'));
-		}
-		$auth = Cache::read($this->getConfig('allowCacheKey'), $this->getConfig('cache'));
-		if ($auth !== false) {
-			return $auth;
+		$rule = $this->_getAllowRule($this->_registry->getController()->getRequest()->getAttribute('params'));
+		if (!$rule) {
+			return;
 		}
 
-		if ($path === null) {
-			$path = $this->getConfig('allowFilePath');
+		if (in_array('*', $rule['allow'], true)) {
+			$this->allow();
+		} elseif (!empty($rule['allow'])) {
+			$this->allow($rule['allow']);
 		}
-
-		$config = $this->getConfig();
-		$config['filePath'] = $path;
-		$config['file'] = $config['allowFile'];
-		unset($config['allowFilePath']);
-		unset($config['allowFile']);
-
-		$auth = $this->_loadAllowAdapter($config['allowAdapter'])->getAllow($this->_getAvailableRoles(), $config);
-
-		Cache::write($this->getConfig('allowCacheKey'), $auth, $this->getConfig('cache'));
-		return $auth;
+		if (in_array('*', $rule['deny'], true)) {
+			$this->deny();
+		} elseif (!empty($rule['deny'])) {
+			$this->deny($rule['deny']);
+		}
 	}
 
 	/**
