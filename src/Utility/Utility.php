@@ -20,8 +20,10 @@ class Utility {
 		if (strpos($key, '.') !== false) {
 			list($res['plugin'], $key) = explode('.', $key);
 		}
-		if (strpos($key, '/') !== false) {
-			list($res['prefix'], $key) = explode('/', $key);
+		$lastSlashPos = strrpos($key, '/');
+		if ($lastSlashPos !== false) {
+			$res['prefix'] = substr($key, 0, $lastSlashPos);
+			$key = substr($key, $lastSlashPos + 1);
 		}
 		$res['controller'] = $key;
 		return $res;

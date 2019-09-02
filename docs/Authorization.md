@@ -318,6 +318,12 @@ if ($this->AuthUser->hasAccess(['action' => 'secretArea'])) {
 }
 ```
 
+### Named Routes
+With 1.12.0+ named routes are also supported now:
+```php
+<?= $this->AuthUser->link('Change Password', ['_name' => 'admin:account:password']); ?>  
+```
+
 ## Including Authentication
 Please note that by default `hasAccess()` only checks the ACL INI, not the allow auth INI.
 Those links and access checks are meant to be used for logged in users.
