@@ -12,8 +12,6 @@ use Cake\Network\Request;
 use Cake\TestSuite\TestCase;
 use TestApp\Controller\Component\TestAuthUserComponent;
 
-/**
- */
 class AuthUserComponentTest extends TestCase {
 
 	/**
