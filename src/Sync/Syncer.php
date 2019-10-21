@@ -24,11 +24,13 @@ class Syncer {
 	 */
 	public function syncAcl(Arguments $args, ConsoleIo $io) {
 		$defaults = [
-			'file' => 'tinyauth_acl.ini',
+			'aclFile' => 'tinyauth_acl.ini',
+			'aclFilePath' => null,
 		];
 		$config = (array)Configure::read('TinyAuth') + $defaults;
 
-		$file = ROOT . DS . 'config' . DS . $config['file'];
+		$path = $config['aclFilePath'] ?: ROOT . DS . 'config' . DS;
+		$file = $path . $config['aclFile'];
 		$content = Utility::parseFile($file);
 
 		$controllers = $this->_getControllers((string)$args->getOption('plugin'));
@@ -153,11 +155,13 @@ class Syncer {
 	 */
 	protected function _parseAuthAllow() {
 		$defaults = [
-			'file' => 'tinyauth_allow.ini',
+			'allowFilePath' => null,
+			'allowFile' => 'tinyauth_allow.ini',
 		];
 		$config = (array)Configure::read('TinyAuth') + $defaults;
 
-		$file = ROOT . DS . 'config' . DS . $config['file'];
+		$path = $config['allowFilePath'] ?: ROOT . DS . 'config' . DS;
+		$file = $path . $config['allowFile'];
 
 		return Utility::parseFile($file);
 	}

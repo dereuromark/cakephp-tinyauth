@@ -40,7 +40,7 @@ class AuthComponent extends CakeAuthComponent {
 	 * @param array $config
 	 */
 	public function __construct(ComponentRegistry $registry, array $config = []) {
-		$config += $this->_defaultTinyAuthConfig;
+		$config += $this->_defaultConfig() + $this->_defaultTinyAuthConfig;
 
 		parent::__construct($registry, $config);
 	}

@@ -8,6 +8,7 @@ use Cake\Datasource\ResultSetInterface;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
 use InvalidArgumentException;
+use RuntimeException;
 use TinyAuth\Auth\AclAdapter\AclAdapterInterface;
 use TinyAuth\Auth\AclAdapter\IniAclAdapter;
 use TinyAuth\Utility\Utility;
@@ -92,16 +93,6 @@ trait AclTrait {
 			$config['autoClearCache'] = Configure::read('debug');
 		}
 		$this->_aclAdapter = $this->_loadAclAdapter($config['aclAdapter']);
-
-		if ($this->getConfig('cacheKey')) {
-			$this->setConfig('aclCacheKey', $this->getConfig('cacheKey'));
-		}
-		if ($this->getConfig('file')) {
-			$this->setConfig('aclFile', $this->getConfig('file'));
-		}
-		if ($this->getConfig('filePath')) {
-			$this->setConfig('aclFilePath', $this->getConfig('filePath'));
-		}
 
 		return $config;
 	}
@@ -382,7 +373,12 @@ trait AclTrait {
 			return $this->_roles;
 		}
 
-		$roles = Configure::read($this->getConfig('rolesTable'));
+		$rolesTableKey = $this->getConfig('rolesTable');
+		if (!$rolesTableKey) {
+			throw new RuntimeException('Invalid/missing rolesTable config');
+		}
+
+		$roles = Configure::read($rolesTableKey);
 		if (is_array($roles)) {
 			if ($this->getConfig('superAdminRole')) {
 				$key = $this->getConfig('superAdmin') ?: 'superadmin';
@@ -391,7 +387,7 @@ trait AclTrait {
 			return $roles;
 		}
 
-		$rolesTable = TableRegistry::get($this->getConfig('rolesTable'));
+		$rolesTable = TableRegistry::get($rolesTableKey);
 		$result = $rolesTable->find()->formatResults(function (ResultSetInterface $results) {
 			return $results->combine($this->getConfig('aliasColumn'), 'id');
 		});
@@ -403,7 +399,7 @@ trait AclTrait {
 		}
 
 		if (count($roles) < 1) {
-			throw new Exception('Invalid TinyAuth role setup (roles table `' . $this->getConfig('rolesTable') . '` has no roles)');
+			throw new Exception('Invalid TinyAuth role setup (roles table `' . $rolesTableKey . '` has no roles)');
 		}
 
 		$this->_roles = $roles;
