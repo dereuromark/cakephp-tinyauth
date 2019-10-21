@@ -1,6 +1,6 @@
 ### Authentication Adapters
 
-Implement the AllowAdapterInterface and make sure your getAllow() method returns an array like so:
+Implement the AllowAdapterInterface and make sure your `getAllow()` method returns an array like so:
 ```php    
     // normal controller
     'Users' => [

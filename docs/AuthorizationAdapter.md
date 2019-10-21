@@ -1,6 +1,6 @@
 ### Authorization Adapters
 
-Implement the AclAdapterInterface and make sure your getAcl() method returns an array like so:
+Implement the AclAdapterInterface and make sure your `getAcl()` method returns an array like so:
 ```php
     // normal controller
     "Posts" => [

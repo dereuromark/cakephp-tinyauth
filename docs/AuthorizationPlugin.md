@@ -2,7 +2,7 @@
 
 Support for [Authorization plugin](https://github.com/cakephp/authorization) usage.
 
-Instead of the Auth component you load the Authorization one:
+Instead of the core Auth component you load the Authorization component:
 
 ```php
 $this->loadComponent('TinyAuth.Authorization', [

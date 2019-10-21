@@ -88,7 +88,7 @@ use Cake\Event\Event;
     public function beforeFilter(Event $event) {
         parent::beforeFilter($event);
 
-        $this->Auth->allow('index', 'view');
+        $this->Auth->allow(['index', 'view']);
     }
 ```
 This can be interested when migrating slowly to TinyAuth, for example.

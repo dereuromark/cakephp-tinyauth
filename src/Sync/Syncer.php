@@ -50,7 +50,9 @@ class Syncer {
 			$string = Utility::buildIniString($content);
 
 			if ($args->getOption('verbose')) {
+				$io->info('=== ' . $config['aclFile'] . ' ===');
 				$io->info($string);
+				$io->info('=== ' . $config['aclFile'] . ' end ===');
 			}
 			return;
 		}
