@@ -2,7 +2,6 @@
 namespace TinyAuth\Utility;
 
 use Cake\Core\Exception\Exception;
-use Cake\Utility\Text;
 
 class Utility {
 
@@ -109,31 +108,6 @@ class Utility {
 		}
 
 		return implode(PHP_EOL, $out);
-	}
-
-	/**
-	 * Extracts existing/used roles from ACL array.
-	 *
-	 * @param array $acl
-	 *
-	 * @return string[]
-	 */
-	public static function roles(array $acl) {
-		$roles = [];
-
-		foreach ($acl as $actions) {
-			foreach ($actions as $rolesAsString) {
-				$rolesAsArray = Text::tokenize($rolesAsString);
-
-				foreach ($rolesAsArray as $role) {
-					if ($role !== '*' && !in_array($role, $roles, true)) {
-						$roles[] = $role;
-					}
-				}
-			}
-		}
-
-		return $roles;
 	}
 
 }
