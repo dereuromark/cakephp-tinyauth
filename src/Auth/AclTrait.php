@@ -7,7 +7,6 @@ use Cake\Datasource\ResultSetInterface;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
 use InvalidArgumentException;
-use RuntimeException;
 use TinyAuth\Auth\AclAdapter\AclAdapterInterface;
 use TinyAuth\Auth\AclAdapter\IniAclAdapter;
 use TinyAuth\Utility\Cache;
@@ -368,7 +367,7 @@ trait AclTrait {
 
 		$rolesTableKey = $this->getConfig('rolesTable');
 		if (!$rolesTableKey) {
-			throw new RuntimeException('Invalid/missing rolesTable config');
+			throw new Exception('Invalid/missing rolesTable config');
 		}
 
 		$roles = Configure::read($rolesTableKey);
