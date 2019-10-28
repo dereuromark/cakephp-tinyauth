@@ -1,7 +1,8 @@
 ### Authentication Adapters
+For adapters to define allow/deny (public/protected) per controller action.
 
 Implement the AllowAdapterInterface and make sure your `getAllow()` method returns an array like so:
-```php    
+```php
     // normal controller
     'Users' => [
         'plugin' => null,

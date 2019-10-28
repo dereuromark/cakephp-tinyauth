@@ -2,6 +2,7 @@
 The fast and easy way for user authentication in CakePHP 3.x applications.
 
 Use TinyAuth Component if you want to add instant (and easy) action whitelisting to your application.
+You can allow/deny per controller action or with wildcards also per controller and more.
 
 ## Basic Features
 - INI file (static) based access rights (controller-action setup)
@@ -12,7 +13,7 @@ Do NOT use if
 
 ## Enabling
 
-Authentication is set up in your controller's `initialize` method:
+Authentication is set up in your controller's `initialize()` method:
 
 ```php
 // src/Controller/AppController

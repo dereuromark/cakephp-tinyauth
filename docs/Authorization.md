@@ -19,7 +19,7 @@ frontend yourself)
 ## Enabling
 
 Assuming you already have authentication set up correctly you can enable
-authorization in your controller's `beforeFilter` like this example:
+authorization in your controller's `beforeFilter()` method like this example:
 
 ```php
 // src/Controller/AppController
