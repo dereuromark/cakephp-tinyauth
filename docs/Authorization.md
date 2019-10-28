@@ -250,12 +250,9 @@ prefixes|array|A list of authorizeByPrefix handled prefixes.
 allowUser|bool|True will give authenticated users access to all resources except those using the `adminPrefix`
 adminPrefix|string|Name of the prefix used for admin pages. Defaults to admin.
 autoClearCache|bool|True will generate a new ACL cache file every time.
-cache|string|Cache type. Defaults to `_cake_core_`.
-aclCacheKey|string|Cache key. Defaults to `tinyauth_acl`.
 aclFilePath|string|Full path to the acl.ini. Can also be an array of multiple paths. Defaults to `ROOT . DS . 'config' . DS`.
 aclFile|string|Name of the INI file. Defaults to `acl.ini`.
 includeAuthentication|bool|Set to true to include public auth access into hasAccess() checks. Note, that this requires Configure configuration.
-allowCacheKey|string|Cache key. Defaults to `tinyauth_allow`. Needed to fetch allow info from the correct cache. Must be the same as set in AuthComponent.
 
 ## AuthUserComponent
 Add the AuthUserComponent and you can easily check permissions inside your controller scope:

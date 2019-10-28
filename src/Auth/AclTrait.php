@@ -1,7 +1,6 @@
 <?php
 namespace TinyAuth\Auth;
 
-use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
 use Cake\Datasource\ResultSetInterface;
@@ -11,6 +10,7 @@ use InvalidArgumentException;
 use RuntimeException;
 use TinyAuth\Auth\AclAdapter\AclAdapterInterface;
 use TinyAuth\Auth\AclAdapter\IniAclAdapter;
+use TinyAuth\Utility\Cache;
 use TinyAuth\Utility\Utility;
 
 trait AclTrait {
@@ -61,9 +61,6 @@ trait AclTrait {
 			'prefixes' => [], // Whitelisted prefixes (only used when allowAdmin is enabled), leave empty to use all available
 			'allowUser' => false, // enable to allow ALL roles access to all actions except prefixed with 'adminPrefix'
 			'adminPrefix' => 'admin', // name of the admin prefix route (only used when allowUser is enabled)
-			'cache' => '_cake_core_',
-			'aclCacheKey' => 'tinyauth_acl',
-			'allowCacheKey' => 'tinyauth_allow', // This is needed to fetch allow info from the correct cache. Must be the same as set in AuthComponent.
 			'autoClearCache' => null, // Set to true to delete cache automatically in debug mode, keep null for auto-detect
 			'aclFilePath' => null, // Possible to locate INI file at given path e.g. Plugin::configPath('Admin'), filePath is also available for shared config
 			'aclFile' => 'tinyauth_acl.ini',
@@ -83,10 +80,6 @@ trait AclTrait {
 		$config += $this->_defaultConfig();
 		if (!$config['prefixes'] && !empty($config['authorizeByPrefix'])) {
 			throw new Exception('Invalid TinyAuthorization setup for `authorizeByPrefix`. Please declare `prefixes`.');
-		}
-
-		if (!in_array($config['cache'], Cache::configured(), true)) {
-			throw new Exception(sprintf('Invalid TinyAuth cache `%s`', $config['cache']));
 		}
 
 		if ($config['autoClearCache'] === null) {
@@ -275,8 +268,8 @@ trait AclTrait {
 			return $this->auth;
 		}
 
-		$authAllow = Cache::read($this->getConfig('allowCacheKey'), $this->getConfig('cache'));
-		if (!$authAllow) {
+		$authAllow = Cache::read(Cache::KEY_ALLOW);
+		if ($authAllow === null) {
 			//TOOD make refactor to collect data at runtime? Should not be necessary if AuthComponent is used properly.
 			throw new Exception('Cache for Authentication data not found. This is required for `includeAuthentication` as true. Make sure you enabled TinyAuth.AuthComponent.');
 		}
@@ -299,10 +292,10 @@ trait AclTrait {
 	 */
 	protected function _getAcl($path = null) {
 		if ($this->getConfig('autoClearCache') && Configure::read('debug')) {
-			Cache::delete($this->getConfig('aclCacheKey'), $this->getConfig('cache'));
+			Cache::clear(Cache::KEY_ACL);
 		}
-		$acl = Cache::read($this->getConfig('aclCacheKey'), $this->getConfig('cache'));
-		if ($acl !== false) {
+		$acl = Cache::read(Cache::KEY_ACL);
+		if ($acl !== null) {
 			return $acl;
 		}
 
@@ -316,7 +309,7 @@ trait AclTrait {
 		unset($config['aclFile']);
 
 		$acl = $this->_aclAdapter->getAcl($this->_getAvailableRoles(), $config);
-		Cache::write($this->getConfig('aclCacheKey'), $acl, $this->getConfig('cache'));
+		Cache::write(Cache::KEY_ACL, $acl);
 
 		return $acl;
 	}

@@ -2,7 +2,6 @@
 
 namespace TinyAuth\Test\TestCase\Controller\Component;
 
-use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
 use Cake\Core\Plugin;
@@ -10,6 +9,7 @@ use Cake\Routing\Exception\MissingRouteException;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\View\View;
+use TinyAuth\Utility\Cache;
 use TinyAuth\View\Helper\AuthUserHelper;
 
 /**
@@ -363,20 +363,15 @@ class AuthUserHelperTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testHasAccessPublic() {
+	public function testHasAccessPublicCache() {
 		$this->AuthUserHelper->setConfig('includeAuthentication', true);
-		$cache = '_cake_core_';
-		$cacheKey = 'tinyauth_allow';
-		$this->AuthUserHelper->setConfig('cache', $cache);
-		$this->AuthUserHelper->setConfig('cacheKey', $cacheKey);
-
 		$data = [
 			'Users' => [
 				'controller' => 'Users',
 				'allow' => ['view'],
 			]
 		];
-		Cache::write($cacheKey, $data, $cache);
+		Cache::write(Cache::KEY_ALLOW, $data);
 
 		$request = [
 			'controller' => 'Users',

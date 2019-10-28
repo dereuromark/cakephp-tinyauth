@@ -1,11 +1,11 @@
 <?php
 namespace TinyAuth\Auth;
 
-use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
 use InvalidArgumentException;
 use TinyAuth\Auth\AllowAdapter\AllowAdapterInterface;
+use TinyAuth\Utility\Cache;
 
 trait AllowTrait {
 
@@ -44,10 +44,10 @@ trait AllowTrait {
 	 */
 	protected function _getAllow($path = null) {
 		if ($this->getConfig('autoClearCache') && Configure::read('debug')) {
-			Cache::delete($this->getConfig('allowCacheKey'), $this->getConfig('cache'));
+			Cache::clear(Cache::KEY_ALLOW);
 		}
-		$auth = Cache::read($this->getConfig('allowCacheKey'), $this->getConfig('cache'));
-		if ($auth !== false) {
+		$auth = Cache::read(Cache::KEY_ALLOW);
+		if ($auth !== null) {
 			return $auth;
 		}
 
@@ -63,7 +63,8 @@ trait AllowTrait {
 
 		$auth = $this->_loadAllowAdapter($config['allowAdapter'])->getAllow($config);
 
-		Cache::write($this->getConfig('allowCacheKey'), $auth, $this->getConfig('cache'));
+		Cache::write(Cache::KEY_ALLOW, $auth);
+
 		return $auth;
 	}
 

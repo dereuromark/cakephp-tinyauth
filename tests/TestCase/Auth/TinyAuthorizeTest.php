@@ -110,19 +110,6 @@ class TinyAuthorizeTest extends TestCase {
 	}
 
 	/**
-	 * Tests exception thrown when Cache is unavailable.
-	 *
-	 * @expectedException \Cake\Core\Exception\Exception
-	 * @return void
-	 */
-	public function testConstructorWithoutValidCache() {
-		$object = new TestTinyAuthorize($this->collection, [
-			'cache' => 'invalid-cache-config'
-		]);
-		$this->assertTrue(is_object($object));
-	}
-
-	/**
 	 * @return void
 	 */
 	public function testGetAcl() {

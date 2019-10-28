@@ -41,6 +41,16 @@ Those classes most likely share quite a few configs, in that case you definitely
 ```
 This way you keep it DRY.
 
+## Cache busting
+In general, it is advised to clear the cache after each deploy, e.g. using
+```
+bin/cake clear cache
+```
+In debug mode this happens automatically for each request.
+
+By default, the cache engine used is `_cake_core_`, the prefix is `tinyauth_`.
+You can also clear the cache from code using `TinyAuth\Utility\Cache::clear()` method for specifically this.
+
 ## Custom Allow or ACL adapters
 You can easily switch out the INI file adapters for both using `allowAdapter` and `aclAdapter` config.
 This way you can also read from DB or provide any other API driven backend to read the data from for your authentication or authorization.
