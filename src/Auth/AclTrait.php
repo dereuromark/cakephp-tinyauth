@@ -363,7 +363,11 @@ trait AclTrait {
 			return $this->_roles;
 		}
 
-		$roles = Configure::read($this->getConfig('rolesTable'));
+		$rolesTableKey = $this->getConfig('rolesTable');
+		if (!$rolesTableKey) {
+			throw new Exception('Invalid/missing rolesTable config');
+		}
+		$roles = Configure::read($rolesTableKey);
 		if (is_array($roles)) {
 			if ($this->getConfig('superAdminRole')) {
 				$key = $this->getConfig('superAdmin') ?: 'superadmin';
