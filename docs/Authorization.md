@@ -88,7 +88,7 @@ named ``roles``. If you prefer to use another table name simply specify it using
 ``rolesTable`` configuration option.
 
 >**Note:** make sure to add an "alias" field to your roles table (used as slug
-identifier in the acl.ini file)
+identifier in the auth_acl.ini file)
 
 Example of a record from a valid roles table:
 
@@ -137,9 +137,9 @@ bin/cake migrations migrate -p TinyAuth
 ```
 Alternatively you can copy and paste this migration file to your `app/Config` folder and adjust the fields and table names and then use that modified version instead.
 
-## acl.ini
+## auth_acl.ini
 
-TinyAuth expects an ``acl.ini`` file in your config directory.
+TinyAuth expects an ``auth_acl.ini`` file in your config directory.
 Use it to specify who gets access to which resources.
 
 The section key syntax follows the CakePHP naming convention for plugins.
@@ -250,8 +250,8 @@ prefixes|array|A list of authorizeByPrefix handled prefixes.
 allowUser|bool|True will give authenticated users access to all resources except those using the `adminPrefix`
 adminPrefix|string|Name of the prefix used for admin pages. Defaults to admin.
 autoClearCache|bool|True will generate a new ACL cache file every time.
-aclFilePath|string|Full path to the acl.ini. Can also be an array of multiple paths. Defaults to `ROOT . DS . 'config' . DS`.
-aclFile|string|Name of the INI file. Defaults to `acl.ini`.
+aclFilePath|string|Full path to the auth_acl.ini. Can also be an array of multiple paths. Defaults to `ROOT . DS . 'config' . DS`.
+aclFile|string|Name of the INI file. Defaults to `auth_acl.ini`.
 includeAuthentication|bool|Set to true to include public auth access into hasAccess() checks. Note, that this requires Configure configuration.
 
 ## AuthUserComponent

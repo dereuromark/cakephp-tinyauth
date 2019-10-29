@@ -48,7 +48,7 @@ bin/cake clear cache
 ```
 In debug mode this happens automatically for each request.
 
-By default, the cache engine used is `_cake_core_`, the prefix is `tinyauth_`.
+By default, the cache engine used is `_cake_core_`, the prefix is `tiny_auth_`.
 You can also clear the cache from code using `TinyAuth\Utility\Cache::clear()` method for specifically this.
 
 ## Custom Allow or ACL adapters

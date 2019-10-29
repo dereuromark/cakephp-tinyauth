@@ -24,7 +24,7 @@ class Syncer {
 	 */
 	public function syncAcl(Arguments $args, ConsoleIo $io) {
 		$defaults = [
-			'aclFile' => 'tinyauth_acl.ini',
+			'aclFile' => 'auth_acl.ini',
 			'aclFilePath' => null,
 		];
 		$config = (array)Configure::read('TinyAuth') + $defaults;
@@ -158,7 +158,7 @@ class Syncer {
 	protected function _parseAuthAllow() {
 		$defaults = [
 			'allowFilePath' => null,
-			'allowFile' => 'tinyauth_allow.ini',
+			'allowFile' => 'auth_allow.ini',
 		];
 		$config = (array)Configure::read('TinyAuth') + $defaults;
 

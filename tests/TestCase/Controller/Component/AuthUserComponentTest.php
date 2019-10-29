@@ -133,7 +133,7 @@ class AuthUserComponentTest extends TestCase {
 		$cache = '_cake_core_';
 		$cacheKey = 'allow';
 		Configure::write('TinyAuth.cache', $cache);
-		Configure::write('TinyAuth.cachePrefix', 'tinyauth_');
+		Configure::write('TinyAuth.cachePrefix', 'tiny_auth_');
 		Configure::write('TinyAuth.cacheKey', $cacheKey);
 
 		$data = [

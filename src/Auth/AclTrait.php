@@ -62,7 +62,7 @@ trait AclTrait {
 			'adminPrefix' => 'admin', // name of the admin prefix route (only used when allowUser is enabled)
 			'autoClearCache' => null, // Set to true to delete cache automatically in debug mode, keep null for auto-detect
 			'aclFilePath' => null, // Possible to locate INI file at given path e.g. Plugin::configPath('Admin'), filePath is also available for shared config
-			'aclFile' => 'tinyauth_acl.ini',
+			'aclFile' => 'auth_acl.ini',
 			'includeAuthentication' => false, // Set to true to include public auth access into hasAccess() checks. Note, that this requires Configure configuration.
 		];
 		$config = (array)Configure::read('TinyAuth') + $defaults;

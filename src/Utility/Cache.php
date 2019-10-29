@@ -22,7 +22,7 @@ class Cache {
 	 */
 	protected static $_defaultConfig = [
 		'cache' => '_cake_core_',
-		'cachePrefix' => 'tinyauth_',
+		'cachePrefix' => 'tiny_auth_',
 		'allowCacheKey' => self::KEY_ALLOW,
 		'aclCacheKey' => self::KEY_ACL,
 	];
