@@ -7,7 +7,7 @@ use TinyAuth\Utility\Utility;
 class IniAclAdapter implements AclAdapterInterface {
 
 	/**
-	 * {@inheritdoc}
+	 * {@inheritDoc}
 	 *
 	 * @return array
 	 */

@@ -7,7 +7,7 @@ use TinyAuth\Utility\Utility;
 class IniAllowAdapter implements AllowAdapterInterface {
 
 	/**
-	 * {@inheritdoc}
+	 * {@inheritDoc}
 	 *
 	 * @return array
 	 */

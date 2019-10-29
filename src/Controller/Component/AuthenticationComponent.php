@@ -37,7 +37,7 @@ class AuthenticationComponent extends CakeAuthenticationComponent {
 	}
 
 	/**
-	 * {inheritDoc}
+	 * {@inheritDoc}
 	 *
 	 * @return void
 	 */
