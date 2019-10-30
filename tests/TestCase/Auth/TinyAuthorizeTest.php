@@ -124,11 +124,11 @@ class TinyAuthorizeTest extends TestCase {
 				'prefix' => null,
 				'plugin' => null,
 				'allow' => [
-					'index' => [1],
-					'edit' => [1],
-					'delete' => [3],
-					'very_long_underscored_action' => [1],
-					'veryLongActionNameAction' => [1]
+					'index' => ['user' => 1],
+					'edit' => ['user' => 1],
+					'delete' => ['admin' => 3],
+					'very_long_underscored_action' => ['user' => 1],
+					'veryLongActionNameAction' => ['user' => 1]
 				],
 				'deny' => [],
 			],
@@ -137,11 +137,11 @@ class TinyAuthorizeTest extends TestCase {
 				'prefix' => 'admin',
 				'plugin' => null,
 				'allow' => [
-					'index' => [1],
-					'edit' => [1],
-					'delete' => [3],
-					'very_long_underscored_action' => [1],
-					'veryLongActionNameAction' => [1]
+					'index' => ['user' => 1],
+					'edit' => ['user' => 1],
+					'delete' => ['admin' => 3],
+					'very_long_underscored_action' => ['user' => 1],
+					'veryLongActionNameAction' => ['user' => 1]
 				],
 				'deny' => [],
 			],
@@ -150,12 +150,12 @@ class TinyAuthorizeTest extends TestCase {
 				'prefix' => null,
 				'plugin' => 'Tags',
 				'allow' => [
-					'index' => [1],
-					'edit' => [1],
-					'view' => [1],
-					'delete' => [3],
-					'very_long_underscored_action' => [1],
-					'veryLongActionNameAction' => [1]
+					'index' => ['user' => 1],
+					'edit' => ['user' => 1],
+					'view' => ['user' => 1],
+					'delete' => ['admin' => 3],
+					'very_long_underscored_action' => ['user' => 1],
+					'veryLongActionNameAction' => ['user' => 1]
 				],
 				'deny' => [],
 			],
@@ -164,12 +164,12 @@ class TinyAuthorizeTest extends TestCase {
 				'prefix' => 'admin',
 				'plugin' => 'Tags',
 				'allow' => [
-					'index' => [1],
-					'edit' => [1],
-					'view' => [1],
-					'delete' => [3],
-					'very_long_underscored_action' => [1],
-					'veryLongActionNameAction' => [1]
+					'index' => ['user' => 1],
+					'edit' => ['user' => 1],
+					'view' => ['user' => 1],
+					'delete' => ['admin' => 3],
+					'very_long_underscored_action' => ['user' => 1],
+					'veryLongActionNameAction' => ['user' => 1]
 				],
 				'deny' => [],
 			],
@@ -178,7 +178,7 @@ class TinyAuthorizeTest extends TestCase {
 				'prefix' => 'special',
 				'plugin' => null,
 				'allow' => [
-					'*' => [3]
+					'*' => ['admin' => 3]
 				],
 				'deny' => [],
 			],
@@ -187,7 +187,7 @@ class TinyAuthorizeTest extends TestCase {
 				'prefix' => 'special',
 				'plugin' => 'Comments',
 				'allow' => [
-					'*' => [3]
+					'*' => ['admin' => 3]
 				],
 				'deny' => [],
 			],
@@ -196,7 +196,7 @@ class TinyAuthorizeTest extends TestCase {
 				'prefix' => null,
 				'plugin' => null,
 				'allow' => [
-					'*' => [1, 2, 3]
+					'*' => ['user' => 1, 'moderator' => 2, 'admin' => 3]
 				],
 				'deny' => [],
 			],
@@ -205,7 +205,7 @@ class TinyAuthorizeTest extends TestCase {
 				'prefix' => 'admin',
 				'plugin' => null,
 				'allow' => [
-					'*' => [1, 2, 3]
+					'*' => ['user' => 1, 'moderator' => 2, 'admin' => 3]
 				],
 				'deny' => [],
 			],
@@ -214,7 +214,7 @@ class TinyAuthorizeTest extends TestCase {
 				'prefix' => null,
 				'plugin' => 'Posts',
 				'allow' => [
-					'*' => [1, 2, 3]
+					'*' => ['user' => 1, 'moderator' => 2, 'admin' => 3]
 				],
 				'deny' => [],
 			],
@@ -223,7 +223,7 @@ class TinyAuthorizeTest extends TestCase {
 				'prefix' => 'admin',
 				'plugin' => 'Posts',
 				'allow' => [
-					'*' => [1, 2, 3]
+					'*' => ['user' => 1, 'moderator' => 2, 'admin' => 3]
 				],
 				'deny' => [],
 			],
@@ -232,10 +232,10 @@ class TinyAuthorizeTest extends TestCase {
 				'prefix' => null,
 				'plugin' => null,
 				'allow' => [
-					'*' => [1, 2]
+					'*' => ['user' => 1, 'moderator' => 2]
 				],
 				'deny' => [
-					'foo' => [1]
+					'foo' => ['user' => 1]
 				],
 			],
 			'admin/Blogs' => [
@@ -243,7 +243,7 @@ class TinyAuthorizeTest extends TestCase {
 				'prefix' => 'admin',
 				'plugin' => null,
 				'allow' => [
-					'*' => [2]
+					'*' => ['moderator' => 2]
 				],
 				'deny' => [],
 			],
@@ -252,7 +252,7 @@ class TinyAuthorizeTest extends TestCase {
 				'prefix' => null,
 				'plugin' => 'Blogs',
 				'allow' => [
-					'*' => [2]
+					'*' => ['moderator' => 2]
 				],
 				'deny' => [],
 			],
@@ -261,7 +261,7 @@ class TinyAuthorizeTest extends TestCase {
 				'prefix' => 'admin',
 				'plugin' => 'Blogs',
 				'allow' => [
-					'*' => [2]
+					'*' => ['moderator' => 2]
 				],
 				'deny' => [],
 			]

@@ -2,6 +2,7 @@
 
 namespace TinyAuth\Auth\AllowAdapter;
 
+use Cake\Core\Configure;
 use TinyAuth\Utility\Utility;
 
 class IniAllowAdapter implements AllowAdapterInterface {
@@ -28,7 +29,9 @@ class IniAllowAdapter implements AllowAdapterInterface {
 				$actions[$k] = $action;
 			}
 
-			$auth[$key]['map'] = $actions;
+			if (Configure::read('debug')) {
+				$auth[$key]['map'] = $actions;
+			}
 			$auth[$key]['deny'] = [];
 			$auth[$key]['allow'] = [];
 

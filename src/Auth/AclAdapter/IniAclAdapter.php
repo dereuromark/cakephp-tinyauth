@@ -2,6 +2,7 @@
 
 namespace TinyAuth\Auth\AclAdapter;
 
+use Cake\Core\Configure;
 use TinyAuth\Utility\Utility;
 
 class IniAclAdapter implements AclAdapterInterface {
@@ -17,7 +18,9 @@ class IniAclAdapter implements AclAdapterInterface {
 		$acl = [];
 		foreach ($iniArray as $key => $array) {
 			$acl[$key] = Utility::deconstructIniKey($key);
-			$acl[$key]['map'] = $array;
+			if (Configure::read('debug')) {
+				$acl[$key]['map'] = $array;
+			}
 			$acl[$key]['deny'] = [];
 			$acl[$key]['allow'] = [];
 
@@ -68,20 +71,22 @@ class IniAclAdapter implements AclAdapterInterface {
 						if (!$role) {
 							continue;
 						}
+						$roleName = strtolower($role);
 
 						// Lookup role id by name in roles array
-						$newRole = $availableRoles[strtolower($role)];
-						$acl[$key]['allow'][$action][] = $newRole;
+						$newRole = $availableRoles[$roleName];
+						$acl[$key]['allow'][$action][$roleName] = $newRole;
 					}
 					foreach ($deniedRoles as $role) {
 						$role = trim($role);
 						if (!$role) {
 							continue;
 						}
+						$roleName = strtolower($role);
 
 						// Lookup role id by name in roles array
-						$newRole = $availableRoles[strtolower($role)];
-						$acl[$key]['deny'][$action][] = $newRole;
+						$newRole = $availableRoles[$roleName];
+						$acl[$key]['deny'][$action][$roleName] = $newRole;
 					}
 				}
 			}
