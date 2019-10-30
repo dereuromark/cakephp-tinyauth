@@ -1,7 +1,7 @@
 # TinyAuth Authorization
 The fast and easy way for user authorization in CakePHP 3.x applications.
 
-Enable TinyAuth Authorize adapter if you want to add instant (and easy) role
+Enable TinyAuth Authorize if you want to add instant (and easy) role
 based access control (RBAC) to your application.
 
 ## Basic Features
@@ -252,6 +252,7 @@ adminPrefix|string|Name of the prefix used for admin pages. Defaults to admin.
 autoClearCache|bool|True will generate a new ACL cache file every time.
 aclFilePath|string|Full path to the auth_acl.ini. Can also be an array of multiple paths. Defaults to `ROOT . DS . 'config' . DS`.
 aclFile|string|Name of the INI file. Defaults to `auth_acl.ini`.
+aclAdapter|string|Class name, defaults to `IniAclAdapter::class`.
 includeAuthentication|bool|Set to true to include public auth access into hasAccess() checks. Note, that this requires Configure configuration.
 
 ## AuthUserComponent
@@ -318,7 +319,7 @@ if ($this->AuthUser->hasAccess(['action' => 'secretArea'])) {
 ### Named Routes
 With 1.12.0+ named routes are also supported now:
 ```php
-<?= $this->AuthUser->link('Change Password', ['_name' => 'admin:account:password']); ?>  
+<?= $this->AuthUser->link('Change Password', ['_name' => 'admin:account:password']); ?>
 ```
 
 ## Including Authentication
@@ -363,7 +364,7 @@ This way, if you ever refactor them, it will be easier to adjust all occurrences
 
 ### Leverage session
 Especially when working with multi-role setup, it can be useful to not every time read the current user's roles from the database.
-When logging in a user you can write the roles to the session right away. 
+When logging in a user you can write the roles to the session right away.
 If available here, TinyAuth will use those and will not try to query the roles table (or the `roles_users` pivot table).
 
 For basic single-role setup, the session is expected to be filled like
@@ -373,7 +374,7 @@ For basic single-role setup, the session is expected to be filled like
         'id' => '1',
         'role_id' => '1',
         ...
-    ]    
+    ]
 ];
 ```
 The expected `'role_id'` session key is configurable via `roleColumn` config key.
@@ -391,7 +392,7 @@ For a multi-role setup it can be either the normalized array form
             ],
             ...
         ],
-    ]    
+    ]
 ];
 ```
 or the simplified numeric list form
@@ -401,11 +402,11 @@ or the simplified numeric list form
         'id' => '1',
         ...
         'Roles' => [
-            '1', 
+            '1',
             '2',
             ...
         ]
-    ]    
+    ]
 ];
 ```
 The expected `'Roles'` session key is configurable via `rolesTable` config key.
@@ -421,7 +422,7 @@ Alternatively, instead of manually adding the Roles into the session, you can al
             'role_id' => '1',
             ...
         ],
-    ]    
+    ]
 ];
 ```
 Note that in this case the role definitions will have to contain a `role_id`, though (as the pivot table only contains `user_id` and that field).

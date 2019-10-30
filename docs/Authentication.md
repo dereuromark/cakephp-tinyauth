@@ -68,7 +68,7 @@ Using only allowing is recommended.
 Careful with denying, as this can accidentally open up more than desired actions. If you really want to use it:
 
 ```ini
-Users = "!secret",* 
+Users = "!secret",*
 ```
 Meaning: Allow all Users actions by default, but keep authentication required for "secret" action.
 
@@ -96,7 +96,7 @@ This can be interested when migrating slowly to TinyAuth, for example.
 Once you move such a code based rule into the INI file, you can safely remove those lines of code in your controller :)
 
 ### allow() vs deny()
-Since 1.11.0 you can also mix it with deny() calls. From how the AuthComponent works, all allow() calls need be done before calling deny(). 
+Since 1.11.0 you can also mix it with deny() calls. From how the AuthComponent works, all allow() calls need be done before calling deny().
 As such TinyAuth injects its list now before `Controller::beforeFilter()` gets called.
 
 
@@ -121,3 +121,4 @@ Option | Type | Description
 autoClearCache|bool|True will generate a new ACL cache file every time.
 allowFilePath|string|Full path to the INI file. Can also be an array of paths. Defaults to `ROOT . DS . 'config' . DS`.
 allowFile|string|Name of the INI file. Defaults to `auth_allow.ini`.
+allowAdapter|string|Class name, defaults to `IniAllowAdapter::class`.

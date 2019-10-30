@@ -28,7 +28,6 @@ class AuthComponent extends CakeAuthComponent {
 	 */
 	protected $_defaultTinyAuthConfig = [
 		'allowAdapter' => IniAllowAdapter::class,
-		'cache' => '_cake_core_',
 		'autoClearCache' => null, // Set to true to delete cache automatically in debug mode, keep null for auto-detect
 		'allowFilePath' => null, // Possible to locate ini file at given path e.g. Plugin::configPath('Admin'), filePath is also available for shared config
 		'allowFile' => 'auth_allow.ini',
