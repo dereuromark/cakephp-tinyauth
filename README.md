@@ -10,7 +10,7 @@
 
 A CakePHP plugin to handle authentication and user authorization the easy way.
 
-**This branch is for CakePHP 3.7+**
+This branch is for **CakePHP 3.7+**. For details see [version map](https://github.com/dereuromark/cakephp-ide-helper/wiki#cakephp-version-map).
 
 ## Features
 
