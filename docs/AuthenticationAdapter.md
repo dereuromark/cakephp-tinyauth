@@ -11,7 +11,7 @@ Implement the AllowAdapterInterface and make sure your `getAllow()` method retur
         'deny' => [],
         'allow' => [
             'index',
-            'view'
+            'view',
         ]
     ],
     // or with admin prefix
@@ -21,8 +21,8 @@ Implement the AllowAdapterInterface and make sure your `getAllow()` method retur
         'controller' => 'Users',
         'deny' => [],
         'allow' => [
-            'index'
-        ]
+            'index',
+        ],
     ],
     // plugin controller
     'Extras.Offers' => [
@@ -30,11 +30,11 @@ Implement the AllowAdapterInterface and make sure your `getAllow()` method retur
         'prefix' => null,
         'controller' => 'Offers',
         'deny' => [
-            'superPrivate'
+            'superPrivate',
         ],
         'allow' => [
-            '*'
-        ]
+            '*',
+        ],
     ],
     ...
 ```

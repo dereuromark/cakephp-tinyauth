@@ -13,7 +13,7 @@ Implement the AclAdapterInterface and make sure your `getAcl()` method returns a
         ],
         'deny => [
             // action to role id mapping
-        ]
+        ],
     ],
     // or plugin with admin prefix
     'Queue.admin/QueuedJobs' => [
@@ -22,13 +22,13 @@ Implement the AclAdapterInterface and make sure your `getAcl()` method returns a
         'controller' => 'QueuedJobs',
         'allow' => [
             'index' => [
-                1
+                'user' => 1,
             ],
             'view' => [
-                1
+                'user' => 1,
             ],
             '*' => [
-                3
+                'admin' => 3,
             ],
         ],
     ],
