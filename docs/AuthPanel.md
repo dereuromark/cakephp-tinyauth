@@ -28,11 +28,11 @@ Activate the panel in your config:
 
 ```php
     'DebugKit' => [
-		'panels' => [
-			...
-			'TinyAuth.Auth' => true,
-		],
-	],
+        'panels' => [
+            ...
+            'TinyAuth.Auth' => true,
+        ],
+    ],
 ```
 
 Now it should be visible in your DebugKit panel list.
