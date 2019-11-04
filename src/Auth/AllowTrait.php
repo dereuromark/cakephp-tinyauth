@@ -77,6 +77,10 @@ trait AllowTrait {
 	 * @throws \InvalidArgumentException
 	 */
 	protected function _loadAllowAdapter($adapter) {
+		if ($this->_allowAdapter !== null) {
+			return $this->_allowAdapter;
+		}
+
 		if (!class_exists($adapter)) {
 			throw new Exception(sprintf('The Acl Adapter class "%s" was not found.', $adapter));
 		}
@@ -87,6 +91,7 @@ trait AllowTrait {
 				'TinyAuth Acl adapters have to implement %s.', AllowAdapterInterface::class
 			));
 		}
+		$this->_allowAdapter = $adapterInstance;
 
 		return $adapterInstance;
 	}

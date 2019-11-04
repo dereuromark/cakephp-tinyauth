@@ -19,7 +19,7 @@ class TinyAuth {
 	 * @param array $config
 	 */
 	public function __construct(array $config = []) {
-		$config = $this->_prepareConfig($config);
+		$config += Config::all();
 
 		$this->setConfig($config);
 	}

@@ -58,6 +58,8 @@ Cake\Cache\Cache::setConfig($cache);
 
 Cake\Core\Plugin::getCollection()->add(new TinyAuth\Plugin());
 
+class_alias(\TestApp\View\AppView::class, 'App\View\AppView');
+
 // Ensure default test connection is defined
 if (!getenv('db_class')) {
 	putenv('db_class=Cake\Database\Driver\Sqlite');

@@ -4,13 +4,10 @@ namespace TinyAuth\Controller\Component;
 
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\AuthComponent as CakeAuthComponent;
-use Cake\Core\Exception\Exception;
 use Cake\Event\Event;
-use InvalidArgumentException;
 use TinyAuth\Auth\AclTrait;
-use TinyAuth\Auth\AllowAdapter\AllowAdapterInterface;
-use TinyAuth\Auth\AllowAdapter\IniAllowAdapter;
 use TinyAuth\Auth\AllowTrait;
+use TinyAuth\Utility\Config;
 
 /**
  * TinyAuth AuthComponent to handle all authentication in a central ini file.
@@ -24,21 +21,11 @@ class AuthComponent extends CakeAuthComponent {
 	use AllowTrait;
 
 	/**
-	 * @var array
-	 */
-	protected $_defaultTinyAuthConfig = [
-		'allowAdapter' => IniAllowAdapter::class,
-		'autoClearCache' => null, // Set to true to delete cache automatically in debug mode, keep null for auto-detect
-		'allowFilePath' => null, // Possible to locate ini file at given path e.g. Plugin::configPath('Admin'), filePath is also available for shared config
-		'allowFile' => 'auth_allow.ini',
-	];
-
-	/**
 	 * @param \Cake\Controller\ComponentRegistry $registry
 	 * @param array $config
 	 */
 	public function __construct(ComponentRegistry $registry, array $config = []) {
-		$config += $this->_defaultConfig() + $this->_defaultTinyAuthConfig;
+		$config += Config::all();
 
 		parent::__construct($registry, $config);
 	}
@@ -50,7 +37,8 @@ class AuthComponent extends CakeAuthComponent {
 	public function initialize(array $config) {
 		parent::initialize($config);
 
-		$this->_prepareAuthentication();
+		$params = $this->_registry->getController()->getRequest()->getAttribute('params');
+		$this->_prepareAuthentication($params);
 	}
 
 	/**
@@ -77,10 +65,11 @@ class AuthComponent extends CakeAuthComponent {
 	}
 
 	/**
+	 * @param array $params
 	 * @return void
 	 */
-	protected function _prepareAuthentication() {
-		$rule = $this->_getAllowRule($this->_registry->getController()->getRequest()->getAttribute('params'));
+	protected function _prepareAuthentication(array $params) {
+		$rule = $this->_getAllowRule($params);
 		if (!$rule) {
 			return;
 		}
@@ -95,29 +84,6 @@ class AuthComponent extends CakeAuthComponent {
 		} elseif (!empty($rule['deny'])) {
 			$this->deny($rule['deny']);
 		}
-	}
-
-	/**
-	 * Finds the authentication adapter to use for this request.
-	 *
-	 * @param string $adapter Acl adapter to load.
-	 * @return \TinyAuth\Auth\AllowAdapter\AllowAdapterInterface
-	 * @throws \Cake\Core\Exception\Exception
-	 * @throws \InvalidArgumentException
-	 */
-	protected function _loadAllowAdapter($adapter) {
-		if (!class_exists($adapter)) {
-			throw new Exception(sprintf('The Acl Adapter class "%s" was not found.', $adapter));
-		}
-
-		$adapterInstance = new $adapter();
-		if (!($adapterInstance instanceof AllowAdapterInterface)) {
-			throw new InvalidArgumentException(sprintf(
-				'TinyAuth Acl adapters have to implement %s.', AllowAdapterInterface::class
-			));
-		}
-
-		return $adapterInstance;
 	}
 
 }

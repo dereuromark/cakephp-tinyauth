@@ -8,7 +8,6 @@ use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
 use InvalidArgumentException;
 use TinyAuth\Auth\AclAdapter\AclAdapterInterface;
-use TinyAuth\Auth\AclAdapter\IniAclAdapter;
 use TinyAuth\Utility\Cache;
 use TinyAuth\Utility\Utility;
 
@@ -17,77 +16,27 @@ trait AclTrait {
 	/**
 	 * @var array|null
 	 */
-	protected $_acl = null;
+	protected $_acl;
 
 	/**
 	 * @var array|null
 	 */
-	protected $_roles = null;
+	protected $_roles;
 
 	/**
 	 * @var array|null
 	 */
-	protected $_userRoles = null;
+	protected $_userRoles;
 
 	/**
 	 * @var \TinyAuth\Auth\AclAdapter\AclAdapterInterface|null
 	 */
-	protected $_aclAdapter = null;
+	protected $_aclAdapter;
 
 	/**
 	 * @var array|null
 	 */
-	protected $auth = null;
-
-	/**
-	 * @return array
-	 */
-	protected function _defaultConfig() {
-		$defaults = [
-			'aclAdapter' => IniAclAdapter::class,
-			'idColumn' => 'id', // ID Column in users table
-			'roleColumn' => 'role_id', // Foreign key for the Role ID in users table or in pivot table
-			'userColumn' => 'user_id', // Foreign key for the User id in pivot table. Only for multi-roles setup
-			'aliasColumn' => 'alias', // Name of column in roles table holding role alias/slug
-			'rolesTable' => 'Roles', // name of Configure key holding available roles OR class name of roles table
-			'usersTable' => 'Users', // name of the Users table
-			'pivotTable' => null, // Should be used in multi-roles setups
-			'multiRole' => false, // true to enables multirole/HABTM authorization (requires a valid pivot table)
-			'superAdminRole' => null, // id of super admin role, which grants access to ALL resources
-			'superAdmin' => null, // super admin, which grants access to ALL resources
-			'superAdminColumn' => null, // Column of super admin
-			'authorizeByPrefix' => false,
-			'prefixes' => [], // Whitelisted prefixes (only used when allowAdmin is enabled), leave empty to use all available
-			'allowUser' => false, // enable to allow ALL roles access to all actions except prefixed with 'adminPrefix'
-			'adminPrefix' => 'admin', // name of the admin prefix route (only used when allowUser is enabled)
-			'autoClearCache' => null, // Set to true to delete cache automatically in debug mode, keep null for auto-detect
-			'aclFilePath' => null, // Possible to locate INI file at given path e.g. Plugin::configPath('Admin'), filePath is also available for shared config
-			'aclFile' => 'auth_acl.ini',
-			'includeAuthentication' => false, // Set to true to include public auth access into hasAccess() checks. Note, that this requires Configure configuration.
-		];
-		$config = (array)Configure::read('TinyAuth') + $defaults;
-
-		return $config;
-	}
-
-	/**
-	 * @param array $config
-	 * @throws \Cake\Core\Exception\Exception
-	 * @return array
-	 */
-	protected function _prepareConfig(array $config) {
-		$config += $this->_defaultConfig();
-		if (!$config['prefixes'] && !empty($config['authorizeByPrefix'])) {
-			throw new Exception('Invalid TinyAuthorization setup for `authorizeByPrefix`. Please declare `prefixes`.');
-		}
-
-		if ($config['autoClearCache'] === null) {
-			$config['autoClearCache'] = Configure::read('debug');
-		}
-		$this->_aclAdapter = $this->_loadAclAdapter($config['aclAdapter']);
-
-		return $config;
-	}
+	protected $auth;
 
 	/**
 	 * Finds the authorization adapter to use for this request.
@@ -98,6 +47,10 @@ trait AclTrait {
 	 * @throws \InvalidArgumentException
 	 */
 	protected function _loadAclAdapter($adapter) {
+		if ($this->_aclAdapter !== null) {
+			return $this->_aclAdapter;
+		}
+
 		if (!class_exists($adapter)) {
 			throw new Exception(sprintf('The Acl Adapter class "%s" was not found.', $adapter));
 		}
@@ -108,6 +61,8 @@ trait AclTrait {
 				'TinyAuth Acl adapters have to implement %s.', AclAdapterInterface::class
 			));
 		}
+
+		$this->_aclAdapter = $adapterInstance;
 
 		return $adapterInstance;
 	}
@@ -122,7 +77,7 @@ trait AclTrait {
 	 * @return bool Success
 	 * @throws \Cake\Core\Exception\Exception
 	 */
-	protected function _check(array $user, array $params) {
+	protected function _checkUser(array $user, array $params) {
 		if ($this->getConfig('includeAuthentication') && $this->_isPublic($params)) {
 			return true;
 		}
@@ -157,6 +112,16 @@ trait AclTrait {
 
 		$userRoles = $this->_getUserRoles($user);
 
+		return $this->_check($userRoles, $params);
+	}
+
+	/**
+	 * @param array $userRoles
+	 * @param array $params
+	 *
+	 * @return bool
+	 */
+	protected function _check(array $userRoles, array $params) {
 		// Allow access to all prefixed actions for users belonging to
 		// the specified role that matches the prefix.
 		if ($this->getConfig('authorizeByPrefix') && !empty($params['prefix'])) {
@@ -307,7 +272,7 @@ trait AclTrait {
 		unset($config['aclFilePath']);
 		unset($config['aclFile']);
 
-		$acl = $this->_aclAdapter->getAcl($this->_getAvailableRoles(), $config);
+		$acl = $this->_loadAclAdapter($config['aclAdapter'])->getAcl($this->_getAvailableRoles(), $config);
 		Cache::write(Cache::KEY_ACL, $acl);
 
 		return $acl;
@@ -408,7 +373,7 @@ trait AclTrait {
 	 *   in multi-role mode)
 	 *
 	 * @param array $user The user to get the roles for
-	 * @return array List with all role ids belonging to the user
+	 * @return int[] List with all role ids belonging to the user
 	 * @throws \Cake\Core\Exception\Exception
 	 */
 	protected function _getUserRoles($user) {
@@ -433,17 +398,7 @@ trait AclTrait {
 		}
 
 		// Multi-role from session via pivot table
-		$pivotTableName = $this->getConfig('pivotTable');
-		if (!$pivotTableName) {
-			list(, $rolesTableName) = pluginSplit($this->getConfig('rolesTable'));
-			list(, $usersTableName) = pluginSplit($this->getConfig('usersTable'));
-			$tables = [
-				$usersTableName,
-				$rolesTableName
-			];
-			asort($tables);
-			$pivotTableName = implode('', $tables);
-		}
+		$pivotTableName = $this->_pivotTableName();
 		if (isset($user[$pivotTableName])) {
 			$userRoles = $user[$pivotTableName];
 			if (isset($userRoles[0][$this->getConfig('roleColumn')])) {
@@ -459,6 +414,25 @@ trait AclTrait {
 		}
 
 		return $this->_mapped($roles);
+	}
+
+	/**
+	 * @return string
+	 */
+	protected function _pivotTableName() {
+		$pivotTableName = $this->getConfig('pivotTable');
+		if (!$pivotTableName) {
+			list(, $rolesTableName) = pluginSplit($this->getConfig('rolesTable'));
+			list(, $usersTableName) = pluginSplit($this->getConfig('usersTable'));
+			$tables = [
+				$usersTableName,
+				$rolesTableName
+			];
+			asort($tables);
+			$pivotTableName = implode('', $tables);
+		}
+
+		return $pivotTableName;
 	}
 
 	/**

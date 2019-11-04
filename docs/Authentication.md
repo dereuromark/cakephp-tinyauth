@@ -58,19 +58,22 @@ admin/Users = *
 ; ----------------------------------------------------------
 Accounts.Accounts = view, edit
 ; ----------------------------------------------------------
-; AccountsController in plugin named Accounts using /admin
-; prefixed route
+; AccountsController in plugin named Accounts using /my-admin
+; prefixed route (assuming you are using recommended DashedRoute class)
 ; ----------------------------------------------------------
-Accounts.admin/Accounts = index
+Accounts.my_admin/Accounts = index
 ```
 
-Using only allowing is recommended.
+Note: Prefixes are always `lowercase_underscored`. The route inflects to the final casing if needed. 
+Nested prefixes are joined using `/`, e.g. `my/admin/nested/`.
+
+Using only "allowing" is recommended for security reasons.
 Careful with denying, as this can accidentally open up more than desired actions. If you really want to use it:
 
 ```ini
 Users = "!secret",*
 ```
-Meaning: Allow all Users actions by default, but keep authentication required for "secret" action.
+Meaning: Allow all "Users" controller actions by default, but keep authentication required for "secret" action.
 
 Note that deny always trumps allow, if both are declared for an action.
 

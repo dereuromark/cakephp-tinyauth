@@ -4,6 +4,7 @@ namespace TinyAuth\Auth;
 use Cake\Auth\BaseAuthorize;
 use Cake\Controller\ComponentRegistry;
 use Cake\Http\ServerRequest;
+use TinyAuth\Utility\Config;
 
 /**
  * Probably the most simple and fastest ACL out there.
@@ -33,7 +34,7 @@ class TinyAuthorize extends BaseAuthorize {
 	 * @throws \Cake\Core\Exception\Exception
 	 */
 	public function __construct(ComponentRegistry $registry, array $config = []) {
-		$config = $this->_prepareConfig($config);
+		$config += Config::all();
 
 		parent::__construct($registry, $config);
 	}
@@ -52,7 +53,7 @@ class TinyAuthorize extends BaseAuthorize {
 	 * @return bool Success
 	 */
 	public function authorize($user, ServerRequest $request) {
-		return $this->_check((array)$user, $request->getAttribute('params'));
+		return $this->_checkUser((array)$user, $request->getAttribute('params'));
 	}
 
 }

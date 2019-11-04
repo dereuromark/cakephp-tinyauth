@@ -4,7 +4,7 @@ namespace TinyAuth\Test\Auth;
 use Cake\Controller\ComponentRegistry;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\Network\Request;
+use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use ReflectionClass;
 use TestApp\Auth\AclAdapter\CustomAclAdapter;
@@ -33,7 +33,7 @@ class TinyAuthorizeTest extends TestCase {
 	public $collection;
 
 	/**
-	 * @var \Cake\Http\ServerRequest|\Cake\Network\Request
+	 * @var \Cake\Http\ServerRequest
 	 */
 	public $request;
 
@@ -45,7 +45,7 @@ class TinyAuthorizeTest extends TestCase {
 
 		$this->collection = new ComponentRegistry();
 
-		$this->request = new Request();
+		$this->request = new ServerRequest();
 
 		Configure::write('Roles', [
 			'user' => 1,
@@ -79,10 +79,8 @@ class TinyAuthorizeTest extends TestCase {
 	 * @return void
 	 */
 	public function testLoadingAclAdapter() {
-		$object = new TestTinyAuthorize($this->collection, [
-			'aclAdapter' => CustomAclAdapter::class
-		]);
-		$this->assertInstanceOf(CustomAclAdapter::class, $object->getAclAdapter());
+		$object = new TestTinyAuthorize($this->collection);
+		$this->assertInstanceOf(CustomAclAdapter::class, $object->getAclAdapter(CustomAclAdapter::class));
 	}
 
 	/**
@@ -92,9 +90,10 @@ class TinyAuthorizeTest extends TestCase {
 	 * @return void
 	 */
 	public function testLoadingInvalidAclAdapter() {
-		new TestTinyAuthorize($this->collection, [
+		$object = new TestTinyAuthorize($this->collection, [
 			'aclAdapter' => Configure::class
 		]);
+		$object->getAcl();
 	}
 
 	/**
@@ -104,9 +103,10 @@ class TinyAuthorizeTest extends TestCase {
 	 * @return void
 	 */
 	public function testLoadingNonExistentAclAdapter() {
-		new TestTinyAuthorize($this->collection, [
+		$object = new TestTinyAuthorize($this->collection, [
 			'aclAdapter' => 'Non\\Existent\\Acl\\Adapter'
 		]);
+		$object->getAcl();
 	}
 
 	/**

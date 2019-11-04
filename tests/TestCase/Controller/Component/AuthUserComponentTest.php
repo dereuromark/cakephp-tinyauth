@@ -7,7 +7,7 @@ use Cake\Controller\Component\AuthComponent;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Event\Event;
-use Cake\Network\Request;
+use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use TestApp\Controller\Component\TestAuthUserComponent;
 use TinyAuth\Utility\Cache;
@@ -30,7 +30,7 @@ class AuthUserComponentTest extends TestCase {
 	 * @return void
 	 */
 	public function setUp() {
-		$controller = new Controller(new Request());
+		$controller = new Controller(new ServerRequest());
 		$componentRegistry = new ComponentRegistry($controller);
 		$this->AuthUser = new TestAuthUserComponent($componentRegistry);
 		$this->AuthUser->Auth = $this->getMockBuilder(AuthComponent::class)->setMethods(['user'])->setConstructorArgs([$componentRegistry])->getMock();
@@ -156,7 +156,7 @@ class AuthUserComponentTest extends TestCase {
 	 * @return void
 	 */
 	public function testBeforeRenderSetAuthUser() {
-		$controller = new Controller(new Request());
+		$controller = new Controller(new ServerRequest());
 		$event = new Event('Controller.beforeRender', $controller);
 		$this->AuthUser->beforeRender($event);
 

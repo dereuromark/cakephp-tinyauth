@@ -6,7 +6,7 @@ use Authorization\Controller\Component\AuthorizationComponent as CakeAuthorizati
 use Cake\Controller\ComponentRegistry;
 use Cake\Event\Event;
 use TinyAuth\Auth\AclTrait;
-use TinyAuth\Auth\AllowAdapter\IniAllowAdapter;
+use TinyAuth\Utility\Config;
 
 /**
  * TinyAuth AuthorizationComponent to handle all authorization in a central ini file.
@@ -16,21 +16,11 @@ class AuthorizationComponent extends CakeAuthorizationComponent {
 	use AclTrait;
 
 	/**
-	 * @var array
-	 */
-	protected $_defaultTinyAuthConfig = [
-		'allowAdapter' => IniAllowAdapter::class,
-		'autoClearCache' => null, // Set to true to delete cache automatically in debug mode, keep null for auto-detect
-		'allowFilePath' => null, // Possible to locate ini file at given path e.g. Plugin::configPath('Admin'), filePath is also available for shared config
-		'allowFile' => 'auth_allow.ini',
-	];
-
-	/**
 	 * @param \Cake\Controller\ComponentRegistry $registry
 	 * @param array $config
 	 */
 	public function __construct(ComponentRegistry $registry, array $config = []) {
-		$config += ($this->_defaultTinyAuthConfig + $this->_defaultConfig());
+		$config += Config::all();
 
 		parent::__construct($registry, $config);
 	}

@@ -6,8 +6,8 @@ use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
 use Cake\Core\Plugin;
 use Cake\Event\Event;
-use Cake\Network\Request;
-use Cake\Network\Response;
+use Cake\Http\Response;
+use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use TestApp\Controller\OffersController;
 use TinyAuth\Controller\Component\AuthComponent;
@@ -41,7 +41,7 @@ class AuthComponentTest extends TestCase {
 	 * @return void
 	 */
 	public function testValid() {
-		$request = new Request(['params' => [
+		$request = new ServerRequest(['params' => [
 			'controller' => 'Users',
 			'action' => 'view',
 			'plugin' => null,
@@ -65,7 +65,7 @@ class AuthComponentTest extends TestCase {
 	 * @return void
 	 */
 	public function testValidAnyAction() {
-		$request = new Request(['params' => [
+		$request = new ServerRequest(['params' => [
 			'plugin' => 'Extras',
 			'controller' => 'Offers',
 			'action' => 'index',
@@ -89,7 +89,7 @@ class AuthComponentTest extends TestCase {
 	 * @return void
 	 */
 	public function testDeniedActionInController() {
-		$request = new Request(['params' => [
+		$request = new ServerRequest(['params' => [
 			'plugin' => 'Extras',
 			'controller' => 'Offers',
 			'action' => 'denied',
@@ -115,7 +115,7 @@ class AuthComponentTest extends TestCase {
 	 * @return void
 	 */
 	public function testDeniedAction() {
-		$request = new Request(['params' => [
+		$request = new ServerRequest(['params' => [
 			'plugin' => 'Extras',
 			'controller' => 'Offers',
 			'action' => 'superPrivate',
@@ -141,7 +141,7 @@ class AuthComponentTest extends TestCase {
 	 * @return void
 	 */
 	public function testInvalid() {
-		$request = new Request(['params' => [
+		$request = new ServerRequest(['params' => [
 			'controller' => 'FooBar',
 			'action' => 'index',
 			'plugin' => null,
@@ -164,10 +164,10 @@ class AuthComponentTest extends TestCase {
 	}
 
 	/**
-	 * @param \Cake\Network\Request $request
+	 * @param \Cake\Http\ServerRequest $request
 	 * @return \Cake\Controller\Controller|\PHPUnit_Framework_MockObject_MockObject
 	 */
-	protected function getControllerMock(Request $request) {
+	protected function getControllerMock(ServerRequest $request) {
 		$controller = $this->getMockBuilder(Controller::class)
 			->setConstructorArgs([$request])
 			->setMethods(['isAction'])

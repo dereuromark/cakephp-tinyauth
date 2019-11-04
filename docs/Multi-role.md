@@ -29,7 +29,7 @@ Pages = display
 Users = login
 ```
 
-### acl.ini
+### auth_acl.ini
 ```ini
 // in config folder
 ; ----------------------------------------------------------

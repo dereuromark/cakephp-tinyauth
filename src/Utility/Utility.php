@@ -14,7 +14,7 @@ class Utility {
 	public static function deconstructIniKey($key) {
 		$res = [
 			'plugin' => null,
-			'prefix' => null
+			'prefix' => null,
 		];
 
 		if (strpos($key, '.') !== false) {

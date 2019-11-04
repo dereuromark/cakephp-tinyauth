@@ -4,7 +4,8 @@ namespace TinyAuth\Controller\Component;
 
 use Authentication\Controller\Component\AuthenticationComponent as CakeAuthenticationComponent;
 use Cake\Controller\ComponentRegistry;
-use TinyAuth\Auth\AllowAdapter\IniAllowAdapter;
+use Cake\Core\Exception\Exception;
+use Cake\Routing\Router;
 use TinyAuth\Auth\AllowTrait;
 
 /**
@@ -15,21 +16,11 @@ class AuthenticationComponent extends CakeAuthenticationComponent {
 	use AllowTrait;
 
 	/**
-	 * @var array
-	 */
-	protected $_defaultTinyAuthConfig = [
-		'allowAdapter' => IniAllowAdapter::class,
-		'autoClearCache' => null, // Set to true to delete cache automatically in debug mode, keep null for auto-detect
-		'allowFilePath' => null, // Possible to locate ini file at given path e.g. Plugin::configPath('Admin'), filePath is also available for shared config
-		'allowFile' => 'auth_allow.ini',
-	];
-
-	/**
 	 * @param \Cake\Controller\ComponentRegistry $registry
 	 * @param array $config
 	 */
 	public function __construct(ComponentRegistry $registry, array $config = []) {
-		$config += $this->_defaultTinyAuthConfig;
+		$config += Config::all();
 
 		parent::__construct($registry, $config);
 	}
@@ -43,6 +34,48 @@ class AuthenticationComponent extends CakeAuthenticationComponent {
 		$this->_prepareAuthentication();
 
 		parent::startup();
+	}
+
+	/**
+	 * Checks if a given URL is public.
+	 *
+	 * If no URL is given it will default to the current request URL.
+	 *
+	 * @param array $url
+	 * @return bool
+	 */
+	public function isPublic(array $url = []) {
+		if (!$url) {
+			$url = $this->getController()->getRequest()->getAttribute('params');
+		}
+
+		if (isset($url['_name'])) {
+			//throw MissingRouteException if necessary
+			Router::url($url);
+			$routes = Router::getRouteCollection()->named();
+			$defaults = $routes[$url['_name']]->defaults;
+			if (!isset($defaults['action']) || !isset($defaults['controller'])) {
+				throw new Exception('Controller or action name could not be null.');
+			}
+			$url = [
+				'prefix' => !empty($defaults['prefix']) ? $defaults['prefix'] : null,
+				'plugin' => !empty($defaults['plugin']) ? $defaults['plugin'] : null,
+				'controller' => $defaults['controller'],
+				'action' => $defaults['action'],
+			];
+		} else {
+			$params = $this->getController()->getRequest()->getAttribute('params');
+			$url += [
+				'prefix' => !empty($params['prefix']) ? $params['prefix'] : null,
+				'plugin' => !empty($params['plugin']) ? $params['plugin'] : null,
+				'controller' => $params['controller'],
+				'action' => 'index',
+			];
+		}
+
+		$rule = $this->_getAllowRule($url);
+
+		return !empty($rule);
 	}
 
 	/**
