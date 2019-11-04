@@ -24,7 +24,7 @@ If you do not have any roles and either all are logged in or not logged in you c
 See [Authentication](Authentication.md) docs.
 
 ## Authorization
-For this we have a TinyAuthorize adapter.
+The TinyAuthorize adapter takes care of authorization.
 
 The adapter plays well together with the component above.
 But if you prefer to control the action whitelisting for authentication via code and `$this->Auth->allow()` calls, you can
@@ -79,6 +79,7 @@ See the docs for details:
 - [TinyAuth and Authentication plugin](AuthenticationPlugin.md)
 - [TinyAuth and Authorization plugin](AuthorizationPlugin.md)
 
+Note: Those are *beta* - not fully tested/functional.
 
 ## Contributing
 Feel free to fork and pull request.

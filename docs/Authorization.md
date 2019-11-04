@@ -197,7 +197,7 @@ view, edit = user
 Note: Prefixes are always `lowercase_underscored`. The route inflects to the final casing if needed. 
 Nested prefixes are joined using `/`, e.g. `my/admin/nested/`.
 
-Using only "allowing" is recommended for security reasons.
+Using only "granting" is recommended for security reasons.
 Careful with denying, as this can accidentally open up more than desired actions. If you really want to use it:
 
 ```ini
@@ -205,9 +205,9 @@ Careful with denying, as this can accidentally open up more than desired actions
 * = user, admin
 secret = !user
 ```
-Meaning: Allow all "Users" controller actions by default for user/admin role, but only allow admins to access "secret" action.
+Meaning: Grant the user/admin role access to all "Users" controller actions by default, but only allow admins to access "secret" action.
 
-Note that deny always trumps allow, if both are declared for an action and role.
+Note that denying always trumps granting, if both are declared for an action.
 
 ### Multiple files and merging
 You can specify multiple paths in your config, e.g. when you have plugins and separated the definitions across them.
@@ -258,7 +258,7 @@ aclFile|string|Name of the INI file. Defaults to `auth_acl.ini`.
 aclAdapter|string|Class name, defaults to `IniAclAdapter::class`.
 includeAuthentication|bool|Set to true to include public auth access into hasAccess() checks. Note, that this requires Configure configuration.
 
-## AuthUserComponent
+## AuthUser Component
 Add the AuthUserComponent and you can easily check permissions inside your controller scope:
 ```php
 $this->loadComponent('TinyAuth.AuthUser');
@@ -286,7 +286,7 @@ $isMe = $this->AuthUser->isMe($userEntity->id);
 $isMe = $this->AuthUser->id() == $userEntity->id;
 ```
 
-## AuthUserHelper
+## AuthUser Helper
 The helper assists with the same in the templates.
 
 Include the helper in your `AppView.php`:
@@ -326,7 +326,7 @@ With 1.12.0+ named routes are also supported now:
 ```
 
 ## Including Authentication
-Please note that by default `hasAccess()` only checks the ACL INI, not the allow auth INI.
+Please note that by default `hasAccess()` only checks the `auth_acl`, not the `auth_allow` adapter.
 Those links and access checks are meant to be used for logged in users.
 
 If you need to build a navigation that includes publicly accessible actions, you need to enable

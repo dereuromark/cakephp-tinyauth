@@ -37,7 +37,7 @@ The section key syntax follows the CakePHP naming convention for plugins.
 Make sure to create an entry for each action you want to expose and use:
 
 - one or more action names
-- the ``*`` wildcard to allow access to all actions of that controller
+- the ``*`` wildcard to grant access to all actions of that controller
 - use `"!actionName"` (quotes are important then) to deny certain actions
 
 ```ini
@@ -67,21 +67,21 @@ Accounts.my_admin/Accounts = index
 Note: Prefixes are always `lowercase_underscored`. The route inflects to the final casing if needed. 
 Nested prefixes are joined using `/`, e.g. `my/admin/nested/`.
 
-Using only "allowing" is recommended for security reasons.
+Using only "granting" is recommended for security reasons.
 Careful with denying, as this can accidentally open up more than desired actions. If you really want to use it:
 
 ```ini
 Users = "!secret",*
 ```
-Meaning: Allow all "Users" controller actions by default, but keep authentication required for "secret" action.
+Meaning: Grant public access to all "Users" controller actions by default, but keep authentication required for "secret" action.
 
-Note that deny always trumps allow, if both are declared for an action.
+Note that denying always trumps granting, if both are declared for an action.
 
 ### Multiple files and merging
 You can specify multiple paths in your config, e.g. when you have plugins and separated the definitions across them.
 Make sure you are using each key only once, though. The first definition will be kept and all others for the same key are ignored.
 
-### Mixing with code
+## Mixing with code
 It is possible to have mixed INI and code rules. Those will get merged prior to authentication.
 So in case any of your controllers (or plugin controllers) contain such a statement, it will merge itself with your INI whitelist:
 ```php
@@ -99,9 +99,10 @@ This can be interested when migrating slowly to TinyAuth, for example.
 Once you move such a code based rule into the INI file, you can safely remove those lines of code in your controller :)
 
 ### allow() vs deny()
-Since 1.11.0 you can also mix it with deny() calls. From how the AuthComponent works, all allow() calls need be done before calling deny().
+Since 1.11.0 you can also mix it with `deny()` calls. From how the AuthComponent works, all allow() calls need be done before calling deny().
 As such TinyAuth injects its list now before `Controller::beforeFilter()` gets called.
 
+Note: It is also advised to move away from these controller calls.
 
 ## Caching
 
