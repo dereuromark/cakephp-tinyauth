@@ -80,11 +80,13 @@ class AuthPanel extends DebugPanel {
 		$data['roles'] = $roles;
 
 		$access = [];
-		if ($user) {
-			foreach ($availableRoles as $role => $id) {
+		foreach ($availableRoles as $role => $id) {
+			if ($user) {
 				$user = $this->_injectRole($user, $role, $id);
-				$access[$role] = $this->_checkUser($user, $params);
+			} else {
+				$user = $this->_generateUser($role, $id);
 			}
+			$access[$role] = $this->_checkUser($user, $params);
 		}
 		$data['access'] = $access;
 
@@ -121,7 +123,7 @@ class AuthPanel extends DebugPanel {
 	/**
 	 * @param array $user
 	 * @param string $role
-	 * @param int $id
+	 * @param int|string $id
 	 *
 	 * @return array
 	 */
@@ -145,6 +147,27 @@ class AuthPanel extends DebugPanel {
 		}
 
 		//TODO: other edge cases?
+
+		return $user;
+	}
+
+	/**
+	 * @param string $role
+	 * @param int|string $id
+	 *
+	 * @return array
+	 */
+	protected function _generateUser($role, $id) {
+		$user = [
+			'id' => 0,
+		];
+		if (!$this->getConfig('multiRole')) {
+			$user[$this->getConfig('roleColumn')] = $id;
+
+			return $user;
+		}
+
+		$user[$this->getConfig('rolesTable')] = [$role => $id];
 
 		return $user;
 	}

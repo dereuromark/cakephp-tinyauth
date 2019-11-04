@@ -10,6 +10,11 @@ If an action is not whitelisted, it will trigger the login process.
 The second only gets invoked once the person is already logged in.
 In that case the role of this logged in user decides if that action is allowed to be accessed.
 
+## DebugKit Panel
+You can activate an "Auth" DebugKit panel to have useful insights per URL.
+
+See [AuthPanel](AuthPanel.md) docs.
+
 ## Authentication
 This is done via TinyAuth AuthComponent.
 

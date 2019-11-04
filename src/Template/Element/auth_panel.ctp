@@ -25,7 +25,7 @@ use TinyAuth\Utility\Config;
 	<br/>
 	<p>Tiny Auth URL path: <b style="font-weight: bold"><?php echo h($path); ?></b></p>
 
-	<h2>Authentication</h2>
+	<h2>Authentication (allow)</h2>
 	<?php
 	if (Config::get('allowAdapter')) {
 		$icon = $isPublic ? AuthPanel::ICON_PUBLIC : AuthPanel::ICON_RESTRICTED;
@@ -41,7 +41,7 @@ use TinyAuth\Utility\Config;
 	}
 	?>
 
-	<h2>Authorization</h2>
+	<h2>Authorization (ACL)</h2>
 	<?php
 	if (Config::get('aclAdapter')) {
 		if ($user) {
@@ -53,16 +53,24 @@ use TinyAuth\Utility\Config;
 			Debugger::dump($roles);
 
 		} else {
-			echo '<i>not logged in</i>';
+			echo '<i>not logged in</i><br/>';
 		}
 
 	} else {
-		echo '<i>disabled</i>';
+		echo '<i>disabled</i><br/>';
 	}
 	?>
-	<br/ >
 
-	<p>The following roles have access to this action:</p>
+	<br/>
+
+	<?php if ($access) { ?>
+	<p>
+		<?php if (!$isPublic) { ?>
+		The following roles have access to this action:
+		<?php } else { ?>
+		The following roles would have access to this action once you revoke public access:
+		<?php } ?>
+	</p>
 	<ul>
 		<?php
 		foreach ($availableRoles as $role => $id) {
@@ -73,5 +81,6 @@ use TinyAuth\Utility\Config;
 		}
 		?>
 	</ul>
+	<?php } ?>
 
 </section>

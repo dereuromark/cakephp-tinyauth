@@ -7,6 +7,7 @@ use Cake\Controller\ComponentRegistry;
 use Cake\Core\Exception\Exception;
 use Cake\Routing\Router;
 use TinyAuth\Auth\AllowTrait;
+use TinyAuth\Utility\Config;
 
 /**
  * TinyAuth AuthenticationComponent to handle all authentication in a central ini file.

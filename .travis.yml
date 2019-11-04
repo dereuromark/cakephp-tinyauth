@@ -42,7 +42,7 @@ before_script:
 
 script:
   - if [[ $DEFAULT == 1 ]]; then vendor/bin/phpunit ; fi
-  - if [[ $PREFER_LOWEST == 1 ]]; then composer require --dev dereuromark/composer-prefer-lowest && vendor/bin/validate-prefer-lowest ; fi
+  - if [[ $PREFER_LOWEST == 1 ]]; then composer require --dev dereuromark/composer-prefer-lowest composer/semver && vendor/bin/validate-prefer-lowest ; fi
 
   - if [[ $CHECKS == 1 ]]; then composer phpstan-setup && composer phpstan ; fi
   - if [[ $CHECKS == 1 ]]; then composer cs-check ; fi

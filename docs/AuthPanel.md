@@ -15,7 +15,11 @@ Protected action (quick icon):
 
 ![public](img/auth_restricted.png)
 
-Panel showcase once opened:
+Panel showcase once opened as "guest":
+
+![panel](img/panel_guest.png)
+
+Panel showcase as "logged in user":
 
 ![panel](img/panel.png)
 
