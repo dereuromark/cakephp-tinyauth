@@ -12,9 +12,6 @@ use Cake\TestSuite\TestCase;
 use TestApp\Controller\OffersController;
 use TinyAuth\Controller\Component\AuthComponent;
 
-/**
- * TinyAuth AuthComponent to handle all authentication in a central ini file.
- */
 class AuthComponentTest extends TestCase {
 
 	/**
