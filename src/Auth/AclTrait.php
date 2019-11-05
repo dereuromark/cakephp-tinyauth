@@ -167,7 +167,7 @@ trait AclTrait {
 			if (empty($params['prefix'])) {
 				return true;
 			}
-			if ($params['prefix'] !== $this->getConfig('adminPrefix')) {
+			if ($params['prefix'] !== $this->getConfig('adminPrefix') && strpos($params['prefix'], $this->getConfig('adminPrefix') . '/') !== 0) {
 				return true;
 			}
 		}
