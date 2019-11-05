@@ -31,6 +31,7 @@ class AuthUserHelperTest extends TestCase {
 	 * @var array
 	 */
 	protected $config = [];
+
 	/**
 	 * @return void
 	 */

@@ -73,6 +73,7 @@ class AuthenticationComponentTest extends TestCase {
 		$result = $this->component->isPublic();
 		$this->assertTrue($result);
 	}
+
 	/**
 	 * @return void
 	 */
