@@ -66,7 +66,7 @@ class AuthUserHelperTest extends TestCase {
 	public function testIsAuthorizedValid() {
 		$user = [
 			'id' => 1,
-			'role_id' => 1
+			'role_id' => ROLE_USER
 		];
 		$this->View->set('_authUser', $user);
 
@@ -94,7 +94,7 @@ class AuthUserHelperTest extends TestCase {
 	public function testIsAuthorizedInvalid() {
 		$user = [
 			'id' => 1,
-			'role_id' => 1
+			'role_id' => ROLE_USER
 		];
 		$this->View->set('_authUser', $user);
 
@@ -150,7 +150,7 @@ class AuthUserHelperTest extends TestCase {
 	public function testNamedRouteMissingControllerActionException() {
 		$user = [
 			'id' => 1,
-			'role_id' => 1
+			'role_id' => ROLE_USER
 		];
 		$this->View->set('_authUser', $user);
 
@@ -174,7 +174,7 @@ class AuthUserHelperTest extends TestCase {
 	public function testInvalidNamedRouteException() {
 		$user = [
 			'id' => 1,
-			'role_id' => 1
+			'role_id' => ROLE_USER
 		];
 		$this->View->set('_authUser', $user);
 
@@ -199,7 +199,7 @@ class AuthUserHelperTest extends TestCase {
 	public function testIncompleteNamedRouteException() {
 		$user = [
 			'id' => 1,
-			'role_id' => 1
+			'role_id' => ROLE_USER
 		];
 		$this->View->set('_authUser', $user);
 
@@ -241,7 +241,7 @@ class AuthUserHelperTest extends TestCase {
 	public function testLinkValid() {
 		$user = [
 			'id' => 1,
-			'role_id' => 1
+			'role_id' => ROLE_USER
 		];
 		$this->View->set('_authUser', $user);
 
@@ -259,7 +259,7 @@ class AuthUserHelperTest extends TestCase {
 	public function testLinkInvalidDefault() {
 		$user = [
 			'id' => 1,
-			'role_id' => 1
+			'role_id' => ROLE_USER
 		];
 		$this->View->set('_authUser', $user);
 
@@ -277,7 +277,7 @@ class AuthUserHelperTest extends TestCase {
 	public function testPostLinkValid() {
 		$user = [
 			'id' => 1,
-			'role_id' => 3
+			'role_id' => ROLE_ADMIN
 		];
 		$this->View->set('_authUser', $user);
 
@@ -296,7 +296,7 @@ class AuthUserHelperTest extends TestCase {
 	public function testPostLinkInvalid() {
 		$user = [
 			'id' => 1,
-			'role_id' => 1
+			'role_id' => ROLE_USER
 		];
 		$this->View->set('_authUser', $user);
 
@@ -314,7 +314,7 @@ class AuthUserHelperTest extends TestCase {
 	public function testPostLinkValidNoEscape() {
 		$user = [
 			'id' => 1,
-			'role_id' => 3
+			'role_id' => ROLE_ADMIN
 		];
 		$this->View->set('_authUser', $user);
 

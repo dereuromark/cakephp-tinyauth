@@ -31,7 +31,7 @@ class IniAllowAdapterTest extends TestCase {
 		];
 		$result = $this->adapter->getAllow($config);
 
-		$this->assertCount(3, $result);
+		$this->assertCount(4, $result);
 	}
 
 }

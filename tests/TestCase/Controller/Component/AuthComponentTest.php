@@ -9,6 +9,7 @@ use Cake\Event\Event;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
+use TestApp\Controller\Admin\MyPrefix\MyTestController;
 use TestApp\Controller\OffersController;
 use TinyAuth\Controller\Component\AuthComponent;
 
@@ -120,6 +121,54 @@ class AuthComponentTest extends TestCase {
 			'pass' => [1],
 		]]);
 		$controller = new OffersController($request);
+		$controller->loadComponent('TinyAuth.Auth', $this->componentConfig);
+
+		$config = [];
+		$controller->Auth->initialize($config);
+
+		$event = new Event('Controller.beforeFilter', $controller);
+		$controller->beforeFilter($event);
+
+		$event = new Event('Controller.startup', $controller);
+		$response = $controller->Auth->startup($event);
+		$this->assertInstanceOf(Response::class, $response);
+		$this->assertSame(302, $response->getStatusCode());
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testValidActionNestedPrefix() {
+		$request = new ServerRequest(['params' => [
+			'plugin' => null,
+			'prefix' => 'admin/my_prefix',
+			'controller' => 'MyTest',
+			'action' => 'myPublic',
+		]]);
+		$controller = new MyTestController($request);
+
+		$registry = new ComponentRegistry($controller);
+		$this->AuthComponent = new AuthComponent($registry, $this->componentConfig);
+
+		$config = [];
+		$this->AuthComponent->initialize($config);
+
+		$event = new Event('Controller.startup', $controller);
+		$response = $this->AuthComponent->startup($event);
+		$this->assertNull($response);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testDeniedActionNestedPrefix() {
+		$request = new ServerRequest(['params' => [
+			'plugin' => null,
+			'prefix' => 'admin/my_prefix',
+			'controller' => 'MyTest',
+			'action' => 'myAll',
+		]]);
+		$controller = new MyTestController($request);
 		$controller->loadComponent('TinyAuth.Auth', $this->componentConfig);
 
 		$config = [];

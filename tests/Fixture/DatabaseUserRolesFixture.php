@@ -28,12 +28,12 @@ class DatabaseUserRolesFixture extends TestFixture {
 		[
 			'id' => 1,
 			'user_id' => 1,
-			'role_id' => 11	// user
+			'role_id' => 11 // user
 		],
 		[
 			'id' => 2,
 			'user_id' => 1,
-			'role_id' => 12	// moderator
+			'role_id' => 12 // moderator
 		],
 		[
 			'id' => 3,

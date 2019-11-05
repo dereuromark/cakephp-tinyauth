@@ -36,7 +36,7 @@ class IniAclAdapterTest extends TestCase {
 		];
 		$result = $this->adapter->getAcl($availableRoles, $config);
 
-		$this->assertCount(14, $result);
+		$this->assertCount(15, $result);
 	}
 
 }

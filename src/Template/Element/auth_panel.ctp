@@ -23,7 +23,7 @@ use TinyAuth\Utility\Config;
 	Debugger::dump($params);
 	?>
 	<br/>
-	<p>Tiny Auth URL path: <b style="font-weight: bold"><?php echo h($path); ?></b></p>
+	<p>TinyAuth URL path: <b style="font-weight: bold"><?php echo h($path); ?></b></p>
 
 	<h2>Authentication (allow)</h2>
 	<?php
