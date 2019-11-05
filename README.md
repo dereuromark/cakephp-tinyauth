@@ -26,6 +26,7 @@ Once you are logged in, what actions can you see with your role(s)?
 ### Useful helpers
 - AuthUser Component and Helper for stateful and stateless "auth data" access.
 - Authentication Component and Helper for `isPublic()` check on current other other actions.
+- Auth DebugKit panel for detailed insights into current URL and auth status.
 
 ## What's the idea?
 Default CakePHP authentication and authorization depends on code changes in at least each controller, maybe more classes.
