@@ -10,7 +10,7 @@ use TinyAuth\Auth\AuthUserTrait;
 use TinyAuth\Utility\Config;
 
 /**
- * TinyAuth component to handle all authorization.
+ * Easy access to the current logged in user and the corresponding auth data.
  *
  * @property \Cake\Controller\Component\AuthComponent $Auth
  */

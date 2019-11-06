@@ -12,9 +12,6 @@ use Cake\View\View;
 use TinyAuth\Utility\Cache;
 use TinyAuth\View\Helper\AuthUserHelper;
 
-/**
- * TinyAuth AuthComponent to handle all authentication in a central ini file.
- */
 class AuthUserHelperTest extends TestCase {
 
 	/**
