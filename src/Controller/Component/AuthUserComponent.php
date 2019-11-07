@@ -7,15 +7,17 @@ use Cake\Controller\ComponentRegistry;
 use Cake\Event\Event;
 use TinyAuth\Auth\AclTrait;
 use TinyAuth\Auth\AuthUserTrait;
+use TinyAuth\Utility\Config;
 
 /**
- * TinyAuth component to handle all authorization.
+ * Easy access to the current logged in user and the corresponding auth data.
  *
  * @property \Cake\Controller\Component\AuthComponent $Auth
  */
 class AuthUserComponent extends Component {
 
-	use AclTrait, AuthUserTrait;
+	use AclTrait;
+	use AuthUserTrait;
 
 	/**
 	 * @var array
@@ -28,7 +30,7 @@ class AuthUserComponent extends Component {
 	 * @throws \Cake\Core\Exception\Exception
 	 */
 	public function __construct(ComponentRegistry $registry, array $config = []) {
-		$config = $this->_prepareConfig($config);
+		$config += Config::all();
 
 		parent::__construct($registry, $config);
 	}
@@ -46,6 +48,8 @@ class AuthUserComponent extends Component {
 	}
 
 	/**
+	 * This is only for usage with already logged in persons as this uses the ACL (not allow) data.
+	 *
 	 * @param array $url
 	 * @return bool
 	 */
@@ -58,7 +62,7 @@ class AuthUserComponent extends Component {
 			'action' => 'index',
 		];
 
-		return $this->_check((array)$this->Auth->user(), $url);
+		return $this->_checkUser((array)$this->Auth->user(), $url);
 	}
 
 	/**

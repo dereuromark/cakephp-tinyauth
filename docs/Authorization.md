@@ -1,7 +1,7 @@
 # TinyAuth Authorization
 The fast and easy way for user authorization in CakePHP 3.x applications.
 
-Enable TinyAuth Authorize adapter if you want to add instant (and easy) role
+Enable TinyAuth Authorize if you want to add instant (and easy) role
 based access control (RBAC) to your application.
 
 ## Basic Features
@@ -19,22 +19,22 @@ frontend yourself)
 ## Enabling
 
 Assuming you already have authentication set up correctly you can enable
-authorization in your controller's `beforeFilter` like this example:
+authorization in your controller's `beforeFilter()` method like this example:
 
 ```php
 // src/Controller/AppController
 
 public function initialize() {
-	parent::initialize();
+    parent::initialize();
 
-	$this->loadComponent('TinyAuth.Auth', [
-		'authorize' => [
-			'TinyAuth.Tiny' => [
-				...
-			],
-			...
-		]
-	]);
+    $this->loadComponent('TinyAuth.Auth', [
+        'authorize' => [
+            'TinyAuth.Tiny' => [
+                ...
+            ],
+            ...
+        ]
+    ]);
 }
 ```
 TinyAuth Authorize can be used in combination with any [CakePHP Authentication Type](http://book.cakephp.org/3.0/en/controllers/components/authentication.html#choosing-an-authentication-type), as well.
@@ -43,13 +43,13 @@ TinyAuth Authorize can be used in combination with any [CakePHP Authentication T
 Please note that `TinyAuth.Auth` replaces the default CakePHP `Auth` component. Do not try to load both at once.
 You can also use the default one, if you only want to use ACL (authorization):
 ```php
-	$this->loadComponent('Auth', [
-		'authorize' => [
-			'TinyAuth.Tiny' => [
-				...
-			]
-		]
-	]);
+    $this->loadComponent('Auth', [
+        'authorize' => [
+            'TinyAuth.Tiny' => [
+                ...
+            ]
+        ]
+    ]);
 ```
 
 
@@ -74,11 +74,11 @@ define('ROLE_ADMIN', 2);
 define('ROLE_SUPERADMIN', 9);
 
 return [
-	'Roles' => [
-		'user' => ROLE_USER,
-		'admin' => ROLE_ADMIN,
-		'superadmin' => ROLE_SUPERADMIN
-	]
+    'Roles' => [
+        'user' => ROLE_USER,
+        'admin' => ROLE_ADMIN,
+        'superadmin' => ROLE_SUPERADMIN
+    ]
 ];
 ```
 
@@ -88,7 +88,7 @@ named ``roles``. If you prefer to use another table name simply specify it using
 ``rolesTable`` configuration option.
 
 >**Note:** make sure to add an "alias" field to your roles table (used as slug
-identifier in the acl.ini file)
+identifier in the auth_acl.ini file)
 
 Example of a record from a valid roles table:
 
@@ -137,9 +137,9 @@ bin/cake migrations migrate -p TinyAuth
 ```
 Alternatively you can copy and paste this migration file to your `app/Config` folder and adjust the fields and table names and then use that modified version instead.
 
-## acl.ini
+## auth_acl.ini
 
-TinyAuth expects an ``acl.ini`` file in your config directory.
+TinyAuth expects an ``auth_acl.ini`` file in your config directory.
 Use it to specify who gets access to which resources.
 
 The section key syntax follows the CakePHP naming convention for plugins.
@@ -187,12 +187,27 @@ view, edit = user
 view, edit = user
 * = admin
 ; ----------------------------------------------------------
-; CompaniesController in plugin named Accounts using /admin
-; prefixed route
+; CompaniesController in plugin named Accounts using /my-admin
+; prefixed route (assuming you are using recommended DashedRoute class)
 ; ----------------------------------------------------------
-[Accounts.admin/Companies]
+[Accounts.my_admin/Companies]
 * = admin
 ```
+
+Note: Prefixes are always `lowercase_underscored`. The route inflects to the final casing if needed. 
+Nested prefixes are joined using `/`, e.g. `my/admin/nested/`.
+
+Using only "granting" is recommended for security reasons.
+Careful with denying, as this can accidentally open up more than desired actions. If you really want to use it:
+
+```ini
+[Users]
+* = user, admin
+secret = !user
+```
+Meaning: Grant the user/admin role access to all "Users" controller actions by default, but only allow admins to access "secret" action.
+
+Note that denying always trumps granting, if both are declared for an action.
 
 ### Multiple files and merging
 You can specify multiple paths in your config, e.g. when you have plugins and separated the definitions across them.
@@ -210,7 +225,7 @@ By default it will not use caching in debug mode, though.
 To modify the caching behavior set the ``autoClearCache`` configuration option:
 ```php
 'TinyAuth.Tiny' => [
-	'autoClearCache' => true|false
+    'autoClearCache' => true|false
 ]
 ```
 
@@ -238,14 +253,12 @@ prefixes|array|A list of authorizeByPrefix handled prefixes.
 allowUser|bool|True will give authenticated users access to all resources except those using the `adminPrefix`
 adminPrefix|string|Name of the prefix used for admin pages. Defaults to admin.
 autoClearCache|bool|True will generate a new ACL cache file every time.
-cache|string|Cache type. Defaults to `_cake_core_`.
-aclCacheKey|string|Cache key. Defaults to `tiny_auth_acl`.
-aclFilePath|string|Full path to the acl.ini. Can also be an array of multiple paths. Defaults to `ROOT . DS . 'config' . DS`.
-aclFile|string|Name of the INI file. Defaults to `acl.ini`.
+aclFilePath|string|Full path to the auth_acl.ini. Can also be an array of multiple paths. Defaults to `ROOT . DS . 'config' . DS`.
+aclFile|string|Name of the INI file. Defaults to `auth_acl.ini`.
+aclAdapter|string|Class name, defaults to `IniAclAdapter::class`.
 includeAuthentication|bool|Set to true to include public auth access into hasAccess() checks. Note, that this requires Configure configuration.
-allowCacheKey|string|Cache key. Defaults to `tiny_auth_allow`. Needed to fetch allow info from the correct cache. Must be the same as set in AuthComponent.
 
-## AuthUserComponent
+## AuthUser Component
 Add the AuthUserComponent and you can easily check permissions inside your controller scope:
 ```php
 $this->loadComponent('TinyAuth.AuthUser');
@@ -254,7 +267,7 @@ $this->loadComponent('TinyAuth.AuthUser');
 Maybe you only want to redirect to a certain action if that is accessible for this user (role):
 ```php
 if ($this->AuthUser->hasAccess(['action' => 'forModeratorOnly'])) {
-	return $this->redirect(['action' => 'forModeratorOnly']);
+    return $this->redirect(['action' => 'forModeratorOnly']);
 }
 // Do something else
 ```
@@ -262,7 +275,7 @@ if ($this->AuthUser->hasAccess(['action' => 'forModeratorOnly'])) {
 Or if that person is of a certain role in general:
 ```php
 if ($this->AuthUser->hasRole('mod')) { // Either by alias or id
-	// OK, do something now
+    // OK, do something now
 }
 ```
 
@@ -273,7 +286,7 @@ $isMe = $this->AuthUser->isMe($userEntity->id);
 $isMe = $this->AuthUser->id() == $userEntity->id;
 ```
 
-## AuthUserHelper
+## AuthUser Helper
 The helper assists with the same in the templates.
 
 Include the helper in your `AppView.php`:
@@ -300,20 +313,20 @@ echo $this->AuthUser->postLink('Delete this', ['action' => 'delete', $id], ['con
 You can also do more complex things:
 ```php
 if ($this->AuthUser->hasAccess(['action' => 'secretArea'])) {
-	echo 'Only for you: ';
-	echo $this->Html->link('admin/index', ['action' => 'secretArea']);
-	echo ' (do not tell anyone else!);
+    echo 'Only for you: ';
+    echo $this->Html->link('admin/index', ['action' => 'secretArea']);
+    echo ' (do not tell anyone else!);
 }
 ```
 
 ### Named Routes
 With 1.12.0+ named routes are also supported now:
 ```php
-<?= $this->AuthUser->link('Change Password', ['_name' => 'admin:account:password']); ?>  
+<?= $this->AuthUser->link('Change Password', ['_name' => 'admin:account:password']); ?>
 ```
 
 ## Including Authentication
-Please note that by default `hasAccess()` only checks the ACL INI, not the allow auth INI.
+Please note that by default `hasAccess()` only checks the `auth_acl`, not the `auth_allow` adapter.
 Those links and access checks are meant to be used for logged in users.
 
 If you need to build a navigation that includes publicly accessible actions, you need to enable
@@ -333,6 +346,7 @@ bin/cake tiny_auth_sync {your default roles, comma separated}
 ```
 This will then add any missing controller with `* = ...` for all actions and you can then manually fine-tune.
 
+Note: Use `'*'` as wildcard role if you just want to generate all possible controllers.
 Use with `-d -v` to just output the changes it would do to your ACL INI file.
 
 ## Tips
@@ -346,24 +360,24 @@ define('ROLE_MOD', 'moderator');
 
 // In your template
 if ($this->AuthUser->hasRole(ROLE_MOD)) {
-	...
+    ...
 }
 ```
 This way, if you ever refactor them, it will be easier to adjust all occurrences, it will also be possible to use auto-completion type-hinting.
 
 ### Leverage session
 Especially when working with multi-role setup, it can be useful to not every time read the current user's roles from the database.
-When logging in a user you can write the roles to the session right away. 
+When logging in a user you can write the roles to the session right away.
 If available here, TinyAuth will use those and will not try to query the roles table (or the `roles_users` pivot table).
 
 For basic single-role setup, the session is expected to be filled like
 ```php
 'Auth' => [
-	'User' => [
-		'id' => '1',
-		'role_id' => '1',
-		...
-	]	
+    'User' => [
+        'id' => '1',
+        'role_id' => '1',
+        ...
+    ]
 ];
 ```
 The expected `'role_id'` session key is configurable via `roleColumn` config key.
@@ -371,31 +385,31 @@ The expected `'role_id'` session key is configurable via `roleColumn` config key
 For a multi-role setup it can be either the normalized array form
 ```php
 'Auth' => [
-	'User' => [
-		'id' => '1',
-		...
-		'Roles' => [
-			[
-				'id' => '1',
-				...
-			],
-			...
-		],
-	]	
+    'User' => [
+        'id' => '1',
+        ...
+        'Roles' => [
+            [
+                'id' => '1',
+                ...
+            ],
+            ...
+        ],
+    ]
 ];
 ```
 or the simplified numeric list form
 ```php
 'Auth' => [
-	'User' => [
-		'id' => '1',
-		...
-		'Roles' => [
-			'1', 
-			'2',
-			...
-		]
-	]	
+    'User' => [
+        'id' => '1',
+        ...
+        'Roles' => [
+            '1',
+            '2',
+            ...
+        ]
+    ]
 ];
 ```
 The expected `'Roles'` session key is configurable via `rolesTable` config key.
@@ -403,15 +417,15 @@ The expected `'Roles'` session key is configurable via `rolesTable` config key.
 Alternatively, instead of manually adding the Roles into the session, you can also just join in the pivot table (`roles_users` usually), and if those are added to the session in either normalized or numeric list it will also read from those instead of asking the database:
 ```php
 'Auth' => [
-	'User' => [
-		'id' => '1',
-		...
-		'roles_users' => [
-			...
-			'role_id' => '1',
-			...
-		],
-	]	
+    'User' => [
+        'id' => '1',
+        ...
+        'roles_users' => [
+            ...
+            'role_id' => '1',
+            ...
+        ],
+    ]
 ];
 ```
 Note that in this case the role definitions will have to contain a `role_id`, though (as the pivot table only contains `user_id` and that field).

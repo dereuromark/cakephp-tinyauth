@@ -24,7 +24,9 @@ Once you are logged in, what actions can you see with your role(s)?
 - Multi-role: 1 user can have 1...n roles (users, roles and a "roles_users" pivat table for example)
 
 ### Useful helpers
-AuthUser Component and Helper for stateful and stateless "auth data" access.
+- AuthUser Component and Helper for stateful and stateless "auth data" access.
+- Authentication Component and Helper for `isPublic()` check on current other other actions.
+- Auth DebugKit panel for detailed insights into current URL and auth status.
 
 ## What's the idea?
 Default CakePHP authentication and authorization depends on code changes in at least each controller, maybe more classes.
@@ -43,7 +45,7 @@ can be very useful when dealing with role based decisions in your controller or 
 See https://sandbox.dereuromark.de/auth-sandbox
 
 ### auth_allow.ini
-Define the public actions (accessable by anyone) per controller:
+Define the public actions (accessible by anyone) per controller:
 ```ini
 Users = index,view
 admin/Maintenance = pingCheck
@@ -51,7 +53,7 @@ PluginName.SomeController = *
 MyPlugin.api/V1 = *
 ```
 
-### acl.ini
+### auth_acl.ini
 Define what actions may be accessed by what logged-in user role:
 ```ini
 [Users]
@@ -61,7 +63,7 @@ add,edit = user,mod
 [admin/Users]
 * = admin
 
-[Translate.admin/Languages]]
+[Translate.admin/Languages]
 * = *
 ```
 

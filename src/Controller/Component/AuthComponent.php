@@ -2,15 +2,15 @@
 
 namespace TinyAuth\Controller\Component;
 
-use Cake\Cache\Cache;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\AuthComponent as CakeAuthComponent;
-use Cake\Core\Configure;
 use Cake\Event\Event;
 use TinyAuth\Auth\AclTrait;
+use TinyAuth\Auth\AllowTrait;
+use TinyAuth\Utility\Config;
 
 /**
- * TinyAuth AuthComponent to handle all authentication in a central ini file.
+ * TinyAuth AuthComponent to handle all authentication in a central INI file.
  *
  * @property \Cake\Controller\Component\RequestHandlerComponent $RequestHandler
  * @property \Cake\Controller\Component\FlashComponent $Flash
@@ -18,37 +18,16 @@ use TinyAuth\Auth\AclTrait;
 class AuthComponent extends CakeAuthComponent {
 
 	use AclTrait;
-
-	/**
-	 * @var array
-	 */
-	protected $_defaultTinyAuthConfig = [
-		'cache' => '_cake_core_',
-		'autoClearCache' => null, // Set to true to delete cache automatically in debug mode, keep null for auto-detect
-		'allowCacheKey' => 'tiny_auth_allow',
-		'allowFilePath' => null, // Possible to locate ini file at given path e.g. Plugin::configPath('Admin'), filePath is also available for shared config
-		'allowFile' => 'auth_allow.ini',
-	];
+	use AllowTrait;
 
 	/**
 	 * @param \Cake\Controller\ComponentRegistry $registry
 	 * @param array $config
 	 */
 	public function __construct(ComponentRegistry $registry, array $config = []) {
-		$config += $this->_defaultTinyAuthConfig;
+		$config += Config::all();
 
 		parent::__construct($registry, $config);
-
-		// BC config check
-		if ($this->getConfig('cacheKey')) {
-			$this->setConfig('allowCacheKey', $this->getConfig('cacheKey'));
-		}
-		if ($this->getConfig('file')) {
-			$this->setConfig('allowFile', $this->getConfig('file'));
-		}
-		if ($this->getConfig('filePath')) {
-			$this->setConfig('allowFilePath', $this->getConfig('filePath'));
-		}
 	}
 
 	/**
@@ -58,7 +37,8 @@ class AuthComponent extends CakeAuthComponent {
 	public function initialize(array $config) {
 		parent::initialize($config);
 
-		$this->_prepareAuthentication();
+		$params = $this->_registry->getController()->getRequest()->getAttribute('params');
+		$this->_prepareAuthentication($params);
 	}
 
 	/**
@@ -85,78 +65,25 @@ class AuthComponent extends CakeAuthComponent {
 	}
 
 	/**
+	 * @param array $params
 	 * @return void
 	 */
-	protected function _prepareAuthentication() {
-		$authentication = $this->_getAuth($this->getConfig('allowFilePath'));
-
-		$params = $this->request->getAttribute('params');
-		foreach ($authentication as $rule) {
-			if ($params['plugin'] && $params['plugin'] !== $rule['plugin']) {
-				continue;
-			}
-			if (!empty($params['prefix']) && $params['prefix'] !== $rule['prefix']) {
-				continue;
-			}
-			if ($params['controller'] !== $rule['controller']) {
-				continue;
-			}
-
-			if ($rule['actions'] === []) {
-				$this->allow();
-				return;
-			}
-
-			$this->allow($rule['actions']);
-		}
-	}
-
-	/**
-	 * Parse ini file and returns the allowed actions.
-	 *
-	 * Uses cache for maximum performance.
-	 *
-	 * @param string|null $path
-	 * @return array Actions
-	 */
-	protected function _getAuth($path = null) {
-		if ($this->getConfig('autoClearCache') && Configure::read('debug')) {
-			Cache::delete($this->getConfig('allowCacheKey'), $this->getConfig('cache'));
-		}
-		$roles = Cache::read($this->getConfig('allowCacheKey'), $this->getConfig('cache'));
-		if ($roles !== false) {
-			return $roles;
+	protected function _prepareAuthentication(array $params) {
+		$rule = $this->_getAllowRule($params);
+		if (!$rule) {
+			return;
 		}
 
-		if ($path === null) {
-			$path = $this->getConfig('allowFilePath');
+		if (in_array('*', $rule['allow'], true)) {
+			$this->allow();
+		} elseif (!empty($rule['allow'])) {
+			$this->allow($rule['allow']);
 		}
-		$iniArray = $this->_parseFiles($path, $this->getConfig('allowFile'));
-
-		$res = [];
-		foreach ($iniArray as $key => $actions) {
-			$res[$key] = $this->_deconstructIniKey($key);
-			$res[$key]['map'] = $actions;
-
-			$actions = explode(',', $actions);
-
-			if (in_array('*', $actions)) {
-				$res[$key]['actions'] = [];
-				continue;
-			}
-
-			foreach ($actions as $action) {
-				$action = trim($action);
-				if (!$action) {
-					continue;
-				}
-
-				$res[$key]['actions'][] = $action;
-			}
+		if (in_array('*', $rule['deny'], true)) {
+			$this->deny();
+		} elseif (!empty($rule['deny'])) {
+			$this->deny($rule['deny']);
 		}
-
-		Cache::write($this->getConfig('allowCacheKey'), $res, $this->getConfig('cache'));
-		return $res;
 	}
 
 }

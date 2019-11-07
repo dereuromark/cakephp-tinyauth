@@ -4,7 +4,7 @@ namespace TinyAuth\Test\Auth;
 use Cake\Controller\ComponentRegistry;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\Network\Request;
+use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use ReflectionClass;
 use TestApp\Auth\AclAdapter\CustomAclAdapter;
@@ -33,7 +33,7 @@ class TinyAuthorizeTest extends TestCase {
 	public $collection;
 
 	/**
-	 * @var \Cake\Http\ServerRequest|\Cake\Network\Request
+	 * @var \Cake\Http\ServerRequest
 	 */
 	public $request;
 
@@ -45,12 +45,12 @@ class TinyAuthorizeTest extends TestCase {
 
 		$this->collection = new ComponentRegistry();
 
-		$this->request = new Request();
+		$this->request = new ServerRequest();
 
 		Configure::write('Roles', [
-			'user' => 1,
-			'moderator' => 2,
-			'admin' => 3
+			'user' => ROLE_USER,
+			'moderator' => ROLE_MODERATOR,
+			'admin' => ROLE_ADMIN
 		]);
 
 		Configure::write('TinyAuth', [
@@ -79,10 +79,8 @@ class TinyAuthorizeTest extends TestCase {
 	 * @return void
 	 */
 	public function testLoadingAclAdapter() {
-		$object = new TestTinyAuthorize($this->collection, [
-			'aclAdapter' => CustomAclAdapter::class
-		]);
-		$this->assertInstanceOf(CustomAclAdapter::class, $object->getAclAdapter());
+		$object = new TestTinyAuthorize($this->collection);
+		$this->assertInstanceOf(CustomAclAdapter::class, $object->getAclAdapter(CustomAclAdapter::class));
 	}
 
 	/**
@@ -95,6 +93,7 @@ class TinyAuthorizeTest extends TestCase {
 		$object = new TestTinyAuthorize($this->collection, [
 			'aclAdapter' => Configure::class
 		]);
+		$object->getAcl();
 	}
 
 	/**
@@ -107,18 +106,7 @@ class TinyAuthorizeTest extends TestCase {
 		$object = new TestTinyAuthorize($this->collection, [
 			'aclAdapter' => 'Non\\Existent\\Acl\\Adapter'
 		]);
-	}
-
-	/**
-	 * Tests exception thrown when Cache is unavailable.
-	 *
-	 * @expectedException \Cake\Core\Exception\Exception
-	 * @return void
-	 */
-	public function testConstructorWithoutValidCache() {
-		$object = new TestTinyAuthorize($this->collection, [
-			'cache' => 'invalid-cache-config'
-		]);
+		$object->getAcl();
 	}
 
 	/**
@@ -135,131 +123,160 @@ class TinyAuthorizeTest extends TestCase {
 				'controller' => 'Tags',
 				'prefix' => null,
 				'plugin' => null,
-				'actions' => [
-					'index' => [1],
-					'edit' => [1],
-					'delete' => [3],
-					'very_long_underscored_action' => [1],
-					'veryLongActionNameAction' => [1]
-				]
+				'allow' => [
+					'index' => ['user' => ROLE_USER],
+					'edit' => ['user' => ROLE_USER],
+					'delete' => ['admin' => ROLE_ADMIN],
+					'very_long_underscored_action' => ['user' => ROLE_USER],
+					'veryLongActionNameAction' => ['user' => ROLE_USER]
+				],
+				'deny' => [],
 			],
 			'admin/Tags' => [
 				'controller' => 'Tags',
 				'prefix' => 'admin',
 				'plugin' => null,
-				'actions' => [
-					'index' => [1],
-					'edit' => [1],
-					'delete' => [3],
-					'very_long_underscored_action' => [1],
-					'veryLongActionNameAction' => [1]
-				]
+				'allow' => [
+					'index' => ['user' => ROLE_USER],
+					'edit' => ['user' => ROLE_USER],
+					'delete' => ['admin' => ROLE_ADMIN],
+					'very_long_underscored_action' => ['user' => ROLE_USER],
+					'veryLongActionNameAction' => ['user' => ROLE_USER]
+				],
+				'deny' => [],
 			],
 			'Tags.Tags' => [
 				'controller' => 'Tags',
 				'prefix' => null,
 				'plugin' => 'Tags',
-				'actions' => [
-					'index' => [1],
-					'edit' => [1],
-					'view' => [1],
-					'delete' => [3],
-					'very_long_underscored_action' => [1],
-					'veryLongActionNameAction' => [1]
-				]
+				'allow' => [
+					'index' => ['user' => ROLE_USER],
+					'edit' => ['user' => ROLE_USER],
+					'view' => ['user' => ROLE_USER],
+					'delete' => ['admin' => ROLE_ADMIN],
+					'very_long_underscored_action' => ['user' => ROLE_USER],
+					'veryLongActionNameAction' => ['user' => ROLE_USER]
+				],
+				'deny' => [],
 			],
 			'Tags.admin/Tags' => [
 				'controller' => 'Tags',
 				'prefix' => 'admin',
 				'plugin' => 'Tags',
-				'actions' => [
-					'index' => [1],
-					'edit' => [1],
-					'view' => [1],
-					'delete' => [3],
-					'very_long_underscored_action' => [1],
-					'veryLongActionNameAction' => [1]
-				]
+				'allow' => [
+					'index' => ['user' => ROLE_USER],
+					'edit' => ['user' => ROLE_USER],
+					'view' => ['user' => ROLE_USER],
+					'delete' => ['admin' => ROLE_ADMIN],
+					'very_long_underscored_action' => ['user' => ROLE_USER],
+					'veryLongActionNameAction' => ['user' => ROLE_USER]
+				],
+				'deny' => [],
 			],
 			'special/Comments' => [
 				'controller' => 'Comments',
 				'prefix' => 'special',
 				'plugin' => null,
-				'actions' => [
-					'*' => [3]
-				]
+				'allow' => [
+					'*' => ['admin' => ROLE_ADMIN]
+				],
+				'deny' => [],
 			],
 			'Comments.special/Comments' => [
 				'controller' => 'Comments',
 				'prefix' => 'special',
 				'plugin' => 'Comments',
-				'actions' => [
-					'*' => [3]
-				]
+				'allow' => [
+					'*' => ['admin' => ROLE_ADMIN]
+				],
+				'deny' => [],
 			],
 			'Posts' => [
 				'controller' => 'Posts',
 				'prefix' => null,
 				'plugin' => null,
-				'actions' => [
-					'*' => [1, 2, 3]
-				]
+				'allow' => [
+					'*' => ['user' => ROLE_USER, 'moderator' => ROLE_MODERATOR, 'admin' => ROLE_ADMIN]
+				],
+				'deny' => [],
 			],
 			'admin/Posts' => [
 				'controller' => 'Posts',
 				'prefix' => 'admin',
 				'plugin' => null,
-				'actions' => [
-					'*' => [1, 2, 3]
-				]
+				'allow' => [
+					'*' => ['user' => ROLE_USER, 'moderator' => ROLE_MODERATOR, 'admin' => ROLE_ADMIN]
+				],
+				'deny' => [],
 			],
 			'Posts.Posts' => [
 				'controller' => 'Posts',
 				'prefix' => null,
 				'plugin' => 'Posts',
-				'actions' => [
-					'*' => [1, 2, 3]
-				]
+				'allow' => [
+					'*' => ['user' => ROLE_USER, 'moderator' => ROLE_MODERATOR, 'admin' => ROLE_ADMIN],
+				],
+				'deny' => [],
 			],
 			'Posts.admin/Posts' => [
 				'controller' => 'Posts',
 				'prefix' => 'admin',
 				'plugin' => 'Posts',
-				'actions' => [
-					'*' => [1, 2, 3]
-				]
+				'allow' => [
+					'*' => ['user' => ROLE_USER, 'moderator' => ROLE_MODERATOR, 'admin' => ROLE_ADMIN]
+				],
+				'deny' => [],
 			],
 			'Blogs' => [
 				'controller' => 'Blogs',
 				'prefix' => null,
 				'plugin' => null,
-				'actions' => [
-					'*' => [2]
-				]
+				'allow' => [
+					'*' => ['user' => ROLE_USER, 'moderator' => ROLE_MODERATOR],
+				],
+				'deny' => [
+					'foo' => ['user' => ROLE_USER],
+				],
 			],
 			'admin/Blogs' => [
 				'controller' => 'Blogs',
 				'prefix' => 'admin',
 				'plugin' => null,
-				'actions' => [
-					'*' => [2]
-				]
+				'allow' => [
+					'*' => ['moderator' => ROLE_MODERATOR],
+				],
+				'deny' => [],
 			],
 			'Blogs.Blogs' => [
 				'controller' => 'Blogs',
 				'prefix' => null,
 				'plugin' => 'Blogs',
-				'actions' => [
-					'*' => [2]
-				]
+				'allow' => [
+					'*' => ['moderator' => ROLE_MODERATOR],
+				],
+				'deny' => [],
 			],
 			'Blogs.admin/Blogs' => [
 				'controller' => 'Blogs',
 				'prefix' => 'admin',
 				'plugin' => 'Blogs',
-				'actions' => [
-					'*' => [2]
-				]
+				'allow' => [
+					'*' => ['moderator' => ROLE_MODERATOR],
+				],
+				'deny' => [],
+			],
+			'admin/my_prefix/MyTest' => [
+				'controller' => 'MyTest',
+				'prefix' => 'admin/my_prefix',
+				'plugin' => null,
+				'allow' => [
+					'myAll' => ['user' => ROLE_USER, 'moderator' => ROLE_MODERATOR, 'admin' => ROLE_ADMIN],
+					'myModerator' => ['moderator' => ROLE_MODERATOR],
+					'myDenied' => ['admin' => ROLE_ADMIN],
+				],
+				'deny' => [
+					'myDenied' => ['moderator' => ROLE_MODERATOR],
+				],
 			]
 		];
 		// We don't need the original map
@@ -301,7 +318,7 @@ class TinyAuthorizeTest extends TestCase {
 		$this->request->params['prefix'] = null;
 		$this->request->params['plugin'] = 'Tags';
 
-		$user = ['role_id' => 1]; // valid role without authorization
+		$user = ['role_id' => ROLE_USER]; // valid role without authorization
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 
@@ -310,7 +327,7 @@ class TinyAuthorizeTest extends TestCase {
 		$this->request->params['prefix'] = null;
 		$this->request->params['plugin'] = null;
 
-		$user = ['role_id' => 1];
+		$user = ['role_id' => ROLE_USER];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 
@@ -319,7 +336,7 @@ class TinyAuthorizeTest extends TestCase {
 		$this->request->params['prefix'] = null;
 		$this->request->params['plugin'] = 'Tags';
 
-		$user = ['role_id' => 1];
+		$user = ['role_id' => ROLE_USER];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 
@@ -328,7 +345,7 @@ class TinyAuthorizeTest extends TestCase {
 		$this->request->params['prefix'] = 'admin';
 		$this->request->params['plugin'] = 'Tags';
 
-		$user = ['role_id' => 1];
+		$user = ['role_id' => ROLE_USER];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 	}
@@ -346,13 +363,13 @@ class TinyAuthorizeTest extends TestCase {
 		$this->request->params['prefix'] = null;
 		$this->request->params['plugin'] = null;
 
-		$user = ['role_id' => 1];
+		$user = ['role_id' => ROLE_USER];
 		$this->request->params['action'] = 'edit';
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
 		$this->request->params['action'] = 'delete';
-		$user = ['role_id' => 3];
+		$user = ['role_id' => ROLE_ADMIN];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
@@ -361,12 +378,12 @@ class TinyAuthorizeTest extends TestCase {
 		$this->request->params['prefix'] = 'admin';
 		$this->request->params['plugin'] = null;
 
-		$user = ['role_id' => 1];
+		$user = ['role_id' => ROLE_USER];
 		$this->request->params['action'] = 'edit';
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
-		$user = ['role_id' => 3];
+		$user = ['role_id' => ROLE_ADMIN];
 		$this->request->params['action'] = 'delete';
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
@@ -376,12 +393,12 @@ class TinyAuthorizeTest extends TestCase {
 		$this->request->params['prefix'] = null;
 		$this->request->params['plugin'] = 'Tags';
 
-		$user = ['role_id' => 1];
+		$user = ['role_id' => ROLE_USER];
 		$this->request->params['action'] = 'edit';
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
-		$user = ['role_id' => 3];
+		$user = ['role_id' => ROLE_ADMIN];
 		$this->request->params['action'] = 'delete';
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
@@ -391,12 +408,12 @@ class TinyAuthorizeTest extends TestCase {
 		$this->request->params['prefix'] = 'admin';
 		$this->request->params['plugin'] = 'Tags';
 
-		$user = ['role_id' => 1];
+		$user = ['role_id' => ROLE_USER];
 		$this->request->params['action'] = 'edit';
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
-		$user = ['role_id' => 3];
+		$user = ['role_id' => ROLE_ADMIN];
 		$this->request->params['action'] = 'delete';
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
@@ -420,7 +437,7 @@ class TinyAuthorizeTest extends TestCase {
 		$this->request->params['prefix'] = null;
 		$this->request->params['plugin'] = null;
 
-		$user = ['role_id' => 1];
+		$user = ['role_id' => ROLE_USER];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 
@@ -429,7 +446,7 @@ class TinyAuthorizeTest extends TestCase {
 		$this->request->params['prefix'] = 'admin';
 		$this->request->params['plugin'] = null;
 
-		$user = ['role_id' => 1];
+		$user = ['role_id' => ROLE_USER];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 
@@ -438,7 +455,7 @@ class TinyAuthorizeTest extends TestCase {
 		$this->request->params['prefix'] = 'Admin';
 		$this->request->params['plugin'] = null;
 
-		$user = ['role_id' => 1];
+		$user = ['role_id' => ROLE_USER];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 
@@ -447,7 +464,7 @@ class TinyAuthorizeTest extends TestCase {
 		$this->request->params['prefix'] = null;
 		$this->request->params['plugin'] = 'Tags';
 
-		$user = ['role_id' => 1];
+		$user = ['role_id' => ROLE_USER];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 
@@ -456,7 +473,7 @@ class TinyAuthorizeTest extends TestCase {
 		$this->request->params['prefix'] = null;
 		$this->request->params['plugin'] = 'tags';
 
-		$user = ['role_id' => 1];
+		$user = ['role_id' => ROLE_USER];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 
@@ -465,7 +482,7 @@ class TinyAuthorizeTest extends TestCase {
 		$this->request->params['prefix'] = 'Admin';
 		$this->request->params['plugin'] = 'Tags';
 
-		$user = ['role_id' => 1];
+		$user = ['role_id' => ROLE_USER];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 	}
@@ -486,11 +503,11 @@ class TinyAuthorizeTest extends TestCase {
 		$this->request->params['prefix'] = null;
 		$this->request->params['plugin'] = null;
 
-		$user = ['role_id' => 1];
+		$user = ['role_id' => ROLE_USER];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
-		$user = ['role_id' => 2];
+		$user = ['role_id' => ROLE_MODERATOR];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 
@@ -499,11 +516,11 @@ class TinyAuthorizeTest extends TestCase {
 		$this->request->params['prefix'] = 'admin';
 		$this->request->params['plugin'] = null;
 
-		$user = ['role_id' => 1];
+		$user = ['role_id' => ROLE_USER];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
-		$user = ['role_id' => 2];
+		$user = ['role_id' => ROLE_MODERATOR];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 
@@ -512,11 +529,11 @@ class TinyAuthorizeTest extends TestCase {
 		$this->request->params['prefix'] = null;
 		$this->request->params['plugin'] = 'Tags';
 
-		$user = ['role_id' => 1];
+		$user = ['role_id' => ROLE_USER];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
-		$user = ['role_id' => 2];
+		$user = ['role_id' => ROLE_MODERATOR];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 
@@ -525,11 +542,11 @@ class TinyAuthorizeTest extends TestCase {
 		$this->request->params['prefix'] = 'admin';
 		$this->request->params['plugin'] = 'Tags';
 
-		$user = ['role_id' => 1];
+		$user = ['role_id' => ROLE_USER];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
-		$user = ['role_id' => 2];
+		$user = ['role_id' => ROLE_MODERATOR];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 	}
@@ -550,11 +567,11 @@ class TinyAuthorizeTest extends TestCase {
 		$this->request->params['prefix'] = null;
 		$this->request->params['plugin'] = null;
 
-		$user = ['role_id' => 1];
+		$user = ['role_id' => ROLE_USER];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
-		$user = ['role_id' => 2];
+		$user = ['role_id' => ROLE_MODERATOR];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 
@@ -563,11 +580,11 @@ class TinyAuthorizeTest extends TestCase {
 		$this->request->params['prefix'] = 'admin';
 		$this->request->params['plugin'] = null;
 
-		$user = ['role_id' => 1];
+		$user = ['role_id' => ROLE_USER];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
-		$user = ['role_id' => 2];
+		$user = ['role_id' => ROLE_MODERATOR];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 
@@ -576,11 +593,11 @@ class TinyAuthorizeTest extends TestCase {
 		$this->request->params['prefix'] = null;
 		$this->request->params['plugin'] = 'Tags';
 
-		$user = ['role_id' => 1];
+		$user = ['role_id' => ROLE_USER];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
-		$user = ['role_id' => 2];
+		$user = ['role_id' => ROLE_MODERATOR];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 
@@ -589,11 +606,11 @@ class TinyAuthorizeTest extends TestCase {
 		$this->request->params['prefix'] = 'admin';
 		$this->request->params['plugin'] = 'Tags';
 
-		$user = ['role_id' => 1];
+		$user = ['role_id' => ROLE_USER];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
-		$user = ['role_id' => 2];
+		$user = ['role_id' => ROLE_MODERATOR];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 	}
@@ -665,7 +682,7 @@ class TinyAuthorizeTest extends TestCase {
 		$this->request->params['prefix'] = null;
 		$this->request->params['plugin'] = null;
 
-		$user = ['role_id' => 2];
+		$user = ['role_id' => ROLE_MODERATOR];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
@@ -674,7 +691,7 @@ class TinyAuthorizeTest extends TestCase {
 		$this->request->params['prefix'] = 'admin';
 		$this->request->params['plugin'] = null;
 
-		$user = ['role_id' => 2];
+		$user = ['role_id' => ROLE_MODERATOR];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
@@ -683,7 +700,7 @@ class TinyAuthorizeTest extends TestCase {
 		$this->request->params['prefix'] = null;
 		$this->request->params['plugin'] = 'Posts';
 
-		$user = ['role_id' => 2];
+		$user = ['role_id' => ROLE_MODERATOR];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
@@ -692,7 +709,7 @@ class TinyAuthorizeTest extends TestCase {
 		$this->request->params['prefix'] = 'admin';
 		$this->request->params['plugin'] = 'Posts';
 
-		$user = ['role_id' => 2];
+		$user = ['role_id' => ROLE_MODERATOR];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 	}
@@ -716,11 +733,11 @@ class TinyAuthorizeTest extends TestCase {
 		$this->request->params['prefix'] = null;
 		$this->request->params['plugin'] = null;
 
-		$user = ['role_id' => 2];
+		$user = ['role_id' => ROLE_MODERATOR];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
-		$user = ['role_id' => 3];
+		$user = ['role_id' => ROLE_ADMIN];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 
@@ -729,11 +746,11 @@ class TinyAuthorizeTest extends TestCase {
 		$this->request->params['prefix'] = 'admin';
 		$this->request->params['plugin'] = null;
 
-		$user = ['role_id' => 2];
+		$user = ['role_id' => ROLE_MODERATOR];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
-		$user = ['role_id' => 3];
+		$user = ['role_id' => ROLE_ADMIN];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 
@@ -742,11 +759,11 @@ class TinyAuthorizeTest extends TestCase {
 		$this->request->params['prefix'] = null;
 		$this->request->params['plugin'] = 'Blogs';
 
-		$user = ['role_id' => 2];
+		$user = ['role_id' => ROLE_MODERATOR];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
-		$user = ['role_id' => 3];
+		$user = ['role_id' => ROLE_ADMIN];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 
@@ -755,11 +772,68 @@ class TinyAuthorizeTest extends TestCase {
 		$this->request->params['prefix'] = 'admin';
 		$this->request->params['plugin'] = 'Blogs';
 
-		$user = ['role_id' => 2];
+		$user = ['role_id' => ROLE_MODERATOR];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
-		$user = ['role_id' => 3];
+		$user = ['role_id' => ROLE_ADMIN];
+		$res = $object->authorize($user, $this->request);
+		$this->assertFalse($res);
+	}
+
+	/**
+	 * Tests with deny even though wildcard allows all for this role.
+	 *
+	 * @return void
+	 */
+	public function testDeny() {
+		$object = new TestTinyAuthorize($this->collection, [
+		]);
+
+		// All tests performed against this action
+		$this->request->params['action'] = 'foo';
+
+		// Test standard controller
+		$this->request->params['controller'] = 'Blogs';
+		$this->request->params['prefix'] = null;
+		$this->request->params['plugin'] = null;
+
+		$user = ['role_id' => ROLE_MODERATOR];
+		$res = $object->authorize($user, $this->request);
+		$this->assertTrue($res);
+
+		$user = ['role_id' => ROLE_USER];
+		$res = $object->authorize($user, $this->request);
+		$this->assertFalse($res);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testAllowNestedPrefix() {
+		$object = new TestTinyAuthorize($this->collection, [
+		]);
+
+		// All tests performed against this action
+		$this->request->params['action'] = 'myModerator';
+
+		// Test standard controller
+		$this->request->params['controller'] = 'MyTest';
+		$this->request->params['prefix'] = 'admin/my_prefix';
+		$this->request->params['plugin'] = null;
+
+		$user = ['role_id' => ROLE_MODERATOR];
+		$res = $object->authorize($user, $this->request);
+		$this->assertTrue($res);
+
+		$user = ['role_id' => ROLE_USER];
+		$res = $object->authorize($user, $this->request);
+		$this->assertFalse($res);
+
+		// Test different prefix
+		$this->request->params['prefix'] = 'admin';
+
+		$user = ['role_id' => ROLE_MODERATOR];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 	}
@@ -784,15 +858,15 @@ class TinyAuthorizeTest extends TestCase {
 		$this->request->params['prefix'] = null;
 		$this->request->params['plugin'] = null;
 
-		$user = ['role_id' => 1];
+		$user = ['role_id' => ROLE_USER];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
-		$user = ['role_id' => 2];
+		$user = ['role_id' => ROLE_MODERATOR];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
-		$user = ['role_id' => 3];
+		$user = ['role_id' => ROLE_ADMIN];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
@@ -803,15 +877,15 @@ class TinyAuthorizeTest extends TestCase {
 		$this->request->params['prefix'] = 'admin';
 		$this->request->params['plugin'] = null;
 
-		$user = ['role_id' => 1];
+		$user = ['role_id' => ROLE_USER];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 
-		$user = ['role_id' => 2];
+		$user = ['role_id' => ROLE_MODERATOR];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 
-		$user = ['role_id' => 3];
+		$user = ['role_id' => ROLE_ADMIN];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 
@@ -820,15 +894,15 @@ class TinyAuthorizeTest extends TestCase {
 		$this->request->params['prefix'] = null;
 		$this->request->params['plugin'] = 'Tags';
 
-		$user = ['role_id' => 1];
+		$user = ['role_id' => ROLE_USER];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
-		$user = ['role_id' => 2];
+		$user = ['role_id' => ROLE_MODERATOR];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
-		$user = ['role_id' => 3];
+		$user = ['role_id' => ROLE_ADMIN];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
@@ -838,15 +912,15 @@ class TinyAuthorizeTest extends TestCase {
 		$this->request->params['prefix'] = 'admin';
 		$this->request->params['plugin'] = 'Tags';
 
-		$user = ['role_id' => 1];
+		$user = ['role_id' => ROLE_USER];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 
-		$user = ['role_id' => 2];
+		$user = ['role_id' => ROLE_MODERATOR];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 
-		$user = ['role_id' => 3];
+		$user = ['role_id' => ROLE_ADMIN];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 
@@ -856,15 +930,15 @@ class TinyAuthorizeTest extends TestCase {
 		$this->request->params['prefix'] = 'special';
 		$this->request->params['plugin'] = null;
 
-		$user = ['role_id' => 1];
+		$user = ['role_id' => ROLE_USER];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
-		$user = ['role_id' => 2];
+		$user = ['role_id' => ROLE_MODERATOR];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
-		$user = ['role_id' => 3];
+		$user = ['role_id' => ROLE_ADMIN];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
@@ -874,15 +948,15 @@ class TinyAuthorizeTest extends TestCase {
 		$this->request->params['prefix'] = 'special';
 		$this->request->params['plugin'] = 'Comments';
 
-		$user = ['role_id' => 1];
+		$user = ['role_id' => ROLE_USER];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
-		$user = ['role_id' => 2];
+		$user = ['role_id' => ROLE_MODERATOR];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
-		$user = ['role_id' => 3];
+		$user = ['role_id' => ROLE_ADMIN];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 	}
@@ -912,11 +986,11 @@ class TinyAuthorizeTest extends TestCase {
 		$this->request->params['prefix'] = 'admin';
 		$this->request->params['plugin'] = null;
 
-		$user = ['role_id' => 1];
+		$user = ['role_id' => ROLE_USER];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 
-		$user = ['role_id' => 3];
+		$user = ['role_id' => ROLE_ADMIN];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
@@ -925,11 +999,11 @@ class TinyAuthorizeTest extends TestCase {
 		$this->request->params['prefix'] = 'admin';
 		$this->request->params['plugin'] = 'Tags';
 
-		$user = ['role_id' => 1];
+		$user = ['role_id' => ROLE_USER];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 
-		$user = ['role_id' => 3];
+		$user = ['role_id' => ROLE_ADMIN];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 	}
@@ -949,7 +1023,7 @@ class TinyAuthorizeTest extends TestCase {
 		];
 
 		foreach ($acl as $resource) {
-			foreach ($resource['actions'] as $action => $allowed) {
+			foreach ($resource['allow'] as $action => $allowed) {
 				$this->request->params['controller'] = $resource['controller'];
 				$this->request->params['prefix'] = $resource['prefix'];
 				$this->request->params['action'] = $action;
@@ -978,7 +1052,7 @@ class TinyAuthorizeTest extends TestCase {
 				Plugin::path('TinyAuth') . 'tests' . DS . 'test_files' . DS,
 				Plugin::path('TinyAuth') . 'tests' . DS . 'test_files' . DS . 'subfolder' . DS,
 			],
-			'acl.ini'
+			'auth_acl.ini'
 		]);
 		$this->assertTrue(is_array($res));
 
@@ -1003,7 +1077,7 @@ class TinyAuthorizeTest extends TestCase {
 		$method->setAccessible(true);
 		$method->invokeArgs($object, [
 			Plugin::path('TinyAuth') . 'non' . DS . 'existent' . DS,
-			'acl.ini']);
+			'auth_acl.ini']);
 	}
 
 	/**
@@ -1173,9 +1247,9 @@ class TinyAuthorizeTest extends TestCase {
 
 		// Test against roles array in Configure
 		$expected = [
-			'user' => 1,
-			'moderator' => 2,
-			'admin' => 3
+			'user' => ROLE_USER,
+			'moderator' => ROLE_MODERATOR,
+			'admin' => ROLE_ADMIN
 		];
 		$res = $method->invoke($object);
 		$this->assertEquals($expected, $res);
@@ -1251,9 +1325,9 @@ class TinyAuthorizeTest extends TestCase {
 		$method->setAccessible(true);
 
 		// Single-role: get role id from roleColumn in user table
-		$user = ['role_id' => 1];
+		$user = ['role_id' => ROLE_USER];
 		$res = $method->invokeArgs($object, [$user]);
-		$this->assertSame(['user' => 1], $res);
+		$this->assertSame(['user' => ROLE_USER], $res);
 
 		// Multi-role: lookup roles directly in pivot table
 		$object = new TestTinyAuthorize($this->collection, [
@@ -1367,11 +1441,11 @@ class TinyAuthorizeTest extends TestCase {
 			'superAdmin' => 1,
 		]);
 
-		$user = ['id' => 1, 'role_id' => 1];
+		$user = ['id' => 1, 'role_id' => ROLE_USER];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
-		$user = ['id' => 2, 'role_id' => 1];
+		$user = ['id' => 2, 'role_id' => ROLE_USER];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 
@@ -1380,11 +1454,11 @@ class TinyAuthorizeTest extends TestCase {
 			'idColumn' => 'group_id',
 			'superAdmin' => 1
 		]);
-		$user = ['id' => 100, 'role_id' => 1, 'group_id' => 1];
+		$user = ['id' => 100, 'role_id' => ROLE_USER, 'group_id' => 1];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
-		$user = ['id' => 101, 'role_id' => 1, 'group_id' => 2];
+		$user = ['id' => 101, 'role_id' => ROLE_USER, 'group_id' => 2];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 
@@ -1394,11 +1468,11 @@ class TinyAuthorizeTest extends TestCase {
 			'superAdminColumn' => 'group_id',
 			'superAdmin' => 1
 		]);
-		$user = ['id' => 100, 'role_id' => 1, 'group_id' => 1];
+		$user = ['id' => 100, 'role_id' => ROLE_USER, 'group_id' => 1];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
-		$user = ['id' => 101, 'role_id' => 1, 'group_id' => 2];
+		$user = ['id' => 101, 'role_id' => ROLE_USER, 'group_id' => 2];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 
@@ -1407,11 +1481,11 @@ class TinyAuthorizeTest extends TestCase {
 			'superAdminColumn' => 'group_id',
 			'superAdmin' => 1
 		]);
-		$user = ['id' => 100, 'role_id' => 1, 'group_id' => 1];
+		$user = ['id' => 100, 'role_id' => ROLE_USER, 'group_id' => 1];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
-		$user = ['id' => 101, 'role_id' => 1, 'group_id' => 2];
+		$user = ['id' => 101, 'role_id' => ROLE_USER, 'group_id' => 2];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 
@@ -1421,15 +1495,15 @@ class TinyAuthorizeTest extends TestCase {
 			'superAdminColumn' => 'group',
 			'superAdmin' => 'Admin'
 		]);
-		$user = ['id' => 100, 'role_id' => 1, 'group' => 'admin'];
+		$user = ['id' => 100, 'role_id' => ROLE_USER, 'group' => 'admin'];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 
-		$user = ['id' => 100, 'role_id' => 1, 'group' => 'Admin'];
+		$user = ['id' => 100, 'role_id' => ROLE_USER, 'group' => 'Admin'];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
-		$user = ['id' => 101, 'role_id' => 1, 'group' => 'authors'];
+		$user = ['id' => 101, 'role_id' => ROLE_USER, 'group' => 'authors'];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 

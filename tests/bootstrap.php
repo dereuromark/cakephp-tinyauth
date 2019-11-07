@@ -56,7 +56,13 @@ $cache = [
 
 Cake\Cache\Cache::setConfig($cache);
 
+define('ROLE_USER', 1);
+define('ROLE_MODERATOR', 2);
+define('ROLE_ADMIN', 3);
+
 Cake\Core\Plugin::getCollection()->add(new TinyAuth\Plugin());
+
+class_alias(\TestApp\View\AppView::class, 'App\View\AppView');
 
 // Ensure default test connection is defined
 if (!getenv('db_class')) {

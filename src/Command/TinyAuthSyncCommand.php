@@ -9,6 +9,7 @@ use Cake\Console\CommandCollectionAwareInterface;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use TinyAuth\Sync\Syncer;
+use TinyAuth\Utility\TinyAuth;
 
 /**
  * Auth and ACL helper
@@ -38,7 +39,7 @@ class TinyAuthSyncCommand extends Command implements CommandCollectionAwareInter
 	 * @return int
 	 */
 	public function execute(Arguments $args, ConsoleIo $io) {
-		$syncer = $this->getSyncer();
+		$syncer = $this->_getSyncer();
 		$syncer->syncAcl($args, $io);
 		$io->out('Controllers and ACL synced.');
 
@@ -48,7 +49,7 @@ class TinyAuthSyncCommand extends Command implements CommandCollectionAwareInter
 	/**
 	 * @return \TinyAuth\Sync\Syncer
 	 */
-	protected function getSyncer() {
+	protected function _getSyncer() {
 		return new Syncer();
 	}
 
@@ -59,10 +60,12 @@ class TinyAuthSyncCommand extends Command implements CommandCollectionAwareInter
 	 * @return \Cake\Console\ConsoleOptionParser
 	 */
 	protected function buildOptionParser(ConsoleOptionParser $parser) {
+		$roles = $this->_getAvailableRoles();
+
 		$parser->setDescription(
 			'Get the list of controllers and make sure, they are synced into the ACL file.'
 		)->addArgument('roles', [
-			'help' => 'Role names, comma separated, e.g. `user,admin`.',
+			'help' => 'Role names, comma separated, e.g. `user,admin`.' . ($roles ? PHP_EOL . 'Available roles: ' . implode(', ', $roles) . '.' : ''),
 			'required' => true,
 		])->addOption('plugin', [
 			'short' => 'p',
@@ -70,11 +73,20 @@ class TinyAuthSyncCommand extends Command implements CommandCollectionAwareInter
 			'default' => null,
 		])->addOption('dry-run', [
 			'short' => 'd',
-			'help' => 'Dry Run (only output, do not modify ini files).',
+			'help' => 'Dry Run (only output, do not modify INI files).',
 			'boolean' => true,
 		]);
 
 		return $parser;
+	}
+
+	/**
+	 * @return string[]
+	 */
+	protected function _getAvailableRoles() {
+		$roles = (new TinyAuth())->getAvailableRoles();
+
+		return array_keys($roles);
 	}
 
 }

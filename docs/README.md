@@ -10,18 +10,21 @@ If an action is not whitelisted, it will trigger the login process.
 The second only gets invoked once the person is already logged in.
 In that case the role of this logged in user decides if that action is allowed to be accessed.
 
-## Authentication
-NEW since version 1.4.0
+## DebugKit Panel
+You can activate an "Auth" DebugKit panel to have useful insights per URL.
 
+See [AuthPanel](AuthPanel.md) docs.
+
+## Authentication
 This is done via TinyAuth AuthComponent.
 
-The component plays well together with the adapter (see below).
+The component plays well together with the authorization part (see below).
 If you do not have any roles and either all are logged in or not logged in you can also use this stand-alone to make certain pages public.
 
 See [Authentication](Authentication.md) docs.
 
 ## Authorization
-For this we have a TinyAuthorize adapter.
+The TinyAuthorize adapter takes care of authorization.
 
 The adapter plays well together with the component above.
 But if you prefer to control the action whitelisting for authentication via code and `$this->Auth->allow()` calls, you can
@@ -36,12 +39,26 @@ See [Authorization](Authorization.md) docs.
 Those classes most likely share quite a few configs, in that case you definitely should use Configure to define those centrally:
 ```php
 // in your app.php
-	'TinyAuth' => [
-		'multiRole' => true,
-		...
-	],
+    'TinyAuth' => [
+        'multiRole' => true,
+        ...
+    ],
 ```
 This way you keep it DRY.
+
+## Cache busting
+In general, it is advised to clear the cache after each deploy, e.g. using
+```
+bin/cake clear cache
+```
+In debug mode this happens automatically for each request.
+
+By default, the cache engine used is `_cake_core_`, the prefix is `tiny_auth_`.
+You can also clear the cache from code using `TinyAuth\Utility\Cache::clear()` method for specifically this.
+
+## Custom Allow or ACL adapters
+You can easily switch out the INI file adapters for both using `allowAdapter` and `aclAdapter` config.
+This way you can also read from DB or provide any other API driven backend to read the data from for your authentication or authorization.
 
 ## Troubleshooting
 First of all: Isolate the issue. Never mix **authentication** and **authorization** (read the top part again).
@@ -53,6 +70,16 @@ Only if that is working, attach an Auth adapter (which now means authorization c
 By default it will now deny all logged in users any access to any protected action. Only by specifically whitelisting actions/controllers now in the ACL definition, a specific user can access a specific action again.
 Make sure that the session contains the correct data structure, also make sure the roles are configured or in the database and can be found as expected. The user with the right role should get access now to the corresponding action (make also sure cache is cleared).
 You then verified: authorization is working fine, as well - only with the correct role a user can now access protected actions.
+
+## Working with new plugins
+If you are using [Authentication](https://github.com/cakephp/authentication) or [Authorization](https://github.com/cakephp/authorization) plugin, you will need to use the
+Authentication/Authorization components of this plugin instead for them to work with TinyAuth.
+
+See the docs for details:
+- [TinyAuth and Authentication plugin](AuthenticationPlugin.md)
+- [TinyAuth and Authorization plugin](AuthorizationPlugin.md)
+
+Note: Those are *beta* - not fully tested/functional.
 
 ## Contributing
 Feel free to fork and pull request.

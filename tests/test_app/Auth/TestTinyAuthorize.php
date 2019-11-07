@@ -8,10 +8,11 @@ use TinyAuth\Auth\TinyAuthorize;
 class TestTinyAuthorize extends TinyAuthorize {
 
 	/**
-	 * @return \TinyAuth\Auth\AclAdapter\AclAdapterInterface|null
+	 * @param string $adapter
+	 * @return \TinyAuth\Auth\AclAdapter\AclAdapterInterface
 	 */
-	public function getAclAdapter() {
-		return $this->_aclAdapter;
+	public function getAclAdapter($adapter) {
+		return $this->_loadAclAdapter($adapter);
 	}
 
 	/**
@@ -28,6 +29,7 @@ class TestTinyAuthorize extends TinyAuthorize {
 	 */
 	protected function _getAcl($path = null) {
 		$path = Plugin::path('TinyAuth') . 'tests' . DS . 'test_files' . DS;
+
 		return parent::_getAcl($path);
 	}
 

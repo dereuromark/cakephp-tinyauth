@@ -24,14 +24,16 @@ class Syncer {
 	 */
 	public function syncAcl(Arguments $args, ConsoleIo $io) {
 		$defaults = [
-			'file' => 'acl.ini',
+			'aclFile' => 'auth_acl.ini',
+			'aclFilePath' => null,
 		];
 		$config = (array)Configure::read('TinyAuth') + $defaults;
 
-		$file = ROOT . DS . 'config' . DS . $config['file'];
+		$path = $config['aclFilePath'] ?: ROOT . DS . 'config' . DS;
+		$file = $path . $config['aclFile'];
 		$content = Utility::parseFile($file);
 
-		$controllers = $this->getControllers((string)$args->getOption('plugin'));
+		$controllers = $this->_getControllers((string)$args->getOption('plugin'));
 		foreach ($controllers as $controller) {
 			if (isset($content[$controller])) {
 				continue;
@@ -48,7 +50,9 @@ class Syncer {
 			$string = Utility::buildIniString($content);
 
 			if ($args->getOption('verbose')) {
+				$io->info('=== ' . $config['aclFile'] . ' ===');
 				$io->info($string);
+				$io->info('=== ' . $config['aclFile'] . ' end ===');
 			}
 			return;
 		}
@@ -60,13 +64,13 @@ class Syncer {
 	 * @param string $plugin
 	 * @return array
 	 */
-	protected function getControllers($plugin) {
+	protected function _getControllers($plugin) {
 		if ($plugin === 'all') {
 			$plugins = (array)Plugin::loaded();
 
 			$controllers = [];
 			foreach ($plugins as $plugin) {
-				$controllers = array_merge($controllers, $this->getControllers($plugin));
+				$controllers = array_merge($controllers, $this->_getControllers($plugin));
 			}
 
 			return $controllers;
@@ -76,7 +80,7 @@ class Syncer {
 
 		$controllers = [];
 		foreach ($folders as $folder) {
-			$controllers = array_merge($controllers, $this->parseControllers($folder, $plugin));
+			$controllers = array_merge($controllers, $this->_parseControllers($folder, $plugin));
 		}
 
 		return $controllers;
@@ -89,7 +93,7 @@ class Syncer {
 	 *
 	 * @return array
 	 */
-	protected function parseControllers($folder, $plugin, $prefix = null) {
+	protected function _parseControllers($folder, $plugin, $prefix = null) {
 		$folderContent = (new Folder($folder))->read(Folder::SORT_NAME, true);
 
 		$controllers = [];
@@ -104,7 +108,7 @@ class Syncer {
 				continue;
 			}
 
-			if ($this->noAuthenticationNeeded($name, $plugin, $prefix)) {
+			if ($this->_noAuthenticationNeeded($name, $plugin, $prefix)) {
 				continue;
 			}
 
@@ -118,7 +122,7 @@ class Syncer {
 				continue;
 			}
 
-			$controllers = array_merge($controllers, $this->parseControllers($folder . $subFolder . DS, $plugin, $subFolder));
+			$controllers = array_merge($controllers, $this->_parseControllers($folder . $subFolder . DS, $plugin, $subFolder));
 		}
 
 		return $controllers;
@@ -130,9 +134,9 @@ class Syncer {
 	 * @param string $prefix
 	 * @return bool
 	 */
-	protected function noAuthenticationNeeded($name, $plugin, $prefix) {
+	protected function _noAuthenticationNeeded($name, $plugin, $prefix) {
 		if (!isset($this->authAllow)) {
-			$this->authAllow = $this->parseAuthAllow();
+			$this->authAllow = $this->_parseAuthAllow();
 		}
 
 		$key = $name;
@@ -151,13 +155,15 @@ class Syncer {
 	/**
 	 * @return array
 	 */
-	protected function parseAuthAllow() {
+	protected function _parseAuthAllow() {
 		$defaults = [
-			'file' => 'auth_allow.ini',
+			'allowFilePath' => null,
+			'allowFile' => 'auth_allow.ini',
 		];
 		$config = (array)Configure::read('TinyAuth') + $defaults;
 
-		$file = ROOT . DS . 'config' . DS . $config['file'];
+		$path = $config['allowFilePath'] ?: ROOT . DS . 'config' . DS;
+		$file = $path . $config['allowFile'];
 
 		return Utility::parseFile($file);
 	}

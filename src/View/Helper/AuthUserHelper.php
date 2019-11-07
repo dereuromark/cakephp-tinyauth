@@ -8,6 +8,7 @@ use Cake\View\Helper;
 use Cake\View\View;
 use TinyAuth\Auth\AclTrait;
 use TinyAuth\Auth\AuthUserTrait;
+use TinyAuth\Utility\Config;
 
 /**
  * @property \Cake\View\Helper\HtmlHelper $Html
@@ -27,7 +28,7 @@ class AuthUserHelper extends Helper {
 	 * @param array $config Configuration settings for the helper.
 	 */
 	public function __construct(View $View, array $config = []) {
-		$config = $this->_prepareConfig($config);
+		$config += Config::all();
 
 		parent::__construct($View, $config);
 	}
@@ -72,7 +73,7 @@ class AuthUserHelper extends Helper {
 			throw new Exception('Variable _authUser containing the user data needs to be passed down. The TinyAuth.Auth component does it automatically, if loaded.');
 		}
 
-		return $this->_check((array)$authuser, $url);
+		return $this->_checkUser((array)$authuser, $url);
 	}
 
 	/**

@@ -16,7 +16,11 @@ class TinyAuthSyncCommandTest extends ConsoleIntegrationTestCase {
 	public function setUp() {
 		parent::setUp();
 
-		$this->skipIf(version_compare(Configure::version(), '3.6.0', '<'), 'Commands added in CakePHP 3.6+');
+		Configure::write('Roles', [
+			'user' => 1,
+			'moderator' => 2,
+			'admin' => 3
+		]);
 
 		$this->setAppNamespace();
 		$this->useCommandRunner();
@@ -26,7 +30,8 @@ class TinyAuthSyncCommandTest extends ConsoleIntegrationTestCase {
 	 * @return void
 	 */
 	public function testSync() {
-		Configure::write('TinyAuth.file', '../tests/test_files/subfolder/acl.ini');
+		Configure::write('TinyAuth.aclFilePath', TESTS . 'test_files/subfolder/');
+		Configure::write('TinyAuth.allowFilePath', TESTS . 'test_files/');
 
 		$folder = new Folder();
 		$folder->copy(['from' => TESTS . 'test_app' . DS . 'Controller' . DS, 'to' => '/tmp' . DS . 'src' . DS . 'Controller' . DS]);

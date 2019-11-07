@@ -2,6 +2,7 @@
 The fast and easy way for user authentication in CakePHP 3.x applications.
 
 Use TinyAuth Component if you want to add instant (and easy) action whitelisting to your application.
+You can allow/deny per controller action or with wildcards also per controller and more.
 
 ## Basic Features
 - INI file (static) based access rights (controller-action setup)
@@ -12,15 +13,15 @@ Do NOT use if
 
 ## Enabling
 
-Authentication is set up in your controller's `initialize` method:
+Authentication is set up in your controller's `initialize()` method:
 
 ```php
 // src/Controller/AppController
 
 public function initialize() {
-	parent::initialize();
+    parent::initialize();
 
-	$this->loadComponent('TinyAuth.Auth');
+    $this->loadComponent('TinyAuth.Auth');
 }
 ```
 
@@ -36,7 +37,8 @@ The section key syntax follows the CakePHP naming convention for plugins.
 Make sure to create an entry for each action you want to expose and use:
 
 - one or more action names
-- the ``*`` wildcard to allow access to all actions of that controller
+- the ``*`` wildcard to grant access to all actions of that controller
+- use `"!actionName"` (quotes are important then) to deny certain actions
 
 ```ini
 ; ----------------------------------------------------------
@@ -56,17 +58,30 @@ admin/Users = *
 ; ----------------------------------------------------------
 Accounts.Accounts = view, edit
 ; ----------------------------------------------------------
-; AccountsController in plugin named Accounts using /admin
-; prefixed route
+; AccountsController in plugin named Accounts using /my-admin
+; prefixed route (assuming you are using recommended DashedRoute class)
 ; ----------------------------------------------------------
-Accounts.admin/Accounts = index
+Accounts.my_admin/Accounts = index
 ```
+
+Note: Prefixes are always `lowercase_underscored`. The route inflects to the final casing if needed. 
+Nested prefixes are joined using `/`, e.g. `my/admin/nested/`.
+
+Using only "granting" is recommended for security reasons.
+Careful with denying, as this can accidentally open up more than desired actions. If you really want to use it:
+
+```ini
+Users = "!secret",*
+```
+Meaning: Grant public access to all "Users" controller actions by default, but keep authentication required for "secret" action.
+
+Note that denying always trumps granting, if both are declared for an action.
 
 ### Multiple files and merging
 You can specify multiple paths in your config, e.g. when you have plugins and separated the definitions across them.
 Make sure you are using each key only once, though. The first definition will be kept and all others for the same key are ignored.
 
-### Mixing with code
+## Mixing with code
 It is possible to have mixed INI and code rules. Those will get merged prior to authentication.
 So in case any of your controllers (or plugin controllers) contain such a statement, it will merge itself with your INI whitelist:
 ```php
@@ -74,19 +89,20 @@ So in case any of your controllers (or plugin controllers) contain such a statem
 use Cake\Event\Event;
 ...
 
-	public function beforeFilter(Event $event) {
-		parent::beforeFilter($event);
+    public function beforeFilter(Event $event) {
+        parent::beforeFilter($event);
 
-		$this->Auth->allow('index', 'view');
-	}
+        $this->Auth->allow(['index', 'view']);
+    }
 ```
 This can be interested when migrating slowly to TinyAuth, for example.
 Once you move such a code based rule into the INI file, you can safely remove those lines of code in your controller :)
 
 ### allow() vs deny()
-Since 1.11.0 you can also mix it with deny() calls. From how the AuthComponent works, all allow() calls need be done before calling deny(). 
+Since 1.11.0 you can also mix it with `deny()` calls. From how the AuthComponent works, all allow() calls need be done before calling deny().
 As such TinyAuth injects its list now before `Controller::beforeFilter()` gets called.
 
+Note: It is also advised to move away from these controller calls.
 
 ## Caching
 
@@ -96,7 +112,7 @@ By default it will not use caching in debug mode, though.
 To modify the caching behavior set the ``autoClearCache`` configuration option:
 ```php
 $this->loadComponent('TinyAuth.Auth', [
-	'autoClearCache' => true|false
+    'autoClearCache' => true|false
 )]
 ```
 
@@ -107,7 +123,6 @@ TinyAuth AuthComponent supports the following configuration options.
 Option | Type | Description
 :----- | :--- | :----------
 autoClearCache|bool|True will generate a new ACL cache file every time.
-cache|string|Cache type. Defaults to `_cake_core_`.
-allowCacheKey|string|Cache key. Defaults to `tiny_auth_allow`.
 allowFilePath|string|Full path to the INI file. Can also be an array of paths. Defaults to `ROOT . DS . 'config' . DS`.
 allowFile|string|Name of the INI file. Defaults to `auth_allow.ini`.
+allowAdapter|string|Class name, defaults to `IniAllowAdapter::class`.

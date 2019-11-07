@@ -2,7 +2,6 @@
 
 namespace TinyAuth\Test\TestCase\Controller\Component;
 
-use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
 use Cake\Core\Plugin;
@@ -10,11 +9,9 @@ use Cake\Routing\Exception\MissingRouteException;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\View\View;
+use TinyAuth\Utility\Cache;
 use TinyAuth\View\Helper\AuthUserHelper;
 
-/**
- * TinyAuth AuthComponent to handle all authentication in a central ini file.
- */
 class AuthUserHelperTest extends TestCase {
 
 	/**
@@ -31,6 +28,7 @@ class AuthUserHelperTest extends TestCase {
 	 * @var array
 	 */
 	protected $config = [];
+
 	/**
 	 * @return void
 	 */
@@ -65,7 +63,7 @@ class AuthUserHelperTest extends TestCase {
 	public function testIsAuthorizedValid() {
 		$user = [
 			'id' => 1,
-			'role_id' => 1
+			'role_id' => ROLE_USER
 		];
 		$this->View->set('_authUser', $user);
 
@@ -93,7 +91,7 @@ class AuthUserHelperTest extends TestCase {
 	public function testIsAuthorizedInvalid() {
 		$user = [
 			'id' => 1,
-			'role_id' => 1
+			'role_id' => ROLE_USER
 		];
 		$this->View->set('_authUser', $user);
 
@@ -149,7 +147,7 @@ class AuthUserHelperTest extends TestCase {
 	public function testNamedRouteMissingControllerActionException() {
 		$user = [
 			'id' => 1,
-			'role_id' => 1
+			'role_id' => ROLE_USER
 		];
 		$this->View->set('_authUser', $user);
 
@@ -173,7 +171,7 @@ class AuthUserHelperTest extends TestCase {
 	public function testInvalidNamedRouteException() {
 		$user = [
 			'id' => 1,
-			'role_id' => 1
+			'role_id' => ROLE_USER
 		];
 		$this->View->set('_authUser', $user);
 
@@ -198,7 +196,7 @@ class AuthUserHelperTest extends TestCase {
 	public function testIncompleteNamedRouteException() {
 		$user = [
 			'id' => 1,
-			'role_id' => 1
+			'role_id' => ROLE_USER
 		];
 		$this->View->set('_authUser', $user);
 
@@ -240,7 +238,7 @@ class AuthUserHelperTest extends TestCase {
 	public function testLinkValid() {
 		$user = [
 			'id' => 1,
-			'role_id' => 1
+			'role_id' => ROLE_USER
 		];
 		$this->View->set('_authUser', $user);
 
@@ -258,7 +256,7 @@ class AuthUserHelperTest extends TestCase {
 	public function testLinkInvalidDefault() {
 		$user = [
 			'id' => 1,
-			'role_id' => 1
+			'role_id' => ROLE_USER
 		];
 		$this->View->set('_authUser', $user);
 
@@ -276,7 +274,7 @@ class AuthUserHelperTest extends TestCase {
 	public function testPostLinkValid() {
 		$user = [
 			'id' => 1,
-			'role_id' => 3
+			'role_id' => ROLE_ADMIN
 		];
 		$this->View->set('_authUser', $user);
 
@@ -295,7 +293,7 @@ class AuthUserHelperTest extends TestCase {
 	public function testPostLinkInvalid() {
 		$user = [
 			'id' => 1,
-			'role_id' => 1
+			'role_id' => ROLE_USER
 		];
 		$this->View->set('_authUser', $user);
 
@@ -313,7 +311,7 @@ class AuthUserHelperTest extends TestCase {
 	public function testPostLinkValidNoEscape() {
 		$user = [
 			'id' => 1,
-			'role_id' => 3
+			'role_id' => ROLE_ADMIN
 		];
 		$this->View->set('_authUser', $user);
 
@@ -363,20 +361,15 @@ class AuthUserHelperTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testHasAccessPublic() {
+	public function testHasAccessPublicCache() {
 		$this->AuthUserHelper->setConfig('includeAuthentication', true);
-		$cache = '_cake_core_';
-		$cacheKey = 'tiny_auth_allow';
-		$this->AuthUserHelper->setConfig('cache', $cache);
-		$this->AuthUserHelper->setConfig('cacheKey', $cacheKey);
-
 		$data = [
 			'Users' => [
 				'controller' => 'Users',
-				'actions' => ['view'],
+				'allow' => ['view'],
 			]
 		];
-		Cache::write($cacheKey, $data, $cache);
+		Cache::write(Cache::KEY_ALLOW, $data);
 
 		$request = [
 			'controller' => 'Users',

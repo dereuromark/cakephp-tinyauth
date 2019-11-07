@@ -29,17 +29,17 @@ class UsersFixture extends TestFixture {
 		[
 			'id' => '1',
 			'username' => 'dereuromark',
-			'role_id' => 1
+			'role_id' => ROLE_USER
 		],
 		[
 			'id' => '2',
 			'username' => 'bravo-kernel',
-			'role_id' => 3
+			'role_id' => ROLE_ADMIN
 		],
 		[
 			'id' => '3',
 			'username' => 'adriana',
-			'role_id' => 2
+			'role_id' => ROLE_MODERATOR
 		]
 	];
 

@@ -3,16 +3,16 @@
 ```php
 // in your app.php
 'TinyAuth' => [
-	'multiRole' => true
+    'multiRole' => true
 ]
 ```
 
 ```php
 // in your AppController.php
 $this->loadComponent('TinyAuth.Auth', [
-	'autoClearCache' => true,
-	'authorize' => ['TinyAuth.Tiny'],
-	...
+    'autoClearCache' => true,
+    'authorize' => ['TinyAuth.Tiny'],
+    ...
 ]);
 ```
 
@@ -29,7 +29,7 @@ Pages = display
 Users = login
 ```
 
-### acl.ini
+### auth_acl.ini
 ```ini
 // in config folder
 ; ----------------------------------------------------------
@@ -73,37 +73,4 @@ edit, index, logout = author
 ; ----------------------------------------------------------
 [Settings]
 * = admin
-```
-
-### AuthUser Helper
-```php
-// in your AppView.php
-$this->loadHelper('TinyAuth.AuthUser');
-```
-
-```php
-// e.g Template - Element - menu
-if ($this->AuthUser->hasRole('admin')) {
-	<li class="nav-item"><?= $this->Html->link(__('Settings'), ['controller' => 'Settings', 'action' => 'index'], ['class' => 'nav-link']) ?></li>
-}
-```
-
-```php
-echo $this->AuthUser->link('Admin Backend', ['prefix' => 'admin', 'action' => 'index']);
-```
-
-### AuthUser Component
-```php
-// in your Controller
-$this->loadComponent('TinyAuth.AuthUser');
-```
-
-```php
-// e.g ArticlesController - edit
-if ($this->AuthUser->hasRole('author')) {
-	if (!$this->AuthUser->isMe($article->user_id)){
-		$this->Flash->error(__('You are not authorized to access that location.'));
-		return $this->redirect(['action' => 'index']);
-	}
-}
 ```
