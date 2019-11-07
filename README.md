@@ -21,7 +21,7 @@ What are public actions, which ones need login?
 Once you are logged in, what actions can you see with your role(s)?
 
 - Single-role: 1 user has 1 role (users and roles table for example)
-- Multi-role: 1 user can have 1...n roles (users, roles and a "roles_users" pivat table for example)
+- Multi-role: 1 user can have 1...n roles (users, roles and a "roles_users" pivot table for example)
 
 ### Useful helpers
 - AuthUser Component and Helper for stateful and stateless "auth data" access.
