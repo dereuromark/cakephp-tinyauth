@@ -150,7 +150,7 @@ trait AclTrait {
 				$prefixes = $this->_normalizePrefixes($prefixes);
 			}
 
-			if ($this->_isAuthorizedByPrefix($params['prefix'], $prefixes, $userRoles, $roles)) {
+			if ($prefixes && $this->_isAuthorizedByPrefix($params['prefix'], $prefixes, $userRoles, $roles)) {
 				return true;
 			}
 		}
