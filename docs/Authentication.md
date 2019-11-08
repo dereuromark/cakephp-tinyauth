@@ -11,6 +11,35 @@ You can allow/deny per controller action or with wildcards also per controller a
 Do NOT use if
 - you want to dynamically adjust what pages are public inside controllers
 
+## Quick setups
+TinyAuth, to live up to its name, offers a few quick setups.
+
+### Allow non-prefixed
+If you have non-prefixed controllers that you want to make public and keep prefixed ones protected:
+```php
+'allowLoggedIn' => true,
+```
+Any such action will now be public by default.
+
+You can always set up "deny" rules for any action to protect a specific one from public access.
+
+### Prefix based allow
+If you want to allow certain prefixes on top, you can use:
+```php
+'allowPrefixes' => [
+    'my_prefix',
+    'nested/prefix',
+],
+```
+
+>**Note:** Prefixes are always `lowercase_underscored` (even if routing makes them to `dashed-ones` in the URL).
+
+Careful: Nested prefixes currently also match (and inherit) by parent.
+So if `my_prefix` is allowed, `my_prefix/sub` and other nested ones would also automatically be allowed.
+You would need to explicitly set up ACL rules here to deny those if needed.
+
+At the same time you can always set up "deny" rules for any allowed prefix to revoke the set default.
+
 ## Enabling
 
 Authentication is set up in your controller's `initialize()` method:
@@ -64,8 +93,8 @@ Accounts.Accounts = view, edit
 Accounts.my_admin/Accounts = index
 ```
 
-Note: Prefixes are always `lowercase_underscored`. The route inflects to the final casing if needed. 
-Nested prefixes are joined using `/`, e.g. `my/admin/nested/`.
+>**Note:** Prefixes are always `lowercase_underscored`. The route inflects to the final casing if needed. 
+Nested prefixes are joined using `/`, e.g. `my/admin/nested`.
 
 Using only "granting" is recommended for security reasons.
 Careful with denying, as this can accidentally open up more than desired actions. If you really want to use it:
