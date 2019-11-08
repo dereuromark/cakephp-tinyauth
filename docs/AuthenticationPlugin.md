@@ -12,4 +12,4 @@ $this->loadComponent('TinyAuth.Authentication', [
 
 For all the rest just follow the plugin's documentation.
 
-Then you use the [Authentication documention](Authentication.md) to fill your config file.
+Then you use the [Authentication documention](Authentication.md) to fill your INI config file.
