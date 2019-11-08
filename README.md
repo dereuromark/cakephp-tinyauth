@@ -22,6 +22,7 @@ Once you are logged in, what actions can you see with your role(s)?
 
 - Single-role: 1 user has 1 role (users and roles table for example)
 - Multi-role: 1 user can have 1...n roles (users, roles and a "roles_users" pivot table for example)
+- [Quick Setups](https://github.com/dereuromark/cakephp-tinyauth/blob/master/docs/Authorization.md#quick-setups) for 5 minute integration.
 
 ### Useful helpers
 - AuthUser Component and Helper for stateful and stateless "auth data" access.
