@@ -15,11 +15,18 @@ trait AllowTrait {
 	protected $_allowAdapter;
 
 	/**
+	 * Get the rules for a specific controller.
+	 *
+	 * Each consumer has to check the allow and deny rules inside,
+	 * a deny always trumps an allow, specific actions always the wildcard (*).
+	 *
 	 * @param array $params
 	 * @return array
 	 */
 	protected function _getAllowRule(array $params) {
 		$rules = $this->_getAllow($this->getConfig('allowFilePath'));
+
+		$defaults = $this->_getAllowDefaultsForCurrentParams($params);
 
 		foreach ($rules as $rule) {
 			if ($params['plugin'] && $params['plugin'] !== $rule['plugin']) {
@@ -32,10 +39,65 @@ trait AllowTrait {
 				continue;
 			}
 
+			if ($defaults) {
+				$rule['allow'] = array_merge($rule['allow'], $defaults['allow']);
+			}
+
 			return $rule;
 		}
 
-		return [];
+		return $defaults;
+	}
+
+	/**
+	 * @param array $rule
+	 * @param string $action
+	 *
+	 * @return bool
+	 */
+	protected function _isActionAllowed(array $rule, $action) {
+		$rule += [
+			'deny' => [],
+			'allow' => [],
+		];
+
+		if (in_array($action, $rule['deny'], true) || in_array('*', $rule['deny'], true)) {
+			return false;
+		}
+
+		if (!in_array($action, $rule['allow'], true) && !in_array('*', $rule['allow'], true)) {
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * @param array $params
+	 * @return array
+	 */
+	protected function _getAllowDefaultsForCurrentParams(array $params) {
+		if ($this->getConfig('allowNonPrefixed') && empty($params['prefix'])) {
+			return ['allow' => ['*']];
+		}
+
+		if (empty($params['prefix'])) {
+			return [];
+		}
+
+		/** @var string[] $allowedPrefixes */
+		$allowedPrefixes = (array)$this->getConfig('allowPrefixes');
+
+		$result = [];
+		if ($allowedPrefixes) {
+			foreach ($allowedPrefixes as $allowedPrefix) {
+				if ($params['prefix'] === $allowedPrefix || strpos($params['prefix'], $allowedPrefix . '/') === 0) {
+					return ['allow' => ['*']];
+				}
+			}
+		}
+
+		return $result;
 	}
 
 	/**

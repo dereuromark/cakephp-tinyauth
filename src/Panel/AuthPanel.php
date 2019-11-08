@@ -70,7 +70,7 @@ class AuthPanel extends DebugPanel {
 		];
 
 		$rule = $this->_getAllowRule($params);
-		$this->isPublic = !empty($rule);
+		$this->isPublic = $this->_isActionAllowed($rule, $params['action']);
 
 		$controller->loadComponent('TinyAuth.AuthUser');
 		$user = $controller->AuthUser->user();

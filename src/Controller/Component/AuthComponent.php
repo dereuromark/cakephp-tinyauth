@@ -5,6 +5,7 @@ namespace TinyAuth\Controller\Component;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\AuthComponent as CakeAuthComponent;
 use Cake\Event\Event;
+use RuntimeException;
 use TinyAuth\Auth\AclTrait;
 use TinyAuth\Auth\AllowTrait;
 use TinyAuth\Utility\Config;
@@ -28,6 +29,13 @@ class AuthComponent extends CakeAuthComponent {
 		$config += Config::all();
 
 		parent::__construct($registry, $config);
+
+		if ($registry->has('Authentication') && get_class($registry->get('Authentication')) === AuthenticationComponent::class) {
+			throw new RuntimeException('You cannot use new TinyAuth.Authentication component and this TinyAuth.Auth component together.');
+		}
+		if ($registry->has('Authorization') && get_class($registry->get('Authorization')) === AuthorizationComponent::class) {
+			throw new RuntimeException('You cannot use new TinyAuth.Authorization component and this TinyAuth.Auth component together.');
+		}
 	}
 
 	/**

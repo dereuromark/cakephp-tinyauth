@@ -17,7 +17,7 @@ TinyAuth, to live up to its name, offers a few quick setups.
 ### Allow non-prefixed
 If you have non-prefixed controllers that you want to make public and keep prefixed ones protected:
 ```php
-'allowLoggedIn' => true,
+'allowNonPrefixed' => true,
 ```
 Any such action will now be public by default.
 
