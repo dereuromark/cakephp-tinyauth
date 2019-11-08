@@ -69,7 +69,7 @@ class AuthenticationHelper extends Helper {
 
 		$rule = $this->_getAllowRule($url);
 
-		return !empty($rule);
+		return $this->_isActionAllowed($rule, $url['action']);
 	}
 
 }

@@ -232,7 +232,7 @@ view, edit = user
 ```
 
 >**Note:** Prefixes are always `lowercase_underscored`. The route inflects to the final casing if needed. 
-Nested prefixes are joined using `/`, e.g. `my/admin/nested/`.
+Nested prefixes are joined using `/`, e.g. `my/admin/nested`.
 
 Using only "granting" is recommended for security reasons.
 Careful with denying, as this can accidentally open up more than desired actions. If you really want to use it:

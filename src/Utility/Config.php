@@ -20,10 +20,13 @@ class Config {
 	 * @var array
 	 */
 	protected static $_defaultConfig = [
+		// allow
 		'allowAdapter' => IniAllowAdapter::class,
-		'allowFilePath' => null,
+		'allowFilePath' => null, // Possible to locate INI file at given path e.g. Plugin::configPath('Admin'), filePath is also available for shared config
 		'allowFile' => 'auth_allow.ini',
-
+		'allowNonPrefixed' => false, // Set to true to allow all non-prefixed controller actions automatically as public access.
+		'allowPrefixes' => [], // Set prefixes that are whitelisted as public access
+		// acl
 		'aclAdapter' => IniAclAdapter::class,
 		'idColumn' => 'id', // ID Column in users table
 		'roleColumn' => 'role_id', // Foreign key for the Role ID in users table or in pivot table

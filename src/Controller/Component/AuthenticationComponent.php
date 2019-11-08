@@ -6,6 +6,7 @@ use Authentication\Controller\Component\AuthenticationComponent as CakeAuthentic
 use Cake\Controller\ComponentRegistry;
 use Cake\Core\Exception\Exception;
 use Cake\Routing\Router;
+use RuntimeException;
 use TinyAuth\Auth\AllowTrait;
 use TinyAuth\Utility\Config;
 
@@ -29,6 +30,10 @@ class AuthenticationComponent extends CakeAuthenticationComponent {
 		$config += Config::all();
 
 		parent::__construct($registry, $config);
+
+		if ($registry->has('Auth') && get_class($registry->get('Auth')) === AuthComponent::class) {
+			throw new RuntimeException('You cannot use TinyAuth.Authentication component and former TinyAuth.Auth component together.');
+		}
 	}
 
 	/**
@@ -81,7 +86,7 @@ class AuthenticationComponent extends CakeAuthenticationComponent {
 
 		$rule = $this->_getAllowRule($url);
 
-		return !empty($rule);
+		return $this->_isActionAllowed($rule, $url['action']);
 	}
 
 	/**

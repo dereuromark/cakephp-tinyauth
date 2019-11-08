@@ -94,6 +94,73 @@ class AuthenticationComponentTest extends TestCase {
 	}
 
 	/**
+	 * @return void
+	 */
+	public function testIsPublicAllowNonPrefixed() {
+		$request = new ServerRequest(['params' => [
+			'controller' => 'Foos',
+			'action' => 'view',
+		]]);
+		$controller = $this->getControllerMock($request);
+		$registry = new ComponentRegistry($controller);
+		$this->component = new AuthenticationComponent($registry, ['allowNonPrefixed' => true] + $this->componentConfig);
+
+		$result = $this->component->isPublic();
+		$this->assertTrue($result);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testIsPublicAllowNonPrefixedFail() {
+		$request = new ServerRequest(['params' => [
+			'controller' => 'Foos',
+			'action' => 'view',
+			'prefix' => 'foo',
+		]]);
+		$controller = $this->getControllerMock($request);
+		$registry = new ComponentRegistry($controller);
+		$this->component = new AuthenticationComponent($registry, ['allowNonPrefixed' => true] + $this->componentConfig);
+
+		$result = $this->component->isPublic();
+		$this->assertFalse($result);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testIsPublicAllowPrefixed() {
+		$request = new ServerRequest(['params' => [
+			'controller' => 'Foos',
+			'action' => 'view',
+			'prefix' => 'foo_bar',
+		]]);
+		$controller = $this->getControllerMock($request);
+		$registry = new ComponentRegistry($controller);
+		$this->component = new AuthenticationComponent($registry, ['allowPrefixes' => 'foo_bar'] + $this->componentConfig);
+
+		$result = $this->component->isPublic();
+		$this->assertTrue($result);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testIsPublicAllowPrefixedFail() {
+		$request = new ServerRequest(['params' => [
+			'controller' => 'Foos',
+			'action' => 'view',
+			'prefix' => 'Foo',
+		]]);
+		$controller = $this->getControllerMock($request);
+		$registry = new ComponentRegistry($controller);
+		$this->component = new AuthenticationComponent($registry, ['allowPrefixes' => 'foo_bar'] + $this->componentConfig);
+
+		$result = $this->component->isPublic();
+		$this->assertFalse($result);
+	}
+
+	/**
 	 * @param \Cake\Http\ServerRequest $request
 	 * @return \Cake\Controller\Controller|\PHPUnit_Framework_MockObject_MockObject
 	 */
