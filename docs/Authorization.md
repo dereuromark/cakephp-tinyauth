@@ -137,10 +137,47 @@ bin/cake migrations migrate -p TinyAuth
 ```
 Alternatively you can copy and paste this migration file to your `app/Config` folder and adjust the fields and table names and then use that modified version instead.
 
-## auth_acl.ini
 
+## Quick setups
+TinyAuth, to live up to its name, offers a few quick setups.
+
+### User vs Admin
+If you have basically two roles (or *none* vs. admin) and want to separate frontend and backend actions, you can just use:
+```php
+'allowLoggedIn' => true,
+```
+This way, by default, any logged in user has access to all pages except the ones with a prefix defined in a blacklist
+called `'protectedPrefix'`. This list defaults to `admin` prefix.
+
+If you have another or more prefixes, you can customize the whitelist of prefixes using:
+```php
+'protectedPrefix' => ['admin', 'management', ...]
+```
+
+### Prefix based ACL
+If your prefixes match the role names, you can also do:
+```php
+'authorizeByPrefix' => true,
+```
+It will map all available roles to their prefix pendant and allow access based on this.
+
+If you need more control over the prefix map, or want to even customize the roles per prefix, you can do that as array:
+```php
+'authorizeByPrefix' => [
+    'admin => 'admin',
+    'management' => ['mod', 'admin'],
+    'prefix_three' => ...  
+],
+```
+
+Since non-prefixed routes are not caught be this, this is best combined with `'allowLoggedIn' => true`
+and all prefixes listed in `protectedPrefix`.
+
+>**Note:** Prefixes are always `lowercase_underscored` (even if routing makes them to `dashed-ones` in the URL).
+
+## auth_acl.ini
 TinyAuth expects an ``auth_acl.ini`` file in your config directory.
-Use it to specify who gets access to which resources.
+Use it to specify in detail who gets access to which resources.
 
 The section key syntax follows the CakePHP naming convention for plugins.
 
@@ -194,7 +231,7 @@ view, edit = user
 * = admin
 ```
 
-Note: Prefixes are always `lowercase_underscored`. The route inflects to the final casing if needed. 
+>**Note:** Prefixes are always `lowercase_underscored`. The route inflects to the final casing if needed. 
 Nested prefixes are joined using `/`, e.g. `my/admin/nested/`.
 
 Using only "granting" is recommended for security reasons.
@@ -244,14 +281,13 @@ usersTable|string|Class name of the users table.
 pivotTable|string|Name of the pivot table, for a multi-group setup.
 rolesTablePlugin|string|Name of the plugin for the roles table, if any.
 pivotTablePlugin|string|Name of the plugin for the pivot table, if any.
-multiRole|bool|True will enable multi-role/HABTM authorization (requires a valid join table)
+multiRole|bool|True will enable multi-role/HABTM authorization (requires a valid join table).
 superAdminRole|int|Id of the super admin role. Users with this role will have access to ALL resources.
-superAdmin|int or string|Id/name of the super admin. Users with this id/name will have access to ALL resources.null/0/"0" take disable it
-superAdminColumn|string|Column of super admin in user table.default use idColumn option
-authorizeByPrefix|bool|If prefixed routes should be auto-handled by their matching role name.
-prefixes|array|A list of authorizeByPrefix handled prefixes.
-allowUser|bool|True will give authenticated users access to all resources except those using the `adminPrefix`
-adminPrefix|string|Name of the prefix used for admin pages. Defaults to admin.
+superAdmin|int or string|Id/name of the super admin. Users with this id/name will have access to ALL resources. null/0/'0' disable it.
+superAdminColumn|string|Column of super admin in user table. Default is idColumn option.
+authorizeByPrefix|bool/array|If prefixed routes should be auto-handled by their matching role name or a prefix=>role map.
+allowLoggedIn|bool|True will give authenticated users access to all resources except those using the `protectedPrefix`.
+protectedPrefix|string/array|Name of the prefix(es) used for admin pages. Defaults to admin.
 autoClearCache|bool|True will generate a new ACL cache file every time.
 aclFilePath|string|Full path to the auth_acl.ini. Can also be an array of multiple paths. Defaults to `ROOT . DS . 'config' . DS`.
 aclFile|string|Name of the INI file. Defaults to `auth_acl.ini`.

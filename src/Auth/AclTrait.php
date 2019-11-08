@@ -99,13 +99,14 @@ trait AclTrait {
 			}
 		}
 
-		// Give any logged in user access to ALL actions when `allowUser` is
-		// enabled except when the `adminPrefix` is being used.
-		if ($this->getConfig('allowUser')) {
+		// Give any logged in user access to ALL actions when `allowLoggedIn` is
+		// enabled except when the `protectedPrefix` is being used.
+		if ($this->getConfig('allowLoggedIn')) {
 			if (empty($params['prefix'])) {
 				return true;
 			}
-			if ($params['prefix'] !== $this->getConfig('adminPrefix') && strpos($params['prefix'], $this->getConfig('adminPrefix') . '/') !== 0) {
+			$protectedPrefixes = (array)$this->getConfig('protectedPrefix');
+			if (!$this->_isProtectedPrefix($params['prefix'], $protectedPrefixes)) {
 				return true;
 			}
 		}
@@ -116,7 +117,23 @@ trait AclTrait {
 	}
 
 	/**
-	 * @param array $userRoles
+	 * @param string $prefix
+	 * @param string[] $protectedPrefixes
+	 *
+	 * @return bool
+	 */
+	protected function _isProtectedPrefix($prefix, array $protectedPrefixes) {
+		foreach ($protectedPrefixes as $protectedPrefix) {
+			if ($prefix === $protectedPrefix || strpos($prefix, $protectedPrefix . '/') === 0) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * @param int[] $userRoles
 	 * @param array $params
 	 *
 	 * @return bool
@@ -124,13 +141,17 @@ trait AclTrait {
 	protected function _check(array $userRoles, array $params) {
 		// Allow access to all prefixed actions for users belonging to
 		// the specified role that matches the prefix.
-		if ($this->getConfig('authorizeByPrefix') && !empty($params['prefix'])) {
-			if (in_array($params['prefix'], $this->getConfig('prefixes'), true)) {
-				$roles = $this->_getAvailableRoles();
-				$role = isset($roles[$params['prefix']]) ? $roles[$params['prefix']] : null;
-				if ($role && in_array($role, $userRoles)) {
-					return true;
-				}
+		$prefixes = $this->getConfig('authorizeByPrefix');
+		if (!empty($params['prefix']) && $prefixes) {
+			$roles = $this->_getAvailableRoles();
+			if ($prefixes === true) {
+				$prefixes = array_combine(array_keys($roles), array_keys($roles));
+			} else {
+				$prefixes = $this->_normalizePrefixes($prefixes);
+			}
+
+			if ($this->_isAuthorizedByPrefix($params['prefix'], $prefixes, $userRoles, $roles)) {
+				return true;
 			}
 		}
 
@@ -183,6 +204,54 @@ trait AclTrait {
 		}
 
 		return false;
+	}
+
+	/**
+	 * @param string $prefix
+	 * @param array $prefixMap
+	 * @param int[] $userRoles
+	 * @param int[] $availableRoles
+	 *
+	 * @return bool
+	 */
+	protected function _isAuthorizedByPrefix($prefix, array $prefixMap, array $userRoles, array $availableRoles) {
+		if (!$userRoles || !$prefixMap || !$availableRoles) {
+			return false;
+		}
+
+		if (empty($prefixMap[$prefix])) {
+			return false;
+		}
+
+		$prefixRoles = (array)$prefixMap[$prefix];
+		foreach ($prefixRoles as $prefixRole) {
+			$role = isset($availableRoles[$prefixRole]) ? $availableRoles[$prefixRole] : null;
+			if ($role && in_array($role, $userRoles, true)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Can be [prefixOne, prefixTwo => roleOne, prefixTwo => [roleOne, roleTwo]]
+	 *
+	 * @param string[] $prefixes
+	 *
+	 * @return array
+	 */
+	protected function _normalizePrefixes(array $prefixes) {
+		$normalized = [];
+		foreach ($prefixes as $prefix => $role) {
+			if (is_int($prefix)) {
+				$prefix = $role;
+			}
+
+			$normalized[$prefix] = $role;
+		}
+
+		return $normalized;
 	}
 
 	/**

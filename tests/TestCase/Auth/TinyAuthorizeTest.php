@@ -839,15 +839,15 @@ class TinyAuthorizeTest extends TestCase {
 	}
 
 	/**
-	 * Tests with configuration setting 'allowUser' set to true, giving user
+	 * Tests with configuration setting 'allowLoggedIn' set to true, giving user
 	 * access to all controller/actions except when prefixed with /admin
 	 *
 	 * @return void
 	 */
 	public function testUserMethodsAllowed() {
 		$object = new TestTinyAuthorize($this->collection, [
-			'allowUser' => true,
-			'adminPrefix' => 'admin'
+			'allowLoggedIn' => true,
+			'protectedPrefix' => 'admin'
 		]);
 
 		// All tests performed against this action
@@ -871,7 +871,7 @@ class TinyAuthorizeTest extends TestCase {
 		$this->assertTrue($res);
 
 		// Test standard controller with /admin prefix. Note: users should NOT
-		// be allowed access here since the prefix matches the  'adminPrefix'
+		// be allowed access here since the prefix matches the  'protectedPrefix'
 		// configuration setting.
 		$this->request->params['controller'] = 'Tags';
 		$this->request->params['prefix'] = 'admin';
@@ -907,7 +907,7 @@ class TinyAuthorizeTest extends TestCase {
 		$this->assertTrue($res);
 
 		// Test plugin controller with /admin prefix. Again: access should
-		// NOT be allowed because of matching 'adminPrefix'
+		// NOT be allowed because of matching 'protectedPrefix'
 		$this->request->params['controller'] = 'Tags';
 		$this->request->params['prefix'] = 'admin';
 		$this->request->params['plugin'] = 'Tags';
@@ -925,7 +925,7 @@ class TinyAuthorizeTest extends TestCase {
 		$this->assertFalse($res);
 
 		// Test access to a standard controller using a prefix not matching the
-		// 'adminPrefix' => users should be allowed access.
+		// 'protectedPrefix' => users should be allowed access.
 		$this->request->params['controller'] = 'Comments';
 		$this->request->params['prefix'] = 'special';
 		$this->request->params['plugin'] = null;
@@ -943,7 +943,7 @@ class TinyAuthorizeTest extends TestCase {
 		$this->assertTrue($res);
 
 		// Test access to a plugin controller using a prefix not matching the
-		// 'adminPrefix' => users should be allowed access.
+		// 'protectedPrefix' => users should be allowed access.
 		$this->request->params['controller'] = 'Comments';
 		$this->request->params['prefix'] = 'special';
 		$this->request->params['plugin'] = 'Comments';
@@ -965,15 +965,11 @@ class TinyAuthorizeTest extends TestCase {
 	 * Test with enabled configuration settings - access to all actions that are
 	 * prefixed using the same role configuration setting.
 	 *
-	 * TODO: also allow mapping of "prefix" => "role" for more flexibility
-	 *
 	 * @return void
 	 */
 	public function testAdminMethodsAllowed() {
 		$config = [
-			'authorizeByPrefix' => true,
-			'adminRole' => 3,
-			'prefixes' => ['admin'],
+			'authorizeByPrefix' => ['admin'],
 			'autoClearCache' => true
 		];
 		$object = new TestTinyAuthorize($this->collection, $config);
@@ -1004,6 +1000,46 @@ class TinyAuthorizeTest extends TestCase {
 		$this->assertFalse($res);
 
 		$user = ['role_id' => ROLE_ADMIN];
+		$res = $object->authorize($user, $this->request);
+		$this->assertTrue($res);
+	}
+
+	/**
+	 * Tests prefix => role(s) mapping
+	 *
+	 * @return void
+	 */
+	public function testAdminMethodsAllowedPrefixMap() {
+		$config = [
+			'authorizeByPrefix' => ['management' => 'admin', 'cool' => ['foo', 'bar', 'user']],
+			'autoClearCache' => true
+		];
+		$object = new TestTinyAuthorize($this->collection, $config);
+
+		// All tests performed against this action
+		$this->request->params['action'] = 'any_action';
+
+		// Test standard controller with /management prefix
+		$this->request->params['controller'] = 'Tags';
+		$this->request->params['prefix'] = 'management';
+		$this->request->params['plugin'] = null;
+
+		$user = ['role_id' => ROLE_USER];
+		$res = $object->authorize($user, $this->request);
+		$this->assertFalse($res);
+
+		$user = ['role_id' => ROLE_ADMIN];
+		$res = $object->authorize($user, $this->request);
+		$this->assertTrue($res);
+
+		// Test standard controller with /cool prefix
+		$this->request->params['prefix'] = 'cool';
+
+		$user = ['role_id' => ROLE_ADMIN];
+		$res = $object->authorize($user, $this->request);
+		$this->assertFalse($res);
+
+		$user = ['role_id' => ROLE_USER];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 	}

@@ -19,7 +19,7 @@ use TinyAuth\Utility\Config;
  * 'authorize' => ['Tools.Tiny']
  *
  * Or with admin prefix protection only
- * 'authorize' => ['Tools.Tiny' => ['allowUser' => true]];
+ * 'authorize' => ['Tools.Tiny' => ['allowLoggedIn' => true]];
  *
  * @author Mark Scherer
  * @license MIT
