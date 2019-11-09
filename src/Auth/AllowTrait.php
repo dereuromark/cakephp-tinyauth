@@ -26,7 +26,7 @@ trait AllowTrait {
 	protected function _getAllowRule(array $params) {
 		$rules = $this->_getAllow($this->getConfig('allowFilePath'));
 
-		$defaults = $this->_getAllowDefaultsForCurrentParams($params);
+		$allowDefaults = $this->_getAllowDefaultsForCurrentParams($params);
 
 		foreach ($rules as $rule) {
 			if ($params['plugin'] && $params['plugin'] !== $rule['plugin']) {
@@ -39,14 +39,17 @@ trait AllowTrait {
 				continue;
 			}
 
-			if ($defaults) {
-				$rule['allow'] = array_merge($rule['allow'], $defaults['allow']);
+			if ($allowDefaults) {
+				$rule['allow'] = array_merge($rule['allow'], $allowDefaults);
 			}
 
 			return $rule;
 		}
 
-		return $defaults;
+		return [
+			'allow' => $allowDefaults,
+			'deny' => [],
+		];
 	}
 
 	/**
@@ -74,11 +77,11 @@ trait AllowTrait {
 
 	/**
 	 * @param array $params
-	 * @return array
+	 * @return string[]
 	 */
 	protected function _getAllowDefaultsForCurrentParams(array $params) {
 		if ($this->getConfig('allowNonPrefixed') && empty($params['prefix'])) {
-			return ['allow' => ['*']];
+			return ['*'];
 		}
 
 		if (empty($params['prefix'])) {
@@ -92,7 +95,7 @@ trait AllowTrait {
 		if ($allowedPrefixes) {
 			foreach ($allowedPrefixes as $allowedPrefix) {
 				if ($params['prefix'] === $allowedPrefix || strpos($params['prefix'], $allowedPrefix . '/') === 0) {
-					return ['allow' => ['*']];
+					return ['*'];
 				}
 			}
 		}
