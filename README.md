@@ -36,9 +36,10 @@ Once you are logged in, what actions can you see with your role(s)?
 Default CakePHP authentication and authorization depends on code changes in at least each controller, maybe more classes.
 This plugin hooks in with a single line of change and manages all that using config files and there is no need to touch all those controllers, including plugin controllers.
 
-It is also possible to manage the config files without the need of coding skills. And it could with some effort also be moved completely to the DB and managed by CRUD backend.
+It is also possible to manage the config files without the need to code. 
+And it can with adapters also be moved completely to the DB and managed by CRUD backend.
 
-Ask yourself: Do you need the overhead and complexity involved with the core CakePHP ACL? See also my post [acl-access-control-lists-revised/](https://www.dereuromark.de/2015/01/06/acl-access-control-lists-revised/).
+Ask yourself: Do you need the overhead and complexity involved with the full blown (RBAC DB) ACL? See also my post [acl-access-control-lists-revised/](https://www.dereuromark.de/2015/01/06/acl-access-control-lists-revised/).
 If not, then this plugin could very well be your answer and a super quick solution to your auth problem :)
 
 But even if you don't leverage the authentication or authorization, the available AuthUserComponent and AuthUserHelper
