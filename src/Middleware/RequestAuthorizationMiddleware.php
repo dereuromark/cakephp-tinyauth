@@ -3,11 +3,11 @@
 namespace TinyAuth\Middleware;
 
 use Authorization\Exception\ForbiddenException;
+use Authorization\Middleware\RequestAuthorizationMiddleware as PluginRequestAuthorizationMiddleware;
 use Authorization\Policy\Result;
 use Authorization\Policy\ResultInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Authorization\Middleware\RequestAuthorizationMiddleware as PluginRequestAuthorizationMiddleware;
 use TinyAuth\Auth\AclTrait;
 use TinyAuth\Auth\AllowTrait;
 use TinyAuth\Utility\Config;
@@ -22,51 +22,50 @@ use TinyAuth\Utility\Config;
  * each controller and action, against a role based access system or any other
  * kind of authorization process that controls access to certain actions.
  */
-class RequestAuthorizationMiddleware extends PluginRequestAuthorizationMiddleware
-{
+class RequestAuthorizationMiddleware extends PluginRequestAuthorizationMiddleware {
+
 	use AclTrait;
 	use AllowTrait;
 
 	/**
 	 * @param array $config Configuration options
 	 */
-	public function __construct($config = [])
-	{
+	public function __construct($config = []) {
 		$config += Config::all();
 
 		parent::__construct($config);
 	}
 
-    /**
-     * Callable implementation for the middleware stack.
-     *
-     * @param \Psr\Http\Message\ServerRequestInterface $request Server request.
-     * @param \Psr\Http\Message\ResponseInterface $response Response.
-     * @param callable $next The next middleware to call.
-     * @return ResponseInterface A response.
-     */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next)
-    {
+	/**
+	 * Callable implementation for the middleware stack.
+	 *
+	 * @param \Psr\Http\Message\ServerRequestInterface $request Server request.
+	 * @param \Psr\Http\Message\ResponseInterface $response Response.
+	 * @param callable $next The next middleware to call.
+	 * @return \Psr\Http\Message\ResponseInterface A response.
+	 */
+	public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next) {
 		$params = $request->getAttribute('params');
 		$rule = $this->_getAllowRule($params);
 
-        $service = $this->getServiceFromRequest($request);
+		$service = $this->getServiceFromRequest($request);
 		if ($this->_isActionAllowed($rule, $params['action'])) {
 			$service->skipAuthorization();
 
 			return $next($request, $response);
 		}
 
-        $identity = $request->getAttribute($this->getConfig('identityAttribute'));
+		$identity = $request->getAttribute($this->getConfig('identityAttribute'));
 
-        $result = $service->can($identity, $this->getConfig('method'), $request);
-        if (!$result instanceof ResultInterface) {
-            $result = new Result($result);
-        }
-        if (!$result->getStatus()) {
-            throw new ForbiddenException($result);
-        }
+		$result = $service->can($identity, $this->getConfig('method'), $request);
+		if (!$result instanceof ResultInterface) {
+			$result = new Result($result);
+		}
+		if (!$result->getStatus()) {
+			throw new ForbiddenException($result);
+		}
 
-        return $next($request, $response);
-    }
+		return $next($request, $response);
+	}
+
 }
