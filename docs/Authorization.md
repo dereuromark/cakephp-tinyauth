@@ -179,7 +179,10 @@ and all prefixes listed in `protectedPrefix`.
 TinyAuth expects an ``auth_acl.ini`` file in your config directory.
 Use it to specify in detail who gets access to which resources.
 
-The section key syntax follows the CakePHP naming convention for plugins.
+The section key syntax follows the CakePHP naming convention:
+```
+PluginName.my_prefix/MyController
+```
 
 Make sure to create an entry for each action you want to expose and use:
 
@@ -229,6 +232,9 @@ view, edit = user
 ; ----------------------------------------------------------
 [Accounts.my_admin/Companies]
 * = admin
+
+[SomeController]
+* = * ; All roles can access all actions
 ```
 
 >**Note:** Prefixes are always `lowercase_underscored`. The route inflects to the final casing if needed. 
@@ -249,6 +255,10 @@ Note that denying always trumps granting, if both are declared for an action.
 ### Multiple files and merging
 You can specify multiple paths in your config, e.g. when you have plugins and separated the definitions across them.
 Make sure you are using each section key only once, though. The first definition will be kept and all others for the same section key are ignored.
+
+### Template with defaults
+See the `config/` folder and the default template for popular plugins.
+You can copy out any default rules you want to use in your project. 
 
 ## Adapters
 By default INI files and the IniAdapter will be used.

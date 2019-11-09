@@ -10,6 +10,17 @@ $this->loadComponent('TinyAuth.Authorization', [
 ]);
 ```
 
+And in your `Application` class you need to load both `Authoritation` and TinyAuth specific
+`RequestAuthorization` middlewares in that order:
+
+```php
+use Authorization\Middleware\AuthorizationMiddleware;
+use TinyAuth\Middleware\RequestAuthorizationMiddleware;
+
+$middlewareQueue->add(new AuthorizationMiddleware($this, $config));
+$middlewareQueue->add(new RequestAuthorizationMiddleware());
+```
+
 For all the rest just follow the plugin's documentation.
 
 For your resolver you need to use this map inside `Application::getAuthorizationService()`:

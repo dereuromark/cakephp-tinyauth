@@ -61,7 +61,10 @@ That is basically already all for the code changes :-) Super-easy!
 TinyAuth expects an ``auth_allow.ini`` file in your config directory.
 Use it to specify what actions are not protected by authentication.
 
-The section key syntax follows the CakePHP naming convention for plugins.
+The section key syntax follows the CakePHP naming convention:
+```
+PluginName.my_prefix/MyController
+```
 
 Make sure to create an entry for each action you want to expose and use:
 
@@ -109,6 +112,10 @@ Note that denying always trumps granting, if both are declared for an action.
 ### Multiple files and merging
 You can specify multiple paths in your config, e.g. when you have plugins and separated the definitions across them.
 Make sure you are using each key only once, though. The first definition will be kept and all others for the same key are ignored.
+
+### Template with defaults
+See the `config/` folder and the default template for popular plugins.
+You can copy out any default rules you want to use in your project.
 
 ## Mixing with code
 It is possible to have mixed INI and code rules. Those will get merged prior to authentication.
