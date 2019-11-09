@@ -17,6 +17,13 @@ And in your `Application` class you need to load both `Authoritation` and TinyAu
 use Authorization\Middleware\AuthorizationMiddleware;
 use TinyAuth\Middleware\RequestAuthorizationMiddleware;
 
+// in Application::middleware()
+$config = [
+    'unauthorizedHandler' => [
+        'className' => 'Authorization.Redirect',
+        ...
+    ],
+];
 $middlewareQueue->add(new AuthorizationMiddleware($this, $config));
 $middlewareQueue->add(new RequestAuthorizationMiddleware());
 ```

@@ -10,6 +10,14 @@ $this->loadComponent('TinyAuth.Authentication', [
 ]);
 ```
 
+Make sure you load the middleware:
+```php
+use Authentication\Middleware\AuthenticationMiddleware;
+
+// in Application::middleware()
+$middlewareQueue->add(new AuthenticationMiddleware($this));
+```
+
 For all the rest just follow the plugin's documentation.
 
 Then you use the [Authentication documention](Authentication.md) to fill your INI config file.
