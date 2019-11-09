@@ -25,7 +25,7 @@ class TinyAuth {
 	}
 
 	/**
-	 * @return string[]
+	 * @return int[]
 	 */
 	public function getAvailableRoles() {
 		$roles = $this->_getAvailableRoles();
