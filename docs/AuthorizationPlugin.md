@@ -50,4 +50,4 @@ public function getAuthorizationService(ServerRequestInterface $request, Respons
 }
 ```
 
-Then you use the [Authorization documention](Authorization.md) to set up roles and fill your INI config file.
+Then you use the [Authorization documentation](Authorization.md) to set up roles and fill your INI config file.

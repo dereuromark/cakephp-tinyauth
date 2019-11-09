@@ -20,4 +20,4 @@ $middlewareQueue->add(new AuthenticationMiddleware($this));
 
 For all the rest just follow the plugin's documentation.
 
-Then you use the [Authentication documention](Authentication.md) to fill your INI config file.
+Then you use the [Authentication documentation](Authentication.md) to fill your INI config file.

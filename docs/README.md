@@ -81,6 +81,15 @@ See the docs for details:
 
 Note: Those are *beta* - not fully tested/functional.
 
+### When to use the new plugins?
+They are super powerful, but they also require a load of config to get them to run.
+If you need authentication/authorization on middleware/routing level however, you need
+to use them.
+
+If you only need the basic request policy provided by this plugin, and no further ORM or other policies,
+then it is best to stick to the Auth component as simple wrapper.
+It is then limited to controller scope (no middleware/routing support) as it always has been so far.
+
 ## Contributing
 Feel free to fork and pull request.
 
