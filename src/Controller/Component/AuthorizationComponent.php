@@ -21,6 +21,11 @@ class AuthorizationComponent extends CakeAuthorizationComponent {
 	use AclTrait;
 
 	/**
+	 * @var \TinyAuth\Controller\Component\AuthenticationComponent|null
+	 */
+	protected $_authentication;
+
+	/**
 	 * @param \Cake\Controller\ComponentRegistry $registry
 	 * @param array $config
 	 */
@@ -32,6 +37,12 @@ class AuthorizationComponent extends CakeAuthorizationComponent {
 		if ($registry->has('Auth') && get_class($registry->get('Auth')) === AuthComponent::class) {
 			throw new RuntimeException('You cannot use TinyAuth.Authorization component and former TinyAuth.Auth component together.');
 		}
+
+		if ($registry->getController()->components()->has('Authentication')) {
+			/** @var \TinyAuth\Controller\Component\AuthenticationComponent $authentication */
+			$authentication = $registry->getController()->components()->get('Authentication');
+			$this->_authentication = $authentication;
+		}
 	}
 
 	/**
@@ -42,6 +53,12 @@ class AuthorizationComponent extends CakeAuthorizationComponent {
 	 * @return void
 	 */
 	public function authorizeAction() {
+		if ($this->_isUnauthenticatedAction()) {
+			$this->skipAuthorization();
+
+			return;
+		}
+
 		$request = $this->getController()->getRequest();
 
 		$action = $request->getParam('action');
@@ -55,6 +72,24 @@ class AuthorizationComponent extends CakeAuthorizationComponent {
 		$this->authorize($request, 'access');
 
 		parent::authorizeAction();
+	}
+
+	/**
+	 * Is public already thanks to Authentication component.
+	 *
+	 * @return bool
+	 */
+	protected function _isUnauthenticatedAction() {
+		if ($this->_authentication === null) {
+			return false;
+		}
+
+		$unauthenticatedActions = $this->_authentication->getUnauthenticatedActions();
+		$request = $this->getController()->getRequest();
+
+		$action = $request->getParam('action');
+
+		return in_array($action, $unauthenticatedActions, true);
 	}
 
 }
