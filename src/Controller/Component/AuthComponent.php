@@ -49,17 +49,6 @@ class AuthComponent extends CakeAuthComponent {
 	}
 
 	/**
-	 * Events supported by this component.
-	 *
-	 * @return array
-	 */
-	public function implementedEvents() {
-		return [
-			'Controller.beforeRender' => 'beforeRender',
-		] + parent::implementedEvents();
-	}
-
-	/**
 	 * @param array $params
 	 * @return void
 	 */

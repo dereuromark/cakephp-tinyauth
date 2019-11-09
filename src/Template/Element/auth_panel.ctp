@@ -2,7 +2,7 @@
 /**
  * @var \App\View\AppView $this
  * @var array $params
- * @var bool $isPublic
+ * @var bool|null $isPublic
  * @var array $user
  * @var array $roles
  * @var array $availableRoles
@@ -13,6 +13,17 @@
 use Cake\Error\Debugger;
 use TinyAuth\Panel\AuthPanel;
 use TinyAuth\Utility\Config;
+
+if (!isset($params)) {
+	$params = [];
+}
+if (!isset($path)) {
+	$path = '';
+}
+if (!isset($isPublic)) {
+	$isPublic = null;
+}
+
 ?>
 
 <section class="section-tile">
@@ -28,14 +39,17 @@ use TinyAuth\Utility\Config;
 	<h2>Authentication (allow)</h2>
 	<?php
 	if (Config::get('allowAdapter')) {
-		$icon = $isPublic ? AuthPanel::ICON_PUBLIC : AuthPanel::ICON_RESTRICTED;
-		echo '<p>' . $icon . ' <b style="font-weight: bold">' . ($isPublic ? 'public' : 'secured') . '</b> action</p>';
-		if ($isPublic) {
-			echo '<div><small>Any guest can visit this page</small></div>';
+		if ($isPublic === null) {
+			echo '<div><small>No information available</small></div>';
 		} else {
-			echo '<div><small>Login required to visit this page</small></div>';
+			$icon = $isPublic ? AuthPanel::ICON_PUBLIC : AuthPanel::ICON_RESTRICTED;
+			echo '<p>' . $icon . ' <b style="font-weight: bold">' . ($isPublic ? 'public' : 'secured') . '</b> action</p>';
+			if ($isPublic) {
+				echo '<div><small>Any guest can visit this page</small></div>';
+			} else {
+				echo '<div><small>Login required to visit this page</small></div>';
+			}
 		}
-
 	} else {
 		echo '<i>disabled</i>';
 	}
@@ -44,8 +58,7 @@ use TinyAuth\Utility\Config;
 	<h2>Authorization (ACL)</h2>
 	<?php
 	if (Config::get('aclAdapter')) {
-		if ($user) {
-			//$roles = $this->AuthUser->roles();
+		if (!empty($user)) {
 
 			echo '<p>Logged in with ID <b style="font-weight: bold">' . h($user['id']) . '</b></p>';
 
@@ -63,7 +76,7 @@ use TinyAuth\Utility\Config;
 
 	<br/>
 
-	<?php if ($access) { ?>
+	<?php if (!empty($access)) { ?>
 	<p>
 		<?php if (!$isPublic) { ?>
 		The following roles have access to this action:
