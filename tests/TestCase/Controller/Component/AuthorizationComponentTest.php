@@ -2,10 +2,11 @@
 
 namespace TinyAuth\Test\TestCase\Controller\Component;
 
+use Authorization\AuthorizationService;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
+use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\Event\Event;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use TinyAuth\Controller\Component\AuthorizationComponent;
@@ -26,8 +27,14 @@ class AuthorizationComponentTest extends TestCase {
 	 * @return void
 	 */
 	public function setUp() {
+		Configure::write('Roles', [
+			'user' => ROLE_USER,
+			'moderator' => ROLE_MODERATOR,
+			'admin' => ROLE_ADMIN
+		]);
+
 		$this->componentConfig = [
-			'allowFilePath' => Plugin::path('TinyAuth') . 'tests' . DS . 'test_files' . DS,
+			'aclFilePath' => Plugin::path('TinyAuth') . 'tests' . DS . 'test_files' . DS,
 			'autoClearCache' => true,
 		];
 	}
@@ -43,17 +50,24 @@ class AuthorizationComponentTest extends TestCase {
 			'_ext' => null,
 			'pass' => [1]
 		]]);
+		$authorization = $this->getMockBuilder(AuthorizationService::class)->disableOriginalConstructor()->getMock();
+		$authorization->expects($this->once())
+			->method('can')
+			->willReturn(true);
+
+		$request = $request->withAttribute('authorization', $authorization);
 		$controller = $this->getControllerMock($request);
 
 		$registry = new ComponentRegistry($controller);
 		$this->component = new AuthorizationComponent($registry, $this->componentConfig);
 
-		$config = [];
-		$this->component->initialize($config);
+		$this->component->authorizeAction();
 
-		$event = new Event('Controller.startup', $controller);
-		$response = $this->component->startup($event);
-		$this->assertNull($response);
+		$request = $this->component->getController()->getRequest();
+		/** @var \Authorization\AuthorizationService $service */
+		$service = $request->getAttribute('authorization');
+
+		$this->assertInstanceOf(AuthorizationService::class, $service);
 	}
 
 	/**

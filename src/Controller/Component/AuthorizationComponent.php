@@ -4,7 +4,6 @@ namespace TinyAuth\Controller\Component;
 
 use Authorization\Controller\Component\AuthorizationComponent as CakeAuthorizationComponent;
 use Cake\Controller\ComponentRegistry;
-use Cake\Event\Event;
 use RuntimeException;
 use TinyAuth\Auth\AclTrait;
 use TinyAuth\Utility\Config;
@@ -36,25 +35,26 @@ class AuthorizationComponent extends CakeAuthorizationComponent {
 	}
 
 	/**
-	 * Callback for Controller.startup event.
+	 * Action authorization handler.
 	 *
-	 * @param \Cake\Event\Event $event Event instance.
-	 * @return \Cake\Http\Response|null
-	 */
-	public function startup(Event $event) {
-		$this->_prepareAuthorization($event);
-
-		return null;
-	}
-
-	/**
-	 * @param \Cake\Event\Event $event
+	 * Checks identity and model authorization.
+	 *
 	 * @return void
 	 */
-	protected function _prepareAuthorization(Event $event) {
-		//TODO 'skipAuthorization' from allow ini config
-		//TODO 'authorizeModel' and maybe 'actionMap'
-		//TODO rest
+	public function authorizeAction() {
+		$request = $this->getController()->getRequest();
+
+		$action = $request->getParam('action');
+		$skipAuthorization = $this->checkAction($action, 'skipAuthorization');
+		if ($skipAuthorization) {
+			$this->skipAuthorization();
+
+			return;
+		}
+
+		$this->authorize($request, 'access');
+
+		parent::authorizeAction();
 	}
 
 }
