@@ -4,7 +4,6 @@ namespace TinyAuth\Controller\Component;
 
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\AuthComponent as CakeAuthComponent;
-use Cake\Event\Event;
 use RuntimeException;
 use TinyAuth\Auth\AclTrait;
 use TinyAuth\Auth\AllowTrait;
@@ -58,18 +57,6 @@ class AuthComponent extends CakeAuthComponent {
 		return [
 			'Controller.beforeRender' => 'beforeRender',
 		] + parent::implementedEvents();
-	}
-
-	/**
-	 * @param \Cake\Event\Event $event
-	 * @return \Cake\Http\Response|null
-	 */
-	public function beforeRender(Event $event) {
-		/** @var \Cake\Controller\Controller $controller */
-		$controller = $event->getSubject();
-
-		$authUser = (array)$this->user();
-		$controller->set('_authUser', $authUser);
 	}
 
 	/**

@@ -7,6 +7,7 @@ use Cake\Datasource\ResultSetInterface;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
 use InvalidArgumentException;
+use RuntimeException;
 use TinyAuth\Auth\AclAdapter\AclAdapterInterface;
 use TinyAuth\Utility\Cache;
 use TinyAuth\Utility\Utility;
@@ -391,7 +392,7 @@ trait AclTrait {
 	 * Will look for a roles array in
 	 * Configure first, tries database roles table next.
 	 *
-	 * @return array List with all available roles
+	 * @return int[] List with all available roles
 	 * @throws \Cake\Core\Exception\Exception
 	 */
 	protected function _getAvailableRoles() {
@@ -410,13 +411,23 @@ trait AclTrait {
 				$key = $this->getConfig('superAdmin') ?: 'superadmin';
 				$roles[$key] = $this->getConfig('superAdminRole');
 			}
+
+			if (!$roles) {
+				throw new Exception('Invalid roles config: No roles found in config.');
+			}
+
 			return $roles;
 		}
 
-		$rolesTable = TableRegistry::get($rolesTableKey);
-		$result = $rolesTable->find()->formatResults(function (ResultSetInterface $results) {
-			return $results->combine($this->getConfig('aliasColumn'), 'id');
-		});
+		try {
+			$rolesTable = TableRegistry::get($rolesTableKey);
+			$result = $rolesTable->find()->formatResults(function (ResultSetInterface $results) {
+				return $results->combine($this->getConfig('aliasColumn'), 'id');
+			});
+		} catch (RuntimeException $e) {
+			throw new Exception('Invalid roles config: DB table `' . $rolesTableKey . '` cannot be found/accessed (`' . $e->getMessage() . '`).', null, $e);
+		}
+
 		$roles = $result->toArray();
 
 		if ($this->getConfig('superAdminRole')) {
@@ -448,7 +459,12 @@ trait AclTrait {
 	protected function _getUserRoles($user) {
 		// Single-role from session
 		if (!$this->getConfig('multiRole')) {
-			if (!array_key_exists($this->getConfig('roleColumn'), $user)) {
+			$roleColumn = $this->getConfig('roleColumn');
+			if (!$roleColumn) {
+				throw new Exception('Invalid TinyAuth config, `roleColumn` config missing.');
+			}
+
+			if (!array_key_exists($roleColumn, $user)) {
 				throw new Exception(sprintf('Missing TinyAuth role id field (%s) in user session', 'Auth.User.' . $this->getConfig('roleColumn')));
 			}
 			if (!isset($user[$this->getConfig('roleColumn')])) {
@@ -529,10 +545,12 @@ trait AclTrait {
 	}
 
 	/**
-	 * @param array $roles
-	 * @return array
+	 * Returns current roles as [alias => id] pairs.
+	 *
+	 * @param int[] $roles
+	 * @return int[]
 	 */
-	protected function _mapped($roles) {
+	protected function _mapped(array $roles) {
 		$availableRoles = $this->_getAvailableRoles();
 
 		$array = [];
