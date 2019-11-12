@@ -183,6 +183,8 @@ class AuthPanel extends DebugPanel {
 			'plugin' => null,
 		];
 		unset($params['isAjax']);
+		unset($params['_csrfToken']);
+		unset($params['_Token']);
 
 		return $params;
 	}
