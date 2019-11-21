@@ -33,7 +33,7 @@ class Syncer {
 		$file = $path . $config['aclFile'];
 		$content = Utility::parseFile($file);
 
-		$controllers = $this->_getControllers((string)$args->getOption('plugin'));
+		$controllers = $this->_getControllers((string)$args->getOption('plugin') ?: null);
 		foreach ($controllers as $controller) {
 			if (isset($content[$controller])) {
 				continue;
@@ -76,7 +76,7 @@ class Syncer {
 			return $controllers;
 		}
 
-		$folders = App::path('Controller', $plugin);
+		$folders = App::classPath('Controller', $plugin);
 
 		$controllers = [];
 		foreach ($folders as $folder) {

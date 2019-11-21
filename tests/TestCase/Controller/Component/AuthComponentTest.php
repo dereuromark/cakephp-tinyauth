@@ -141,7 +141,7 @@ class AuthComponentTest extends TestCase {
 	public function testValidActionNestedPrefix() {
 		$request = new ServerRequest(['params' => [
 			'plugin' => null,
-			'prefix' => 'admin/my_prefix',
+			'prefix' => 'Admin/MyPrefix',
 			'controller' => 'MyTest',
 			'action' => 'myPublic',
 		]]);
@@ -211,7 +211,7 @@ class AuthComponentTest extends TestCase {
 
 	/**
 	 * @param \Cake\Http\ServerRequest $request
-	 * @return \Cake\Controller\Controller|\PHPUnit_Framework_MockObject_MockObject
+	 * @return \Cake\Controller\Controller|\PHPUnit\Framework\MockObject\MockObject
 	 */
 	protected function getControllerMock(ServerRequest $request) {
 		$controller = $this->getMockBuilder(Controller::class)

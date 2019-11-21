@@ -26,22 +26,22 @@ class UtilityTest extends TestCase {
 	 * @return void
 	 */
 	public function testDeconstructIniKey() {
-		$key = 'api/foo/bar/MyController';
+		$key = 'Api/Foo/Bar/MyController';
 		$result = Utility::deconstructIniKey($key);
 
 		$expected = [
 			'plugin' => null,
-			'prefix' => 'api/foo/bar',
+			'prefix' => 'Api/Foo/Bar',
 			'controller' => 'MyController',
 		];
 		$this->assertEquals($expected, $result);
 
-		$key = 'My/Foo/Bar.admin/MyController';
+		$key = 'My/Foo/Bar.Admin/MyController';
 		$result = Utility::deconstructIniKey($key);
 
 		$expected = [
 			'plugin' => 'My/Foo/Bar',
-			'prefix' => 'admin',
+			'prefix' => 'Admin',
 			'controller' => 'MyController',
 		];
 		$this->assertEquals($expected, $result);

@@ -6,6 +6,7 @@ use Cake\Core\Exception\Exception;
 use Cake\Datasource\ResultSetInterface;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
+use Cake\Utility\Inflector;
 use InvalidArgumentException;
 use RuntimeException;
 use TinyAuth\Auth\AclAdapter\AclAdapterInterface;
@@ -20,9 +21,14 @@ trait AclTrait {
 	protected $_acl;
 
 	/**
-	 * @var array|null
+	 * @var int[]|null
 	 */
 	protected $_roles;
+
+	/**
+	 * @var string[]|null
+	 */
+	protected $_prefixMap;
 
 	/**
 	 * @var array|null
@@ -142,16 +148,11 @@ trait AclTrait {
 	protected function _check(array $userRoles, array $params) {
 		// Allow access to all prefixed actions for users belonging to
 		// the specified role that matches the prefix.
-		$prefixes = $this->getConfig('authorizeByPrefix');
-		if (!empty($params['prefix']) && $prefixes) {
+		$prefixMap = $this->getConfig('authorizeByPrefix');
+		if (!empty($params['prefix']) && $prefixMap) {
 			$roles = $this->_getAvailableRoles();
-			if ($prefixes === true) {
-				$prefixes = array_combine(array_keys($roles), array_keys($roles));
-			} else {
-				$prefixes = $this->_normalizePrefixes($prefixes);
-			}
-
-			if ($prefixes && $this->_isAuthorizedByPrefix($params['prefix'], $prefixes, $userRoles, $roles)) {
+			$prefixMap = $this->_prefixMap($roles);
+			if ($prefixMap && $this->_isAuthorizedByPrefix($params['prefix'], $prefixMap, $userRoles, $roles)) {
 				return true;
 			}
 		}
@@ -208,8 +209,52 @@ trait AclTrait {
 	}
 
 	/**
+	 * @param array $roles
+	 * @return string[]
+	 */
+	protected function _prefixMap(array $roles): array {
+		if ($this->_prefixMap !== null) {
+			return $this->_prefixMap;
+		}
+
+		/** @var bool|string[] $prefixMap */
+		$prefixMap = $this->getConfig('authorizeByPrefix');
+		if (!$prefixMap) {
+			return [];
+		}
+
+		if ($prefixMap === true) {
+			$prefixMap = $this->_prefixesFromRoles($roles);
+		} else {
+			$prefixMap = $this->_normalizePrefixes($prefixMap);
+		}
+
+		$this->_prefixMap = $prefixMap;
+
+		return $this->_prefixMap;
+	}
+
+	/**
+	 * Gets the [PrefixName => roleName] pairs from existing roles.
+	 *
+	 * @param array $roles
+	 *
+	 * @return string[]
+	 */
+	protected function _prefixesFromRoles(array $roles) {
+		$names = array_keys($roles);
+		$prefixMap = [];
+		foreach ($names as $name) {
+			$prefix = Inflector::camelize(Inflector::underscore($name));
+			$prefixMap[$prefix] = $name;
+		}
+
+		return $prefixMap;
+	}
+
+	/**
 	 * @param string $prefix
-	 * @param array $prefixMap
+	 * @param string[] $prefixMap
 	 * @param int[] $userRoles
 	 * @param int[] $availableRoles
 	 *
@@ -224,9 +269,9 @@ trait AclTrait {
 			return false;
 		}
 
-		$prefixRoles = (array)$prefixMap[$prefix];
-		foreach ($prefixRoles as $prefixRole) {
-			$role = isset($availableRoles[$prefixRole]) ? $availableRoles[$prefixRole] : null;
+		$prefixRoleSlugs = (array)$prefixMap[$prefix];
+		foreach ($prefixRoleSlugs as $prefixRoleSlug) {
+			$role = isset($availableRoles[$prefixRoleSlug]) ? $availableRoles[$prefixRoleSlug] : null;
 			if ($role && in_array($role, $userRoles, true)) {
 				return true;
 			}
@@ -236,7 +281,7 @@ trait AclTrait {
 	}
 
 	/**
-	 * Can be [prefixOne, prefixTwo => roleOne, prefixTwo => [roleOne, roleTwo]]
+	 * Can be [PrefixOne, PrefixTwo => roleOne, PrefixTwo => [roleOne, roleTwo]]
 	 *
 	 * @param string[] $prefixes
 	 *
@@ -247,6 +292,7 @@ trait AclTrait {
 		foreach ($prefixes as $prefix => $role) {
 			if (is_int($prefix)) {
 				$prefix = $role;
+				$role = Inflector::dasherize(Inflector::underscore($role));
 			}
 
 			$normalized[$prefix] = $role;

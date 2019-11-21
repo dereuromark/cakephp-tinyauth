@@ -1,7 +1,7 @@
 language: php
 
 php:
-  - 5.6
+  - 7.2
   - 7.3
   - 7.4snapshot
 
@@ -17,16 +17,16 @@ services:
 
 matrix:
   include:
-    - php: 7.1
+    - php: 7.3
       env: DB=pgsql db_dsn='postgres://postgres@127.0.0.1/cakephp_test'
 
-    - php: 5.6
+    - php: 7.2
       env: PREFER_LOWEST=1
 
-    - php: 7.2
+    - php: 7.3
       env: CHECKS=1 DEFAULT=0
 
-    - php: 7.2
+    - php: 7.3
       env: CODECOVERAGE=1 DEFAULT=0 DB=mysql db_dsn='mysql://root@127.0.0.1/cakephp_test'
 
   fast_finish: true

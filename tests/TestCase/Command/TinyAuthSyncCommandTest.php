@@ -1,7 +1,7 @@
 <?php
 namespace TinyAuth\Test\TestCase\Command;
 
-use Cake\Console\Shell;
+use Cake\Console\Command;
 use Cake\Core\Configure;
 use Cake\Filesystem\Folder;
 use Cake\TestSuite\ConsoleIntegrationTestCase;
@@ -34,11 +34,11 @@ class TinyAuthSyncCommandTest extends ConsoleIntegrationTestCase {
 		Configure::write('TinyAuth.allowFilePath', TESTS . 'test_files/');
 
 		$folder = new Folder();
-		$folder->copy(['from' => TESTS . 'test_app' . DS . 'Controller' . DS, 'to' => '/tmp' . DS . 'src' . DS . 'Controller' . DS]);
+		$folder->copy('/tmp' . DS . 'src' . DS . 'Controller' . DS, ['from' => TESTS . 'test_app' . DS . 'Controller' . DS]);
 
 		$this->exec('tiny_auth_sync foo,bar -d -v');
 
-		$this->assertExitCode(Shell::CODE_SUCCESS);
+		$this->assertExitCode(Command::CODE_SUCCESS);
 		$this->assertOutputContains('index = admin');
 		$this->assertOutputContains('[Offers]');
 		$this->assertOutputContains('* = foo,bar');

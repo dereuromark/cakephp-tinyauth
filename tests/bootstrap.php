@@ -5,7 +5,9 @@
 require dirname(__DIR__) . '/vendor/cakephp/cakephp/src/basics.php';
 require dirname(__DIR__) . '/vendor/autoload.php';
 
-define('DS', DIRECTORY_SEPARATOR);
+if (!defined('DS')) {
+	define('DS', DIRECTORY_SEPARATOR);
+}
 define('ROOT', dirname(__DIR__));
 define('APP_DIR', 'src');
 
@@ -57,6 +59,9 @@ $cache = [
 
 Cake\Cache\Cache::setConfig($cache);
 
+// Why has this no effect?
+require TESTS . 'config' . DS . 'routes.php';
+
 define('ROLE_USER', 1);
 define('ROLE_MODERATOR', 2);
 define('ROLE_ADMIN', 3);
@@ -73,11 +78,8 @@ if (!getenv('db_class')) {
 
 Cake\Datasource\ConnectionManager::setConfig('test', [
 	'className' => 'Cake\Database\Connection',
-	'driver' => getenv('db_class'),
-	'dsn' => getenv('db_dsn'),
-	//'database' => getenv('db_database'),
-	//'username' => getenv('db_username'),
-	//'password' => getenv('db_password'),
+	'driver' => getenv('db_class') ?: null,
+	'dsn' => getenv('db_dsn') ?: null,
 	'timezone' => 'UTC',
 	'quoteIdentifiers' => true,
 	'cacheMetadata' => true,

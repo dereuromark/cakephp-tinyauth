@@ -17,7 +17,7 @@ Implement the AllowAdapterInterface and make sure your `getAllow()` method retur
     // or with admin prefix
     'admin/Users' => [
         'plugin' => null,
-        'prefix' => 'admin',
+        'prefix' => 'Admin',
         'controller' => 'Users',
         'deny' => [],
         'allow' => [
@@ -39,7 +39,7 @@ Implement the AllowAdapterInterface and make sure your `getAllow()` method retur
     ...
 ```
 
-Unique array keys due to the internal `PluginName.prefix/ControllerName` syntax.
+Unique array keys due to the internal `PluginName.Prefix/ControllerName` syntax.
 URL elements and then an array of actions mapped to their role id(s).
 The `*` action key means "any" action.
 

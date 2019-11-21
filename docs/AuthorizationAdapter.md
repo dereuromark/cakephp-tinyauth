@@ -18,7 +18,7 @@ Implement the AclAdapterInterface and make sure your `getAcl()` method returns a
     // or plugin with admin prefix
     'Queue.admin/QueuedJobs' => [
         'plugin' => 'Queue',
-        'prefix' => 'admin',
+        'prefix' => 'Admin',
         'controller' => 'QueuedJobs',
         'allow' => [
             'index' => [
@@ -35,7 +35,7 @@ Implement the AclAdapterInterface and make sure your `getAcl()` method returns a
     ...
 ```
 
-Unique array keys due to the internal `PluginName.prefix/ControllerName` syntax.
+Unique array keys due to the internal `PluginName.Prefix/ControllerName` syntax.
 URL elements and then an array of actions mapped to their role id(s).
 The `*` action key means 'any'.
 

@@ -79,8 +79,6 @@ See the docs for details:
 - [TinyAuth and Authentication plugin](AuthenticationPlugin.md)
 - [TinyAuth and Authorization plugin](AuthorizationPlugin.md)
 
-Note: Those are *beta* - not fully tested/functional.
-
 ### When to use the new plugins?
 They are super powerful, but they also require a load of config to get them to run.
 If you need authentication/authorization on middleware/routing level however, you need
@@ -89,6 +87,12 @@ to use them.
 If you only need the basic request policy provided by this plugin, and no further ORM or other policies,
 then it is best to stick to the Auth component as simple wrapper.
 It is then limited to controller scope (no middleware/routing support) as it always has been so far.
+
+## Upgrade notes
+Coming from CakePHP 3.x the following major changes will affect your app in CakePHP 4.x:
+- Prefixes are now `CamelCase` to follow core conventions (and to be in sync with plugin and controller names).
+- Roles continue to be `dashed-case` (slugs), actions remain `camelBacked` and thus equal to the method name casing usually.
+- If you use custom adapters, make sure the paths now contain the correct prefix casing, as well.
 
 ## Contributing
 Feel free to fork and pull request.

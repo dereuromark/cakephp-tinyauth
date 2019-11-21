@@ -6,7 +6,9 @@ use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
 use Cake\Core\Plugin;
 use Cake\Routing\Exception\MissingRouteException;
+use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
+use Cake\Routing\Route\DashedRoute;
 use Cake\TestSuite\TestCase;
 use Cake\View\View;
 use TinyAuth\Utility\Cache;
@@ -35,7 +37,10 @@ class AuthUserHelperTest extends TestCase {
 	public function setUp(): void {
 		parent::setUp();
 
-		Router::reload();
+		Router::scope('/', function(RouteBuilder $routes) {
+			$routes->fallbacks(DashedRoute::class);
+		});
+
 		Configure::write('Roles', [
 			'user' => 1,
 			'moderator' => 2,
@@ -285,8 +290,8 @@ class AuthUserHelperTest extends TestCase {
 			'action' => 'delete',
 		];
 		$result = $this->AuthUserHelper->postLink('Delete <b>Me</b>', $url);
-		$this->assertContains('<form name=', $result);
-		$this->assertContains('>Delete &lt;b&gt;Me&lt;/b&gt;</a>', $result);
+		$this->assertStringContainsString('<form name=', $result);
+		$this->assertStringContainsString('>Delete &lt;b&gt;Me&lt;/b&gt;</a>', $result);
 	}
 
 	/**
@@ -322,8 +327,8 @@ class AuthUserHelperTest extends TestCase {
 			'action' => 'delete',
 		];
 		$result = $this->AuthUserHelper->postLink('Delete <b>Me</b>', $url, ['escape' => false]);
-		$this->assertContains('<form name=', $result);
-		$this->assertContains('>Delete <b>Me</b></a>', $result);
+		$this->assertStringContainsString('<form name=', $result);
+		$this->assertStringContainsString('>Delete <b>Me</b></a>', $result);
 	}
 
 	/**

@@ -116,7 +116,7 @@ class AuthenticationComponentTest extends TestCase {
 		$request = new ServerRequest(['params' => [
 			'controller' => 'Foos',
 			'action' => 'view',
-			'prefix' => 'foo',
+			'prefix' => 'Foo',
 		]]);
 		$controller = $this->getControllerMock($request);
 		$registry = new ComponentRegistry($controller);
@@ -133,11 +133,11 @@ class AuthenticationComponentTest extends TestCase {
 		$request = new ServerRequest(['params' => [
 			'controller' => 'Foos',
 			'action' => 'view',
-			'prefix' => 'foo_bar',
+			'prefix' => 'FooBar',
 		]]);
 		$controller = $this->getControllerMock($request);
 		$registry = new ComponentRegistry($controller);
-		$this->component = new AuthenticationComponent($registry, ['allowPrefixes' => 'foo_bar'] + $this->componentConfig);
+		$this->component = new AuthenticationComponent($registry, ['allowPrefixes' => 'FooBar'] + $this->componentConfig);
 
 		$result = $this->component->isPublic();
 		$this->assertTrue($result);
@@ -154,7 +154,7 @@ class AuthenticationComponentTest extends TestCase {
 		]]);
 		$controller = $this->getControllerMock($request);
 		$registry = new ComponentRegistry($controller);
-		$this->component = new AuthenticationComponent($registry, ['allowPrefixes' => 'foo_bar'] + $this->componentConfig);
+		$this->component = new AuthenticationComponent($registry, ['allowPrefixes' => 'FooBar'] + $this->componentConfig);
 
 		$result = $this->component->isPublic();
 		$this->assertFalse($result);
@@ -162,7 +162,7 @@ class AuthenticationComponentTest extends TestCase {
 
 	/**
 	 * @param \Cake\Http\ServerRequest $request
-	 * @return \Cake\Controller\Controller|\PHPUnit_Framework_MockObject_MockObject
+	 * @return \Cake\Controller\Controller|\PHPUnit\Framework\MockObject\MockObject
 	 */
 	protected function getControllerMock(ServerRequest $request) {
 		$controller = $this->getMockBuilder(Controller::class)

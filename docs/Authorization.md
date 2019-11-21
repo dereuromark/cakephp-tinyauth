@@ -71,16 +71,18 @@ lookups, for example:
  */
 define('ROLE_USER', 1);
 define('ROLE_ADMIN', 2);
-define('ROLE_SUPERADMIN', 9);
+define('ROLE_SUPER_ADMIN', 9);
 
 return [
     'Roles' => [
         'user' => ROLE_USER,
         'admin' => ROLE_ADMIN,
-        'superadmin' => ROLE_SUPERADMIN
-    ]
+        'super-admin' => ROLE_SUPER_ADMIN,
+    ],
 ];
 ```
+
+The key should be a slug of your role. A multi word like `Super Admin` would be `super-admin` as alias here.
 
 ### Database roles
 When you choose to store your roles in the database TinyAuth expects a table
@@ -100,6 +102,9 @@ Example of a record from a valid roles table:
 'created' => '2010-01-07 03:36:33'
 'modified' => '2010-01-07 03:36:33'
 ```
+
+The `alias` values should be slugged as `lowercase-dashed`. 
+Multi words like `Super Admin` would be `super-admin` etc.
 
 > Please note that you do NOT need Configure based roles when using database
 > roles. Also make sure to remove (or rename) existing Configure based roles
@@ -147,11 +152,11 @@ If you have basically two roles (or *none* vs. admin) and want to separate front
 'allowLoggedIn' => true,
 ```
 This way, by default, any logged in user has access to all pages except the ones with a prefix defined in a blacklist
-called `'protectedPrefix'`. This list defaults to `admin` prefix.
+called `'protectedPrefix'`. This list defaults to `Admin` prefix.
 
 If you have another or more prefixes, you can customize the whitelist of prefixes using:
 ```php
-'protectedPrefix' => ['admin', 'management', ...]
+'protectedPrefix' => ['Admin', 'Management', ...]
 ```
 
 ### Prefix based ACL
@@ -164,16 +169,16 @@ It will map all available roles to their prefix pendant and allow access based o
 If you need more control over the prefix map, or want to even customize the roles per prefix, you can do that as array:
 ```php
 'authorizeByPrefix' => [
-    'admin => 'admin',
-    'management' => ['mod', 'admin'],
-    'prefix_three' => ...  
+    'Admin => 'admin',
+    'Management' => ['mod', 'super-mod'],
+    'PrefixThree' => ...  
 ],
 ```
 
 Since non-prefixed routes are not caught be this, this is best combined with `'allowLoggedIn' => true`
 and all prefixes listed in `protectedPrefix`.
 
->**Note:** Prefixes are always `lowercase_underscored` (even if routing makes them to `dashed-ones` in the URL).
+>**Note:** Prefixes are always `CamelCased` (even if routing makes them to `dashed-ones` in the URL).
 
 ## auth_acl.ini
 TinyAuth expects an ``auth_acl.ini`` file in your config directory.
@@ -181,7 +186,7 @@ Use it to specify in detail who gets access to which resources.
 
 The section key syntax follows the CakePHP naming convention:
 ```
-PluginName.my_prefix/MyController
+PluginName.MyPrefix/MyController
 ```
 
 Make sure to create an entry for each action you want to expose and use:
@@ -200,13 +205,13 @@ edit, view = user, admin
 ; ----------------------------------------------------------
 ; UsersController using /api prefixed route
 ; ----------------------------------------------------------
-[api/Users]
+[Api/Users]
 view = user
 * = admin
 ; ----------------------------------------------------------
 ; UsersController using /admin prefixed route
 ; ----------------------------------------------------------
-[admin/Users]
+[Admin/Users]
 * = admin
 ; ----------------------------------------------------------
 ; AccountsController in plugin named Accounts
@@ -218,7 +223,7 @@ view, edit = user
 ; AccountsController in plugin named Accounts using /admin
 ; prefixed route
 ; ----------------------------------------------------------
-[Accounts.admin/Accounts]
+[Accounts.Admin/Accounts]
 * = admin
 ; ----------------------------------------------------------
 ; CompaniesController in plugin named Accounts
@@ -230,15 +235,15 @@ view, edit = user
 ; CompaniesController in plugin named Accounts using /my-admin
 ; prefixed route (assuming you are using recommended DashedRoute class)
 ; ----------------------------------------------------------
-[Accounts.my_admin/Companies]
+[Accounts.MyAdmin/Companies]
 * = admin
 
 [SomeController]
 * = * ; All roles can access all actions
 ```
 
->**Note:** Prefixes are always `lowercase_underscored`. The route inflects to the final casing if needed. 
-Nested prefixes are joined using `/`, e.g. `my/admin/nested`.
+>**Note:** Prefixes are always `CamelCased`. The route inflects to the final casing if needed. 
+Nested prefixes are joined using `/`, e.g. `MyAdmin/Nested`.
 
 Using only "granting" is recommended for security reasons.
 Careful with denying, as this can accidentally open up more than desired actions. If you really want to use it:
@@ -297,7 +302,7 @@ superAdmin|int or string|Id/name of the super admin. Users with this id/name wil
 superAdminColumn|string|Column of super admin in user table. Default is idColumn option.
 authorizeByPrefix|bool/array|If prefixed routes should be auto-handled by their matching role name or a prefix=>role map.
 allowLoggedIn|bool|True will give authenticated users access to all resources except those using the `protectedPrefix`.
-protectedPrefix|string/array|Name of the prefix(es) used for admin pages. Defaults to admin.
+protectedPrefix|string/array|Name of the prefix(es) used for admin pages. Defaults to `Admin`.
 autoClearCache|bool|True will generate a new ACL cache file every time.
 aclFilePath|string|Full path to the auth_acl.ini. Can also be an array of multiple paths. Defaults to `ROOT . DS . 'config' . DS`.
 aclFile|string|Name of the INI file. Defaults to `auth_acl.ini`.
@@ -347,7 +352,7 @@ But on top, if you want to display certain content or a link for specific roles,
 
 Let's say we only want to print an admin backend link if the role can access it:
 ```php
-echo $this->AuthUser->link('Admin Backend', ['prefix' => 'admin', 'action' => 'index']);
+echo $this->AuthUser->link('Admin Backend', ['prefix' => 'Admin', 'action' => 'index']);
 ```
 It will not show anything for all others.
 
@@ -360,7 +365,7 @@ You can also do more complex things:
 ```php
 if ($this->AuthUser->hasAccess(['action' => 'secretArea'])) {
     echo 'Only for you: ';
-    echo $this->Html->link('admin/index', ['action' => 'secretArea']);
+    echo $this->Html->link('Secret area', ['action' => 'secretArea']);
     echo ' (do not tell anyone else!);
 }
 ```

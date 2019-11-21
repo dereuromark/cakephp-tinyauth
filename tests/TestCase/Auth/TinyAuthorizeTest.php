@@ -3,9 +3,11 @@ namespace TinyAuth\Test\Auth;
 
 use Cake\Controller\ComponentRegistry;
 use Cake\Core\Configure;
+use Cake\Core\Exception\Exception;
 use Cake\Core\Plugin;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 use ReflectionClass;
 use TestApp\Auth\AclAdapter\CustomAclAdapter;
 use TestApp\Auth\TestTinyAuthorize;
@@ -86,26 +88,30 @@ class TinyAuthorizeTest extends TestCase {
 	/**
 	 * Tests loading an invalid acl adapter fails.
 	 *
-	 * @expectedException \InvalidArgumentException
 	 * @return void
 	 */
 	public function testLoadingInvalidAclAdapter() {
 		$object = new TestTinyAuthorize($this->collection, [
 			'aclAdapter' => Configure::class
 		]);
+
+		$this->expectException(InvalidArgumentException::class);
+
 		$object->getAcl();
 	}
 
 	/**
 	 * Tests setting a non-existent class as the acl adapter fails.
 	 *
-	 * @expectedException \Cake\Core\Exception\Exception
 	 * @return void
 	 */
 	public function testLoadingNonExistentAclAdapter() {
 		$object = new TestTinyAuthorize($this->collection, [
 			'aclAdapter' => 'Non\\Existent\\Acl\\Adapter'
 		]);
+
+		$this->expectException(Exception::class);
+
 		$object->getAcl();
 	}
 
@@ -132,9 +138,9 @@ class TinyAuthorizeTest extends TestCase {
 				],
 				'deny' => [],
 			],
-			'admin/Tags' => [
+			'Admin/Tags' => [
 				'controller' => 'Tags',
-				'prefix' => 'admin',
+				'prefix' => 'Admin',
 				'plugin' => null,
 				'allow' => [
 					'index' => ['user' => ROLE_USER],
@@ -159,9 +165,9 @@ class TinyAuthorizeTest extends TestCase {
 				],
 				'deny' => [],
 			],
-			'Tags.admin/Tags' => [
+			'Tags.Admin/Tags' => [
 				'controller' => 'Tags',
-				'prefix' => 'admin',
+				'prefix' => 'Admin',
 				'plugin' => 'Tags',
 				'allow' => [
 					'index' => ['user' => ROLE_USER],
@@ -173,18 +179,18 @@ class TinyAuthorizeTest extends TestCase {
 				],
 				'deny' => [],
 			],
-			'special/Comments' => [
+			'Special/Comments' => [
 				'controller' => 'Comments',
-				'prefix' => 'special',
+				'prefix' => 'Special',
 				'plugin' => null,
 				'allow' => [
 					'*' => ['admin' => ROLE_ADMIN]
 				],
 				'deny' => [],
 			],
-			'Comments.special/Comments' => [
+			'Comments.Special/Comments' => [
 				'controller' => 'Comments',
-				'prefix' => 'special',
+				'prefix' => 'Special',
 				'plugin' => 'Comments',
 				'allow' => [
 					'*' => ['admin' => ROLE_ADMIN]
@@ -200,9 +206,9 @@ class TinyAuthorizeTest extends TestCase {
 				],
 				'deny' => [],
 			],
-			'admin/Posts' => [
+			'Admin/Posts' => [
 				'controller' => 'Posts',
-				'prefix' => 'admin',
+				'prefix' => 'Admin',
 				'plugin' => null,
 				'allow' => [
 					'*' => ['user' => ROLE_USER, 'moderator' => ROLE_MODERATOR, 'admin' => ROLE_ADMIN]
@@ -218,9 +224,9 @@ class TinyAuthorizeTest extends TestCase {
 				],
 				'deny' => [],
 			],
-			'Posts.admin/Posts' => [
+			'Posts.Admin/Posts' => [
 				'controller' => 'Posts',
-				'prefix' => 'admin',
+				'prefix' => 'Admin',
 				'plugin' => 'Posts',
 				'allow' => [
 					'*' => ['user' => ROLE_USER, 'moderator' => ROLE_MODERATOR, 'admin' => ROLE_ADMIN]
@@ -238,9 +244,9 @@ class TinyAuthorizeTest extends TestCase {
 					'foo' => ['user' => ROLE_USER],
 				],
 			],
-			'admin/Blogs' => [
+			'Admin/Blogs' => [
 				'controller' => 'Blogs',
-				'prefix' => 'admin',
+				'prefix' => 'Admin',
 				'plugin' => null,
 				'allow' => [
 					'*' => ['moderator' => ROLE_MODERATOR],
@@ -256,18 +262,18 @@ class TinyAuthorizeTest extends TestCase {
 				],
 				'deny' => [],
 			],
-			'Blogs.admin/Blogs' => [
+			'Blogs.Admin/Blogs' => [
 				'controller' => 'Blogs',
-				'prefix' => 'admin',
+				'prefix' => 'Admin',
 				'plugin' => 'Blogs',
 				'allow' => [
 					'*' => ['moderator' => ROLE_MODERATOR],
 				],
 				'deny' => [],
 			],
-			'admin/my_prefix/MyTest' => [
+			'Admin/MyPrefix/MyTest' => [
 				'controller' => 'MyTest',
-				'prefix' => 'admin/my_prefix',
+				'prefix' => 'Admin/MyPrefix',
 				'plugin' => null,
 				'allow' => [
 					'myAll' => ['user' => ROLE_USER, 'moderator' => ROLE_MODERATOR, 'admin' => ROLE_ADMIN],
@@ -311,39 +317,33 @@ class TinyAuthorizeTest extends TestCase {
 		$this->assertEquals('id', $object->getConfig('idColumn'));
 
 		// All tests performed against this action
-		$this->request->params['action'] = 'add';
+		$this->request = $this->request->withParam('action', 'add');
 
 		// Test standard controller
-		$this->request->params['controller'] = 'Tags';
-		$this->request->params['prefix'] = null;
-		$this->request->params['plugin'] = 'Tags';
+		$this->request = $this->request->withParam('controller', 'Tags');
 
 		$user = ['role_id' => ROLE_USER]; // valid role without authorization
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 
 		// Test standard controller with /admin prefix
-		$this->request->params['controller'] = 'Tags';
-		$this->request->params['prefix'] = null;
-		$this->request->params['plugin'] = null;
+		$this->request = $this->request->withParam('prefix', 'Admin');
 
 		$user = ['role_id' => ROLE_USER];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 
 		// Test plugin controller
-		$this->request->params['controller'] = 'Tags';
-		$this->request->params['prefix'] = null;
-		$this->request->params['plugin'] = 'Tags';
+		$this->request = $this->request->withParam('prefix', null)
+			->withParam('plugin', 'Tags');
 
 		$user = ['role_id' => ROLE_USER];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 
 		// Test plugin controller with /admin prefix
-		$this->request->params['controller'] = 'Tags';
-		$this->request->params['prefix'] = 'admin';
-		$this->request->params['plugin'] = 'Tags';
+		$this->request = $this->request->withParam('prefix', 'Admin')
+			->withParam('plugin', 'Tags');
 
 		$user = ['role_id' => ROLE_USER];
 		$res = $object->authorize($user, $this->request);
@@ -359,62 +359,55 @@ class TinyAuthorizeTest extends TestCase {
 		]);
 
 		// Test standard controller
-		$this->request->params['controller'] = 'Tags';
-		$this->request->params['prefix'] = null;
-		$this->request->params['plugin'] = null;
+		$this->request = $this->request->withParam('controller', 'Tags');
 
 		$user = ['role_id' => ROLE_USER];
-		$this->request->params['action'] = 'edit';
+		$this->request = $this->request->withParam('action', 'edit');
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
-		$this->request->params['action'] = 'delete';
+		$this->request = $this->request->withParam('action', 'delete');
 		$user = ['role_id' => ROLE_ADMIN];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
 		// Test standard controller with /admin prefix
-		$this->request->params['controller'] = 'Tags';
-		$this->request->params['prefix'] = 'admin';
-		$this->request->params['plugin'] = null;
+		$this->request = $this->request->withParam('prefix', 'Admin');
 
 		$user = ['role_id' => ROLE_USER];
-		$this->request->params['action'] = 'edit';
+		$this->request = $this->request->withParam('action', 'edit');
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
 		$user = ['role_id' => ROLE_ADMIN];
-		$this->request->params['action'] = 'delete';
+		$this->request = $this->request->withParam('action', 'delete');
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
 		// Test plugin controller
-		$this->request->params['controller'] = 'Tags';
-		$this->request->params['prefix'] = null;
-		$this->request->params['plugin'] = 'Tags';
+		$this->request = $this->request->withParam('prefix', null)
+			->withParam('plugin', 'Tags');
 
 		$user = ['role_id' => ROLE_USER];
-		$this->request->params['action'] = 'edit';
+		$this->request = $this->request->withParam('action', 'edit');
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
 		$user = ['role_id' => ROLE_ADMIN];
-		$this->request->params['action'] = 'delete';
+		$this->request = $this->request->withParam('action', 'delete');
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
 		// Test plugin controller with /admin prefix
-		$this->request->params['controller'] = 'Tags';
-		$this->request->params['prefix'] = 'admin';
-		$this->request->params['plugin'] = 'Tags';
+		$this->request = $this->request->withParam('prefix', 'Admin');
 
 		$user = ['role_id' => ROLE_USER];
-		$this->request->params['action'] = 'edit';
+		$this->request = $this->request->withParam('action', 'edit');
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
 		$user = ['role_id' => ROLE_ADMIN];
-		$this->request->params['action'] = 'delete';
+		$this->request = $this->request->withParam('action', 'delete');
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 	}
@@ -430,57 +423,52 @@ class TinyAuthorizeTest extends TestCase {
 		]);
 
 		// All tests performed against this action
-		$this->request->params['action'] = 'index';
+		$this->request = $this->request->withParam('action', 'index');
 
 		// Test incorrect controller casing
-		$this->request->params['controller'] = 'tags';
-		$this->request->params['prefix'] = null;
-		$this->request->params['plugin'] = null;
+		$this->request = $this->request->withParam('controller', 'tags');
 
 		$user = ['role_id' => ROLE_USER];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 
 		// Test incorrect controller casing with /admin prefix
-		$this->request->params['controller'] = 'tags';
-		$this->request->params['prefix'] = 'admin';
-		$this->request->params['plugin'] = null;
+		$this->request = $this->request->withParam('prefix', 'Admin');
 
 		$user = ['role_id' => ROLE_USER];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 
 		// Test correct controller casing with incorrect prefix casing
-		$this->request->params['controller'] = 'Users';
-		$this->request->params['prefix'] = 'Admin';
-		$this->request->params['plugin'] = null;
+		$this->request = $this->request->withParam('controller', 'Users')
+			->withParam('prefix', 'admin');
 
 		$user = ['role_id' => ROLE_USER];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 
 		// Test incorrect plugin controller casing
-		$this->request->params['controller'] = 'tags';
-		$this->request->params['prefix'] = null;
-		$this->request->params['plugin'] = 'Tags';
+		$this->request = $this->request->withParam('controller', 'tags')
+			->withParam('prefix', null)
+			->withParam('plugin', 'Tags');
 
 		$user = ['role_id' => ROLE_USER];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 
 		// Test correct plugin controller with incorrect plugin casing
-		$this->request->params['controller'] = 'Tags';
-		$this->request->params['prefix'] = null;
-		$this->request->params['plugin'] = 'tags';
+		$this->request = $this->request->withParam('controller', 'Tags')
+			->withParam('prefix', null)
+			->withParam('plugin', 'tags');
 
 		$user = ['role_id' => ROLE_USER];
 		$res = $object->authorize($user, $this->request);
 		$this->assertFalse($res);
 
 		// Test correct plugin controller with correct plugin but incorrect prefix casing
-		$this->request->params['controller'] = 'Tags';
-		$this->request->params['prefix'] = 'Admin';
-		$this->request->params['plugin'] = 'Tags';
+		$this->request = $this->request->withParam('controller', 'Tags')
+			->withParam('prefix', 'admin')
+			->withParam('plugin', 'Tags');
 
 		$user = ['role_id' => ROLE_USER];
 		$res = $object->authorize($user, $this->request);
@@ -496,12 +484,10 @@ class TinyAuthorizeTest extends TestCase {
 		]);
 
 		// All tests performed against this action
-		$this->request->params['action'] = 'veryLongActionNameAction';
+		$this->request = $this->request->withParam('action', 'veryLongActionNameAction');
 
 		// Test standard controller
-		$this->request->params['controller'] = 'Tags';
-		$this->request->params['prefix'] = null;
-		$this->request->params['plugin'] = null;
+		$this->request = $this->request->withParam('controller', 'Tags');
 
 		$user = ['role_id' => ROLE_USER];
 		$res = $object->authorize($user, $this->request);
@@ -512,9 +498,7 @@ class TinyAuthorizeTest extends TestCase {
 		$this->assertFalse($res);
 
 		// Test standard controller with /admin prefix
-		$this->request->params['controller'] = 'Tags';
-		$this->request->params['prefix'] = 'admin';
-		$this->request->params['plugin'] = null;
+		$this->request = $this->request->withParam('prefix', 'Admin');
 
 		$user = ['role_id' => ROLE_USER];
 		$res = $object->authorize($user, $this->request);
@@ -525,9 +509,8 @@ class TinyAuthorizeTest extends TestCase {
 		$this->assertFalse($res);
 
 		// Test plugin controller
-		$this->request->params['controller'] = 'Tags';
-		$this->request->params['prefix'] = null;
-		$this->request->params['plugin'] = 'Tags';
+		$this->request = $this->request->withParam('prefix', null)
+			->withParam('plugin', 'Tags');
 
 		$user = ['role_id' => ROLE_USER];
 		$res = $object->authorize($user, $this->request);
@@ -538,9 +521,7 @@ class TinyAuthorizeTest extends TestCase {
 		$this->assertFalse($res);
 
 		// Test plugin controller with /admin prefix
-		$this->request->params['controller'] = 'Tags';
-		$this->request->params['prefix'] = 'admin';
-		$this->request->params['plugin'] = 'Tags';
+		$this->request = $this->request->withParam('prefix', 'Admin');
 
 		$user = ['role_id' => ROLE_USER];
 		$res = $object->authorize($user, $this->request);
@@ -560,12 +541,10 @@ class TinyAuthorizeTest extends TestCase {
 		]);
 
 		// All tests performed against this action
-		$this->request->params['action'] = 'very_long_underscored_action';
+		$this->request = $this->request->withParam('action', 'very_long_underscored_action');
 
 		// Test standard controller
-		$this->request->params['controller'] = 'Tags';
-		$this->request->params['prefix'] = null;
-		$this->request->params['plugin'] = null;
+		$this->request = $this->request->withParam('controller', 'Tags');
 
 		$user = ['role_id' => ROLE_USER];
 		$res = $object->authorize($user, $this->request);
@@ -576,9 +555,7 @@ class TinyAuthorizeTest extends TestCase {
 		$this->assertFalse($res);
 
 		// Test standard controller with /admin prefix
-		$this->request->params['controller'] = 'Tags';
-		$this->request->params['prefix'] = 'admin';
-		$this->request->params['plugin'] = null;
+		$this->request = $this->request->withParam('prefix', 'Admin');
 
 		$user = ['role_id' => ROLE_USER];
 		$res = $object->authorize($user, $this->request);
@@ -589,9 +566,8 @@ class TinyAuthorizeTest extends TestCase {
 		$this->assertFalse($res);
 
 		// Test plugin controller
-		$this->request->params['controller'] = 'Tags';
-		$this->request->params['prefix'] = null;
-		$this->request->params['plugin'] = 'Tags';
+		$this->request = $this->request->withParam('prefix', null)
+			->withParam('plugin', 'Tags');
 
 		$user = ['role_id' => ROLE_USER];
 		$res = $object->authorize($user, $this->request);
@@ -602,9 +578,8 @@ class TinyAuthorizeTest extends TestCase {
 		$this->assertFalse($res);
 
 		// Test plugin controller with /admin prefix
-		$this->request->params['controller'] = 'Tags';
-		$this->request->params['prefix'] = 'admin';
-		$this->request->params['plugin'] = 'Tags';
+		$this->request = $this->request->withParam('prefix', 'Admin')
+			->withParam('plugin', 'Tags');
 
 		$user = ['role_id' => ROLE_USER];
 		$res = $object->authorize($user, $this->request);
@@ -627,8 +602,8 @@ class TinyAuthorizeTest extends TestCase {
 			'rolesTable' => 'Roles'
 		]);
 
-		$this->request->params['controller'] = 'Tags';
-		$this->request->params['action'] = 'delete';
+		$this->request = $this->request->withParam('controller', 'Tags')
+			->withParam('action', 'delete');
 
 		// User 1 has roles 1 (user) and 2 (moderator): admin required for the delete.
 		$user = ['id' => 1];
@@ -646,9 +621,6 @@ class TinyAuthorizeTest extends TestCase {
 			'rolesTable' => 'DatabaseRoles',
 			'roleColumn' => 'database_role_id',
 		]);
-
-		$this->request->params['controller'] = 'Tags';
-		$this->request->params['action'] = 'delete';
 
 		// User 1 has roles 11 (user) and 12 (moderator): admin required for the delete.
 		$user = ['id' => 1];
@@ -675,39 +647,33 @@ class TinyAuthorizeTest extends TestCase {
 		]);
 
 		// All tests performed against this action
-		$this->request->params['action'] = 'any_action';
+		$this->request = $this->request->withParam('action', 'any_action');
 
 		// Test standard controller
-		$this->request->params['controller'] = 'Posts';
-		$this->request->params['prefix'] = null;
-		$this->request->params['plugin'] = null;
+		$this->request = $this->request->withParam('controller', 'Posts');
 
 		$user = ['role_id' => ROLE_MODERATOR];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
 		// Test *=* for standard controller with /admin prefix
-		$this->request->params['controller'] = 'Posts';
-		$this->request->params['prefix'] = 'admin';
-		$this->request->params['plugin'] = null;
+		$this->request = $this->request->withParam('prefix', 'Admin');
 
 		$user = ['role_id' => ROLE_MODERATOR];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
 		// Test *=* for plugin controller
-		$this->request->params['controller'] = 'Posts';
-		$this->request->params['prefix'] = null;
-		$this->request->params['plugin'] = 'Posts';
+		$this->request = $this->request->withParam('prefix', null)
+			->withParam('plugin', 'Posts');
 
 		$user = ['role_id' => ROLE_MODERATOR];
 		$res = $object->authorize($user, $this->request);
 		$this->assertTrue($res);
 
 		// Test *=* for plugin controller with /admin prefix
-		$this->request->params['controller'] = 'Posts';
-		$this->request->params['prefix'] = 'admin';
-		$this->request->params['plugin'] = 'Posts';
+		$this->request = $this->request->withParam('prefix', 'Admin')
+			->withParam('plugin', 'Posts');
 
 		$user = ['role_id' => ROLE_MODERATOR];
 		$res = $object->authorize($user, $this->request);
@@ -726,12 +692,10 @@ class TinyAuthorizeTest extends TestCase {
 		]);
 
 		// All tests performed against this action
-		$this->request->params['action'] = 'any_action';
+		$this->request = $this->request->withParam('action', 'any_action');
 
 		// Test standard controller
-		$this->request->params['controller'] = 'Blogs';
-		$this->request->params['prefix'] = null;
-		$this->request->params['plugin'] = null;
+		$this->request = $this->request->withParam('controller', 'Blogs');
 
 		$user = ['role_id' => ROLE_MODERATOR];
 		$res = $object->authorize($user, $this->request);
@@ -742,9 +706,7 @@ class TinyAuthorizeTest extends TestCase {
 		$this->assertFalse($res);
 
 		// Test standard controller with /admin prefix
-		$this->request->params['controller'] = 'Blogs';
-		$this->request->params['prefix'] = 'admin';
-		$this->request->params['plugin'] = null;
+		$this->request = $this->request->withParam('prefix', 'Admin');
 
 		$user = ['role_id' => ROLE_MODERATOR];
 		$res = $object->authorize($user, $this->request);
@@ -755,9 +717,8 @@ class TinyAuthorizeTest extends TestCase {
 		$this->assertFalse($res);
 
 		// Test plugin controlller
-		$this->request->params['controller'] = 'Blogs';
-		$this->request->params['prefix'] = null;
-		$this->request->params['plugin'] = 'Blogs';
+		$this->request = $this->request->withParam('prefix', null)
+			->withParam('plugin', 'Blogs');
 
 		$user = ['role_id' => ROLE_MODERATOR];
 		$res = $object->authorize($user, $this->request);
@@ -768,9 +729,8 @@ class TinyAuthorizeTest extends TestCase {
 		$this->assertFalse($res);
 
 		// Test plugin controlller with /admin prefix
-		$this->request->params['controller'] = 'Blogs';
-		$this->request->params['prefix'] = 'admin';
-		$this->request->params['plugin'] = 'Blogs';
+		$this->request = $this->request->withParam('prefix', 'Admin')
+			->withParam('plugin', 'Blogs');
 
 		$user = ['role_id' => ROLE_MODERATOR];
 		$res = $object->authorize($user, $this->request);
@@ -791,12 +751,10 @@ class TinyAuthorizeTest extends TestCase {
 		]);
 
 		// All tests performed against this action
-		$this->request->params['action'] = 'foo';
+		$this->request = $this->request->withParam('action', 'foo');
 
 		// Test standard controller
-		$this->request->params['controller'] = 'Blogs';
-		$this->request->params['prefix'] = null;
-		$this->request->params['plugin'] = null;
+		$this->request = $this->request->withParam('controller', 'Blogs');
 
 		$user = ['role_id' => ROLE_MODERATOR];
 		$res = $object->authorize($user, $this->request);
@@ -815,12 +773,11 @@ class TinyAuthorizeTest extends TestCase {
 		]);
 
 		// All tests performed against this action
-		$this->request->params['action'] = 'myModerator';
+		$this->request = $this->request->withParam('action', 'myModerator');
 
 		// Test standard controller
-		$this->request->params['controller'] = 'MyTest';
-		$this->request->params['prefix'] = 'admin/my_prefix';
-		$this->request->params['plugin'] = null;
+		$this->request = $this->request->withParam('controller', 'MyTest')
+			->withParam('prefix', 'Admin/MyPrefix');
 
 		$user = ['role_id' => ROLE_MODERATOR];
 		$res = $object->authorize($user, $this->request);
@@ -831,7 +788,7 @@ class TinyAuthorizeTest extends TestCase {
 		$this->assertFalse($res);
 
 		// Test different prefix
-		$this->request->params['prefix'] = 'admin';
+		$this->request = $this->request->withParam('prefix', 'Admin');
 
 		$user = ['role_id' => ROLE_MODERATOR];
 		$res = $object->authorize($user, $this->request);
@@ -847,16 +804,14 @@ class TinyAuthorizeTest extends TestCase {
 	public function testUserMethodsAllowed() {
 		$object = new TestTinyAuthorize($this->collection, [
 			'allowLoggedIn' => true,
-			'protectedPrefix' => 'admin'
+			'protectedPrefix' => 'Admin'
 		]);
 
 		// All tests performed against this action
-		$this->request->params['action'] = 'any_action';
+		$this->request = $this->request->withParam('action', 'any_action');
 
 		// Test standard controller
-		$this->request->params['controller'] = 'Tags';
-		$this->request->params['prefix'] = null;
-		$this->request->params['plugin'] = null;
+		$this->request = $this->request->withParam('controller', 'Tags');
 
 		$user = ['role_id' => ROLE_USER];
 		$res = $object->authorize($user, $this->request);
@@ -873,9 +828,7 @@ class TinyAuthorizeTest extends TestCase {
 		// Test standard controller with /admin prefix. Note: users should NOT
 		// be allowed access here since the prefix matches the  'protectedPrefix'
 		// configuration setting.
-		$this->request->params['controller'] = 'Tags';
-		$this->request->params['prefix'] = 'admin';
-		$this->request->params['plugin'] = null;
+		$this->request = $this->request->withParam('prefix', 'Admin');
 
 		$user = ['role_id' => ROLE_USER];
 		$res = $object->authorize($user, $this->request);
@@ -890,9 +843,8 @@ class TinyAuthorizeTest extends TestCase {
 		$this->assertFalse($res);
 
 		// Test plugin controller
-		$this->request->params['controller'] = 'Tags';
-		$this->request->params['prefix'] = null;
-		$this->request->params['plugin'] = 'Tags';
+		$this->request = $this->request->withParam('prefix', null)
+			->withParam('plugin', 'Tags');
 
 		$user = ['role_id' => ROLE_USER];
 		$res = $object->authorize($user, $this->request);
@@ -908,9 +860,8 @@ class TinyAuthorizeTest extends TestCase {
 
 		// Test plugin controller with /admin prefix. Again: access should
 		// NOT be allowed because of matching 'protectedPrefix'
-		$this->request->params['controller'] = 'Tags';
-		$this->request->params['prefix'] = 'admin';
-		$this->request->params['plugin'] = 'Tags';
+		$this->request = $this->request->withParam('prefix', 'Admin')
+			->withParam('plugin', 'Tags');
 
 		$user = ['role_id' => ROLE_USER];
 		$res = $object->authorize($user, $this->request);
@@ -926,9 +877,9 @@ class TinyAuthorizeTest extends TestCase {
 
 		// Test access to a standard controller using a prefix not matching the
 		// 'protectedPrefix' => users should be allowed access.
-		$this->request->params['controller'] = 'Comments';
-		$this->request->params['prefix'] = 'special';
-		$this->request->params['plugin'] = null;
+		$this->request = $this->request->withParam('controller', 'Comments')
+			->withParam('prefix', 'Special')
+			->withParam('plugin', null);
 
 		$user = ['role_id' => ROLE_USER];
 		$res = $object->authorize($user, $this->request);
@@ -944,9 +895,7 @@ class TinyAuthorizeTest extends TestCase {
 
 		// Test access to a plugin controller using a prefix not matching the
 		// 'protectedPrefix' => users should be allowed access.
-		$this->request->params['controller'] = 'Comments';
-		$this->request->params['prefix'] = 'special';
-		$this->request->params['plugin'] = 'Comments';
+		$this->request = $this->request->withParam('plugin', 'Comments');
 
 		$user = ['role_id' => ROLE_USER];
 		$res = $object->authorize($user, $this->request);
@@ -969,18 +918,17 @@ class TinyAuthorizeTest extends TestCase {
 	 */
 	public function testAdminMethodsAllowed() {
 		$config = [
-			'authorizeByPrefix' => ['admin'],
+			'authorizeByPrefix' => ['Admin'],
 			'autoClearCache' => true
 		];
 		$object = new TestTinyAuthorize($this->collection, $config);
 
 		// All tests performed against this action
-		$this->request->params['action'] = 'any_action';
+		$this->request = $this->request->withParam('action', 'any_action');
 
 		// Test standard controller with /admin prefix
-		$this->request->params['controller'] = 'Tags';
-		$this->request->params['prefix'] = 'admin';
-		$this->request->params['plugin'] = null;
+		$this->request = $this->request->withParam('controller', 'Tags')
+			->withParam('prefix', 'Admin');
 
 		$user = ['role_id' => ROLE_USER];
 		$res = $object->authorize($user, $this->request);
@@ -991,9 +939,35 @@ class TinyAuthorizeTest extends TestCase {
 		$this->assertTrue($res);
 
 		// Test plugin controller with /admin prefix
-		$this->request->params['controller'] = 'Tags';
-		$this->request->params['prefix'] = 'admin';
-		$this->request->params['plugin'] = 'Tags';
+		$this->request = $this->request->withParam('controller', 'Tags')
+			->withParam('prefix', 'Admin')
+			->withParam('plugin', 'Tags');
+
+		$user = ['role_id' => ROLE_USER];
+		$res = $object->authorize($user, $this->request);
+		$this->assertFalse($res);
+
+		$user = ['role_id' => ROLE_ADMIN];
+		$res = $object->authorize($user, $this->request);
+		$this->assertTrue($res);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testAuthorizeRolesAsPrefix() {
+		$config = [
+			'authorizeByPrefix' => true,
+			'autoClearCache' => true
+		];
+		$object = new TestTinyAuthorize($this->collection, $config);
+
+		// All tests performed against this action
+		$this->request = $this->request->withParam('action', 'any_action');
+
+		// Test standard controller with /admin prefix
+		$this->request = $this->request->withParam('controller', 'Tags')
+			->withParam('prefix', 'Admin');
 
 		$user = ['role_id' => ROLE_USER];
 		$res = $object->authorize($user, $this->request);
@@ -1011,18 +985,18 @@ class TinyAuthorizeTest extends TestCase {
 	 */
 	public function testAdminMethodsAllowedPrefixMap() {
 		$config = [
-			'authorizeByPrefix' => ['management' => 'admin', 'cool' => ['foo', 'bar', 'user']],
+			'authorizeByPrefix' => ['Management' => 'admin', 'Cool' => ['foo', 'bar', 'user']],
 			'autoClearCache' => true
 		];
 		$object = new TestTinyAuthorize($this->collection, $config);
 
 		// All tests performed against this action
-		$this->request->params['action'] = 'any_action';
+		$this->request = $this->request->withParam('action', 'any_action');
 
 		// Test standard controller with /management prefix
-		$this->request->params['controller'] = 'Tags';
-		$this->request->params['prefix'] = 'management';
-		$this->request->params['plugin'] = null;
+		$this->request = $this->request->withParam('controller', 'Tags')
+			->withParam('prefix', 'Management')
+			->withParam('plugin', null);
 
 		$user = ['role_id' => ROLE_USER];
 		$res = $object->authorize($user, $this->request);
@@ -1033,7 +1007,7 @@ class TinyAuthorizeTest extends TestCase {
 		$this->assertTrue($res);
 
 		// Test standard controller with /cool prefix
-		$this->request->params['prefix'] = 'cool';
+		$this->request = $this->request->withParam('prefix', 'Cool');
 
 		$user = ['role_id' => ROLE_ADMIN];
 		$res = $object->authorize($user, $this->request);
@@ -1060,9 +1034,9 @@ class TinyAuthorizeTest extends TestCase {
 
 		foreach ($acl as $resource) {
 			foreach ($resource['allow'] as $action => $allowed) {
-				$this->request->params['controller'] = $resource['controller'];
-				$this->request->params['prefix'] = $resource['prefix'];
-				$this->request->params['action'] = $action;
+				$this->request = $this->request->withAttribute('action', $action)
+					->withAttribute('controller', $resource['controller'])
+					->withAttribute('prefix', $resource['prefix']);
 				$res = $object->authorize($user, $this->request);
 				$this->assertTrue($res);
 			}
@@ -1099,7 +1073,6 @@ class TinyAuthorizeTest extends TestCase {
 	/**
 	 * Tests exception thrown when no acl.ini exists.
 	 *
-	 * @expectedException \Cake\Core\Exception\Exception
 	 * @return void
 	 */
 	public function testIniParsingMissingFileException() {
@@ -1111,6 +1084,9 @@ class TinyAuthorizeTest extends TestCase {
 		$reflection = new ReflectionClass(get_class($object));
 		$method = $reflection->getMethod('_parseFiles');
 		$method->setAccessible(true);
+
+		$this->expectException(Exception::class);
+
 		$method->invokeArgs($object, [
 			Plugin::path('TinyAuth') . 'non' . DS . 'existent' . DS,
 			'auth_acl.ini']);
@@ -1129,39 +1105,47 @@ class TinyAuthorizeTest extends TestCase {
 		$method->setAccessible(true);
 
 		// Test standard controller
-		$this->request->params['controller'] = 'Tags';
-		$this->request->params['prefix'] = null;
-		$this->request->params['plugin'] = null;
+		$params = [
+			'controller' => 'Tags',
+			'prefix' => null,
+			'plugin' => null,
+		];
 
 		$expected = 'Tags';
-		$res = $method->invokeArgs($object, [$this->request]);
+		$res = $method->invokeArgs($object, [$params]);
 		$this->assertEquals($expected, $res);
 
 		// Test standard controller with /admin prefix
-		$this->request->params['controller'] = 'Tags';
-		$this->request->params['prefix'] = 'admin';
-		$this->request->params['plugin'] = null;
+		$params = [
+			'controller' => 'Tags',
+			'prefix' => 'Admin',
+			'plugin' => null,
+		];
 
-		$expected = 'admin/Tags';
-		$res = $method->invokeArgs($object, [$this->request]);
+		$expected = 'Admin/Tags';
+		$res = $method->invokeArgs($object, [$params]);
 		$this->assertEquals($expected, $res);
 
 		// Test plugin controller
-		$this->request->params['controller'] = 'Tags';
-		$this->request->params['prefix'] = null;
-		$this->request->params['plugin'] = 'Tags';
+		$params = [
+			'controller' => 'Tags',
+			'prefix' => null,
+			'plugin' => 'Tags'
+		];
 
 		$expected = 'Tags.Tags';
-		$res = $method->invokeArgs($object, [$this->request]);
+		$res = $method->invokeArgs($object, [$params]);
 		$this->assertEquals($expected, $res);
 
 		// Test plugin controller with /admin prefix
-		$this->request->params['controller'] = 'Tags';
-		$this->request->params['prefix'] = 'admin';
-		$this->request->params['plugin'] = 'Tags';
+		$params = [
+			'controller' => 'Tags',
+			'prefix' => 'Admin',
+			'plugin' => 'Tags'
+		];
 
-		$expected = 'Tags.admin/Tags';
-		$res = $method->invokeArgs($object, [$this->request]);
+		$expected = 'Tags.Admin/Tags';
+		$res = $method->invokeArgs($object, [$params]);
 		$this->assertEquals($expected, $res);
 	}
 
@@ -1192,10 +1176,10 @@ class TinyAuthorizeTest extends TestCase {
 		$this->assertNotEquals($expected, $res);
 
 		// Test standard controller with /admin prefix
-		$key = 'admin/Tags';
+		$key = 'Admin/Tags';
 		$expected = [
 			'controller' => 'Tags',
-			'prefix' => 'admin',
+			'prefix' => 'Admin',
 			'plugin' => null
 		];
 		$res = $method->invokeArgs($object, [$key]);
@@ -1206,10 +1190,6 @@ class TinyAuthorizeTest extends TestCase {
 		$this->assertNotEquals($expected, $res);
 
 		$key = 'Admin/tags';
-		$res = $method->invokeArgs($object, [$key]);
-		$this->assertNotEquals($expected, $res);
-
-		$key = 'Admin/Tags';
 		$res = $method->invokeArgs($object, [$key]);
 		$this->assertNotEquals($expected, $res);
 
@@ -1236,10 +1216,10 @@ class TinyAuthorizeTest extends TestCase {
 		$this->assertNotEquals($expected, $res);
 
 		// Test plugin controller with /admin prefix
-		$key = 'Tags.admin/Tags';
+		$key = 'Tags.Admin/Tags';
 		$expected = [
 			'controller' => 'Tags',
-			'prefix' => 'admin',
+			'prefix' => 'Admin',
 			'plugin' => 'Tags'
 		];
 		$res = $method->invokeArgs($object, [$key]);
@@ -1257,9 +1237,9 @@ class TinyAuthorizeTest extends TestCase {
 		$res = $method->invokeArgs($object, [$key]);
 		$this->assertNotEquals($expected, $res);
 
-		$key = 'Tags.Admin/Tags';
+		$key = 'Tags.admin/Tags';
 		$res = $method->invokeArgs($object, [$key]);
-		$this->assertNotEquals($expected, $res);
+		$this->assertEquals($expected, $res);
 
 		$key = 'Tags.Admin/tags';
 		$res = $method->invokeArgs($object, [$key]);
@@ -1308,7 +1288,6 @@ class TinyAuthorizeTest extends TestCase {
 	 * Tests exception thrown when no roles are in Configure AND the roles
 	 * database table does not exist.
 	 *
-	 * @expectedException \Cake\Core\Exception\Exception
 	 * @return void
 	 */
 	public function testAvailableRolesMissingTableException() {
@@ -1320,6 +1299,9 @@ class TinyAuthorizeTest extends TestCase {
 		$reflection = new ReflectionClass(get_class($object));
 		$method = $reflection->getMethod('_getAvailableRoles');
 		$method->setAccessible(true);
+
+		$this->expectException(Exception::class);
+
 		$method->invoke($object);
 	}
 
@@ -1327,7 +1309,6 @@ class TinyAuthorizeTest extends TestCase {
 	 * Tests exception thrown when the roles database table exists but contains
 	 * no roles/records.
 	 *
-	 * @expectedException \Cake\Core\Exception\Exception
 	 * @return void
 	 */
 	public function testAvailableRolesEmptyTableException() {
@@ -1340,6 +1321,9 @@ class TinyAuthorizeTest extends TestCase {
 		$reflection = new ReflectionClass(get_class($object));
 		$method = $reflection->getMethod('_getAvailableRoles');
 		$method->setAccessible(true);
+
+		$this->expectException(Exception::class);
+
 		$method->invoke($object);
 	}
 
@@ -1468,10 +1452,11 @@ class TinyAuthorizeTest extends TestCase {
 	 */
 	public function testSuperAdmin() {
 		// All tests performed against this action
-		$this->request->params['action'] = 'any_action';
-		$this->request->params['controller'] = 'AnyControllers';
-		$this->request->params['prefix'] = null;
-		$this->request->params['plugin'] = null;
+		$this->request = $this->request->withAttribute('action', 'any_action')
+			->withAttribute('controller', 'AnyControllers')
+			->withAttribute('prefix', null)
+			->withAttribute('plugin', null);
+
 		// Single role
 		$object = new TestTinyAuthorize($this->collection, [
 			'superAdmin' => 1,
@@ -1645,7 +1630,6 @@ class TinyAuthorizeTest extends TestCase {
 	 * Tests single-role exception thrown when the roleColumn field is missing
 	 * from the user table.
 	 *
-	 * @expectedException \Cake\Core\Exception\Exception
 	 * @return void
 	 */
 	public function testUserRolesMissingRoleColumn() {
@@ -1658,6 +1642,8 @@ class TinyAuthorizeTest extends TestCase {
 		$reflection = new ReflectionClass(get_class($object));
 		$method = $reflection->getMethod('_getUserRoles');
 		$method->setAccessible(true);
+
+		$this->expectException(Exception::class);
 
 		$user = ['id' => 1];
 		$method->invokeArgs($object, [$user]);

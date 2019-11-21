@@ -2,7 +2,10 @@
 
 namespace TinyAuth\Test\TestCase\Controller\Component;
 
+use Authentication\Identity as AuthenticationIdentity;
 use Authorization\AuthorizationService;
+use Authorization\Identity;
+use Authorization\Policy\Result;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
@@ -50,13 +53,16 @@ class AuthorizationComponentTest extends TestCase {
 			'_ext' => null,
 			'pass' => [1]
 		]]);
+		/** @var \Authorization\AuthorizationService|\PHPUnit\Framework\MockObject\MockObject $authorization */
 		$authorization = $this->getMockBuilder(AuthorizationService::class)->disableOriginalConstructor()->getMock();
 		$authorization->expects($this->once())
-			->method('can')
-			->willReturn(true);
+			->method('canResult')
+			->willReturn(new Result(true));
+		$identity = new Identity($authorization, new AuthenticationIdentity([]));
 
-		$request = $request->withAttribute('authorization', $authorization);
-		$controller = $this->getControllerMock($request);
+		$request = $request->withAttribute('authorization', $authorization)
+			->withAttribute('identity', $identity);
+		$controller = new Controller($request);
 
 		$registry = new ComponentRegistry($controller);
 		$this->component = new AuthorizationComponent($registry, $this->componentConfig);
@@ -68,21 +74,6 @@ class AuthorizationComponentTest extends TestCase {
 		$service = $request->getAttribute('authorization');
 
 		$this->assertInstanceOf(AuthorizationService::class, $service);
-	}
-
-	/**
-	 * @param \Cake\Http\ServerRequest $request
-	 * @return \Cake\Controller\Controller|\PHPUnit_Framework_MockObject_MockObject
-	 */
-	protected function getControllerMock(ServerRequest $request) {
-		$controller = $this->getMockBuilder(Controller::class)
-			->setConstructorArgs([$request])
-			->setMethods(['isAction'])
-			->getMock();
-
-		$controller->expects($this->any())->method('isAction')->willReturn(true);
-
-		return $controller;
 	}
 
 }

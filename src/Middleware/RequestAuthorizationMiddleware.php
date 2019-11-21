@@ -5,7 +5,6 @@ namespace TinyAuth\Middleware;
 use Authorization\Exception\ForbiddenException;
 use Authorization\Middleware\RequestAuthorizationMiddleware as PluginRequestAuthorizationMiddleware;
 use Authorization\Policy\Result;
-use Authorization\Policy\ResultInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use TinyAuth\Auth\AclTrait;

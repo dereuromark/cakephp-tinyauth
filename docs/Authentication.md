@@ -27,15 +27,15 @@ You can always set up "deny" rules for any action to protect a specific one from
 If you want to allow certain prefixes on top, you can use:
 ```php
 'allowPrefixes' => [
-    'my_prefix',
-    'nested/prefix',
+    'MyPrefix',
+    'Nested/Prefix',
 ],
 ```
 
->**Note:** Prefixes are always `lowercase_underscored` (even if routing makes them to `dashed-ones` in the URL).
+>**Note:** Prefixes are always `CamelCased` (even if routing makes them to `dashed-ones` in the URL).
 
 Careful: Nested prefixes currently also match (and inherit) by parent.
-So if `my_prefix` is allowed, `my_prefix/sub` and other nested ones would also automatically be allowed.
+So if `MyPrefix` is allowed, `MyPrefix/Sub` and other nested ones would also automatically be allowed.
 You would need to explicitly set up ACL rules here to deny those if needed.
 
 At the same time you can always set up "deny" rules for any allowed prefix to revoke the set default.
@@ -63,7 +63,7 @@ Use it to specify what actions are not protected by authentication.
 
 The section key syntax follows the CakePHP naming convention:
 ```
-PluginName.my_prefix/MyController
+PluginName.MyPrefix/MyController
 ```
 
 Make sure to create an entry for each action you want to expose and use:
@@ -80,11 +80,11 @@ Users = index
 ; ----------------------------------------------------------
 ; UsersController using /api prefixed route
 ; ----------------------------------------------------------
-api/Users = index, view, edit
+Api/Users = index, view, edit
 ; ----------------------------------------------------------
 ; UsersController using /admin prefixed route
 ; ----------------------------------------------------------
-admin/Users = *
+Admin/Users = *
 ; ----------------------------------------------------------
 ; AccountsController in plugin named Accounts
 ; ----------------------------------------------------------
@@ -93,11 +93,11 @@ Accounts.Accounts = view, edit
 ; AccountsController in plugin named Accounts using /my-admin
 ; prefixed route (assuming you are using recommended DashedRoute class)
 ; ----------------------------------------------------------
-Accounts.my_admin/Accounts = index
+Accounts.MyAdmin/Accounts = index
 ```
 
->**Note:** Prefixes are always `lowercase_underscored`. The route inflects to the final casing if needed. 
-Nested prefixes are joined using `/`, e.g. `my/admin/nested`.
+>**Note:** Prefixes are always `CamelCased`. The route inflects to the final casing if needed. 
+Nested prefixes are joined using `/`, e.g. `MyAdmin/Nested`.
 
 Using only "granting" is recommended for security reasons.
 Careful with denying, as this can accidentally open up more than desired actions. If you really want to use it:

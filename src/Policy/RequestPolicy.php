@@ -1,6 +1,7 @@
 <?php
 namespace TinyAuth\Policy;
 
+use Authorization\IdentityInterface;
 use Authorization\Policy\RequestPolicyInterface;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Http\ServerRequest;
@@ -37,11 +38,11 @@ class RequestPolicy implements RequestPolicyInterface {
 	 * @param \Cake\Http\ServerRequest $request Request
 	 * @return bool
 	 */
-	public function canAccess($identity, ServerRequest $request) {
+	public function canAccess(?IdentityInterface $identity, ServerRequest $request) {
 		$params = $request->getAttribute('params');
-		$user = $identity->getOriginalData();
+		$user = $identity ? (array)$identity->getOriginalData() : [];
 
-		return $this->_checkUser((array)$user, $params);
+		return $this->_checkUser($user, $params);
 	}
 
 }

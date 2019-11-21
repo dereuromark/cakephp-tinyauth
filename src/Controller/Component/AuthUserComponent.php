@@ -2,9 +2,9 @@
 
 namespace TinyAuth\Controller\Component;
 
-use Cake\Event\EventInterface;
 use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
+use Cake\Event\EventInterface;
 use TinyAuth\Auth\AclTrait;
 use TinyAuth\Auth\AuthUserTrait;
 use TinyAuth\Utility\Config;

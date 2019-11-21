@@ -160,7 +160,7 @@ class AuthUserComponentTest extends TestCase {
 		$event = new Event('Controller.beforeRender', $controller);
 		$this->AuthUser->beforeRender($event);
 
-		$this->assertSame([], $controller->viewVars['_authUser']);
+		$this->assertSame([], $controller->viewBuilder()->getVar('_authUser'));
 	}
 
 	/**

@@ -41,7 +41,7 @@ class Config {
 		'superAdminColumn' => null, // Column of super admin
 		'authorizeByPrefix' => false, // true for all available 1:1 matching or list of [prefix => role(s)]
 		'allowLoggedIn' => false, // enable to allow logged in user access to all actions except prefixed with 'protectedPrefix'
-		'protectedPrefix' => 'admin', // name or array of names as prefix route blacklist - only used when 'allowLoggedIn' is enabled
+		'protectedPrefix' => 'Admin', // name or array of names as prefix route blacklist - only used when 'allowLoggedIn' is enabled
 		'autoClearCache' => null, // Set to true to delete cache automatically in debug mode, keep null for auto-detect
 		'aclFilePath' => null, // Possible to locate INI file at given path e.g. Plugin::configPath('Admin'), filePath is also available for shared config
 		'aclFile' => 'auth_acl.ini',
@@ -59,16 +59,6 @@ class Config {
 				$config['autoClearCache'] = Configure::read('debug');
 			}
 
-			// BC from 1.x
-			if (isset($config['allowUser'])) {
-				trigger_error('Deprecated `allowUser`, use `allowLoggedIn` instead.', E_USER_DEPRECATED);
-				$config['allowLoggedIn'] = $config['allowUser'];
-			}
-			if (isset($config['adminPrefix'])) {
-				trigger_error('Deprecated `adminPrefix`, use `protectedPrefix` instead.', E_USER_DEPRECATED);
-				$config['protectedPrefix'] = $config['adminPrefix'];
-			}
-
 			static::$_config = $config;
 		}
 
@@ -77,7 +67,7 @@ class Config {
 
 	/**
 	 * @param string $key
-	 *
+	 * @throws \Cake\Core\Exception\Exception
 	 * @return mixed
 	 */
 	public static function get($key) {

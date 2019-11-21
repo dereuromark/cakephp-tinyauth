@@ -2,6 +2,7 @@
 namespace TinyAuth\Utility;
 
 use Cake\Core\Exception\Exception;
+use Cake\Utility\Inflector;
 
 class Utility {
 
@@ -22,7 +23,8 @@ class Utility {
 		}
 		$lastSlashPos = strrpos($key, '/');
 		if ($lastSlashPos !== false) {
-			$res['prefix'] = substr($key, 0, $lastSlashPos);
+			$prefix = substr($key, 0, $lastSlashPos);
+			$res['prefix'] = Inflector::camelize($prefix);
 			$key = substr($key, $lastSlashPos + 1);
 		}
 		$res['controller'] = $key;

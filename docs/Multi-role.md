@@ -3,7 +3,7 @@
 ```php
 // in your app.php
 'TinyAuth' => [
-    'multiRole' => true
+    'multiRole' => true,
 ]
 ```
 
