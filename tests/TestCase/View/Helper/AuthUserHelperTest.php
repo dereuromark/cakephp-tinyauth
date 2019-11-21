@@ -34,6 +34,8 @@ class AuthUserHelperTest extends TestCase {
 	 */
 	public function setUp(): void {
 		parent::setUp();
+
+		Router::reload();
 		Configure::write('Roles', [
 			'user' => 1,
 			'moderator' => 2,

@@ -83,7 +83,7 @@ class AuthPanelTest extends TestCase {
 			'action' => 'index',
 		];
 
-		$request = new ServerRequest('/users');
+		$request = new ServerRequest(['url' => '/users']);
 		$request = $request->withAttribute('params', $url);
 		$controller = new Controller($request);
 		$event = new Event('event', $controller);
@@ -112,7 +112,7 @@ class AuthPanelTest extends TestCase {
 			'action' => 'index',
 		];
 
-		$request = new ServerRequest('/tags');
+		$request = new ServerRequest(['url' => '/tags']);
 		$request = $request->withAttribute('params', $url);
 		$controller = new Controller($request);
 		$event = new Event('event', $controller);
@@ -140,7 +140,7 @@ class AuthPanelTest extends TestCase {
 			'action' => 'index',
 		];
 
-		$request = new ServerRequest('/tags');
+		$request = new ServerRequest(['url' => '/tags']);
 		$request = $request->withAttribute('params', $url);
 		$request->getSession()->write('Auth.User', [
 			'id' => 1,
