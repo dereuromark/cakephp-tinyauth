@@ -12,7 +12,7 @@ class IniAllowAdapter implements AllowAdapterInterface {
 	 *
 	 * @return array
 	 */
-	public function getAllow(array $config) {
+	public function getAllow(array $config): array {
 		$iniArray = Utility::parseFiles($config['filePath'], $config['file']);
 
 		$auth = [];

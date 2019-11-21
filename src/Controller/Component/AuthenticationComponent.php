@@ -25,6 +25,7 @@ class AuthenticationComponent extends CakeAuthenticationComponent {
 	/**
 	 * @param \Cake\Controller\ComponentRegistry $registry
 	 * @param array $config
+	 * @throws \RuntimeException
 	 */
 	public function __construct(ComponentRegistry $registry, array $config = []) {
 		$config += Config::all();
@@ -41,7 +42,7 @@ class AuthenticationComponent extends CakeAuthenticationComponent {
 	 *
 	 * @return void
 	 */
-	public function startup() {
+	public function startup(): void {
 		$this->_prepareAuthentication();
 
 		parent::startup();
@@ -53,6 +54,7 @@ class AuthenticationComponent extends CakeAuthenticationComponent {
 	 * If no URL is given it will default to the current request URL.
 	 *
 	 * @param array $url
+	 * @throws \Cake\Core\Exception\Exception
 	 * @return bool
 	 */
 	public function isPublic(array $url = []) {

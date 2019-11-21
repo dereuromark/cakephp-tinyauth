@@ -7,11 +7,11 @@ use TinyAuth\Auth\AclAdapter\AclAdapterInterface;
 class CustomAclAdapter implements AclAdapterInterface {
 
 	/**
-	 * {@inheritdoc}
+	 * {@inheritDoc}
 	 *
 	 * @return array
 	 */
-	public function getAcl(array $availableRoles, array $config) {
+	public function getAcl(array $availableRoles, array $config): array {
 		return [];
 	}
 

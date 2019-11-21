@@ -3,7 +3,7 @@
 namespace TinyAuth\Panel;
 
 use Cake\Core\InstanceConfigTrait;
-use Cake\Event\Event;
+use Cake\Event\EventInterface;
 use DebugKit\DebugPanel;
 use TinyAuth\Auth\AclTrait;
 use TinyAuth\Auth\AllowTrait;
@@ -52,14 +52,14 @@ class AuthPanel extends DebugPanel {
 	/**
 	 * Data collection callback.
 	 *
-	 * @param \Cake\Event\Event $event The shutdown event.
+	 * @param \Cake\Event\EventInterface $event The shutdown event.
 	 *
 	 * @return void
 	 */
-	public function shutdown(Event $event) {
+	public function shutdown(EventInterface $event) {
 		/** @var  \Cake\Controller\Controller $controller */
 		$controller = $event->getSubject();
-		$request = $controller->request;
+		$request = $controller->getRequest();
 
 		$params = $this->_getParams($request->getAttribute('params'));
 		$availableRoles = (new TinyAuth())->getAvailableRoles();

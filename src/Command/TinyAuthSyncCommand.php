@@ -27,7 +27,7 @@ class TinyAuthSyncCommand extends Command implements CommandCollectionAwareInter
 	 * @param \Cake\Console\CommandCollection $commands The commands to use.
 	 * @return void
 	 */
-	public function setCommandCollection(CommandCollection $commands) {
+	public function setCommandCollection(CommandCollection $commands): void {
 		$this->commands = $commands;
 	}
 
@@ -59,7 +59,7 @@ class TinyAuthSyncCommand extends Command implements CommandCollectionAwareInter
 	 * @param \Cake\Console\ConsoleOptionParser $parser The parser to build
 	 * @return \Cake\Console\ConsoleOptionParser
 	 */
-	protected function buildOptionParser(ConsoleOptionParser $parser) {
+	protected function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser {
 		$roles = $this->_getAvailableRoles();
 
 		$parser->setDescription(

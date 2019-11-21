@@ -28,6 +28,7 @@ class AuthorizationComponent extends CakeAuthorizationComponent {
 	/**
 	 * @param \Cake\Controller\ComponentRegistry $registry
 	 * @param array $config
+	 * @throws \RuntimeException
 	 */
 	public function __construct(ComponentRegistry $registry, array $config = []) {
 		$config += Config::all();
@@ -52,7 +53,7 @@ class AuthorizationComponent extends CakeAuthorizationComponent {
 	 *
 	 * @return void
 	 */
-	public function authorizeAction() {
+	public function authorizeAction(): void {
 		if ($this->_isUnauthenticatedAction()) {
 			$this->skipAuthorization();
 

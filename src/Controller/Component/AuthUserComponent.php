@@ -2,9 +2,9 @@
 
 namespace TinyAuth\Controller\Component;
 
+use Cake\Event\EventInterface;
 use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
-use Cake\Event\Event;
 use TinyAuth\Auth\AclTrait;
 use TinyAuth\Auth\AuthUserTrait;
 use TinyAuth\Utility\Config;
@@ -27,7 +27,6 @@ class AuthUserComponent extends Component {
 	/**
 	 * @param \Cake\Controller\ComponentRegistry $registry
 	 * @param array $config
-	 * @throws \Cake\Core\Exception\Exception
 	 */
 	public function __construct(ComponentRegistry $registry, array $config = []) {
 		$config += Config::all();
@@ -36,10 +35,10 @@ class AuthUserComponent extends Component {
 	}
 
 	/**
-	 * @param \Cake\Event\Event $event
-	 * @return \Cake\Http\Response|null
+	 * @param \Cake\Event\EventInterface $event
+	 * @return \Cake\Http\Response|null|void
 	 */
-	public function beforeRender(Event $event) {
+	public function beforeRender(EventInterface $event) {
 		/** @var \Cake\Controller\Controller $controller */
 		$controller = $event->getSubject();
 
@@ -53,8 +52,8 @@ class AuthUserComponent extends Component {
 	 * @param array $url
 	 * @return bool
 	 */
-	public function hasAccess(array $url) {
-		$params = $this->request->getAttribute('params');
+	public function hasAccess(array $url): bool {
+		$params = $this->getController()->getRequest()->getAttribute('params');
 		$url += [
 			'prefix' => !empty($params['prefix']) ? $params['prefix'] : null,
 			'plugin' => !empty($params['plugin']) ? $params['plugin'] : null,

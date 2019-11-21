@@ -42,6 +42,7 @@ class RequestAuthorizationMiddleware extends PluginRequestAuthorizationMiddlewar
 	 * @param \Psr\Http\Message\ServerRequestInterface $request Server request.
 	 * @param \Psr\Http\Message\ResponseInterface $response Response.
 	 * @param callable $next The next middleware to call.
+	 * @throws \Authorization\Exception\ForbiddenException
 	 * @return \Psr\Http\Message\ResponseInterface A response.
 	 */
 	public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next) {
@@ -57,11 +58,9 @@ class RequestAuthorizationMiddleware extends PluginRequestAuthorizationMiddlewar
 
 		$identity = $request->getAttribute($this->getConfig('identityAttribute'));
 
-		$result = $service->can($identity, $this->getConfig('method'), $request);
-		if (!$result instanceof ResultInterface) {
-			$result = new Result($result);
-		}
-		if (!$result->getStatus()) {
+		$can = $service->can($identity, $this->getConfig('method'), $request);
+		if (!$can) {
+			$result = new Result($can, 'Can not ' . $this->getConfig('method') . ' request');
 			throw new ForbiddenException($result);
 		}
 

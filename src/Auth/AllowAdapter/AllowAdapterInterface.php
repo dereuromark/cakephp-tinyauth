@@ -11,6 +11,6 @@ interface AllowAdapterInterface {
 	 *
 	 * @return array
 	 */
-	public function getAllow(array $config);
+	public function getAllow(array $config): array;
 
 }

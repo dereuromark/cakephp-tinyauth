@@ -3,5 +3,4 @@ parameters:
     - %rootDir%/../../../tests/bootstrap.php
 
   ignoreErrors:
-    - '#Cannot call method toArray\(\) on array|Cake\ORM\Query#'
     - '#Access to an undefined property .+Controller::\$AuthUser#'

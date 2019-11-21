@@ -68,12 +68,12 @@ class AuthUserHelper extends Helper {
 			];
 		}
 
-		$authuser = isset($this->_View->viewVars['_authUser']) ? $this->_View->viewVars['_authUser'] : null;
-		if ($authuser === null && !$this->getConfig('includeAuthentication')) {
+		$authUser = $this->_View->get('_authUser');
+		if ($authUser === null && !$this->getConfig('includeAuthentication')) {
 			throw new Exception('Variable _authUser containing the user data needs to be passed down. The TinyAuth.Auth component does it automatically, if loaded.');
 		}
 
-		return $this->_checkUser((array)$authuser, $url);
+		return $this->_checkUser((array)$authUser, $url);
 	}
 
 	/**
@@ -139,11 +139,12 @@ class AuthUserHelper extends Helper {
 	 * @throws \Cake\Core\Exception\Exception
 	 */
 	protected function _getUser() {
-		if (!isset($this->_View->viewVars['_authUser'])) {
+		$authUser = $this->_View->get('_authUser');
+		if (!$authUser) {
 			throw new Exception('AuthUser helper needs AuthUser component to function');
 		}
 
-		return $this->_View->viewVars['_authUser'];
+		return $authUser;
 	}
 
 }

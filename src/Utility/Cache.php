@@ -74,7 +74,7 @@ class Cache {
 
 	/**
 	 * @param string $type
-	 *
+	 * @throws \Cake\Core\Exception\Exception
 	 * @return string
 	 */
 	public static function key($type) {
@@ -92,7 +92,7 @@ class Cache {
 
 	/**
 	 * @param array $config
-	 *
+	 * @throws \Cake\Core\Exception\Exception
 	 * @return void
 	 */
 	protected static function assertValidCacheSetup(array $config) {

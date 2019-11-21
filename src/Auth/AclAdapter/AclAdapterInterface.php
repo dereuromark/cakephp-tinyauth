@@ -12,6 +12,6 @@ interface AclAdapterInterface {
 	 *
 	 * @return array
 	 */
-	public function getAcl(array $availableRoles, array $config);
+	public function getAcl(array $availableRoles, array $config): array;
 
 }
