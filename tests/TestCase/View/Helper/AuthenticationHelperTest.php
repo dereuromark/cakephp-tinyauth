@@ -19,7 +19,7 @@ class AuthenticationHelperTest extends TestCase {
 	 *
 	 * @return void
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->config = [
@@ -36,7 +36,7 @@ class AuthenticationHelperTest extends TestCase {
 	 *
 	 * @return void
 	 */
-	public function tearDown() {
+	public function tearDown(): void {
 		unset($this->helper);
 
 		parent::tearDown();

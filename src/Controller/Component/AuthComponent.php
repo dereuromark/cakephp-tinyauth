@@ -23,6 +23,7 @@ class AuthComponent extends CakeAuthComponent {
 	/**
 	 * @param \Cake\Controller\ComponentRegistry $registry
 	 * @param array $config
+	 * @throws \RuntimeException
 	 */
 	public function __construct(ComponentRegistry $registry, array $config = []) {
 		$config += Config::all();
@@ -41,7 +42,7 @@ class AuthComponent extends CakeAuthComponent {
 	 * @param array $config The config data.
 	 * @return void
 	 */
-	public function initialize(array $config) {
+	public function initialize(array $config): void {
 		parent::initialize($config);
 
 		$params = $this->_registry->getController()->getRequest()->getAttribute('params');

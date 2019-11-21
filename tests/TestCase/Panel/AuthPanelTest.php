@@ -25,7 +25,7 @@ class AuthPanelTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		Config::drop();
@@ -50,7 +50,7 @@ class AuthPanelTest extends TestCase {
 	 *
 	 * @return void
 	 */
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 
 		Configure::delete('TinyAuth');

@@ -29,7 +29,7 @@ class AuthUserComponentTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		$controller = new Controller(new ServerRequest());
 		$componentRegistry = new ComponentRegistry($controller);
 		$this->AuthUser = new TestAuthUserComponent($componentRegistry);

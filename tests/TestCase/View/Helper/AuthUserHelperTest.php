@@ -32,7 +32,7 @@ class AuthUserHelperTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 		Configure::write('Roles', [
 			'user' => 1,
@@ -52,7 +52,7 @@ class AuthUserHelperTest extends TestCase {
 	 *
 	 * @return void
 	 */
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 		Router::reload();
 	}
