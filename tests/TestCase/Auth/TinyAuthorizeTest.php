@@ -958,7 +958,7 @@ class TinyAuthorizeTest extends TestCase {
 	public function testAuthorizeRolesAsPrefix() {
 		$config = [
 			'authorizeByPrefix' => true,
-			'autoClearCache' => true
+			'autoClearCache' => true,
 		];
 		$object = new TestTinyAuthorize($this->collection, $config);
 
@@ -1130,7 +1130,7 @@ class TinyAuthorizeTest extends TestCase {
 		$params = [
 			'controller' => 'Tags',
 			'prefix' => null,
-			'plugin' => 'Tags'
+			'plugin' => 'Tags',
 		];
 
 		$expected = 'Tags.Tags';
@@ -1141,7 +1141,7 @@ class TinyAuthorizeTest extends TestCase {
 		$params = [
 			'controller' => 'Tags',
 			'prefix' => 'Admin',
-			'plugin' => 'Tags'
+			'plugin' => 'Tags',
 		];
 
 		$expected = 'Tags.Admin/Tags';
