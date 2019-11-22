@@ -20,7 +20,7 @@ class DatabaseRolesFixture extends TestFixture {
 		'alias' => ['type' => 'string', 'null' => false, 'default' => null, 'length' => 20, 'collate' => 'utf8_unicode_ci', 'comment' => '', 'charset' => 'utf8'],
 		'created' => ['type' => 'datetime', 'null' => true, 'default' => null, 'collate' => null, 'comment' => ''],
 		'modified' => ['type' => 'datetime', 'null' => true, 'default' => null, 'collate' => null, 'comment' => ''],
-		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
 	];
 
 	/**
@@ -52,7 +52,7 @@ class DatabaseRolesFixture extends TestFixture {
 			'alias' => 'admin',
 			'created' => '2010-01-07 03:36:33',
 			'modified' => '2010-01-07 03:36:33',
-		]
+		],
 	];
 
 }

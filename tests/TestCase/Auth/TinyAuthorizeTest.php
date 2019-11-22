@@ -26,7 +26,7 @@ class TinyAuthorizeTest extends TestCase {
 		'plugin.TinyAuth.EmptyRoles',
 		'plugin.TinyAuth.RolesUsers',
 		'plugin.TinyAuth.DatabaseRolesUsers',
-		'plugin.TinyAuth.DatabaseUserRoles'
+		'plugin.TinyAuth.DatabaseUserRoles',
 	];
 
 	/**
@@ -52,7 +52,7 @@ class TinyAuthorizeTest extends TestCase {
 		Configure::write('Roles', [
 			'user' => ROLE_USER,
 			'moderator' => ROLE_MODERATOR,
-			'admin' => ROLE_ADMIN
+			'admin' => ROLE_ADMIN,
 		]);
 
 		Configure::write('TinyAuth', [
@@ -69,7 +69,7 @@ class TinyAuthorizeTest extends TestCase {
 	public function testConstructor() {
 		$object = new TestTinyAuthorize($this->collection, [
 			'rolesTable' => 'AuthRoles',
-			'roleColumn' => 'auth_role_id'
+			'roleColumn' => 'auth_role_id',
 		]);
 		$this->assertEquals('AuthRoles', $object->getConfig('rolesTable'));
 		$this->assertEquals('auth_role_id', $object->getConfig('roleColumn'));
@@ -92,7 +92,7 @@ class TinyAuthorizeTest extends TestCase {
 	 */
 	public function testLoadingInvalidAclAdapter() {
 		$object = new TestTinyAuthorize($this->collection, [
-			'aclAdapter' => Configure::class
+			'aclAdapter' => Configure::class,
 		]);
 
 		$this->expectException(InvalidArgumentException::class);
@@ -107,7 +107,7 @@ class TinyAuthorizeTest extends TestCase {
 	 */
 	public function testLoadingNonExistentAclAdapter() {
 		$object = new TestTinyAuthorize($this->collection, [
-			'aclAdapter' => 'Non\\Existent\\Acl\\Adapter'
+			'aclAdapter' => 'Non\\Existent\\Acl\\Adapter',
 		]);
 
 		$this->expectException(Exception::class);
@@ -120,7 +120,7 @@ class TinyAuthorizeTest extends TestCase {
 	 */
 	public function testGetAcl() {
 		$object = new TestTinyAuthorize($this->collection, [
-			'autoClearCache' => true
+			'autoClearCache' => true,
 		]);
 		$res = $object->getAcl();
 
@@ -134,7 +134,7 @@ class TinyAuthorizeTest extends TestCase {
 					'edit' => ['user' => ROLE_USER],
 					'delete' => ['admin' => ROLE_ADMIN],
 					'very_long_underscored_action' => ['user' => ROLE_USER],
-					'veryLongActionNameAction' => ['user' => ROLE_USER]
+					'veryLongActionNameAction' => ['user' => ROLE_USER],
 				],
 				'deny' => [],
 			],
@@ -147,7 +147,7 @@ class TinyAuthorizeTest extends TestCase {
 					'edit' => ['user' => ROLE_USER],
 					'delete' => ['admin' => ROLE_ADMIN],
 					'very_long_underscored_action' => ['user' => ROLE_USER],
-					'veryLongActionNameAction' => ['user' => ROLE_USER]
+					'veryLongActionNameAction' => ['user' => ROLE_USER],
 				],
 				'deny' => [],
 			],
@@ -161,7 +161,7 @@ class TinyAuthorizeTest extends TestCase {
 					'view' => ['user' => ROLE_USER],
 					'delete' => ['admin' => ROLE_ADMIN],
 					'very_long_underscored_action' => ['user' => ROLE_USER],
-					'veryLongActionNameAction' => ['user' => ROLE_USER]
+					'veryLongActionNameAction' => ['user' => ROLE_USER],
 				],
 				'deny' => [],
 			],
@@ -175,7 +175,7 @@ class TinyAuthorizeTest extends TestCase {
 					'view' => ['user' => ROLE_USER],
 					'delete' => ['admin' => ROLE_ADMIN],
 					'very_long_underscored_action' => ['user' => ROLE_USER],
-					'veryLongActionNameAction' => ['user' => ROLE_USER]
+					'veryLongActionNameAction' => ['user' => ROLE_USER],
 				],
 				'deny' => [],
 			],
@@ -184,7 +184,7 @@ class TinyAuthorizeTest extends TestCase {
 				'prefix' => 'Special',
 				'plugin' => null,
 				'allow' => [
-					'*' => ['admin' => ROLE_ADMIN]
+					'*' => ['admin' => ROLE_ADMIN],
 				],
 				'deny' => [],
 			],
@@ -193,7 +193,7 @@ class TinyAuthorizeTest extends TestCase {
 				'prefix' => 'Special',
 				'plugin' => 'Comments',
 				'allow' => [
-					'*' => ['admin' => ROLE_ADMIN]
+					'*' => ['admin' => ROLE_ADMIN],
 				],
 				'deny' => [],
 			],
@@ -202,7 +202,7 @@ class TinyAuthorizeTest extends TestCase {
 				'prefix' => null,
 				'plugin' => null,
 				'allow' => [
-					'*' => ['user' => ROLE_USER, 'moderator' => ROLE_MODERATOR, 'admin' => ROLE_ADMIN]
+					'*' => ['user' => ROLE_USER, 'moderator' => ROLE_MODERATOR, 'admin' => ROLE_ADMIN],
 				],
 				'deny' => [],
 			],
@@ -211,7 +211,7 @@ class TinyAuthorizeTest extends TestCase {
 				'prefix' => 'Admin',
 				'plugin' => null,
 				'allow' => [
-					'*' => ['user' => ROLE_USER, 'moderator' => ROLE_MODERATOR, 'admin' => ROLE_ADMIN]
+					'*' => ['user' => ROLE_USER, 'moderator' => ROLE_MODERATOR, 'admin' => ROLE_ADMIN],
 				],
 				'deny' => [],
 			],
@@ -229,7 +229,7 @@ class TinyAuthorizeTest extends TestCase {
 				'prefix' => 'Admin',
 				'plugin' => 'Posts',
 				'allow' => [
-					'*' => ['user' => ROLE_USER, 'moderator' => ROLE_MODERATOR, 'admin' => ROLE_ADMIN]
+					'*' => ['user' => ROLE_USER, 'moderator' => ROLE_MODERATOR, 'admin' => ROLE_ADMIN],
 				],
 				'deny' => [],
 			],
@@ -283,7 +283,7 @@ class TinyAuthorizeTest extends TestCase {
 				'deny' => [
 					'myDenied' => ['moderator' => ROLE_MODERATOR],
 				],
-			]
+			],
 		];
 		// We don't need the original map
 		foreach ($res as &$r) {
@@ -297,7 +297,7 @@ class TinyAuthorizeTest extends TestCase {
 	 */
 	public function testBasicUserMethodInexistentRole() {
 		$object = new TestTinyAuthorize($this->collection, [
-			'autoClearCache' => true
+			'autoClearCache' => true,
 		]);
 
 		$user = ['role_id' => 99]; // invalid non-existing role
@@ -310,7 +310,7 @@ class TinyAuthorizeTest extends TestCase {
 	 */
 	public function testBasicUserMethodDisallowed() {
 		$object = new TestTinyAuthorize($this->collection, [
-			'autoClearCache' => true
+			'autoClearCache' => true,
 		]);
 		$this->assertEquals('Roles', $object->getConfig('rolesTable'));
 		$this->assertEquals('role_id', $object->getConfig('roleColumn'));
@@ -355,7 +355,7 @@ class TinyAuthorizeTest extends TestCase {
 	 */
 	public function testBasicUserMethodAllowed() {
 		$object = new TestTinyAuthorize($this->collection, [
-			'autoClearCache' => true
+			'autoClearCache' => true,
 		]);
 
 		// Test standard controller
@@ -419,7 +419,7 @@ class TinyAuthorizeTest extends TestCase {
 	 */
 	public function testCaseSensitivity() {
 		$object = new TestTinyAuthorize($this->collection, [
-			'autoClearCache' => true
+			'autoClearCache' => true,
 		]);
 
 		// All tests performed against this action
@@ -480,7 +480,7 @@ class TinyAuthorizeTest extends TestCase {
 	 */
 	public function testBasicUserMethodAllowedWithLongActionNames() {
 		$object = new TestTinyAuthorize($this->collection, [
-			'autoClearCache' => true
+			'autoClearCache' => true,
 		]);
 
 		// All tests performed against this action
@@ -537,7 +537,7 @@ class TinyAuthorizeTest extends TestCase {
 	 */
 	public function testBasicUserMethodAllowedWithLongActionNamesUnderscored() {
 		$object = new TestTinyAuthorize($this->collection, [
-			'autoClearCache' => true
+			'autoClearCache' => true,
 		]);
 
 		// All tests performed against this action
@@ -599,7 +599,7 @@ class TinyAuthorizeTest extends TestCase {
 		// Test against roles array in Configure
 		$object = new TestTinyAuthorize($this->collection, [
 			'multiRole' => true,
-			'rolesTable' => 'Roles'
+			'rolesTable' => 'Roles',
 		]);
 
 		$this->request = $this->request->withParam('controller', 'Tags')
@@ -643,7 +643,7 @@ class TinyAuthorizeTest extends TestCase {
 	 */
 	public function testBasicUserMethodAllowedWildcard() {
 		$object = new TestTinyAuthorize($this->collection, [
-			'autoClearCache' => true
+			'autoClearCache' => true,
 		]);
 
 		// All tests performed against this action
@@ -688,7 +688,7 @@ class TinyAuthorizeTest extends TestCase {
 	 */
 	public function testBasicUserMethodAllowedWildcardSpecificGroup() {
 		$object = new TestTinyAuthorize($this->collection, [
-			'autoClearCache' => true
+			'autoClearCache' => true,
 		]);
 
 		// All tests performed against this action
@@ -804,7 +804,7 @@ class TinyAuthorizeTest extends TestCase {
 	public function testUserMethodsAllowed() {
 		$object = new TestTinyAuthorize($this->collection, [
 			'allowLoggedIn' => true,
-			'protectedPrefix' => 'Admin'
+			'protectedPrefix' => 'Admin',
 		]);
 
 		// All tests performed against this action
@@ -919,7 +919,7 @@ class TinyAuthorizeTest extends TestCase {
 	public function testAdminMethodsAllowed() {
 		$config = [
 			'authorizeByPrefix' => ['Admin'],
-			'autoClearCache' => true
+			'autoClearCache' => true,
 		];
 		$object = new TestTinyAuthorize($this->collection, $config);
 
@@ -986,7 +986,7 @@ class TinyAuthorizeTest extends TestCase {
 	public function testAdminMethodsAllowedPrefixMap() {
 		$config = [
 			'authorizeByPrefix' => ['Management' => 'admin', 'Cool' => ['foo', 'bar', 'user']],
-			'autoClearCache' => true
+			'autoClearCache' => true,
 		];
 		$object = new TestTinyAuthorize($this->collection, $config);
 
@@ -1025,11 +1025,11 @@ class TinyAuthorizeTest extends TestCase {
 	 */
 	public function testSuperAdminRole() {
 		$object = new TestTinyAuthorize($this->collection, [
-			'superAdminRole' => 9
+			'superAdminRole' => 9,
 		]);
 		$acl = $object->getAcl();
 		$user = [
-			'role_id' => 9
+			'role_id' => 9,
 		];
 
 		foreach ($acl as $resource) {
@@ -1050,7 +1050,7 @@ class TinyAuthorizeTest extends TestCase {
 	 */
 	public function testIniParsing() {
 		$object = new TestTinyAuthorize($this->collection, [
-			'autoClearCache' => true
+			'autoClearCache' => true,
 		]);
 
 		// Make protected function available
@@ -1062,7 +1062,7 @@ class TinyAuthorizeTest extends TestCase {
 				Plugin::path('TinyAuth') . 'tests' . DS . 'test_files' . DS,
 				Plugin::path('TinyAuth') . 'tests' . DS . 'test_files' . DS . 'subfolder' . DS,
 			],
-			'auth_acl.ini'
+			'auth_acl.ini',
 		]);
 		$this->assertTrue(is_array($res));
 
@@ -1077,7 +1077,7 @@ class TinyAuthorizeTest extends TestCase {
 	 */
 	public function testIniParsingMissingFileException() {
 		$object = new TestTinyAuthorize($this->collection, [
-			'autoClearCache' => true
+			'autoClearCache' => true,
 		]);
 
 		// Make protected function available
@@ -1166,7 +1166,7 @@ class TinyAuthorizeTest extends TestCase {
 		$expected = [
 			'controller' => 'Tags',
 			'plugin' => null,
-			'prefix' => null
+			'prefix' => null,
 		];
 		$res = $method->invokeArgs($object, [$key]);
 		$this->assertEquals($expected, $res);
@@ -1180,7 +1180,7 @@ class TinyAuthorizeTest extends TestCase {
 		$expected = [
 			'controller' => 'Tags',
 			'prefix' => 'Admin',
-			'plugin' => null
+			'plugin' => null,
 		];
 		$res = $method->invokeArgs($object, [$key]);
 		$this->assertEquals($expected, $res);
@@ -1198,7 +1198,7 @@ class TinyAuthorizeTest extends TestCase {
 		$expected = [
 			'controller' => 'Tags',
 			'prefix' => null,
-			'plugin' => 'Tags'
+			'plugin' => 'Tags',
 		];
 		$res = $method->invokeArgs($object, [$key]);
 		$this->assertEquals($expected, $res);
@@ -1220,7 +1220,7 @@ class TinyAuthorizeTest extends TestCase {
 		$expected = [
 			'controller' => 'Tags',
 			'prefix' => 'Admin',
-			'plugin' => 'Tags'
+			'plugin' => 'Tags',
 		];
 		$res = $method->invokeArgs($object, [$key]);
 		$this->assertEquals($expected, $res);
@@ -1253,7 +1253,7 @@ class TinyAuthorizeTest extends TestCase {
 	 */
 	public function testAvailableRoles() {
 		$object = new TestTinyAuthorize($this->collection, [
-			'rolesTable' => 'Roles'
+			'rolesTable' => 'Roles',
 		]);
 
 		// Make protected function available
@@ -1265,7 +1265,7 @@ class TinyAuthorizeTest extends TestCase {
 		$expected = [
 			'user' => ROLE_USER,
 			'moderator' => ROLE_MODERATOR,
-			'admin' => ROLE_ADMIN
+			'admin' => ROLE_ADMIN,
 		];
 		$res = $method->invoke($object);
 		$this->assertEquals($expected, $res);
@@ -1273,12 +1273,12 @@ class TinyAuthorizeTest extends TestCase {
 		// Test against roles from database
 		Configure::delete('Roles');
 		$object = new TestTinyAuthorize($this->collection, [
-			'rolesTable' => 'DatabaseRoles'
+			'rolesTable' => 'DatabaseRoles',
 		]);
 		$expected = [
 			'user' => 11,
 			'moderator' => 12,
-			'admin' => 13
+			'admin' => 13,
 		];
 		$res = $method->invoke($object);
 		$this->assertEquals($expected, $res);
@@ -1292,7 +1292,7 @@ class TinyAuthorizeTest extends TestCase {
 	 */
 	public function testAvailableRolesMissingTableException() {
 		$object = new TestTinyAuthorize($this->collection, [
-			'rolesTable' => 'NonExistentTable'
+			'rolesTable' => 'NonExistentTable',
 		]);
 
 		// Make protected function available
@@ -1314,7 +1314,7 @@ class TinyAuthorizeTest extends TestCase {
 	public function testAvailableRolesEmptyTableException() {
 		$object = new TestTinyAuthorize($this->collection, [
 
-			'rolesTable' => 'EmptyRoles'
+			'rolesTable' => 'EmptyRoles',
 		]);
 
 		// Make protected function available
@@ -1336,7 +1336,7 @@ class TinyAuthorizeTest extends TestCase {
 		$object = new TestTinyAuthorize($this->collection, [
 
 			'multiRole' => false,
-			'roleColumn' => 'role_id'
+			'roleColumn' => 'role_id',
 		]);
 
 		// Make protected function available
@@ -1358,7 +1358,7 @@ class TinyAuthorizeTest extends TestCase {
 		$user = ['id' => 2];
 		$expected = [
 			'user' => 11,
-			'admin' => 13
+			'admin' => 13,
 		];
 		$res = $method->invokeArgs($object, [$user]);
 		$this->assertEquals($expected, $res);
@@ -1385,7 +1385,7 @@ class TinyAuthorizeTest extends TestCase {
 		$user = ['id' => 2];
 		$expected = [
 			'user' => 11,
-			'admin' => 13
+			'admin' => 13,
 		];
 		$res = $method->invokeArgs($object, [$user]);
 		$this->assertEquals($expected, $res);
@@ -1413,33 +1413,33 @@ class TinyAuthorizeTest extends TestCase {
 
 		$user = [
 			'id' => 1,
-			'profile_id' => 2
+			'profile_id' => 2,
 		];
 		$expected = [
 			'user' => 11,
-			'admin' => 13
+			'admin' => 13,
 		];
 		$res = $method->invokeArgs($object, [$user]);
 		$this->assertEquals($expected, $res);
 
 		$user = [
 			'id' => 1,
-			'profile_id' => 1
+			'profile_id' => 1,
 		];
 		$expected = [
 			'user' => 11,
-			'moderator' => 12
+			'moderator' => 12,
 		];
 		$res = $method->invokeArgs($object, [$user]);
 		$this->assertEquals($expected, $res);
 
 		//without id
 		$user = [
-			'profile_id' => 1
+			'profile_id' => 1,
 		];
 		$expected = [
 			'user' => 11,
-			'moderator' => 12
+			'moderator' => 12,
 		];
 		$res = $method->invokeArgs($object, [$user]);
 		$this->assertEquals($expected, $res);
@@ -1473,7 +1473,7 @@ class TinyAuthorizeTest extends TestCase {
 		//single role and use idColumn
 		$object = new TestTinyAuthorize($this->collection, [
 			'idColumn' => 'group_id',
-			'superAdmin' => 1
+			'superAdmin' => 1,
 		]);
 		$user = ['id' => 100, 'role_id' => ROLE_USER, 'group_id' => 1];
 		$res = $object->authorize($user, $this->request);
@@ -1487,7 +1487,7 @@ class TinyAuthorizeTest extends TestCase {
 		$object = new TestTinyAuthorize($this->collection, [
 			'idColumn' => 'any_id_column',
 			'superAdminColumn' => 'group_id',
-			'superAdmin' => 1
+			'superAdmin' => 1,
 		]);
 		$user = ['id' => 100, 'role_id' => ROLE_USER, 'group_id' => 1];
 		$res = $object->authorize($user, $this->request);
@@ -1500,7 +1500,7 @@ class TinyAuthorizeTest extends TestCase {
 		//single role and use superAdminColumn without idColumn
 		$object = new TestTinyAuthorize($this->collection, [
 			'superAdminColumn' => 'group_id',
-			'superAdmin' => 1
+			'superAdmin' => 1,
 		]);
 		$user = ['id' => 100, 'role_id' => ROLE_USER, 'group_id' => 1];
 		$res = $object->authorize($user, $this->request);
@@ -1514,7 +1514,7 @@ class TinyAuthorizeTest extends TestCase {
 		$object = new TestTinyAuthorize($this->collection, [
 			'idColumn' => 'any_id_column',
 			'superAdminColumn' => 'group',
-			'superAdmin' => 'Admin'
+			'superAdmin' => 'Admin',
 		]);
 		$user = ['id' => 100, 'role_id' => ROLE_USER, 'group' => 'admin'];
 		$res = $object->authorize($user, $this->request);
@@ -1535,7 +1535,7 @@ class TinyAuthorizeTest extends TestCase {
 			'pivotTable' => 'DatabaseUserRoles',
 			'roleColumn' => 'role_id',
 			'userColumn' => 'user_id',
-			'superAdmin' => 1
+			'superAdmin' => 1,
 		]);
 		$user = ['id' => 1];
 		$res = $object->authorize($user, $this->request);
@@ -1553,7 +1553,7 @@ class TinyAuthorizeTest extends TestCase {
 			'roleColumn' => 'role_id',
 			'userColumn' => 'user_id',
 			'idColumn' => 'profile_id',
-			'superAdmin' => 1
+			'superAdmin' => 1,
 		]);
 		$user = ['id' => 100, 'profile_id' => 1];
 		$res = $object->authorize($user, $this->request);
@@ -1572,7 +1572,7 @@ class TinyAuthorizeTest extends TestCase {
 			'userColumn' => 'user_id',
 			'idColumn' => 'another_id',
 			'superAdminColumn' => 'group_id',
-			'superAdmin' => 100
+			'superAdmin' => 100,
 		]);
 
 		$user = ['another_id' => 1, 'group_id' => 100];
@@ -1591,7 +1591,7 @@ class TinyAuthorizeTest extends TestCase {
 			'roleColumn' => 'role_id',
 			'userColumn' => 'user_id',
 			'superAdminColumn' => 'group_id',
-			'superAdmin' => 100
+			'superAdmin' => 100,
 		]);
 
 		$user = ['id' => 1, 'group_id' => 100];
@@ -1610,7 +1610,7 @@ class TinyAuthorizeTest extends TestCase {
 			'roleColumn' => 'role_id',
 			'userColumn' => 'user_id',
 			'superAdminColumn' => 'group',
-			'superAdmin' => 'Admin'
+			'superAdmin' => 'Admin',
 		]);
 
 		$user = ['id' => 1, 'group' => 'admin'];
@@ -1635,7 +1635,7 @@ class TinyAuthorizeTest extends TestCase {
 	public function testUserRolesMissingRoleColumn() {
 		$object = new TestTinyAuthorize($this->collection, [
 			'rolesTable' => 'NonExistentTable',
-			'multiRole' => false
+			'multiRole' => false,
 		]);
 
 		// Make protected function available
@@ -1657,7 +1657,7 @@ class TinyAuthorizeTest extends TestCase {
 	public function testUserRolesUserWithoutPivotRoles() {
 		$object = new TestTinyAuthorize($this->collection, [
 			'rolesTable' => 'Roles',
-			'multiRole' => true
+			'multiRole' => true,
 		]);
 
 		// Make protected function available

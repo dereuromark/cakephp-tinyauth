@@ -17,7 +17,7 @@ class UsersFixture extends TestFixture {
 		'id' => ['type' => 'integer'],
 		'username' => ['type' => 'string', 'null' => false, 'length' => 64, 'collate' => 'utf8_unicode_ci', 'comment' => '', 'charset' => 'utf8'],
 		'role_id' => ['type' => 'integer', 'null' => false, 'default' => '0', 'length' => 11, 'collate' => null, 'comment' => ''],
-		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
 	];
 
 	/**
@@ -29,18 +29,18 @@ class UsersFixture extends TestFixture {
 		[
 			'id' => '1',
 			'username' => 'dereuromark',
-			'role_id' => ROLE_USER
+			'role_id' => ROLE_USER,
 		],
 		[
 			'id' => '2',
 			'username' => 'bravo-kernel',
-			'role_id' => ROLE_ADMIN
+			'role_id' => ROLE_ADMIN,
 		],
 		[
 			'id' => '3',
 			'username' => 'adriana',
-			'role_id' => ROLE_MODERATOR
-		]
+			'role_id' => ROLE_MODERATOR,
+		],
 	];
 
 }

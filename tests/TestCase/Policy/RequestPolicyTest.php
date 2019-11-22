@@ -29,7 +29,7 @@ class RequestPolicyTest extends TestCase {
 		Configure::write('Roles', [
 			'user' => ROLE_USER,
 			'moderator' => ROLE_MODERATOR,
-			'admin' => ROLE_ADMIN
+			'admin' => ROLE_ADMIN,
 		]);
 
 		$this->config = [

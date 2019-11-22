@@ -33,7 +33,7 @@ class AuthorizationComponentTest extends TestCase {
 		Configure::write('Roles', [
 			'user' => ROLE_USER,
 			'moderator' => ROLE_MODERATOR,
-			'admin' => ROLE_ADMIN
+			'admin' => ROLE_ADMIN,
 		]);
 
 		$this->componentConfig = [
@@ -51,7 +51,7 @@ class AuthorizationComponentTest extends TestCase {
 			'action' => 'view',
 			'plugin' => null,
 			'_ext' => null,
-			'pass' => [1]
+			'pass' => [1],
 		]]);
 		/** @var \Authorization\AuthorizationService|\PHPUnit\Framework\MockObject\MockObject $authorization */
 		$authorization = $this->getMockBuilder(AuthorizationService::class)->disableOriginalConstructor()->getMock();

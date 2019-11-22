@@ -41,7 +41,7 @@ class AuthenticationComponentTest extends TestCase {
 			'action' => 'view',
 			'plugin' => null,
 			'_ext' => null,
-			'pass' => [1]
+			'pass' => [1],
 		]]);
 		$controller = $this->getControllerMock($request);
 		$registry = new ComponentRegistry($controller);
@@ -64,7 +64,7 @@ class AuthenticationComponentTest extends TestCase {
 			'action' => 'view',
 			'plugin' => null,
 			'_ext' => null,
-			'pass' => [1]
+			'pass' => [1],
 		]]);
 		$controller = $this->getControllerMock($request);
 		$registry = new ComponentRegistry($controller);
@@ -83,7 +83,7 @@ class AuthenticationComponentTest extends TestCase {
 			'action' => 'view',
 			'plugin' => null,
 			'_ext' => null,
-			'pass' => [1]
+			'pass' => [1],
 		]]);
 		$controller = $this->getControllerMock($request);
 		$registry = new ComponentRegistry($controller);

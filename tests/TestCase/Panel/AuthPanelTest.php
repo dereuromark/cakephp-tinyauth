@@ -33,7 +33,7 @@ class AuthPanelTest extends TestCase {
 		Configure::write('Roles', [
 			'user' => 1,
 			'moderator' => 2,
-			'admin' => 3
+			'admin' => 3,
 		]);
 		$config = [
 			'allowFilePath' => Plugin::path('TinyAuth') . 'tests' . DS . 'test_files' . DS,

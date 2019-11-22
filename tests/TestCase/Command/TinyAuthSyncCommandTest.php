@@ -19,7 +19,7 @@ class TinyAuthSyncCommandTest extends ConsoleIntegrationTestCase {
 		Configure::write('Roles', [
 			'user' => 1,
 			'moderator' => 2,
-			'admin' => 3
+			'admin' => 3,
 		]);
 
 		$this->setAppNamespace();
