@@ -18,7 +18,7 @@ class AuthUserComponentTest extends TestCase {
 	 * @var array
 	 */
 	public $fixtures = [
-		'core.Sessions'
+		'core.Sessions',
 	];
 
 	/**
@@ -38,7 +38,7 @@ class AuthUserComponentTest extends TestCase {
 		Configure::write('Roles', [
 			'user' => 1,
 			'moderator' => 2,
-			'admin' => 3
+			'admin' => 3,
 		]);
 		$this->AuthUser->setConfig('autoClearCache', true);
 	}
@@ -49,7 +49,7 @@ class AuthUserComponentTest extends TestCase {
 	public function testIsAuthorizedValid() {
 		$user = [
 			'id' => 1,
-			'role_id' => 1
+			'role_id' => 1,
 		];
 		$this->AuthUser->Auth->expects($this->once())
 			->method('user')
@@ -70,7 +70,7 @@ class AuthUserComponentTest extends TestCase {
 	public function testIsAuthorizedInvalid() {
 		$user = [
 			'id' => 1,
-			'role_id' => 1
+			'role_id' => 1,
 		];
 		$this->AuthUser->Auth->expects($this->once())
 			->method('user')
@@ -113,7 +113,7 @@ class AuthUserComponentTest extends TestCase {
 			'Users' => [
 				'controller' => 'Users',
 				'allow' => ['view'],
-			]
+			],
 		];
 		Cache::write(Cache::KEY_ALLOW, $data);
 
@@ -140,7 +140,7 @@ class AuthUserComponentTest extends TestCase {
 			'Users' => [
 				'controller' => 'Users',
 				'allow' => ['index'],
-			]
+			],
 		];
 		Cache::write($cacheKey, $data, $cache);
 

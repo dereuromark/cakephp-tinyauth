@@ -15,8 +15,8 @@ class DatabaseRolesUsersFixture extends TestFixture {
 		'user_id' => ['type' => 'integer'],
 		'database_role_id' => ['type' => 'integer'],
 		'_constraints' => [
-			'primary' => ['type' => 'primary', 'columns' => ['id']]
-		]
+			'primary' => ['type' => 'primary', 'columns' => ['id']],
+		],
 	];
 
 	/**
@@ -28,22 +28,22 @@ class DatabaseRolesUsersFixture extends TestFixture {
 		[
 			'id' => 1,
 			'user_id' => 1,
-			'database_role_id' => 11 // user
+			'database_role_id' => 11, // user
 		],
 		[
 			'id' => 2,
 			'user_id' => 1,
-			'database_role_id' => 12 // moderator
+			'database_role_id' => 12, // moderator
 		],
 		[
 			'id' => 3,
 			'user_id' => 2,
-			'database_role_id' => 11 // user
+			'database_role_id' => 11, // user
 		],
 		[
 			'id' => 4,
 			'user_id' => 2,
-			'database_role_id' => 13 // admin
+			'database_role_id' => 13, // admin
 		],
 	];
 

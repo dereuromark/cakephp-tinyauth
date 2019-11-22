@@ -26,7 +26,7 @@ class TinyAuthTest extends TestCase {
 		$expected = [
 			'user' => 11,
 			'moderator' => 12,
-			'admin' => 13
+			'admin' => 13,
 		];
 		$this->assertEquals($expected, $result);
 	}

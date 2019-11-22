@@ -511,7 +511,7 @@ trait AclTrait {
 			list(, $usersTableName) = pluginSplit($this->getConfig('usersTable'));
 			$tables = [
 				$usersTableName,
-				$rolesTableName
+				$rolesTableName,
 			];
 			asort($tables);
 			$pivotTableName = implode('', $tables);

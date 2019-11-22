@@ -44,7 +44,7 @@ class AuthComponentTest extends TestCase {
 			'action' => 'view',
 			'plugin' => null,
 			'_ext' => null,
-			'pass' => [1]
+			'pass' => [1],
 		]]);
 		$controller = $this->getControllerMock($request);
 
@@ -68,7 +68,7 @@ class AuthComponentTest extends TestCase {
 			'controller' => 'Offers',
 			'action' => 'index',
 			'_ext' => null,
-			'pass' => [1]
+			'pass' => [1],
 		]]);
 		$controller = new OffersController($request);
 

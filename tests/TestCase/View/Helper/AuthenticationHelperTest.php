@@ -51,7 +51,7 @@ class AuthenticationHelperTest extends TestCase {
 			'action' => 'view',
 			'plugin' => null,
 			'_ext' => null,
-			'pass' => [1]
+			'pass' => [1],
 		]]);
 		$this->helper->getView()->setRequest($request);
 
@@ -70,7 +70,7 @@ class AuthenticationHelperTest extends TestCase {
 			'action' => 'view',
 			'plugin' => null,
 			'_ext' => null,
-			'pass' => [1]
+			'pass' => [1],
 		]]);
 		$this->helper->getView()->setRequest($request);
 
