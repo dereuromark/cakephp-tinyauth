@@ -1,4 +1,5 @@
 <?php
+
 namespace TestApp\Controller\Admin\MyPrefix;
 
 use Cake\Controller\Controller;

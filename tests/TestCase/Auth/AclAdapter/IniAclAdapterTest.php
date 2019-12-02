@@ -1,4 +1,5 @@
 <?php
+
 namespace TinyAuth\Test\Auth\AclAdapter;
 
 use Cake\Core\Plugin;

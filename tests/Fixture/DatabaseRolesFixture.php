@@ -1,4 +1,5 @@
 <?php
+
 namespace TinyAuth\Test\Fixture;
 
 use Cake\TestSuite\Fixture\TestFixture;

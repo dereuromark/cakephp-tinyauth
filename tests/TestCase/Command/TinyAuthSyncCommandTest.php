@@ -1,4 +1,5 @@
 <?php
+
 namespace TinyAuth\Test\TestCase\Command;
 
 use Cake\Console\Shell;
