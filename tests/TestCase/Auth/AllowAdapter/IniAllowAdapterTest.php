@@ -1,4 +1,5 @@
 <?php
+
 namespace TinyAuth\Test\Auth\AllowAdapter;
 
 use Cake\Core\Plugin;

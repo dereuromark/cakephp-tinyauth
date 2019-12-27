@@ -1,4 +1,5 @@
 <?php
+
 namespace TinyAuth\Auth;
 
 use Cake\Auth\BaseAuthorize;

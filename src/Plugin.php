@@ -1,4 +1,5 @@
 <?php
+
 namespace TinyAuth;
 
 use Cake\Core\BasePlugin;

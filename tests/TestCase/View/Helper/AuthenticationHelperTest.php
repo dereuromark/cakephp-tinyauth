@@ -1,4 +1,5 @@
 <?php
+
 namespace TinyAuth\Test\TestCase\View\Helper;
 
 use Cake\Core\Plugin;

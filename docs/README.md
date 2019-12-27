@@ -60,6 +60,9 @@ You can also clear the cache from code using `TinyAuth\Utility\Cache::clear()` m
 You can easily switch out the INI file adapters for both using `allowAdapter` and `aclAdapter` config.
 This way you can also read from DB or provide any other API driven backend to read the data from for your authentication or authorization.
 
+Current customizations:
+- [TinyAuthBackend plugin](https://github.com/dereuromark/cakephp-tinyauth-backend) as backend GUI for "allow" and "ACL".
+
 ## Troubleshooting
 First of all: Isolate the issue. Never mix **authentication** and **authorization** (read the top part again).
 

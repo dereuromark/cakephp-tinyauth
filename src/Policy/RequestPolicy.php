@@ -1,4 +1,5 @@
 <?php
+
 namespace TinyAuth\Policy;
 
 use Authorization\IdentityInterface;

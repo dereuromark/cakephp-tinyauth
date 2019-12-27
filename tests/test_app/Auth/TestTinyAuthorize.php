@@ -1,4 +1,5 @@
 <?php
+
 namespace TestApp\Auth;
 
 use Cake\Core\Plugin;
