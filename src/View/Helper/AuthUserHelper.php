@@ -141,7 +141,7 @@ class AuthUserHelper extends Helper {
 	protected function _getUser() {
 		$authUser = $this->_View->get('_authUser');
 		if (!$authUser) {
-			throw new Exception('AuthUser helper needs AuthUser component to function');
+			throw new Exception('TinyAuth.AuthUser helper needs TinyAuth.AuthUser component to function. Please make sure it is loaded in your controller.');
 		}
 
 		return $authUser;
