@@ -1,5 +1,5 @@
 # TinyAuth Authorization
-The fast and easy way for user authorization in CakePHP 3.x applications.
+The fast and easy way for user authorization in CakePHP applications.
 
 Enable TinyAuth Authorize if you want to add instant (and easy) role
 based access control (RBAC) to your application.
@@ -388,7 +388,7 @@ can not be taken into account.
 
 
 ## Sync Command
-The plugin offers a convenience CLI command (CakePHP 3.6+) to sync ACL for any new controller.
+The plugin offers a convenience CLI command to sync ACL for any new controller.
 It will automatically skip controllers that are whitelisted as public (non authenticated).
 In a future version this could also be broken down to action level.
 
