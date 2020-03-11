@@ -1,6 +1,7 @@
 parameters:
-  autoload_files:
-    - %rootDir%/../../../tests/bootstrap.php
-
-  ignoreErrors:
-    - '#Access to an undefined property .+Controller::\$AuthUser#'
+	autoload_files:
+		- %rootDir%/../../../tests/bootstrap.php
+	checkMissingIterableValueType: false
+	checkGenericClassInNonGenericObjectType: false
+	ignoreErrors:
+		- '#Access to an undefined property .+Controller::\$AuthUser#'

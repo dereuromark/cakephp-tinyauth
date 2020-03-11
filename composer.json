@@ -42,10 +42,10 @@
 	"prefer-stable": true,
 	"scripts": {
 		"test": "php phpunit.phar",
-		"test-setup": "[ ! -f phpunit.phar ] && wget https://phar.phpunit.de/phpunit-8.4.3.phar && mv phpunit-8.4.3.phar phpunit.phar || true",
+		"test-setup": "[ ! -f phpunit.phar ] && wget https://phar.phpunit.de/phpunit-8.5.1.phar && mv phpunit-8.5.1.phar phpunit.phar || true",
 		"test-coverage" : "php phpunit.phar --log-junit tmp/coverage/unitreport.xml --coverage-html tmp/coverage --coverage-clover tmp/coverage/coverage.xml",
-		"phpstan": "phpstan analyse -c tests/phpstan.neon -l 6 src/",
-		"phpstan-setup": "cp composer.json composer.backup && composer require --dev phpstan/phpstan:^0.11 && mv composer.backup composer.json",
+		"stan": "phpstan analyse -c tests/phpstan.neon -l 7 src/",
+		"stan-setup": "cp composer.json composer.backup && composer require --dev phpstan/phpstan:^0.12 && mv composer.backup composer.json",
 		"cs-check": "phpcs -p --standard=vendor/fig-r/psr2r-sniffer/PSR2R/ruleset.xml --ignore=/tests/test_files/,/config/Migrations/ --extensions=php src/ tests/",
 		"cs-fix": "phpcbf -p --standard=vendor/fig-r/psr2r-sniffer/PSR2R/ruleset.xml --ignore=/tests/test_files/,/config/Migrations/ --extensions=php src/ tests/",
 		"lowest": "validate-prefer-lowest",
