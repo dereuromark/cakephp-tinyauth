@@ -7,6 +7,7 @@ use Authorization\Middleware\RequestAuthorizationMiddleware as PluginRequestAuth
 use Authorization\Policy\Result;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use TinyAuth\Auth\AclTrait;
 use TinyAuth\Auth\AllowTrait;
 use TinyAuth\Utility\Config;
@@ -36,15 +37,12 @@ class RequestAuthorizationMiddleware extends PluginRequestAuthorizationMiddlewar
 	}
 
 	/**
-	 * Callable implementation for the middleware stack.
-	 *
-	 * @param \Psr\Http\Message\ServerRequestInterface $request Server request.
-	 * @param \Psr\Http\Message\ResponseInterface $response Response.
-	 * @param callable $next The next middleware to call.
+	 * @param \Psr\Http\Message\ServerRequestInterface $request
+	 * @param \Psr\Http\Server\RequestHandlerInterface $handler
 	 * @throws \Authorization\Exception\ForbiddenException
-	 * @return \Psr\Http\Message\ResponseInterface A response.
+	 * @return \Psr\Http\Message\ResponseInterface
 	 */
-	public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next) {
+	public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface {
 		$params = $request->getAttribute('params');
 		$rule = $this->_getAllowRule($params);
 
@@ -52,7 +50,7 @@ class RequestAuthorizationMiddleware extends PluginRequestAuthorizationMiddlewar
 		if ($this->_isActionAllowed($rule, $params['action'])) {
 			$service->skipAuthorization();
 
-			return $next($request, $response);
+			return $handler->handle($request);
 		}
 
 		$identity = $request->getAttribute($this->getConfig('identityAttribute'));
@@ -63,7 +61,7 @@ class RequestAuthorizationMiddleware extends PluginRequestAuthorizationMiddlewar
 			throw new ForbiddenException($result);
 		}
 
-		return $next($request, $response);
+		return $handler->handle($request);
 	}
 
 }
