@@ -10,7 +10,7 @@ $this->loadComponent('TinyAuth.Authorization', [
 ]);
 ```
 
-And in your `Application` class you need to load both `Authoritation` and TinyAuth specific
+And in your `Application` class you need to load both `Authorization` and TinyAuth specific
 `RequestAuthorization` middlewares in that order:
 
 ```php
