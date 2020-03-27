@@ -7,6 +7,7 @@ use Authorization\Policy\RequestPolicyInterface;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Http\ServerRequest;
 use TinyAuth\Auth\AclTrait;
+use TinyAuth\Auth\AllowTrait;
 use TinyAuth\Utility\Config;
 
 /**
@@ -15,6 +16,7 @@ use TinyAuth\Utility\Config;
 class RequestPolicy implements RequestPolicyInterface {
 
 	use AclTrait;
+	use AllowTrait;
 	use InstanceConfigTrait;
 
 	/**

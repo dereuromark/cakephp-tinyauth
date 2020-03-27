@@ -349,9 +349,8 @@ trait AclTrait {
 			return $this->auth;
 		}
 
-		$authAllow = Cache::read(Cache::KEY_ALLOW);
+		$authAllow = $this->_getAllow();
 		if ($authAllow === null) {
-			//TOOD make refactor to collect data at runtime? Should not be necessary if AuthComponent is used properly.
 			throw new Exception('Cache for Authentication data not found. This is required for `includeAuthentication` as true. Make sure you enabled TinyAuth.AuthComponent.');
 		}
 
