@@ -28,6 +28,7 @@ use TinyAuth\Utility\Config;
 class TinyAuthorize extends BaseAuthorize {
 
 	use AclTrait;
+	use AllowTrait;
 
 	/**
 	 * @param \Cake\Controller\ComponentRegistry $registry

@@ -4,10 +4,12 @@ namespace TinyAuth\Utility;
 
 use Cake\Core\InstanceConfigTrait;
 use TinyAuth\Auth\AclTrait;
+use TinyAuth\Auth\AllowTrait;
 
 class TinyAuth {
 
 	use AclTrait;
+	use AllowTrait;
 	use InstanceConfigTrait;
 
 	/**

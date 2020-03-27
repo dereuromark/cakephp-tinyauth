@@ -350,9 +350,6 @@ trait AclTrait {
 		}
 
 		$authAllow = $this->_getAllow();
-		if ($authAllow === null) {
-			throw new Exception('Cache for Authentication data not found. This is required for `includeAuthentication` as true. Make sure you enabled TinyAuth.AuthComponent.');
-		}
 
 		$this->auth = $authAllow;
 
