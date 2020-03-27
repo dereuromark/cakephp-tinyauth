@@ -7,6 +7,7 @@ use Cake\Routing\Router;
 use Cake\View\Helper;
 use Cake\View\View;
 use TinyAuth\Auth\AclTrait;
+use TinyAuth\Auth\AllowTrait;
 use TinyAuth\Auth\AuthUserTrait;
 use TinyAuth\Utility\Config;
 
@@ -16,7 +17,9 @@ use TinyAuth\Utility\Config;
  */
 class AuthUserHelper extends Helper {
 
-	use AclTrait, AuthUserTrait;
+	use AclTrait;
+	use AllowTrait;
+	use	AuthUserTrait;
 
 	/**
 	 * @var array

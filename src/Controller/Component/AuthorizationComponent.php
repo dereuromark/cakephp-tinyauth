@@ -6,6 +6,7 @@ use Authorization\Controller\Component\AuthorizationComponent as CakeAuthorizati
 use Cake\Controller\ComponentRegistry;
 use RuntimeException;
 use TinyAuth\Auth\AclTrait;
+use TinyAuth\Auth\AllowTrait;
 use TinyAuth\Utility\Config;
 
 /**
@@ -19,6 +20,7 @@ use TinyAuth\Utility\Config;
 class AuthorizationComponent extends CakeAuthorizationComponent {
 
 	use AclTrait;
+	use AllowTrait;
 
 	/**
 	 * @var \TinyAuth\Controller\Component\AuthenticationComponent|null

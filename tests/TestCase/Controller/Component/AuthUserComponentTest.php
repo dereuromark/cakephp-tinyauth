@@ -109,6 +109,7 @@ class AuthUserComponentTest extends TestCase {
 	 */
 	public function testHasAccessPublicCache() {
 		$this->AuthUser->setConfig('includeAuthentication', true);
+		$this->AuthUser->setConfig('autoClearCache', false);
 		$data = [
 			'Users' => [
 				'controller' => 'Users',
@@ -130,11 +131,7 @@ class AuthUserComponentTest extends TestCase {
 	 */
 	public function testHasAccessPublicInvalid() {
 		$this->AuthUser->setConfig('includeAuthentication', true);
-		$cache = '_cake_core_';
-		$cacheKey = 'allow';
-		Configure::write('TinyAuth.cache', $cache);
-		Configure::write('TinyAuth.cachePrefix', 'tiny_auth_');
-		Configure::write('TinyAuth.cacheKey', $cacheKey);
+		$this->AuthUser->setConfig('autoClearCache', false);
 
 		$data = [
 			'Users' => [
@@ -142,7 +139,7 @@ class AuthUserComponentTest extends TestCase {
 				'allow' => ['index'],
 			],
 		];
-		Cache::write($cacheKey, $data, $cache);
+		Cache::write(Cache::KEY_ALLOW, $data);
 
 		$request = [
 			'controller' => 'Users',
