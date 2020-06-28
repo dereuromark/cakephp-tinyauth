@@ -36,7 +36,8 @@ class AuthenticationComponentTest extends TestCase {
 	 * @return void
 	 */
 	public function testValid() {
-		$request = new ServerRequest(['params' => [
+		$request = new ServerRequest([
+'params' => [
 			'controller' => 'Users',
 			'action' => 'view',
 			'plugin' => null,
@@ -59,7 +60,8 @@ class AuthenticationComponentTest extends TestCase {
 	 * @return void
 	 */
 	public function testIsPublic() {
-		$request = new ServerRequest(['params' => [
+		$request = new ServerRequest([
+'params' => [
 			'controller' => 'Users',
 			'action' => 'view',
 			'plugin' => null,
@@ -78,7 +80,8 @@ class AuthenticationComponentTest extends TestCase {
 	 * @return void
 	 */
 	public function testIsPublicFail() {
-		$request = new ServerRequest(['params' => [
+		$request = new ServerRequest([
+'params' => [
 			'controller' => 'Sales',
 			'action' => 'view',
 			'plugin' => null,
@@ -97,7 +100,8 @@ class AuthenticationComponentTest extends TestCase {
 	 * @return void
 	 */
 	public function testIsPublicAllowNonPrefixed() {
-		$request = new ServerRequest(['params' => [
+		$request = new ServerRequest([
+'params' => [
 			'controller' => 'Foos',
 			'action' => 'view',
 		]]);
@@ -113,7 +117,8 @@ class AuthenticationComponentTest extends TestCase {
 	 * @return void
 	 */
 	public function testIsPublicAllowNonPrefixedFail() {
-		$request = new ServerRequest(['params' => [
+		$request = new ServerRequest([
+'params' => [
 			'controller' => 'Foos',
 			'action' => 'view',
 			'prefix' => 'Foo',
@@ -130,7 +135,8 @@ class AuthenticationComponentTest extends TestCase {
 	 * @return void
 	 */
 	public function testIsPublicAllowPrefixed() {
-		$request = new ServerRequest(['params' => [
+		$request = new ServerRequest([
+'params' => [
 			'controller' => 'Foos',
 			'action' => 'view',
 			'prefix' => 'FooBar',
@@ -147,7 +153,8 @@ class AuthenticationComponentTest extends TestCase {
 	 * @return void
 	 */
 	public function testIsPublicAllowPrefixedFail() {
-		$request = new ServerRequest(['params' => [
+		$request = new ServerRequest([
+'params' => [
 			'controller' => 'Foos',
 			'action' => 'view',
 			'prefix' => 'Foo',

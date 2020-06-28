@@ -50,9 +50,9 @@ trait AclTrait {
 	 * Finds the authorization adapter to use for this request.
 	 *
 	 * @param string $adapter Acl adapter to load.
-	 * @return \TinyAuth\Auth\AclAdapter\AclAdapterInterface
 	 * @throws \Cake\Core\Exception\Exception
 	 * @throws \InvalidArgumentException
+	 * @return \TinyAuth\Auth\AclAdapter\AclAdapterInterface
 	 */
 	protected function _loadAclAdapter($adapter) {
 		if ($this->_aclAdapter !== null) {
@@ -82,8 +82,8 @@ trait AclTrait {
 	 *
 	 * @param array $user User data
 	 * @param array $params Request params
-	 * @return bool Success
 	 * @throws \Cake\Core\Exception\Exception
+	 * @return bool Success
 	 */
 	protected function _checkUser(array $user, array $params) {
 		if ($this->getConfig('includeAuthentication') && $this->_isPublic($params)) {
@@ -341,8 +341,8 @@ trait AclTrait {
 	 * Hack to get the auth data here for hasAccess().
 	 * We re-use the cached data for performance reasons.
 	 *
-	 * @return array
 	 * @throws \Cake\Core\Exception\Exception
+	 * @return array
 	 */
 	protected function _getAuth() {
 		if ($this->auth) {
@@ -426,6 +426,7 @@ trait AclTrait {
 		if (!empty($params['plugin'])) {
 			$res = $params['plugin'] . ".$res";
 		}
+
 		return $res;
 	}
 
@@ -435,8 +436,8 @@ trait AclTrait {
 	 * Will look for a roles array in
 	 * Configure first, tries database roles table next.
 	 *
-	 * @return int[] List with all available roles
 	 * @throws \Cake\Core\Exception\Exception
+	 * @return int[] List with all available roles
 	 */
 	protected function _getAvailableRoles() {
 		if ($this->_roles !== null) {
@@ -496,8 +497,8 @@ trait AclTrait {
 	 *   in multi-role mode)
 	 *
 	 * @param array $user The user to get the roles for
-	 * @return int[] List with all role ids belonging to the user
 	 * @throws \Cake\Core\Exception\Exception
+	 * @return int[] List with all role ids belonging to the user
 	 */
 	protected function _getUserRoles($user) {
 		// Single-role from session
@@ -513,6 +514,7 @@ trait AclTrait {
 			if (!isset($user[$this->getConfig('roleColumn')])) {
 				return [];
 			}
+
 			return $this->_mapped([$user[$this->getConfig('roleColumn')]]);
 		}
 
@@ -522,6 +524,7 @@ trait AclTrait {
 			if (isset($userRoles[0]['id'])) {
 				$userRoles = Hash::extract($userRoles, '{n}.id');
 			}
+
 			return $this->_mapped((array)$userRoles);
 		}
 
@@ -532,6 +535,7 @@ trait AclTrait {
 			if (isset($userRoles[0][$this->getConfig('roleColumn')])) {
 				$userRoles = Hash::extract($userRoles, '{n}.' . $this->getConfig('roleColumn'));
 			}
+
 			return $this->_mapped((array)$userRoles);
 		}
 
@@ -550,8 +554,8 @@ trait AclTrait {
 	protected function _pivotTableName() {
 		$pivotTableName = $this->getConfig('pivotTable');
 		if (!$pivotTableName) {
-			list(, $rolesTableName) = pluginSplit($this->getConfig('rolesTable'));
-			list(, $usersTableName) = pluginSplit($this->getConfig('usersTable'));
+			[, $rolesTableName] = pluginSplit($this->getConfig('rolesTable'));
+			[, $usersTableName] = pluginSplit($this->getConfig('usersTable'));
 			$tables = [
 				$usersTableName,
 				$rolesTableName,

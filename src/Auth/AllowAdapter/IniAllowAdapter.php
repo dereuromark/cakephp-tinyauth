@@ -24,6 +24,7 @@ class IniAllowAdapter implements AllowAdapterInterface {
 				$action = trim($action);
 				if ($action === '') {
 					unset($actions[$k]);
+
 					continue;
 				}
 				$actions[$k] = $action;
@@ -39,6 +40,7 @@ class IniAllowAdapter implements AllowAdapterInterface {
 				$denied = mb_substr($action, 0, 1) === '!';
 				if ($denied) {
 					$auth[$key]['deny'][] = mb_substr($action, 1);
+
 					continue;
 				}
 

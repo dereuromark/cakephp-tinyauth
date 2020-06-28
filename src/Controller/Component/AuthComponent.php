@@ -2,8 +2,8 @@
 
 namespace TinyAuth\Controller\Component;
 
-use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\AuthComponent as CakeAuthComponent;
+use Cake\Controller\ComponentRegistry;
 use RuntimeException;
 use TinyAuth\Auth\AclTrait;
 use TinyAuth\Auth\AllowTrait;

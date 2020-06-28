@@ -23,8 +23,8 @@ class OffersController extends Controller {
 	}
 
 	/**
-	 * @return void
 	 * @throws \Exception
+	 * @return void
 	 */
 	public function denied() {
 		throw new Exception('Should not be reached!');

@@ -44,7 +44,8 @@ class RequestPolicyTest extends TestCase {
 	 * @return void
 	 */
 	public function testPolicyCanAccessSuccess() {
-		$request = new ServerRequest(['params' => [
+		$request = new ServerRequest([
+'params' => [
 			'controller' => 'Tags',
 			'action' => 'delete',
 			'plugin' => null,
@@ -64,7 +65,8 @@ class RequestPolicyTest extends TestCase {
 	 * @return void
 	 */
 	public function testPolicyCanAccessFail() {
-		$request = new ServerRequest(['params' => [
+		$request = new ServerRequest([
+'params' => [
 			'controller' => 'Tags',
 			'action' => 'edit',
 			'plugin' => null,

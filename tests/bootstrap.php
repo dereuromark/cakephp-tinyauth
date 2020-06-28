@@ -1,6 +1,6 @@
 <?php
 /**
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license http://www.opensource.org/licenses/mit-license.php MIT License
  */
 require dirname(__DIR__) . '/vendor/cakephp/cakephp/src/basics.php';
 require dirname(__DIR__) . '/vendor/autoload.php';

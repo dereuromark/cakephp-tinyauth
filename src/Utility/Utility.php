@@ -20,7 +20,7 @@ class Utility {
 		];
 
 		if (strpos($key, '.') !== false) {
-			list($res['plugin'], $key) = explode('.', $key);
+			[$res['plugin'], $key] = explode('.', $key);
 		}
 		$lastSlashPos = strrpos($key, '/');
 		if ($lastSlashPos !== false) {
@@ -29,6 +29,7 @@ class Utility {
 			$key = substr($key, $lastSlashPos + 1);
 		}
 		$res['controller'] = $key;
+
 		return $res;
 	}
 
@@ -56,8 +57,8 @@ class Utility {
 	 * Returns the ini file as an array.
 	 *
 	 * @param string $ini Full path to the ini file
-	 * @return array List
 	 * @throws \Cake\Core\Exception\Exception
+	 * @return array List
 	 */
 	public static function parseFile($ini) {
 		if (!file_exists($ini)) {
@@ -77,6 +78,7 @@ class Utility {
 		if (!is_array($iniArray)) {
 			throw new Exception(sprintf('Invalid TinyAuth config file (%s)', $ini));
 		}
+
 		return $iniArray;
 	}
 

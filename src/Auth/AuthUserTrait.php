@@ -59,6 +59,7 @@ trait AuthUserTrait {
 	 */
 	public function isMe($userId) {
 		$field = $this->getConfig('idColumn');
+
 		return $userId && (string)$userId === (string)$this->user($field);
 	}
 
@@ -73,6 +74,7 @@ trait AuthUserTrait {
 		if ($key === null) {
 			return $user;
 		}
+
 		return Hash::get($user, $key);
 	}
 
@@ -116,6 +118,7 @@ trait AuthUserTrait {
 		if (array_key_exists($expectedRole, $roles) || in_array($expectedRole, $roles)) {
 			return true;
 		}
+
 		return false;
 	}
 
@@ -159,6 +162,7 @@ trait AuthUserTrait {
 		if ($count === count($expectedRoles)) {
 			return true;
 		}
+
 		return false;
 	}
 

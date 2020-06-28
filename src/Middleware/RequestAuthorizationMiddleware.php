@@ -58,6 +58,7 @@ class RequestAuthorizationMiddleware extends PluginRequestAuthorizationMiddlewar
 		$can = $service->can($identity, $this->getConfig('method'), $request);
 		if (!$can) {
 			$result = new Result($can, 'Can not ' . $this->getConfig('method') . ' request');
+
 			throw new ForbiddenException($result);
 		}
 

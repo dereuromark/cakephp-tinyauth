@@ -46,7 +46,8 @@ class AuthorizationComponentTest extends TestCase {
 	 * @return void
 	 */
 	public function testValid() {
-		$request = new ServerRequest(['params' => [
+		$request = new ServerRequest([
+'params' => [
 			'controller' => 'Users',
 			'action' => 'view',
 			'plugin' => null,

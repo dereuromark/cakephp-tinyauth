@@ -54,6 +54,7 @@ class Syncer {
 				$io->info($string);
 				$io->info('=== ' . $config['aclFile'] . ' end ===');
 			}
+
 			return;
 		}
 

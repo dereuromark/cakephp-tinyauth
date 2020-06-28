@@ -138,9 +138,9 @@ trait AllowTrait {
 	 * Finds the authentication adapter to use for this request.
 	 *
 	 * @param string $adapter Acl adapter to load.
-	 * @return \TinyAuth\Auth\AllowAdapter\AllowAdapterInterface
 	 * @throws \Cake\Core\Exception\Exception
 	 * @throws \InvalidArgumentException
+	 * @return \TinyAuth\Auth\AllowAdapter\AllowAdapterInterface
 	 */
 	protected function _loadAllowAdapter($adapter) {
 		if ($this->_allowAdapter !== null) {

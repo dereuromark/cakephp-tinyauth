@@ -18,8 +18,8 @@ class MyTestController extends Controller {
 	/**
 	 * Denied via ! in ACL file.
 	 *
-	 * @return void
 	 * @throws \Exception
+	 * @return void
 	 */
 	public function myDenied() {
 		throw new Exception('Should not be reached!');

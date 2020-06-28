@@ -47,7 +47,8 @@ class AuthenticationHelperTest extends TestCase {
 	 * @return void
 	 */
 	public function testIsPublic() {
-		$request = new ServerRequest(['params' => [
+		$request = new ServerRequest([
+'params' => [
 			'controller' => 'Users',
 			'action' => 'view',
 			'plugin' => null,
@@ -66,7 +67,8 @@ class AuthenticationHelperTest extends TestCase {
 	 * @return void
 	 */
 	public function testIsPublicFail() {
-		$request = new ServerRequest(['params' => [
+		$request = new ServerRequest([
+'params' => [
 			'controller' => 'Sales',
 			'action' => 'view',
 			'plugin' => null,

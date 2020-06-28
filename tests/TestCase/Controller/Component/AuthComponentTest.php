@@ -39,7 +39,8 @@ class AuthComponentTest extends TestCase {
 	 * @return void
 	 */
 	public function testValid() {
-		$request = new ServerRequest(['params' => [
+		$request = new ServerRequest([
+'params' => [
 			'controller' => 'Users',
 			'action' => 'view',
 			'plugin' => null,
@@ -63,7 +64,8 @@ class AuthComponentTest extends TestCase {
 	 * @return void
 	 */
 	public function testValidAnyAction() {
-		$request = new ServerRequest(['params' => [
+		$request = new ServerRequest([
+'params' => [
 			'plugin' => 'Extras',
 			'controller' => 'Offers',
 			'action' => 'index',
@@ -87,7 +89,8 @@ class AuthComponentTest extends TestCase {
 	 * @return void
 	 */
 	public function testDeniedActionInController() {
-		$request = new ServerRequest(['params' => [
+		$request = new ServerRequest([
+'params' => [
 			'plugin' => 'Extras',
 			'controller' => 'Offers',
 			'action' => 'denied',
@@ -113,7 +116,8 @@ class AuthComponentTest extends TestCase {
 	 * @return void
 	 */
 	public function testDeniedAction() {
-		$request = new ServerRequest(['params' => [
+		$request = new ServerRequest([
+'params' => [
 			'plugin' => 'Extras',
 			'controller' => 'Offers',
 			'action' => 'superPrivate',
@@ -139,7 +143,8 @@ class AuthComponentTest extends TestCase {
 	 * @return void
 	 */
 	public function testValidActionNestedPrefix() {
-		$request = new ServerRequest(['params' => [
+		$request = new ServerRequest([
+'params' => [
 			'plugin' => null,
 			'prefix' => 'Admin/MyPrefix',
 			'controller' => 'MyTest',
@@ -162,7 +167,8 @@ class AuthComponentTest extends TestCase {
 	 * @return void
 	 */
 	public function testDeniedActionNestedPrefix() {
-		$request = new ServerRequest(['params' => [
+		$request = new ServerRequest([
+'params' => [
 			'plugin' => null,
 			'prefix' => 'admin/my_prefix',
 			'controller' => 'MyTest',
@@ -187,7 +193,8 @@ class AuthComponentTest extends TestCase {
 	 * @return void
 	 */
 	public function testInvalid() {
-		$request = new ServerRequest(['params' => [
+		$request = new ServerRequest([
+'params' => [
 			'controller' => 'FooBar',
 			'action' => 'index',
 			'plugin' => null,

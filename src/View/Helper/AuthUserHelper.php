@@ -43,8 +43,8 @@ class AuthUserHelper extends Helper {
 	 * `includeAuthentication` config and make sure all actions are whitelisted in auth allow INI file.
 	 *
 	 * @param array $url
-	 * @return bool
 	 * @throws \Cake\Core\Exception\Exception
+	 * @return bool
 	 */
 	public function hasAccess(array $url) {
 		if (isset($url['_name'])) {
@@ -138,8 +138,8 @@ class AuthUserHelper extends Helper {
 	}
 
 	/**
-	 * @return array
 	 * @throws \Cake\Core\Exception\Exception
+	 * @return array
 	 */
 	protected function _getUser() {
 		$authUser = $this->_View->get('_authUser');

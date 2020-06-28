@@ -14,8 +14,8 @@ class Cache {
 
 	use StaticConfigTrait;
 
-	const KEY_ALLOW = 'allow';
-	const KEY_ACL = 'acl';
+	public const KEY_ALLOW = 'allow';
+	public const KEY_ACL = 'acl';
 
 	/**
 	 * @var array

@@ -22,6 +22,7 @@ class TestAuthUserComponent extends AuthUserComponent {
 	 */
 	protected function _getAcl($path = null) {
 		$path = Plugin::path('TinyAuth') . 'tests' . DS . 'test_files' . DS;
+
 		return parent::_getAcl($path);
 	}
 

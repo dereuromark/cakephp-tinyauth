@@ -19,8 +19,8 @@ class AuthPanel extends DebugPanel {
 	use AllowTrait;
 	use InstanceConfigTrait;
 
-	const ICON_RESTRICTED = "\u{1f512}";
-	const ICON_PUBLIC = "\u{1f513}";
+	public const ICON_RESTRICTED = "\u{1f512}";
+	public const ICON_PUBLIC = "\u{1f513}";
 
 	/**
 	 * Defines which plugin this panel is from so the element can be located.
@@ -57,7 +57,7 @@ class AuthPanel extends DebugPanel {
 	 * @return void
 	 */
 	public function shutdown(EventInterface $event) {
-		/** @var  \Cake\Controller\Controller $controller */
+		/** @var \Cake\Controller\Controller $controller */
 		$controller = $event->getSubject();
 		$request = $controller->getRequest();
 
@@ -102,6 +102,7 @@ class AuthPanel extends DebugPanel {
 		$data = [
 			'isPublic' => $this->isPublic,
 		];
+
 		return $this->_data + $data;
 	}
 
@@ -143,6 +144,7 @@ class AuthPanel extends DebugPanel {
 		$pivotTableName = $this->_pivotTableName();
 		if (isset($user[$pivotTableName])) {
 			$user[$pivotTableName] = [$role => $id];
+
 			return $user;
 		}
 

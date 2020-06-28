@@ -40,6 +40,7 @@ class IniAclAdapter implements AclAdapterInterface {
 						$role = mb_substr($role, 1);
 						if (!array_key_exists($role, $availableRoles)) {
 							unset($roles[$roleId]);
+
 							continue;
 						}
 
@@ -52,6 +53,7 @@ class IniAclAdapter implements AclAdapterInterface {
 					// Prevent undefined roles appearing in the iniMap
 					if (!array_key_exists($role, $availableRoles) && $role !== '*') {
 						unset($roles[$roleId]);
+
 						continue;
 					}
 					if ($role === '*') {
