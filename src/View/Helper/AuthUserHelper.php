@@ -24,7 +24,7 @@ class AuthUserHelper extends Helper {
 	/**
 	 * @var array
 	 */
-	public $helpers = ['Html', 'Form'];
+	protected $helpers = ['Html', 'Form'];
 
 	/**
 	 * @param \Cake\View\View $View The View this helper is being attached to.
@@ -143,7 +143,7 @@ class AuthUserHelper extends Helper {
 	 */
 	protected function _getUser() {
 		$authUser = $this->_View->get('_authUser');
-		if (!$authUser) {
+		if ($authUser === null) {
 			throw new Exception('TinyAuth.AuthUser helper needs TinyAuth.AuthUser component to function. Please make sure it is loaded in your controller.');
 		}
 

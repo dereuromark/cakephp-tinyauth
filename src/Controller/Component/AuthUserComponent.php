@@ -24,7 +24,7 @@ class AuthUserComponent extends Component {
 	/**
 	 * @var array
 	 */
-	public $components = ['Auth'];
+	protected $components = ['Auth'];
 
 	/**
 	 * @param \Cake\Controller\ComponentRegistry $registry

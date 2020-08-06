@@ -18,7 +18,7 @@ class AuthenticationHelper extends Helper {
 	/**
 	 * @var array
 	 */
-	public $helpers = [];
+	protected $helpers = [];
 
 	/**
 	 * @param \Cake\View\View $View The View this helper is being attached to.
