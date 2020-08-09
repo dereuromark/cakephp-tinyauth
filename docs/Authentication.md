@@ -122,10 +122,10 @@ It is possible to have mixed INI and code rules. Those will get merged prior to 
 So in case any of your controllers (or plugin controllers) contain such a statement, it will merge itself with your INI whitelist:
 ```php
 // In your controller
-use Cake\Event\Event;
+use Cake\Event\EventInterface;
 ...
 
-    public function beforeFilter(Event $event) {
+    public function beforeFilter(EventInterface $event) {
         parent::beforeFilter($event);
 
         $this->Auth->allow(['index', 'view']);
