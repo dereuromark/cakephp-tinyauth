@@ -463,20 +463,12 @@ trait AclTrait {
 			return $roles;
 		}
 
-		try {
-			$rolesTable = TableRegistry::get($rolesTableKey);
-			$result = $rolesTable->find()->formatResults(function (ResultSetInterface $results) {
-				return $results->combine($this->getConfig('aliasColumn'), 'id');
-			});
-		} catch (RuntimeException $e) {
-			throw new Exception('Invalid roles config: DB table `' . $rolesTableKey . '` cannot be found/accessed (`' . $e->getMessage() . '`).', null, $e);
-		}
-
-		$roles = $result->toArray();
-
+		$roles = $this->_getRolesFromDb($rolesTableKey);
 		if ($this->getConfig('superAdminRole')) {
 			$key = $this->getConfig('superAdmin') ?: 'superadmin';
-			$roles[$key] = $this->getConfig('superAdminRole');
+			/** @var int $value */
+			$value = $this->getConfig('superAdminRole');
+			$roles[$key] = $value;
 		}
 
 		if (count($roles) < 1) {
@@ -486,6 +478,27 @@ trait AclTrait {
 		$this->_roles = $roles;
 
 		return $roles;
+	}
+
+	/**
+	 * @param string $rolesTableKey
+	 *
+	 * @throws \Cake\Core\Exception\Exception
+	 *
+	 * @return int[]
+	 */
+	protected function _getRolesFromDb(string $rolesTableKey): array {
+		try {
+			$rolesTable = TableRegistry::getTableLocator()->get($rolesTableKey);
+			$result = $rolesTable->find()->formatResults(function (ResultSetInterface $results) {
+				return $results->combine($this->getConfig('aliasColumn'), 'id');
+			});
+		} catch (RuntimeException $e) {
+			throw new Exception('Invalid roles config: DB table `' . $rolesTableKey . '` cannot be found/accessed (`' . $e->getMessage() . '`).', null, $e);
+		}
+
+		/** @var int[] */
+		return $result->toArray();
 	}
 
 	/**
@@ -540,7 +553,7 @@ trait AclTrait {
 		}
 
 		// Multi-role from DB: load the pivot table
-		$roles = $this->_getRolesFromDb($pivotTableName, $user[$this->getConfig('idColumn')]);
+		$roles = $this->_getRolesFromJunction($pivotTableName, $user[$this->getConfig('idColumn')]);
 		if (!$roles) {
 			return [];
 		}
@@ -572,12 +585,12 @@ trait AclTrait {
 	 * @param int $id User ID
 	 * @return array
 	 */
-	protected function _getRolesFromDb($pivotTableName, $id) {
+	protected function _getRolesFromJunction($pivotTableName, $id) {
 		if (isset($this->_userRoles[$id])) {
 			return $this->_userRoles[$id];
 		}
 
-		$pivotTable = TableRegistry::get($pivotTableName);
+		$pivotTable = TableRegistry::getTableLocator()->get($pivotTableName);
 		$roleColumn = $this->getConfig('roleColumn');
 		$roles = $pivotTable->find()
 			->select($roleColumn)

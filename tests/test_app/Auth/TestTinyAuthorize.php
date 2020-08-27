@@ -38,7 +38,7 @@ class TestTinyAuthorize extends TinyAuthorize {
 	 * @return \Cake\ORM\Table The User table
 	 */
 	public function getTable() {
-		$Users = TableRegistry::get($this->getConfig('usersTable'));
+		$Users = TableRegistry::getTableLocator()->get($this->getConfig('usersTable'));
 		$Users->belongsTo('Roles');
 
 		return $Users;
