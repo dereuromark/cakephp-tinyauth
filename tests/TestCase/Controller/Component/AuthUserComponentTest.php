@@ -17,7 +17,7 @@ class AuthUserComponentTest extends TestCase {
 	/**
 	 * @var array
 	 */
-	public $fixtures = [
+	protected $fixtures = [
 		'core.Sessions',
 	];
 
