@@ -2,6 +2,7 @@
 
 namespace TinyAuth\Policy;
 
+use ArrayAccess;
 use Authorization\IdentityInterface;
 use Authorization\Policy\RequestPolicyInterface;
 use Cake\Core\InstanceConfigTrait;
@@ -41,9 +42,14 @@ class RequestPolicy implements RequestPolicyInterface {
 	 * @param \Cake\Http\ServerRequest $request Request
 	 * @return bool
 	 */
-	public function canAccess(?IdentityInterface $identity, ServerRequest $request) {
+	public function canAccess(?IdentityInterface $identity, ServerRequest $request): bool
+	{
 		$params = $request->getAttribute('params');
-		$user = $identity ? (array)$identity->getOriginalData() : [];
+		$user = [];
+		if ($identity) {
+			$data = $identity->getOriginalData();
+			$user = ($data instanceof ArrayAccess) ? $data->toArray() : (array)$data;
+		}
 
 		return $this->_checkUser($user, $params);
 	}
