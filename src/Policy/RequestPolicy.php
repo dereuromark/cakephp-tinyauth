@@ -42,8 +42,7 @@ class RequestPolicy implements RequestPolicyInterface {
 	 * @param \Cake\Http\ServerRequest $request Request
 	 * @return bool
 	 */
-	public function canAccess(?IdentityInterface $identity, ServerRequest $request): bool
-	{
+	public function canAccess(?IdentityInterface $identity, ServerRequest $request): bool {
 		$params = $request->getAttribute('params');
 		$user = [];
 		if ($identity) {
