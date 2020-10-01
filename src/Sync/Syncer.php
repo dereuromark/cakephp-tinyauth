@@ -62,12 +62,12 @@ class Syncer {
 	}
 
 	/**
-	 * @param string $plugin
+	 * @param string|null $plugin
 	 * @return array
 	 */
 	protected function _getControllers($plugin) {
 		if ($plugin === 'all') {
-			$plugins = (array)Plugin::loaded();
+			$plugins = Plugin::loaded();
 
 			$controllers = [];
 			foreach ($plugins as $plugin) {
@@ -131,8 +131,8 @@ class Syncer {
 
 	/**
 	 * @param string $name
-	 * @param string $plugin
-	 * @param string $prefix
+	 * @param string|null $plugin
+	 * @param string|null $prefix
 	 * @return bool
 	 */
 	protected function _noAuthenticationNeeded($name, $plugin, $prefix) {

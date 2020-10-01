@@ -47,7 +47,7 @@ class RequestPolicy implements RequestPolicyInterface {
 		$user = [];
 		if ($identity) {
 			$data = $identity->getOriginalData();
-			$user = ($data instanceof ArrayAccess) ? $data->toArray() : (array)$data;
+			$user = ($data instanceof ArrayAccess && method_exists($data, 'toArray')) ? $data->toArray() : (array)$data;
 		}
 
 		return $this->_checkUser($user, $params);
