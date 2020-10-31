@@ -2,6 +2,7 @@
 
 namespace TinyAuth\View\Helper;
 
+use ArrayAccess;
 use Cake\Core\Exception\Exception;
 use Cake\Routing\Router;
 use Cake\View\Helper;
@@ -75,8 +76,9 @@ class AuthUserHelper extends Helper {
 		if ($authUser === null && !$this->getConfig('includeAuthentication')) {
 			throw new Exception('Variable _authUser containing the user data needs to be passed down. The TinyAuth.Auth component does it automatically, if loaded.');
 		}
+		$userArray = ($authUser instanceof ArrayAccess && method_exists($authUser, 'toArray')) ? $authUser->toArray() : (array)$authUser;
 
-		return $this->_checkUser((array)$authUser, $url);
+		return $this->_checkUser($userArray, $url);
 	}
 
 	/**
