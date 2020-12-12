@@ -54,7 +54,7 @@ jobs:
           if ${{ matrix.prefer-lowest == 'prefer-lowest' }}; then composer require --dev dereuromark/composer-prefer-lowest:dev-master; fi
       - name: Run PHPUnit
         run: |
-          if ${{ matrix.php-version }} == '7.4'
+          if [[ ${{ matrix.php-version }} == '7.4' ]]
           then
             vendor/bin/phpunit --coverage-clover=coverage.xml
           else

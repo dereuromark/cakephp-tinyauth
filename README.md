@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/dereuromark/cakephp-tinyauth/workflows/CI/badge.svg?branch=master)](https://github.com/dereuromark/cakephp-tinyauth/actions?query=workflow%3ACI+branch%3Amaster)
 [![Latest Stable Version](https://poser.pugx.org/dereuromark/cakephp-tinyauth/v/stable.svg)](https://packagist.org/packages/dereuromark/cakephp-tinyauth)
-[![Coverage Status](https://img.shields.io/codecov/c/github/dereuromark/cakephp-tinyauth/master.svg)](https://codecov.io/github/dereuromark/cakephp-tinyauth?branch=master)
+[![Coverage Status](https://img.shields.io/codecov/c/github/dereuromark/cakephp-tinyauth/master.svg)](https://codecov.io/github/dereuromark/cakephp-tinyauth/branch/master)
 [![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%207.2-8892BF.svg)](https://php.net/)
 [![License](https://poser.pugx.org/dereuromark/cakephp-tinyauth/license.svg)](https://packagist.org/packages/dereuromark/cakephp-tinyauth)
 [![Total Downloads](https://poser.pugx.org/dereuromark/cakephp-tinyauth/d/total.svg)](https://packagist.org/packages/dereuromark/cakephp-tinyauth)
