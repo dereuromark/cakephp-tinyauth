@@ -30,11 +30,6 @@ class AuthPanel extends DebugPanel {
 	public $plugin = 'TinyAuth';
 
 	/**
-	 * @var array
-	 */
-	protected $_data = [];
-
-	/**
 	 * @var bool|null
 	 */
 	protected $isPublic;
@@ -56,7 +51,7 @@ class AuthPanel extends DebugPanel {
 	 *
 	 * @return void
 	 */
-	public function shutdown(EventInterface $event) {
+	public function shutdown(EventInterface $event): void {
 		/** @var \Cake\Controller\Controller $controller */
 		$controller = $event->getSubject();
 		$request = $controller->getRequest();
