@@ -22,12 +22,12 @@ trait AclTrait {
 	protected $_acl;
 
 	/**
-	 * @var int[]|null
+	 * @var array<int>|null
 	 */
 	protected $_roles;
 
 	/**
-	 * @var string[]|null
+	 * @var array<string>|null
 	 */
 	protected $_prefixMap;
 
@@ -66,7 +66,7 @@ trait AclTrait {
 		$adapterInstance = new $adapter();
 		if (!($adapterInstance instanceof AclAdapterInterface)) {
 			throw new InvalidArgumentException(sprintf(
-				'TinyAuth Acl adapters have to implement %s.', AclAdapterInterface::class
+				'TinyAuth Acl adapters have to implement %s.', AclAdapterInterface::class,
 			));
 		}
 
@@ -126,7 +126,7 @@ trait AclTrait {
 
 	/**
 	 * @param string $prefix
-	 * @param string[] $protectedPrefixes
+	 * @param array<string> $protectedPrefixes
 	 *
 	 * @return bool
 	 */
@@ -141,7 +141,7 @@ trait AclTrait {
 	}
 
 	/**
-	 * @param int[] $userRoles
+	 * @param array<int> $userRoles
 	 * @param array $params
 	 *
 	 * @return bool
@@ -211,14 +211,14 @@ trait AclTrait {
 
 	/**
 	 * @param array $roles
-	 * @return string[]
+	 * @return array<string>
 	 */
 	protected function _prefixMap(array $roles): array {
 		if ($this->_prefixMap !== null) {
 			return $this->_prefixMap;
 		}
 
-		/** @var bool|string[] $prefixMap */
+		/** @var array<string>|bool $prefixMap */
 		$prefixMap = $this->getConfig('authorizeByPrefix');
 		if (!$prefixMap) {
 			return [];
@@ -240,7 +240,7 @@ trait AclTrait {
 	 *
 	 * @param array $roles
 	 *
-	 * @return string[]
+	 * @return array<string>
 	 */
 	protected function _prefixesFromRoles(array $roles) {
 		$names = array_keys($roles);
@@ -255,9 +255,9 @@ trait AclTrait {
 
 	/**
 	 * @param string $prefix
-	 * @param string[] $prefixMap
-	 * @param int[] $userRoles
-	 * @param int[] $availableRoles
+	 * @param array<string> $prefixMap
+	 * @param array<int> $userRoles
+	 * @param array<int> $availableRoles
 	 *
 	 * @return bool
 	 */
@@ -272,7 +272,7 @@ trait AclTrait {
 
 		$prefixRoleSlugs = (array)$prefixMap[$prefix];
 		foreach ($prefixRoleSlugs as $prefixRoleSlug) {
-			$role = isset($availableRoles[$prefixRoleSlug]) ? $availableRoles[$prefixRoleSlug] : null;
+			$role = $availableRoles[$prefixRoleSlug] ?? null;
 			if ($role && in_array($role, $userRoles, true)) {
 				return true;
 			}
@@ -284,7 +284,7 @@ trait AclTrait {
 	/**
 	 * Can be [PrefixOne, PrefixTwo => roleOne, PrefixTwo => [roleOne, roleTwo]]
 	 *
-	 * @param string[] $prefixes
+	 * @param array<string> $prefixes
 	 *
 	 * @return array
 	 */
@@ -364,7 +364,7 @@ trait AclTrait {
 	 * - Resolves role slugs to their primary key / identifier
 	 * - Resolves wildcards to their verbose translation
 	 *
-	 * @param string|array|null $path
+	 * @param array|string|null $path
 	 * @return array
 	 */
 	protected function _getAcl($path = null) {
@@ -437,7 +437,7 @@ trait AclTrait {
 	 * Configure first, tries database roles table next.
 	 *
 	 * @throws \Cake\Core\Exception\Exception
-	 * @return int[] List with all available roles
+	 * @return array<int> List with all available roles
 	 */
 	protected function _getAvailableRoles() {
 		if ($this->_roles !== null) {
@@ -485,7 +485,7 @@ trait AclTrait {
 	 *
 	 * @throws \Cake\Core\Exception\Exception
 	 *
-	 * @return int[]
+	 * @return array<int>
 	 */
 	protected function _getRolesFromDb(string $rolesTableKey): array {
 		try {
@@ -497,7 +497,7 @@ trait AclTrait {
 			throw new Exception('Invalid roles config: DB table `' . $rolesTableKey . '` cannot be found/accessed (`' . $e->getMessage() . '`).', null, $e);
 		}
 
-		/** @var int[] */
+		/** @var array<int> */
 		return $result->toArray();
 	}
 
@@ -511,7 +511,7 @@ trait AclTrait {
 	 *
 	 * @param array $user The user to get the roles for
 	 * @throws \Cake\Core\Exception\Exception
-	 * @return int[] List with all role ids belonging to the user
+	 * @return array<int> List with all role ids belonging to the user
 	 */
 	protected function _getUserRoles($user) {
 		// Single-role from session
@@ -607,8 +607,8 @@ trait AclTrait {
 	/**
 	 * Returns current roles as [alias => id] pairs.
 	 *
-	 * @param int[] $roles
-	 * @return int[]
+	 * @param array<int> $roles
+	 * @return array<int>
 	 */
 	protected function _mapped(array $roles) {
 		$availableRoles = $this->_getAvailableRoles();

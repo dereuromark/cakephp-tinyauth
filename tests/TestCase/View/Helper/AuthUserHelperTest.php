@@ -85,7 +85,7 @@ class AuthUserHelperTest extends TestCase {
 		Router::connect(
 			'/edit/*',
 			['controller' => 'Tags', 'action' => 'edit'],
-			['_name' => 'Tags::edit']
+			['_name' => 'Tags::edit'],
 		);
 
 		$request = ['_name' => 'Tags::edit'];
@@ -113,7 +113,7 @@ class AuthUserHelperTest extends TestCase {
 		Router::connect(
 			'/delete/*',
 			['controller' => 'Tags', 'action' => 'delete'],
-			['_name' => 'Tags::delete']
+			['_name' => 'Tags::delete'],
 		);
 
 		$request = ['_name' => 'Tags::delete'];
@@ -139,7 +139,7 @@ class AuthUserHelperTest extends TestCase {
 		Router::connect(
 			'/edit/*',
 			['controller' => 'Tags', 'action' => 'edit'],
-			['_name' => 'Tags::edit']
+			['_name' => 'Tags::edit'],
 		);
 
 		$request = ['_name' => 'Tags::edit'];
@@ -162,7 +162,7 @@ class AuthUserHelperTest extends TestCase {
 		Router::connect(
 			'/edit/*',
 			['action' => 'edit'],
-			['_name' => 'Tags::edit']
+			['_name' => 'Tags::edit'],
 		);
 
 		$request = ['_name' => 'Tags::edit'];
@@ -186,7 +186,7 @@ class AuthUserHelperTest extends TestCase {
 		Router::connect(
 			'/edit/*',
 			['action' => 'edit'],
-			['_name' => 'Tags::edit']
+			['_name' => 'Tags::edit'],
 		);
 
 		$request = ['_name' => 'InvalidName'];
@@ -211,7 +211,7 @@ class AuthUserHelperTest extends TestCase {
 		Router::connect(
 			'/view/{id}',
 			['controller' => 'Posts', 'action' => 'view'],
-			['_name' => 'Posts::view']
+			['_name' => 'Posts::view'],
 		);
 
 		$request = ['_name' => 'Posts::view', 'id' => 1];

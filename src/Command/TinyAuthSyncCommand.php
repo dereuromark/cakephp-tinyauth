@@ -63,7 +63,7 @@ class TinyAuthSyncCommand extends Command implements CommandCollectionAwareInter
 		$roles = $this->_getAvailableRoles();
 
 		$parser->setDescription(
-			'Get the list of controllers and make sure, they are synced into the ACL file.'
+			'Get the list of controllers and make sure, they are synced into the ACL file.',
 		)->addArgument('roles', [
 			'help' => 'Role names, comma separated, e.g. `user,admin`.' . ($roles ? PHP_EOL . 'Available roles: ' . implode(', ', $roles) . '.' : ''),
 			'required' => true,
@@ -81,7 +81,7 @@ class TinyAuthSyncCommand extends Command implements CommandCollectionAwareInter
 	}
 
 	/**
-	 * @return string[]
+	 * @return array<string>
 	 */
 	protected function _getAvailableRoles() {
 		$roles = (new TinyAuth())->getAvailableRoles();

@@ -50,7 +50,7 @@ class TinyAuthorize extends BaseAuthorize {
 	 * - User HABTM Roles (Role array in User array)
 	 * - User belongsTo Roles (role_id in User array)
 	 *
-	 * @param array|\ArrayObject $user The user to authorize
+	 * @param \ArrayObject|array $user The user to authorize
 	 * @param \Cake\Http\ServerRequest $request The request needing authorization.
 	 * @return bool Success
 	 */

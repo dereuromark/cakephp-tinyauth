@@ -19,7 +19,14 @@ class AuthPanel extends DebugPanel {
 	use AllowTrait;
 	use InstanceConfigTrait;
 
+	/**
+	 * @var string
+	 */
 	public const ICON_RESTRICTED = "\u{1f512}";
+
+	/**
+	 * @var string
+	 */
 	public const ICON_PUBLIC = "\u{1f513}";
 
 	/**
@@ -119,7 +126,7 @@ class AuthPanel extends DebugPanel {
 	/**
 	 * @param array $user
 	 * @param string $role
-	 * @param int|string $id
+	 * @param string|int $id
 	 *
 	 * @return array
 	 */
@@ -150,7 +157,7 @@ class AuthPanel extends DebugPanel {
 
 	/**
 	 * @param string $role
-	 * @param int|string $id
+	 * @param string|int $id
 	 *
 	 * @return array
 	 */
