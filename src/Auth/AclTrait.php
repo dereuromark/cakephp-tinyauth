@@ -66,7 +66,8 @@ trait AclTrait {
 		$adapterInstance = new $adapter();
 		if (!($adapterInstance instanceof AclAdapterInterface)) {
 			throw new InvalidArgumentException(sprintf(
-				'TinyAuth Acl adapters have to implement %s.', AclAdapterInterface::class,
+				'TinyAuth Acl adapters have to implement %s.',
+                AclAdapterInterface::class,
 			));
 		}
 

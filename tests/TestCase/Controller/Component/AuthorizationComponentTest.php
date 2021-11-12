@@ -47,13 +47,14 @@ class AuthorizationComponentTest extends TestCase {
 	 */
 	public function testValid() {
 		$request = new ServerRequest([
-'params' => [
-			'controller' => 'Users',
-			'action' => 'view',
-			'plugin' => null,
-			'_ext' => null,
-			'pass' => [1],
-		]]);
+			'params' => [
+				'controller' => 'Users',
+				'action' => 'view',
+				'plugin' => null,
+				'_ext' => null,
+				'pass' => [1],
+			],
+		]);
 		/** @var \Authorization\AuthorizationService|\PHPUnit\Framework\MockObject\MockObject $authorization */
 		$authorization = $this->getMockBuilder(AuthorizationService::class)->disableOriginalConstructor()->getMock();
 		$authorization->expects($this->once())

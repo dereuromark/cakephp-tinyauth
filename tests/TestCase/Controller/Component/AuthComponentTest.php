@@ -40,7 +40,7 @@ class AuthComponentTest extends TestCase {
 	 */
 	public function testValid() {
 		$request = new ServerRequest([
-'params' => [
+		'params' => [
 			'controller' => 'Users',
 			'action' => 'view',
 			'plugin' => null,
@@ -65,7 +65,7 @@ class AuthComponentTest extends TestCase {
 	 */
 	public function testValidAnyAction() {
 		$request = new ServerRequest([
-'params' => [
+		'params' => [
 			'plugin' => 'Extras',
 			'controller' => 'Offers',
 			'action' => 'index',
@@ -90,7 +90,7 @@ class AuthComponentTest extends TestCase {
 	 */
 	public function testDeniedActionInController() {
 		$request = new ServerRequest([
-'params' => [
+		'params' => [
 			'plugin' => 'Extras',
 			'controller' => 'Offers',
 			'action' => 'denied',
@@ -117,7 +117,7 @@ class AuthComponentTest extends TestCase {
 	 */
 	public function testDeniedAction() {
 		$request = new ServerRequest([
-'params' => [
+		'params' => [
 			'plugin' => 'Extras',
 			'controller' => 'Offers',
 			'action' => 'superPrivate',
@@ -144,7 +144,7 @@ class AuthComponentTest extends TestCase {
 	 */
 	public function testValidActionNestedPrefix() {
 		$request = new ServerRequest([
-'params' => [
+		'params' => [
 			'plugin' => null,
 			'prefix' => 'Admin/MyPrefix',
 			'controller' => 'MyTest',
@@ -168,7 +168,7 @@ class AuthComponentTest extends TestCase {
 	 */
 	public function testDeniedActionNestedPrefix() {
 		$request = new ServerRequest([
-'params' => [
+		'params' => [
 			'plugin' => null,
 			'prefix' => 'admin/my_prefix',
 			'controller' => 'MyTest',
@@ -194,7 +194,7 @@ class AuthComponentTest extends TestCase {
 	 */
 	public function testInvalid() {
 		$request = new ServerRequest([
-'params' => [
+		'params' => [
 			'controller' => 'FooBar',
 			'action' => 'index',
 			'plugin' => null,

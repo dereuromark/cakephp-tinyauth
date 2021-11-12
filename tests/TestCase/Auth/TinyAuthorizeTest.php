@@ -1172,7 +1172,7 @@ class TinyAuthorizeTest extends TestCase {
 		$res = $method->invokeArgs($object, [$key]);
 		$this->assertEquals($expected, $res);
 
-		$key = 'tags';	// test incorrect casing
+		$key = 'tags'; // test incorrect casing
 		$res = $method->invokeArgs($object, [$key]);
 		$this->assertNotEquals($expected, $res);
 

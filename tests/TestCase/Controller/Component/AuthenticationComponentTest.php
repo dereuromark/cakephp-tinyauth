@@ -37,13 +37,14 @@ class AuthenticationComponentTest extends TestCase {
 	 */
 	public function testValid() {
 		$request = new ServerRequest([
-'params' => [
-			'controller' => 'Users',
-			'action' => 'view',
-			'plugin' => null,
-			'_ext' => null,
-			'pass' => [1],
-		]]);
+			'params' => [
+				'controller' => 'Users',
+				'action' => 'view',
+				'plugin' => null,
+				'_ext' => null,
+				'pass' => [1],
+			],
+		]);
 		$controller = $this->getControllerMock($request);
 		$registry = new ComponentRegistry($controller);
 		$this->component = new AuthenticationComponent($registry, $this->componentConfig);
@@ -61,7 +62,7 @@ class AuthenticationComponentTest extends TestCase {
 	 */
 	public function testIsPublic() {
 		$request = new ServerRequest([
-'params' => [
+		'params' => [
 			'controller' => 'Users',
 			'action' => 'view',
 			'plugin' => null,
@@ -81,7 +82,7 @@ class AuthenticationComponentTest extends TestCase {
 	 */
 	public function testIsPublicFail() {
 		$request = new ServerRequest([
-'params' => [
+		'params' => [
 			'controller' => 'Sales',
 			'action' => 'view',
 			'plugin' => null,
@@ -101,7 +102,7 @@ class AuthenticationComponentTest extends TestCase {
 	 */
 	public function testIsPublicAllowNonPrefixed() {
 		$request = new ServerRequest([
-'params' => [
+		'params' => [
 			'controller' => 'Foos',
 			'action' => 'view',
 		]]);
@@ -118,7 +119,7 @@ class AuthenticationComponentTest extends TestCase {
 	 */
 	public function testIsPublicAllowNonPrefixedFail() {
 		$request = new ServerRequest([
-'params' => [
+		'params' => [
 			'controller' => 'Foos',
 			'action' => 'view',
 			'prefix' => 'Foo',
@@ -136,7 +137,7 @@ class AuthenticationComponentTest extends TestCase {
 	 */
 	public function testIsPublicAllowPrefixed() {
 		$request = new ServerRequest([
-'params' => [
+		'params' => [
 			'controller' => 'Foos',
 			'action' => 'view',
 			'prefix' => 'FooBar',
@@ -154,7 +155,7 @@ class AuthenticationComponentTest extends TestCase {
 	 */
 	public function testIsPublicAllowPrefixedFail() {
 		$request = new ServerRequest([
-'params' => [
+		'params' => [
 			'controller' => 'Foos',
 			'action' => 'view',
 			'prefix' => 'Foo',

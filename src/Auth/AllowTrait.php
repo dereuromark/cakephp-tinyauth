@@ -154,7 +154,8 @@ trait AllowTrait {
 		$adapterInstance = new $adapter();
 		if (!($adapterInstance instanceof AllowAdapterInterface)) {
 			throw new InvalidArgumentException(sprintf(
-				'TinyAuth Acl adapters have to implement %s.', AllowAdapterInterface::class,
+				'TinyAuth Acl adapters have to implement %s.',
+                AllowAdapterInterface::class,
 			));
 		}
 		$this->_allowAdapter = $adapterInstance;

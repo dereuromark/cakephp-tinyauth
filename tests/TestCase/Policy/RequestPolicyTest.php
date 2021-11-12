@@ -45,11 +45,12 @@ class RequestPolicyTest extends TestCase {
 	 */
 	public function testPolicyCanAccessSuccess() {
 		$request = new ServerRequest([
-'params' => [
-			'controller' => 'Tags',
-			'action' => 'delete',
-			'plugin' => null,
-		]]);
+			'params' => [
+				'controller' => 'Tags',
+				'action' => 'delete',
+				'plugin' => null,
+			],
+		]);
 
 		$identityArray = [
 			'id' => 1,
@@ -66,11 +67,12 @@ class RequestPolicyTest extends TestCase {
 	 */
 	public function testPolicyCanAccessFail() {
 		$request = new ServerRequest([
-'params' => [
-			'controller' => 'Tags',
-			'action' => 'edit',
-			'plugin' => null,
-		]]);
+			'params' => [
+				'controller' => 'Tags',
+				'action' => 'edit',
+				'plugin' => null,
+			],
+		]);
 
 		$identityArray = [
 			'id' => 1,
