@@ -2,7 +2,14 @@
 	"name": "dereuromark/cakephp-tinyauth",
 	"type": "cakephp-plugin",
 	"description": "A CakePHP plugin to handle user authentication and authorization the easy way.",
-	"keywords": ["cakephp", "plugin", "tinyauth", "authentication", "authorization", "roles"],
+	"keywords": [
+		"cakephp",
+		"plugin",
+		"tinyauth",
+		"authentication",
+		"authorization",
+		"roles"
+	],
 	"homepage": "https://github.com/dereuromark/cakephp-tinyauth",
 	"license": "MIT",
 	"authors": [
@@ -42,12 +49,17 @@
 	"prefer-stable": true,
 	"scripts": {
 		"test": "phpunit",
-		"test-coverage" : "phpunit --log-junit tmp/coverage/unitreport.xml --coverage-html tmp/coverage --coverage-clover tmp/coverage/coverage.xml",
+		"test-coverage": "phpunit --log-junit tmp/coverage/unitreport.xml --coverage-html tmp/coverage --coverage-clover tmp/coverage/coverage.xml",
 		"stan": "phpstan analyse -c tests/phpstan.neon -l 8 src/",
 		"stan-setup": "cp composer.json composer.backup && composer require --dev phpstan/phpstan:^1.0.0 && mv composer.backup composer.json",
 		"cs-check": "phpcs -p --standard=vendor/fig-r/psr2r-sniffer/PSR2R/ruleset.xml --ignore=/tests/test_files/,/config/Migrations/ --extensions=php src/ tests/",
 		"cs-fix": "phpcbf -p --standard=vendor/fig-r/psr2r-sniffer/PSR2R/ruleset.xml --ignore=/tests/test_files/,/config/Migrations/ --extensions=php src/ tests/",
 		"lowest": "validate-prefer-lowest",
 		"lowest-setup": "composer update --prefer-lowest --prefer-stable --prefer-dist --no-interaction && cp composer.json composer.backup && composer require --dev dereuromark/composer-prefer-lowest && mv composer.backup composer.json"
+	},
+	"config": {
+		"allow-plugins": {
+			"dealerdirect/phpcodesniffer-composer-installer": true
+		}
 	}
 }
