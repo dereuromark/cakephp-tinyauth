@@ -89,7 +89,7 @@ class AuthUserHelper extends Helper {
 	 *
 	 * @param string $title
 	 * @param array $url
-	 * @param array $options
+	 * @param array<string, mixed> $options
 	 * @return string
 	 */
 	public function link($title, array $url, array $options = []) {
@@ -109,7 +109,7 @@ class AuthUserHelper extends Helper {
 	 *
 	 * @param string $title
 	 * @param array $url
-	 * @param array $options
+	 * @param array<string, mixed> $options
 	 * @return string
 	 */
 	public function postLink($title, array $url, array $options = []) {
@@ -123,7 +123,7 @@ class AuthUserHelper extends Helper {
 
 	/**
 	 * @param string $title
-	 * @param array $options
+	 * @param array<string, mixed> $options
 	 * @return string
 	 */
 	protected function _default($title, array $options) {
