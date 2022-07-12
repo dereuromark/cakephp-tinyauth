@@ -3,7 +3,7 @@
 namespace TinyAuth\View\Helper;
 
 use ArrayAccess;
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 use Cake\Routing\Router;
 use Cake\View\Helper;
 use Cake\View\View;
@@ -44,7 +44,7 @@ class AuthUserHelper extends Helper {
 	 * `includeAuthentication` config and make sure all actions are whitelisted in auth allow INI file.
 	 *
 	 * @param array $url
-	 * @throws \Cake\Core\Exception\Exception
+	 * @throws \Cake\Core\Exception\CakeException
 	 * @return bool
 	 */
 	public function hasAccess(array $url) {
@@ -54,7 +54,7 @@ class AuthUserHelper extends Helper {
 			$routes = Router::getRouteCollection()->named();
 			$defaults = $routes[$url['_name']]->defaults;
 			if (!isset($defaults['action']) || !isset($defaults['controller'])) {
-				throw new Exception('Controller or action name could not be null.');
+				throw new CakeException('Controller or action name could not be null.');
 			}
 			$url = [
 				'prefix' => !empty($defaults['prefix']) ? $defaults['prefix'] : null,
@@ -74,7 +74,7 @@ class AuthUserHelper extends Helper {
 
 		$authUser = $this->_View->get('_authUser');
 		if ($authUser === null && !$this->getConfig('includeAuthentication')) {
-			throw new Exception('Variable _authUser containing the user data needs to be passed down. The TinyAuth.Auth component does it automatically, if loaded.');
+			throw new CakeException('Variable _authUser containing the user data needs to be passed down. The TinyAuth.Auth component does it automatically, if loaded.');
 		}
 		$userArray = ($authUser instanceof ArrayAccess && method_exists($authUser, 'toArray')) ? $authUser->toArray() : (array)$authUser;
 
@@ -140,13 +140,13 @@ class AuthUserHelper extends Helper {
 	}
 
 	/**
-	 * @throws \Cake\Core\Exception\Exception
+	 * @throws \Cake\Core\Exception\CakeException
 	 * @return array
 	 */
 	protected function _getUser() {
 		$authUser = $this->_View->get('_authUser');
 		if ($authUser === null) {
-			throw new Exception('TinyAuth.AuthUser helper needs TinyAuth.AuthUser component to function. Please make sure it is loaded in your controller.');
+			throw new CakeException('TinyAuth.AuthUser helper needs TinyAuth.AuthUser component to function. Please make sure it is loaded in your controller.');
 		}
 
 		return $authUser;

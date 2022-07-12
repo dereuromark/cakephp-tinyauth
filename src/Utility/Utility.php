@@ -2,7 +2,7 @@
 
 namespace TinyAuth\Utility;
 
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 use Cake\Utility\Inflector;
 
 class Utility {
@@ -57,12 +57,12 @@ class Utility {
 	 * Returns the ini file as an array.
 	 *
 	 * @param string $ini Full path to the ini file
-	 * @throws \Cake\Core\Exception\Exception
+	 * @throws \Cake\Core\Exception\CakeException
 	 * @return array List
 	 */
 	public static function parseFile($ini) {
 		if (!file_exists($ini)) {
-			throw new Exception(sprintf('Missing TinyAuth config file (%s)', $ini));
+			throw new CakeException(sprintf('Missing TinyAuth config file (%s)', $ini));
 		}
 
 		if (function_exists('parse_ini_file')) {
@@ -70,13 +70,13 @@ class Utility {
 		} else {
 			$content = file_get_contents($ini);
 			if ($content === false) {
-				throw new Exception('Cannot load INI file.');
+				throw new CakeException('Cannot load INI file.');
 			}
 			$iniArray = parse_ini_string($content, true);
 		}
 
 		if (!is_array($iniArray)) {
-			throw new Exception(sprintf('Invalid TinyAuth config file (%s)', $ini));
+			throw new CakeException(sprintf('Invalid TinyAuth config file (%s)', $ini));
 		}
 
 		return $iniArray;

@@ -4,7 +4,7 @@ namespace TinyAuth\Controller\Component;
 
 use Authentication\Controller\Component\AuthenticationComponent as CakeAuthenticationComponent;
 use Cake\Controller\ComponentRegistry;
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 use Cake\Routing\Router;
 use RuntimeException;
 use TinyAuth\Auth\AllowTrait;
@@ -54,7 +54,7 @@ class AuthenticationComponent extends CakeAuthenticationComponent {
 	 * If no URL is given it will default to the current request URL.
 	 *
 	 * @param array $url
-	 * @throws \Cake\Core\Exception\Exception
+	 * @throws \Cake\Core\Exception\CakeException
 	 * @return bool
 	 */
 	public function isPublic(array $url = []) {
@@ -68,7 +68,7 @@ class AuthenticationComponent extends CakeAuthenticationComponent {
 			$routes = Router::getRouteCollection()->named();
 			$defaults = $routes[$url['_name']]->defaults;
 			if (!isset($defaults['action']) || !isset($defaults['controller'])) {
-				throw new Exception('Controller or action name could not be null.');
+				throw new CakeException('Controller or action name could not be null.');
 			}
 			$url = [
 				'prefix' => !empty($defaults['prefix']) ? $defaults['prefix'] : null,
