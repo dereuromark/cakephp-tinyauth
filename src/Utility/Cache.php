@@ -4,7 +4,7 @@ namespace TinyAuth\Utility;
 
 use Cake\Cache\Cache as CoreCache;
 use Cake\Core\Configure;
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 use Cake\Core\StaticConfigTrait;
 
 /**
@@ -81,7 +81,7 @@ class Cache {
 
 	/**
 	 * @param string $type
-	 * @throws \Cake\Core\Exception\Exception
+	 * @throws \Cake\Core\Exception\CakeException
 	 * @return string
 	 */
 	public static function key($type) {
@@ -91,7 +91,7 @@ class Cache {
 
 		$key = $type . 'CacheKey';
 		if (empty($config[$key])) {
-			throw new Exception(sprintf('Invalid TinyAuth cache key `%s`', $key));
+			throw new CakeException(sprintf('Invalid TinyAuth cache key `%s`', $key));
 		}
 
 		return $config[$key];
@@ -99,12 +99,12 @@ class Cache {
 
 	/**
 	 * @param array $config
-	 * @throws \Cake\Core\Exception\Exception
+	 * @throws \Cake\Core\Exception\CakeException
 	 * @return void
 	 */
 	protected static function assertValidCacheSetup(array $config) {
 		if (!in_array($config['cache'], CoreCache::configured(), true)) {
-			throw new Exception(sprintf('Invalid or not configured TinyAuth cache `%s`', $config['cache']));
+			throw new CakeException(sprintf('Invalid or not configured TinyAuth cache `%s`', $config['cache']));
 		}
 	}
 

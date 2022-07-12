@@ -3,7 +3,7 @@
 namespace TinyAuth\Auth;
 
 use Cake\Core\Configure;
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 use Cake\Datasource\ResultSetInterface;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
@@ -50,7 +50,7 @@ trait AclTrait {
 	 * Finds the authorization adapter to use for this request.
 	 *
 	 * @param string $adapter Acl adapter to load.
-	 * @throws \Cake\Core\Exception\Exception
+	 * @throws \Cake\Core\Exception\CakeException
 	 * @throws \InvalidArgumentException
 	 * @return \TinyAuth\Auth\AclAdapter\AclAdapterInterface
 	 */
@@ -60,7 +60,7 @@ trait AclTrait {
 		}
 
 		if (!class_exists($adapter)) {
-			throw new Exception(sprintf('The Acl Adapter class "%s" was not found.', $adapter));
+			throw new CakeException(sprintf('The Acl Adapter class "%s" was not found.', $adapter));
 		}
 
 		$adapterInstance = new $adapter();
@@ -83,7 +83,7 @@ trait AclTrait {
 	 *
 	 * @param array $user User data
 	 * @param array $params Request params
-	 * @throws \Cake\Core\Exception\Exception
+	 * @throws \Cake\Core\Exception\CakeException
 	 * @return bool Success
 	 */
 	protected function _checkUser(array $user, array $params) {
@@ -101,7 +101,7 @@ trait AclTrait {
 				$superAdminColumn = $this->getConfig('idColumn');
 			}
 			if (!isset($user[$superAdminColumn])) {
-				throw new Exception('Missing super Admin Column in user table');
+				throw new CakeException('Missing super Admin Column in user table');
 			}
 			if ($user[$superAdminColumn] === $this->getConfig('superAdmin')) {
 				return true;
@@ -342,7 +342,7 @@ trait AclTrait {
 	 * Hack to get the auth data here for hasAccess().
 	 * We re-use the cached data for performance reasons.
 	 *
-	 * @throws \Cake\Core\Exception\Exception
+	 * @throws \Cake\Core\Exception\CakeException
 	 * @return array
 	 */
 	protected function _getAuth() {
@@ -437,7 +437,7 @@ trait AclTrait {
 	 * Will look for a roles array in
 	 * Configure first, tries database roles table next.
 	 *
-	 * @throws \Cake\Core\Exception\Exception
+	 * @throws \Cake\Core\Exception\CakeException
 	 * @return array<int> List with all available roles
 	 */
 	protected function _getAvailableRoles() {
@@ -447,7 +447,7 @@ trait AclTrait {
 
 		$rolesTableKey = $this->getConfig('rolesTable');
 		if (!$rolesTableKey) {
-			throw new Exception('Invalid/missing rolesTable config');
+			throw new CakeException('Invalid/missing rolesTable config');
 		}
 
 		$roles = Configure::read($rolesTableKey);
@@ -458,7 +458,7 @@ trait AclTrait {
 			}
 
 			if (!$roles) {
-				throw new Exception('Invalid roles config: No roles found in config.');
+				throw new CakeException('Invalid roles config: No roles found in config.');
 			}
 
 			return $roles;
@@ -473,7 +473,7 @@ trait AclTrait {
 		}
 
 		if (count($roles) < 1) {
-			throw new Exception('Invalid TinyAuth role setup (roles table `' . $rolesTableKey . '` has no roles)');
+			throw new CakeException('Invalid TinyAuth role setup (roles table `' . $rolesTableKey . '` has no roles)');
 		}
 
 		$this->_roles = $roles;
@@ -484,7 +484,7 @@ trait AclTrait {
 	/**
 	 * @param string $rolesTableKey
 	 *
-	 * @throws \Cake\Core\Exception\Exception
+	 * @throws \Cake\Core\Exception\CakeException
 	 *
 	 * @return array<int>
 	 */
@@ -495,7 +495,7 @@ trait AclTrait {
 				return $results->combine($this->getConfig('aliasColumn'), 'id');
 			});
 		} catch (RuntimeException $e) {
-			throw new Exception('Invalid roles config: DB table `' . $rolesTableKey . '` cannot be found/accessed (`' . $e->getMessage() . '`).', null, $e);
+			throw new CakeException('Invalid roles config: DB table `' . $rolesTableKey . '` cannot be found/accessed (`' . $e->getMessage() . '`).', null, $e);
 		}
 
 		/** @var array<int> */
@@ -511,7 +511,7 @@ trait AclTrait {
 	 *   in multi-role mode)
 	 *
 	 * @param array $user The user to get the roles for
-	 * @throws \Cake\Core\Exception\Exception
+	 * @throws \Cake\Core\Exception\CakeException
 	 * @return array<int> List with all role ids belonging to the user
 	 */
 	protected function _getUserRoles($user) {
@@ -519,11 +519,11 @@ trait AclTrait {
 		if (!$this->getConfig('multiRole')) {
 			$roleColumn = $this->getConfig('roleColumn');
 			if (!$roleColumn) {
-				throw new Exception('Invalid TinyAuth config, `roleColumn` config missing.');
+				throw new CakeException('Invalid TinyAuth config, `roleColumn` config missing.');
 			}
 
 			if (!array_key_exists($roleColumn, $user)) {
-				throw new Exception(sprintf('Missing TinyAuth role id field (%s) in user session', 'Auth.User.' . $this->getConfig('roleColumn')));
+				throw new CakeException(sprintf('Missing TinyAuth role id field (%s) in user session', 'Auth.User.' . $this->getConfig('roleColumn')));
 			}
 			if (!isset($user[$this->getConfig('roleColumn')])) {
 				return [];

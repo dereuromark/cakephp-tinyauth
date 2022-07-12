@@ -2,7 +2,7 @@
 
 namespace TinyAuth\View\Helper;
 
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 use Cake\Routing\Router;
 use Cake\View\Helper;
 use Cake\View\View;
@@ -49,7 +49,7 @@ class AuthenticationHelper extends Helper {
 			$routes = Router::getRouteCollection()->named();
 			$defaults = $routes[$url['_name']]->defaults;
 			if (!isset($defaults['action']) || !isset($defaults['controller'])) {
-				throw new Exception('Controller or action name could not be null.');
+				throw new CakeException('Controller or action name could not be null.');
 			}
 			$url = [
 				'prefix' => !empty($defaults['prefix']) ? $defaults['prefix'] : null,

@@ -3,7 +3,7 @@
 namespace TinyAuth\Utility;
 
 use Cake\Core\Configure;
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 use TinyAuth\Auth\AclAdapter\IniAclAdapter;
 use TinyAuth\Auth\AllowAdapter\IniAllowAdapter;
 
@@ -67,13 +67,13 @@ class Config {
 
 	/**
 	 * @param string $key
-	 * @throws \Cake\Core\Exception\Exception
+	 * @throws \Cake\Core\Exception\CakeException
 	 * @return mixed
 	 */
 	public static function get($key) {
 		$config = static::all();
 		if (!isset($config[$key])) {
-			throw new Exception('Key ' . $key . ' not found in config.');
+			throw new CakeException('Key ' . $key . ' not found in config.');
 		}
 
 		return $config[$key];

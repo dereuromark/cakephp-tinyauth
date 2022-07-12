@@ -3,7 +3,7 @@
 namespace TinyAuth\Auth;
 
 use Cake\Core\Configure;
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 use InvalidArgumentException;
 use TinyAuth\Auth\AllowAdapter\AllowAdapterInterface;
 use TinyAuth\Utility\Cache;
@@ -150,7 +150,7 @@ trait AllowTrait {
 	 * Finds the authentication adapter to use for this request.
 	 *
 	 * @param string $adapter Acl adapter to load.
-	 * @throws \Cake\Core\Exception\Exception
+	 * @throws \Cake\Core\Exception\CakeException
 	 * @throws \InvalidArgumentException
 	 * @return \TinyAuth\Auth\AllowAdapter\AllowAdapterInterface
 	 */
@@ -160,7 +160,7 @@ trait AllowTrait {
 		}
 
 		if (!class_exists($adapter)) {
-			throw new Exception(sprintf('The Acl Adapter class "%s" was not found.', $adapter));
+			throw new CakeException(sprintf('The Acl Adapter class "%s" was not found.', $adapter));
 		}
 
 		$adapterInstance = new $adapter();
