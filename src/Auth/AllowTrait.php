@@ -30,11 +30,23 @@ trait AllowTrait {
 		$allowDefaults = $this->_getAllowDefaultsForCurrentParams($params);
 
 		foreach ($rules as $rule) {
-			if ($params['plugin'] && $params['plugin'] !== $rule['plugin']) {
-				continue;
+			if (isset($params['plugin']) && ($params['plugin'] !== null)) {
+				if ($params['plugin'] !== $rule['plugin']) {
+					continue;
+				}
+			} else {
+				if (!empty($rule['plugin'])) {
+					continue;
+				}
 			}
-			if (!empty($params['prefix']) && $params['prefix'] !== $rule['prefix']) {
-				continue;
+			if (isset($params['prefix']) && ($params['prefix'] !== null)) {
+				if ($params['prefix'] !== $rule['prefix']) {
+					continue;
+				}
+			} else {
+				if (!empty($rule['prefix'])) {
+					continue;
+				}
 			}
 			if ($params['controller'] !== $rule['controller']) {
 				continue;

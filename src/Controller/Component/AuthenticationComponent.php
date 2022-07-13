@@ -95,7 +95,16 @@ class AuthenticationComponent extends CakeAuthenticationComponent {
 	 * @return void
 	 */
 	protected function _prepareAuthentication() {
-		$rule = $this->_getAllowRule($this->_registry->getController()->getRequest()->getAttribute('params'));
+		$params = $this->_registry->getController()->getRequest()->getAttribute('params');
+		if (!isset($params['plugin'])) {
+			$params['plugin'] = null;
+		}
+		if (!isset($params['prefix'])) {
+			$params['prefix'] = null;
+		}
+
+		$rule = $this->_getAllowRule($params);
+
 		if (!$rule) {
 			return;
 		}
