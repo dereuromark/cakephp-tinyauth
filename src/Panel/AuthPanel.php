@@ -75,10 +75,12 @@ class AuthPanel extends DebugPanel {
 		$this->isPublic = $this->_isActionAllowed($rule, $params['action']);
 
 		$controller->loadComponent('TinyAuth.AuthUser');
-		$user = $controller->AuthUser->user();
+		/** @var \TinyAuth\Controller\Component\AuthUserComponent $authUserComponent */
+		$authUserComponent = $controller->components()->get('AuthUser');
+		$user = $authUserComponent->user();
 		$data['user'] = $user;
 
-		$roles = $controller->AuthUser->roles();
+		$roles = $authUserComponent->roles();
 		$data['roles'] = $roles;
 
 		$access = [];

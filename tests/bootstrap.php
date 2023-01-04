@@ -1,4 +1,7 @@
 <?php
+
+use TestApp\View\AppView;
+
 /**
  * @license http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -68,7 +71,7 @@ define('ROLE_ADMIN', 3);
 
 Cake\Core\Plugin::getCollection()->add(new TinyAuth\Plugin());
 
-class_alias(\TestApp\View\AppView::class, 'App\View\AppView');
+class_alias(AppView::class, 'App\View\AppView');
 
 // Ensure default test connection is defined
 if (!getenv('db_class')) {

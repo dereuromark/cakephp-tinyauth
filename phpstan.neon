@@ -1,9 +1,9 @@
 parameters:
-	level: 1
+	level: 8
 	paths:
-		- TestCase/
+		- src/
 	bootstrapFiles:
-		- %rootDir%/../../../tests/bootstrap.php
+		- tests/bootstrap.php
 	checkMissingIterableValueType: false
 	checkGenericClassInNonGenericObjectType: false
 	ignoreErrors:

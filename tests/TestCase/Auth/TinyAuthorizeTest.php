@@ -4,10 +4,11 @@ namespace TinyAuth\Test\Auth;
 
 use Cake\Controller\ComponentRegistry;
 use Cake\Core\Configure;
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 use Cake\Core\Plugin;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
+use Exception;
 use InvalidArgumentException;
 use ReflectionClass;
 use TestApp\Auth\AclAdapter\CustomAclAdapter;
@@ -111,7 +112,7 @@ class TinyAuthorizeTest extends TestCase {
 			'aclAdapter' => 'Non\\Existent\\Acl\\Adapter',
 		]);
 
-		$this->expectException(Exception::class);
+		$this->expectException(CakeException::class);
 
 		$object->getAcl();
 	}
@@ -1086,7 +1087,7 @@ class TinyAuthorizeTest extends TestCase {
 		$method = $reflection->getMethod('_parseFiles');
 		$method->setAccessible(true);
 
-		$this->expectException(Exception::class);
+		$this->expectException(CakeException::class);
 
 		$method->invokeArgs($object, [
 			Plugin::path('TinyAuth') . 'non' . DS . 'existent' . DS,

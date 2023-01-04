@@ -3,7 +3,7 @@
 namespace TinyAuth\Test\TestCase\Utility;
 
 use Cake\Core\Configure;
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 use Cake\TestSuite\TestCase;
 use TinyAuth\Utility\Cache;
 
@@ -17,7 +17,7 @@ class CacheTest extends TestCase {
 	public function testCacheInvalid() {
 		Configure::write('TinyAuth.cache', 'foo');
 
-		$this->expectException(Exception::class);
+		$this->expectException(CakeException::class);
 
 		Cache::read(Cache::KEY_ALLOW);
 	}
