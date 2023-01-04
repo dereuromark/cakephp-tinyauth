@@ -34,7 +34,7 @@ class AuthPanel extends DebugPanel {
 	 *
 	 * @var string
 	 */
-	public $plugin = 'TinyAuth';
+	public string $plugin = 'TinyAuth';
 
 	/**
 	 * @var bool|null
@@ -44,7 +44,7 @@ class AuthPanel extends DebugPanel {
 	/**
 	 * @var array
 	 */
-	protected $_defaultConfig = [
+	protected array $_defaultConfig = [
 	];
 
 	public function __construct() {
@@ -102,7 +102,7 @@ class AuthPanel extends DebugPanel {
 	 *
 	 * @return array
 	 */
-	public function data() {
+	public function data(): array {
 		$data = [
 			'isPublic' => $this->isPublic,
 		];
@@ -117,7 +117,7 @@ class AuthPanel extends DebugPanel {
 	 *
 	 * @return string
 	 */
-	public function summary() {
+	public function summary(): string {
 		if ($this->isPublic === null) {
 			return '';
 		}

@@ -25,7 +25,7 @@ class AuthUserHelper extends Helper {
 	/**
 	 * @var array
 	 */
-	protected $helpers = ['Html', 'Form'];
+	protected array $helpers = ['Html', 'Form'];
 
 	/**
 	 * @param \Cake\View\View $View The View this helper is being attached to.

@@ -2,7 +2,6 @@
 
 namespace TinyAuth\Auth;
 
-use Cake\Auth\BaseAuthorize;
 use Cake\Controller\ComponentRegistry;
 use Cake\Http\ServerRequest;
 use TinyAuth\Utility\Config;

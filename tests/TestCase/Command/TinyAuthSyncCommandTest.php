@@ -24,7 +24,7 @@ class TinyAuthSyncCommandTest extends ConsoleIntegrationTestCase {
 		]);
 
 		$this->setAppNamespace();
-		$this->useCommandRunner();
+		//$this->useCommandRunner();
 	}
 
 	/**

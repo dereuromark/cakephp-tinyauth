@@ -10,7 +10,7 @@ class TinyAuthTest extends TestCase {
 	/**
 	 * @var array
 	 */
-	protected $fixtures = [
+	protected array $fixtures = [
 		'plugin.TinyAuth.DatabaseRoles',
 	];
 

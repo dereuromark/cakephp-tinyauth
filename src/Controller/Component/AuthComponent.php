@@ -2,7 +2,6 @@
 
 namespace TinyAuth\Controller\Component;
 
-use Cake\Controller\Component\AuthComponent as CakeAuthComponent;
 use Cake\Controller\ComponentRegistry;
 use RuntimeException;
 use TinyAuth\Auth\AclTrait;
@@ -12,10 +11,9 @@ use TinyAuth\Utility\Config;
 /**
  * TinyAuth AuthComponent to handle all authentication in a central INI file.
  *
- * @property \Cake\Controller\Component\RequestHandlerComponent $RequestHandler
  * @property \Cake\Controller\Component\FlashComponent $Flash
  */
-class AuthComponent extends CakeAuthComponent {
+class AuthComponent extends LegacyAuthComponent {
 
 	use AclTrait;
 	use AllowTrait;

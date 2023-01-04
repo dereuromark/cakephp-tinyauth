@@ -11,7 +11,7 @@ class DatabaseRolesUsersFixture extends TestFixture {
 	*
 	* @var array
 	*/
-	public $fields = [
+	public array $fields = [
 		'id' => ['type' => 'integer'],
 		'user_id' => ['type' => 'integer'],
 		'database_role_id' => ['type' => 'integer'],
@@ -25,7 +25,7 @@ class DatabaseRolesUsersFixture extends TestFixture {
 	*
 	* @var array
 	*/
-	public $records = [
+	public array $records = [
 		[
 			'id' => 1,
 			'user_id' => 1,

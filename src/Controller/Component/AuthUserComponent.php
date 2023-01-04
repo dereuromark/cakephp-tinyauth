@@ -13,7 +13,7 @@ use TinyAuth\Utility\Config;
 /**
  * Easy access to the current logged in user and the corresponding auth data.
  *
- * @property \Cake\Controller\Component\AuthComponent $Auth
+ * @property \TinyAuth\Controller\Component\AuthComponent $Auth
  */
 class AuthUserComponent extends Component {
 
@@ -24,7 +24,7 @@ class AuthUserComponent extends Component {
 	/**
 	 * @var array
 	 */
-	public $components = ['Auth'];
+	protected array $components = ['Auth'];
 
 	/**
 	 * @param \Cake\Controller\ComponentRegistry $registry

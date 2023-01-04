@@ -20,15 +20,15 @@
 		}
 	],
 	"require": {
-		"php": ">=7.4",
-		"cakephp/cakephp": "^4.2"
+		"php": ">=8.1",
+		"cakephp/cakephp": "5.x-dev"
 	},
 	"require-dev": {
-		"cakephp/debug_kit": "^4.2.0",
-		"cakephp/authentication": "^2.2",
-		"cakephp/authorization": "^2.0",
-		"fig-r/psr2r-sniffer": "dev-master",
-		"composer/semver": "^2.0 || ^3.0",
+		"cakephp/debug_kit": "5.x-dev",
+		"cakephp/authentication": "3.x-dev",
+		"cakephp/authorization": "3.x-dev",
+		"fig-r/psr2r-sniffer": "dev-next",
+		"composer/semver": "^3.0",
 		"phpunit/phpunit": "^9.5"
 	},
 	"support": {
@@ -61,5 +61,6 @@
 		"allow-plugins": {
 			"dealerdirect/phpcodesniffer-composer-installer": true
 		}
-	}
+	},
+	"minimum-stability": "dev"
 }

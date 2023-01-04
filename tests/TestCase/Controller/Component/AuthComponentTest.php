@@ -23,7 +23,7 @@ class AuthComponentTest extends TestCase {
 	/**
 	 * @var array
 	 */
-	protected $componentConfig = [];
+	protected array $componentConfig = [];
 
 	/**
 	 * @return void

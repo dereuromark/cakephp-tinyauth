@@ -7,7 +7,7 @@ use Cake\Console\ConsoleIo;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\Filesystem\Folder;
+use TinyAuth\Filesystem\Folder;
 use TinyAuth\Utility\Utility;
 
 class Syncer {

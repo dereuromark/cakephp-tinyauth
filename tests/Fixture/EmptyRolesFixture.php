@@ -14,7 +14,7 @@ class EmptyRolesFixture extends TestFixture {
 	 *
 	 * @var array
 	 */
-	public $fields = [
+	public array $fields = [
 		'id' => ['type' => 'integer'],
 		'alias' => ['type' => 'string', 'null' => false, 'default' => null, 'length' => 20, 'collate' => 'utf8_unicode_ci', 'comment' => '', 'charset' => 'utf8'],
 		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
@@ -25,6 +25,6 @@ class EmptyRolesFixture extends TestFixture {
 	 *
 	 * @var array
 	 */
-	public $records = [];
+	public array $records = [];
 
 }

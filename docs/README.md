@@ -92,10 +92,9 @@ then it is best to stick to the Auth component as simple wrapper.
 It is then limited to controller scope (no middleware/routing support) as it always has been so far.
 
 ## Upgrade notes
-Coming from CakePHP 3.x the following major changes will affect your app in CakePHP 4.x:
-- Prefixes are now `CamelCase` to follow core conventions (and to be in sync with plugin and controller names).
-- Roles continue to be `dashed-case` (slugs), actions remain `camelBacked` and thus equal to the method name casing usually.
-- If you use custom adapters, make sure the paths now contain the correct prefix casing, as well.
+Coming from CakePHP 4.x the following major changes will affect your app:
+- Cake\Auth namespace has been removed and is now migrated to TinyAuth\Auth, that includes the
+  Authentication and Authorization classes, hashers and alike.
 
 ## Contributing
 Feel free to fork and pull request.
@@ -103,4 +102,4 @@ Feel free to fork and pull request.
 There are a few guidelines:
 
 - Coding standards passing: `composer cs-check` to check and `composer cs-fix` to fix.
-- Tests passing: `php phpunit.phar` to run them.
+- Tests passing: `composer test` to run them.
