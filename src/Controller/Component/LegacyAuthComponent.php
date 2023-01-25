@@ -167,7 +167,7 @@ abstract class LegacyAuthComponent extends Component implements EventDispatcherI
 		'logoutRedirect' => null,
 		'authError' => null,
 		'unauthorizedRedirect' => true,
-		'storage' => 'Session',
+		'storage' => 'TinyAuth.Session',
 		'checkAuthIn' => 'Controller.startup',
 	];
 
