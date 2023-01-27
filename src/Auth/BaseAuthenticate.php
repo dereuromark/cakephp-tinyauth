@@ -54,7 +54,7 @@ abstract class BaseAuthenticate implements EventListenerInterface {
 		],
 		'userModel' => 'Users',
 		'finder' => 'all',
-		'passwordHasher' => 'Default',
+		'passwordHasher' => 'TinyAuth.Default',
 	];
 
 	/**

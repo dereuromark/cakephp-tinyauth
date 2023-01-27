@@ -437,7 +437,7 @@ abstract class LegacyAuthComponent extends Component implements EventDispatcherI
 	 */
 	protected function _setDefaults(): void {
 		$defaults = [
-			'authenticate' => ['Form'],
+			'authenticate' => ['TinyAuth.Form'],
 			'flash' => [
 				'element' => 'error',
 				'key' => 'flash',
