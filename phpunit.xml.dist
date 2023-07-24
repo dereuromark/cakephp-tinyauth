@@ -18,10 +18,10 @@
 		</listener>
 	</listeners>
 
-	<filter>
-		<whitelist>
+	<coverage>
+		<include>
 			<directory suffix=".php">src/</directory>
-		</whitelist>
-	</filter>
+		</include>
+	</coverage>
 
 </phpunit>
