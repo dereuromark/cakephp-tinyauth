@@ -1,12 +1,12 @@
 <?php
 
+use Cake\Cache\Cache;
+use Cake\Core\Configure;
+use Cake\Core\Plugin;
+use Cake\Datasource\ConnectionManager;
+use Cake\TestSuite\Fixture\SchemaLoader;
 use TestApp\View\AppView;
-
-/**
- * @license http://www.opensource.org/licenses/mit-license.php MIT License
- */
-require dirname(__DIR__) . '/vendor/cakephp/cakephp/src/basics.php';
-require dirname(__DIR__) . '/vendor/autoload.php';
+use TinyAuth\TinyAuthPlugin;
 
 if (!defined('DS')) {
 	define('DS', DIRECTORY_SEPARATOR);
@@ -33,11 +33,16 @@ define('CACHE', TMP . 'cache' . DS);
 define('CAKE_CORE_INCLUDE_PATH', ROOT . '/vendor/cakephp/cakephp');
 define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
 
-Cake\Core\Configure::write('App', [
+require dirname(__DIR__) . '/vendor/autoload.php';
+require CORE_PATH . 'config/bootstrap.php';
+require CAKE_CORE_INCLUDE_PATH . '/src/functions.php';
+
+Configure::write('App', [
 	'namespace' => 'TestApp',
+	'encoding' => 'UTF-8',
 ]);
 
-Cake\Core\Configure::write('debug', true);
+Configure::write('debug', true);
 
 $cache = [
 	'default' => [
@@ -60,7 +65,7 @@ $cache = [
 	],
 ];
 
-Cake\Cache\Cache::setConfig($cache);
+Cache::setConfig($cache);
 
 // Why has this no effect?
 require TESTS . 'config' . DS . 'routes.php';
@@ -69,7 +74,7 @@ define('ROLE_USER', 1);
 define('ROLE_MODERATOR', 2);
 define('ROLE_ADMIN', 3);
 
-Cake\Core\Plugin::getCollection()->add(new TinyAuth\Plugin());
+Plugin::getCollection()->add(new TinyAuthPlugin());
 
 class_alias(AppView::class, 'App\View\AppView');
 
@@ -79,7 +84,7 @@ if (!getenv('db_class')) {
 	putenv('db_dsn=sqlite:///:memory:');
 }
 
-Cake\Datasource\ConnectionManager::setConfig('test', [
+ConnectionManager::setConfig('test', [
 	'className' => 'Cake\Database\Connection',
 	'driver' => getenv('db_class') ?: null,
 	'dsn' => getenv('db_dsn') ?: null,
@@ -89,6 +94,6 @@ Cake\Datasource\ConnectionManager::setConfig('test', [
 ]);
 
 if (env('FIXTURE_SCHEMA_METADATA')) {
-	$loader = new Cake\TestSuite\Fixture\SchemaLoader();
+	$loader = new SchemaLoader();
 	$loader->loadInternalFile(env('FIXTURE_SCHEMA_METADATA'));
 }

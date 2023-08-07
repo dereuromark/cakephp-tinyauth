@@ -2,7 +2,6 @@
 
 namespace TinyAuth\Test\TestCase\Controller\Component;
 
-use Cake\Controller\Component\AuthComponent;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
@@ -33,7 +32,7 @@ class AuthUserComponentTest extends TestCase {
 		$controller = new Controller(new ServerRequest());
 		$componentRegistry = new ComponentRegistry($controller);
 		$this->AuthUser = new TestAuthUserComponent($componentRegistry);
-		$this->AuthUser->Auth = $this->getMockBuilder(AuthComponent::class)->setMethods(['user'])->setConstructorArgs([$componentRegistry])->getMock();
+		//$this->AuthUser->Auth = $this->getMockBuilder(AuthComponent::class)->onlyMethods(['user'])->setConstructorArgs([$componentRegistry])->getMock();
 
 		Configure::write('Roles', [
 			'user' => 1,

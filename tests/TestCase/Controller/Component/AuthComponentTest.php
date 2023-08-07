@@ -8,6 +8,9 @@ use Cake\Core\Plugin;
 use Cake\Event\Event;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
+use Cake\Routing\Route\DashedRoute;
+use Cake\Routing\RouteBuilder;
+use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use TestApp\Controller\Admin\MyPrefix\MyTestController;
 use TestApp\Controller\OffersController;
@@ -33,6 +36,12 @@ class AuthComponentTest extends TestCase {
 			'allowFilePath' => Plugin::path('TinyAuth') . 'tests' . DS . 'test_files' . DS,
 			'autoClearCache' => true,
 		];
+
+		$builder = Router::createRouteBuilder('/');
+		$builder->setRouteClass(DashedRoute::class);
+		$builder->scope('/', function (RouteBuilder $routes): void {
+			$routes->fallbacks();
+		});
 	}
 
 	/**
@@ -117,13 +126,14 @@ class AuthComponentTest extends TestCase {
 	 */
 	public function testDeniedAction() {
 		$request = new ServerRequest([
-		'params' => [
-			'plugin' => 'Extras',
-			'controller' => 'Offers',
-			'action' => 'superPrivate',
-			'_ext' => null,
-			'pass' => [1],
-		]]);
+			'params' => [
+				'plugin' => 'Extras',
+				'controller' => 'Offers',
+				'action' => 'superPrivate',
+				'_ext' => null,
+				'pass' => [1],
+			],
+		]);
 		$controller = new OffersController($request);
 		$controller->loadComponent('TinyAuth.Auth', $this->componentConfig);
 
@@ -223,7 +233,7 @@ class AuthComponentTest extends TestCase {
 	protected function getControllerMock(ServerRequest $request) {
 		$controller = $this->getMockBuilder(Controller::class)
 			->setConstructorArgs([$request])
-			->setMethods(['isAction'])
+			->onlyMethods(['isAction'])
 			->getMock();
 
 		$controller->expects($this->once())->method('isAction')->willReturn(true);

@@ -2,12 +2,14 @@
 
 namespace TinyAuth\Test\TestCase\Command;
 
-use Cake\Console\Command;
+use Cake\Command\Command;
+use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\Core\Configure;
-use Cake\Filesystem\Folder;
-use Cake\TestSuite\ConsoleIntegrationTestCase;
+use Cake\TestSuite\TestCase;
 
-class TinyAuthSyncCommandTest extends ConsoleIntegrationTestCase {
+class TinyAuthSyncCommandTest extends TestCase {
+
+	use ConsoleIntegrationTestTrait;
 
 	/**
 	 * setup method
@@ -34,8 +36,8 @@ class TinyAuthSyncCommandTest extends ConsoleIntegrationTestCase {
 		Configure::write('TinyAuth.aclFilePath', TESTS . 'test_files/subfolder/');
 		Configure::write('TinyAuth.allowFilePath', TESTS . 'test_files/');
 
-		$folder = new Folder();
-		$folder->copy('/tmp' . DS . 'src' . DS . 'Controller' . DS, ['from' => TESTS . 'test_app' . DS . 'Controller' . DS]);
+		//$folder = new Folder();
+		//$folder->copy('/tmp' . DS . 'src' . DS . 'Controller' . DS, ['from' => TESTS . 'test_app' . DS . 'Controller' . DS]);
 
 		$this->exec('tiny_auth_sync foo,bar -d -v');
 

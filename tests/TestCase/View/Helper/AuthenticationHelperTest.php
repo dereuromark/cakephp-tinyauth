@@ -16,6 +16,11 @@ class AuthenticationHelperTest extends TestCase {
 	protected $helper;
 
 	/**
+	 * @var array
+	 */
+	protected $config;
+
+	/**
 	 * setUp method
 	 *
 	 * @return void

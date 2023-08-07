@@ -175,7 +175,7 @@ class AuthenticationComponentTest extends TestCase {
 	protected function getControllerMock(ServerRequest $request) {
 		$controller = $this->getMockBuilder(Controller::class)
 			->setConstructorArgs([$request])
-			->setMethods(['isAction'])
+			->onlyMethods(['isAction'])
 			->getMock();
 
 		$controller->expects($this->any())->method('isAction')->willReturn(true);

@@ -60,7 +60,7 @@ class AuthPanelTest extends TestCase {
 	 * @return void
 	 */
 	public function testPanelRestrictedAction() {
-		$controller = new Controller();
+		$controller = new Controller(new ServerRequest());
 		$event = new Event('event', $controller);
 
 		$this->panel->shutdown($event);

@@ -37,8 +37,10 @@ class AuthUserHelperTest extends TestCase {
 	public function setUp(): void {
 		parent::setUp();
 
-		Router::scope('/', function(RouteBuilder $routes) {
-			$routes->fallbacks(DashedRoute::class);
+		$builder = Router::createRouteBuilder('/');
+		$builder->setRouteClass(DashedRoute::class);
+		$builder->scope('/', function (RouteBuilder $routes): void {
+			$routes->fallbacks();
 		});
 
 		Configure::write('Roles', [
@@ -82,7 +84,9 @@ class AuthUserHelperTest extends TestCase {
 		$result = $this->AuthUserHelper->hasAccess($request);
 		$this->assertTrue($result);
 
-		Router::connect(
+		$builder = Router::createRouteBuilder('/');
+		$builder->setRouteClass(DashedRoute::class);
+		$builder->connect(
 			'/edit/*',
 			['controller' => 'Tags', 'action' => 'edit'],
 			['_name' => 'Tags::edit'],
@@ -110,7 +114,9 @@ class AuthUserHelperTest extends TestCase {
 		$result = $this->AuthUserHelper->hasAccess($request);
 		$this->assertFalse($result);
 
-		Router::connect(
+		$builder = Router::createRouteBuilder('/');
+		$builder->setRouteClass(DashedRoute::class);
+		$builder->connect(
 			'/delete/*',
 			['controller' => 'Tags', 'action' => 'delete'],
 			['_name' => 'Tags::delete'],
@@ -136,7 +142,9 @@ class AuthUserHelperTest extends TestCase {
 		$result = $this->AuthUserHelper->hasAccess($request);
 		$this->assertFalse($result);
 
-		Router::connect(
+		$builder = Router::createRouteBuilder('/');
+		$builder->setRouteClass(DashedRoute::class);
+		$builder->connect(
 			'/edit/*',
 			['controller' => 'Tags', 'action' => 'edit'],
 			['_name' => 'Tags::edit'],
@@ -159,7 +167,9 @@ class AuthUserHelperTest extends TestCase {
 		];
 		$this->View->set('_authUser', $user);
 
-		Router::connect(
+		$builder = Router::createRouteBuilder('/');
+		$builder->setRouteClass(DashedRoute::class);
+		$builder->connect(
 			'/edit/*',
 			['action' => 'edit'],
 			['_name' => 'Tags::edit'],
@@ -183,7 +193,9 @@ class AuthUserHelperTest extends TestCase {
 		];
 		$this->View->set('_authUser', $user);
 
-		Router::connect(
+		$builder = Router::createRouteBuilder('/');
+		$builder->setRouteClass(DashedRoute::class);
+		$builder->connect(
 			'/edit/*',
 			['action' => 'edit'],
 			['_name' => 'Tags::edit'],
@@ -208,7 +220,9 @@ class AuthUserHelperTest extends TestCase {
 		];
 		$this->View->set('_authUser', $user);
 
-		Router::connect(
+		$builder = Router::createRouteBuilder('/');
+		$builder->setRouteClass(DashedRoute::class);
+		$builder->connect(
 			'/view/{id}',
 			['controller' => 'Posts', 'action' => 'view'],
 			['_name' => 'Posts::view'],

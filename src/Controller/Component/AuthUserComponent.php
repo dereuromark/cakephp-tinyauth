@@ -24,7 +24,7 @@ class AuthUserComponent extends Component {
 	/**
 	 * @var array
 	 */
-	protected array $components = ['Auth'];
+	protected array $components = ['TinyAuth.Auth'];
 
 	/**
 	 * @param \Cake\Controller\ComponentRegistry $registry

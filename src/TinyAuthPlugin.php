@@ -7,7 +7,7 @@ use Cake\Core\BasePlugin;
 /**
  * Plugin for TinyAuth
  */
-class Plugin extends BasePlugin {
+class TinyAuthPlugin extends BasePlugin {
 
 	/**
 	 * @var bool

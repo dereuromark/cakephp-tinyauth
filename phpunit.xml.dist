@@ -12,18 +12,14 @@
 		</testsuite>
 	</testsuites>
 
-	<listeners>
-		<listener class="Cake\TestSuite\Fixture\FixtureInjector">
-			<arguments>
-				<object class="Cake\TestSuite\Fixture\FixtureManager"/>
-			</arguments>
-		</listener>
-	</listeners>
+	<extensions>
+		<bootstrap class="\Cake\TestSuite\Fixture\Extension\PHPUnitExtension"/>
+	</extensions>
 
-	<filter>
-		<whitelist>
+	<source>
+		<include>
 			<directory suffix=".php">src/</directory>
-		</whitelist>
-	</filter>
+		</include>
+	</source>
 
 </phpunit>
