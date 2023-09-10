@@ -6,6 +6,7 @@ use Cake\Command\Command;
 use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
+use TinyAuth\Filesystem\Folder;
 
 class TinyAuthSyncCommandTest extends TestCase {
 
@@ -36,8 +37,8 @@ class TinyAuthSyncCommandTest extends TestCase {
 		Configure::write('TinyAuth.aclFilePath', TESTS . 'test_files/subfolder/');
 		Configure::write('TinyAuth.allowFilePath', TESTS . 'test_files/');
 
-		//$folder = new Folder();
-		//$folder->copy('/tmp' . DS . 'src' . DS . 'Controller' . DS, ['from' => TESTS . 'test_app' . DS . 'Controller' . DS]);
+		$folder = new Folder();
+		$folder->copy('/tmp' . DS . 'src' . DS . 'Controller' . DS, ['from' => TESTS . 'test_app' . DS . 'Controller' . DS]);
 
 		$this->exec('tiny_auth_sync foo,bar -d -v');
 

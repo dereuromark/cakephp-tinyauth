@@ -9,6 +9,7 @@ use Cake\Event\Event;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use TestApp\Controller\Component\TestAuthUserComponent;
+use TinyAuth\Controller\Component\AuthComponent;
 use TinyAuth\Utility\Cache;
 
 class AuthUserComponentTest extends TestCase {
@@ -29,10 +30,14 @@ class AuthUserComponentTest extends TestCase {
 	 * @return void
 	 */
 	public function setUp(): void {
+		$config = [
+			'allowFilePath' => ROOT . DS . 'tests' . DS . 'test_files' . DS,
+		];
+
 		$controller = new Controller(new ServerRequest());
 		$componentRegistry = new ComponentRegistry($controller);
 		$this->AuthUser = new TestAuthUserComponent($componentRegistry);
-		//$this->AuthUser->Auth = $this->getMockBuilder(AuthComponent::class)->onlyMethods(['user'])->setConstructorArgs([$componentRegistry])->getMock();
+		$this->AuthUser->Auth = $this->getMockBuilder(AuthComponent::class)->onlyMethods(['user'])->setConstructorArgs([$componentRegistry, $config])->getMock();
 
 		Configure::write('Roles', [
 			'user' => 1,

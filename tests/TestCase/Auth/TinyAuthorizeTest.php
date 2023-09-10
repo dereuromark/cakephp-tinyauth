@@ -3,6 +3,7 @@
 namespace TinyAuth\Test\Auth;
 
 use Cake\Controller\ComponentRegistry;
+use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
 use Cake\Core\Plugin;
@@ -47,9 +48,8 @@ class TinyAuthorizeTest extends TestCase {
 	public function setUp(): void {
 		parent::setUp();
 
-		$this->collection = new ComponentRegistry();
-
 		$this->request = new ServerRequest();
+		$this->collection = new ComponentRegistry(new Controller($this->request));
 
 		Configure::write('Roles', [
 			'user' => ROLE_USER,

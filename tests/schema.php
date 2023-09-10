@@ -15,7 +15,7 @@ foreach ($ierator as $file) {
 
 	$name = $matches[1];
 	$tableName = Inflector::underscore($name);
-	$class = 'Shim\\Test\\Fixture\\' . $name . 'Fixture';
+	$class = 'TinyAuth\\Test\\Fixture\\' . $name . 'Fixture';
 	try {
 		$object = (new ReflectionClass($class))->getProperty('fields');
 	} catch (ReflectionException $e) {
