@@ -21,12 +21,12 @@
 	],
 	"require": {
 		"php": ">=8.1",
-		"cakephp/cakephp": "5.x-dev"
+		"cakephp/cakephp": "^5.0.0"
 	},
 	"require-dev": {
-		"cakephp/debug_kit": "5.x-dev",
-		"cakephp/authentication": "3.x-dev",
-		"cakephp/authorization": "3.x-dev",
+		"cakephp/debug_kit": "^5.0.1",
+		"cakephp/authentication": "^3.0.1",
+		"cakephp/authorization": "^3.0.1",
 		"fig-r/psr2r-sniffer": "dev-next",
 		"composer/semver": "^3.0",
 		"phpunit/phpunit": "^10.2"
@@ -61,6 +61,5 @@
 		"allow-plugins": {
 			"dealerdirect/phpcodesniffer-composer-installer": true
 		}
-	},
-	"minimum-stability": "dev"
+	}
 }
