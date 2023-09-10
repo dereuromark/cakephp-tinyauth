@@ -85,7 +85,6 @@ class AuthUserHelperTest extends TestCase {
 		$this->assertTrue($result);
 
 		$builder = Router::createRouteBuilder('/');
-		$builder->setRouteClass(DashedRoute::class);
 		$builder->connect(
 			'/edit/*',
 			['controller' => 'Tags', 'action' => 'edit'],
@@ -221,7 +220,6 @@ class AuthUserHelperTest extends TestCase {
 		$this->View->set('_authUser', $user);
 
 		$builder = Router::createRouteBuilder('/');
-		$builder->setRouteClass(DashedRoute::class);
 		$builder->connect(
 			'/view/{id}',
 			['controller' => 'Posts', 'action' => 'view'],
