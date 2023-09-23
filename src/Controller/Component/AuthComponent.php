@@ -25,9 +25,11 @@ class AuthComponent extends LegacyAuthComponent {
 	 */
 	public function __construct(ComponentRegistry $registry, array $config = []) {
 		$config += Config::all();
+		if ($config && empty($config['className'])) {
+			$config['className'] = 'TinyAuth.Auth';
+		}
 
 		parent::__construct($registry, $config);
-
 		if ($registry->has('Authentication') && get_class($registry->get('Authentication')) === AuthenticationComponent::class) {
 			throw new RuntimeException('You cannot use new TinyAuth.Authentication component and this TinyAuth.Auth component together.');
 		}
