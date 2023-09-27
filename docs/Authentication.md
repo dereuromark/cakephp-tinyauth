@@ -96,7 +96,7 @@ Accounts.Accounts = view, edit
 Accounts.MyAdmin/Accounts = index
 ```
 
->**Note:** Prefixes are always `CamelCased`. The route inflects to the final casing if needed. 
+>**Note:** Prefixes are always `CamelCased`. The route inflects to the final casing if needed.
 Nested prefixes are joined using `/`, e.g. `MyAdmin/Nested`.
 
 Using only "granting" is recommended for security reasons.
@@ -150,6 +150,30 @@ To modify the caching behavior set the ``autoClearCache`` configuration option:
 $this->loadComponent('TinyAuth.Auth', [
     'autoClearCache' => true|false
 )]
+```
+
+## Multi Column authentication
+Often times you want to allow logging in with either username or email.
+In this case you can use the built-in adapter for it:
+
+```php
+'authenticate' => [
+    'TinyAuth.MultiColumn' => [
+        'fields' => [
+            'username' => 'login',
+            'password' => 'password',
+        ],
+        'columns' => ['username', 'email'],
+        'userModel' => 'Users',
+    ],
+],
+```
+which you can pass in to Auth component as options.
+
+Your form would then contain e.g.
+```php
+echo $this->Form->control('login', ['label' => 'Your username or email']);
+echo $this->Form->control('password', ['autocomplete' => 'off']);
 ```
 
 ## Configuration
