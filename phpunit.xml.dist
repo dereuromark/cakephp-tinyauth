@@ -8,7 +8,7 @@
 	</php>
 	<testsuites>
 		<testsuite name="tiny-auth">
-			<directory>tests/</directory>
+			<directory>tests/TestCase/</directory>
 		</testsuite>
 	</testsuites>
 

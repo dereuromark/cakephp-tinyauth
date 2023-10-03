@@ -11,7 +11,7 @@ use TinyAuth\Auth\AuthUserTrait;
 use TinyAuth\Utility\Config;
 
 /**
- * Easy access to the current logged in user and the corresponding auth data.
+ * Easy access to the current logged-in user and the corresponding auth data.
  *
  * @property \TinyAuth\Controller\Component\AuthComponent $Auth
  */

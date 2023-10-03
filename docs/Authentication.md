@@ -143,7 +143,7 @@ Note: It is also advised to move away from these controller calls.
 ## Caching
 
 TinyAuth makes heavy use of caching to achieve optimal performance.
-By default it will not use caching in debug mode, though.
+By default, it will not use caching in debug mode, though.
 
 To modify the caching behavior set the ``autoClearCache`` configuration option:
 ```php
