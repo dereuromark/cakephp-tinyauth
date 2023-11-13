@@ -16,9 +16,9 @@ class DatabaseRolesFixture extends TestFixture {
 	 */
 	public array $fields = [
 		'id' => ['type' => 'integer'],
-		'name' => ['type' => 'string', 'null' => false, 'length' => 64, 'collate' => 'utf8_unicode_ci', 'comment' => '', 'charset' => 'utf8'],
-		'description' => ['type' => 'string', 'null' => false, 'default' => null, 'collate' => 'utf8_unicode_ci', 'comment' => '', 'charset' => 'utf8'],
-		'alias' => ['type' => 'string', 'null' => false, 'default' => null, 'length' => 20, 'collate' => 'utf8_unicode_ci', 'comment' => '', 'charset' => 'utf8'],
+		'name' => ['type' => 'string', 'null' => false, 'length' => 64, 'comment' => '', 'charset' => 'utf8'],
+		'description' => ['type' => 'string', 'null' => false, 'default' => null, 'comment' => '', 'charset' => 'utf8'],
+		'alias' => ['type' => 'string', 'null' => false, 'default' => null, 'length' => 20, 'comment' => '', 'charset' => 'utf8'],
 		'created' => ['type' => 'datetime', 'null' => true, 'default' => null, 'collate' => null, 'comment' => ''],
 		'modified' => ['type' => 'datetime', 'null' => true, 'default' => null, 'collate' => null, 'comment' => ''],
 		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],

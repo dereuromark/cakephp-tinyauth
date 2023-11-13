@@ -16,7 +16,7 @@ class EmptyRolesFixture extends TestFixture {
 	 */
 	public array $fields = [
 		'id' => ['type' => 'integer'],
-		'alias' => ['type' => 'string', 'null' => false, 'default' => null, 'length' => 20, 'collate' => 'utf8_unicode_ci', 'comment' => '', 'charset' => 'utf8'],
+		'alias' => ['type' => 'string', 'null' => false, 'default' => null, 'length' => 20, 'comment' => '', 'charset' => 'utf8'],
 		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
 	];
 

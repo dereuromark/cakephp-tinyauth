@@ -16,7 +16,7 @@ class UsersFixture extends TestFixture {
 	 */
 	public array $fields = [
 		'id' => ['type' => 'integer'],
-		'username' => ['type' => 'string', 'null' => false, 'length' => 64, 'collate' => 'utf8_unicode_ci', 'comment' => '', 'charset' => 'utf8'],
+		'username' => ['type' => 'string', 'null' => false, 'length' => 64, 'comment' => '', 'charset' => 'utf8'],
 		'role_id' => ['type' => 'integer', 'null' => false, 'default' => '0', 'length' => 11, 'collate' => null, 'comment' => ''],
 		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
 	];
