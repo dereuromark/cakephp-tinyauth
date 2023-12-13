@@ -350,7 +350,7 @@ abstract class LegacyAuthComponent extends Component implements EventDispatcherI
 		}
 		$result = $auth->unauthenticated($controller->getRequest(), $response);
 		if ($result !== null) {
-			return $result instanceof Response ? $result : null;
+			return $result;
 		}
 
 		if (!$controller->getRequest()->is('ajax')) {
