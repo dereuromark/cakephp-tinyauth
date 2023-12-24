@@ -144,7 +144,7 @@ trait AclTrait {
 	}
 
 	/**
-	 * @param array<int> $userRoles
+	 * @param array<string, int|string> $userRoles
 	 * @param array $params
 	 *
 	 * @return bool
@@ -259,7 +259,7 @@ trait AclTrait {
 	/**
 	 * @param string $prefix
 	 * @param array<string> $prefixMap
-	 * @param array<int> $userRoles
+	 * @param array<string, int|string> $userRoles
 	 * @param array<int> $availableRoles
 	 *
 	 * @return bool
@@ -440,7 +440,7 @@ trait AclTrait {
 	 * Configure first, tries database roles table next.
 	 *
 	 * @throws \Cake\Core\Exception\CakeException
-	 * @return array<int> List with all available roles
+	 * @return array<string, int> List with all available roles
 	 */
 	protected function _getAvailableRoles() {
 		if ($this->_roles !== null) {
@@ -514,7 +514,7 @@ trait AclTrait {
 	 *
 	 * @param array $user The user to get the roles for
 	 * @throws \Cake\Core\Exception\CakeException
-	 * @return array<int> List with all role ids belonging to the user
+	 * @return array<string, int|string> List with all role ids belonging to the user
 	 */
 	protected function _getUserRoles($user) {
 		// Single-role from session
@@ -610,8 +610,8 @@ trait AclTrait {
 	/**
 	 * Returns current roles as [alias => id] pairs.
 	 *
-	 * @param array<int> $roles
-	 * @return array<int>
+	 * @param array<int|string|\BackedEnum> $roles
+	 * @return array<string, int|string>
 	 */
 	protected function _mapped(array $roles) {
 		$availableRoles = $this->_getAvailableRoles();
@@ -620,7 +620,8 @@ trait AclTrait {
 		foreach ($roles as $role) {
 			if ($role instanceof BackedEnum) {
 				$alias = $role instanceof EnumLabelInterface ? $role->label() : $role->name;
-				$array[$role->value] = $alias;
+				$value = $role->value;
+				$array[$alias] = $value;
 
 				continue;
 			}
