@@ -475,16 +475,16 @@ abstract class LegacyAuthComponent extends Component implements EventDispatcherI
 	 * @return bool True if $user is authorized, otherwise false
 	 */
 	public function isAuthorized($user = null, ?ServerRequest $request = null): bool {
-		if (empty($user) && !$this->user()) {
+		if (!$user && !$this->user()) {
 			return false;
 		}
-		if (empty($user)) {
+		if (!$user) {
 			$user = $this->user();
 		}
-		if (empty($request)) {
+		if (!$request) {
 			$request = $this->getController()->getRequest();
 		}
-		if (empty($this->_authorizeObjects)) {
+		if (!$this->_authorizeObjects) {
 			$this->constructAuthorize();
 		}
 		foreach ($this->_authorizeObjects as $authorizer) {
