@@ -113,7 +113,7 @@ class Syncer {
 				continue;
 			}
 
-			$controllers[] = ($plugin ? $plugin . '.' : '') . ($prefix ? strtolower($prefix) . '/' : '') . $name;
+			$controllers[] = ($plugin ? $plugin . '.' : '') . ($prefix ? $prefix . '/' : '') . $name;
 		}
 
 		foreach ($folderContent[0] as $subFolder) {
