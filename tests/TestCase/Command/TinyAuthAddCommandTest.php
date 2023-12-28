@@ -1,6 +1,6 @@
 <?php
 
-namespace TinyAuth\Test\TestCase\Command;
+namespace TestCase\Command;
 
 use Cake\Command\Command;
 use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
@@ -8,7 +8,7 @@ use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
 use TinyAuth\Filesystem\Folder;
 
-class TinyAuthSyncCommandTest extends TestCase {
+class TinyAuthAddCommandTest extends TestCase {
 
 	use ConsoleIntegrationTestTrait;
 
@@ -32,19 +32,18 @@ class TinyAuthSyncCommandTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testSync() {
+	public function testAdd() {
 		Configure::write('TinyAuth.aclFilePath', TESTS . 'test_files/subfolder/');
 		Configure::write('TinyAuth.allowFilePath', TESTS . 'test_files/');
 
 		$folder = new Folder();
 		$folder->copy('/tmp' . DS . 'src' . DS . 'Controller' . DS, ['from' => TESTS . 'test_app' . DS . 'Controller' . DS]);
 
-		$this->exec('tiny_auth_sync foo,bar -d -v');
+		$this->exec('tiny_auth_add Some action foo,bar -d -v');
 
 		$this->assertExitCode(Command::CODE_SUCCESS);
-		$this->assertOutputContains('index = admin');
-		$this->assertOutputContains('[Offers]');
-		$this->assertOutputContains('* = foo,bar');
+		$this->assertOutputContains('[Some]');
+		$this->assertOutputContains('action = foo, bar');
 	}
 
 }

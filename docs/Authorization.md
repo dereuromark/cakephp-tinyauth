@@ -103,7 +103,7 @@ Example of a record from a valid roles table:
 'modified' => '2010-01-07 03:36:33'
 ```
 
-The `alias` values should be slugged as `lowercase-dashed`. 
+The `alias` values should be slugged as `lowercase-dashed`.
 Multi words like `Super Admin` would be `super-admin` etc.
 
 > Please note that you do NOT need Configure based roles when using database
@@ -171,7 +171,7 @@ If you need more control over the prefix map, or want to even customize the role
 'authorizeByPrefix' => [
     'Admin => 'admin',
     'Management' => ['mod', 'super-mod'],
-    'PrefixThree' => ...  
+    'PrefixThree' => ...
 ],
 ```
 
@@ -242,7 +242,7 @@ view, edit = user
 * = * ; All roles can access all actions
 ```
 
->**Note:** Prefixes are always `CamelCased`. The route inflects to the final casing if needed. 
+>**Note:** Prefixes are always `CamelCased`. The route inflects to the final casing if needed.
 Nested prefixes are joined using `/`, e.g. `MyAdmin/Nested`.
 
 Using only "granting" is recommended for security reasons.
@@ -263,7 +263,7 @@ Make sure you are using each section key only once, though. The first definition
 
 ### Template with defaults
 See the `config/` folder and the default template for popular plugins.
-You can copy out any default rules you want to use in your project. 
+You can copy out any default rules you want to use in your project.
 
 ## Adapters
 By default INI files and the IniAdapter will be used.
@@ -398,6 +398,16 @@ bin/cake tiny_auth_sync {your default roles, comma separated}
 This will then add any missing controller with `* = ...` for all actions and you can then manually fine-tune.
 
 Note: Use `'*'` as wildcard role if you just want to generate all possible controllers.
+Use with `-d -v` to just output the changes it would do to your ACL INI file.
+
+## Add Command
+
+Add any role to any command and action:
+```
+bin/cake tiny_auth_add {Controller} {Action} {roles, comma separated}
+```
+It will skip if the roles are already present for this controller and action.
+
 Use with `-d -v` to just output the changes it would do to your ACL INI file.
 
 ## Tips

@@ -6,13 +6,13 @@ use Cake\Command\Command;
 use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
-use TinyAuth\Sync\Syncer;
+use TinyAuth\Sync\Adder;
 use TinyAuth\Utility\TinyAuth;
 
 /**
  * Auth and ACL helper
  */
-class TinyAuthSyncCommand extends Command {
+class TinyAuthAddCommand extends Command {
 
 	/**
 	 * Main function Prints out the list of shells.
@@ -22,18 +22,34 @@ class TinyAuthSyncCommand extends Command {
 	 * @return int
 	 */
 	public function execute(Arguments $args, ConsoleIo $io) {
-		$syncer = $this->_getSyncer();
-		$syncer->syncAcl($args, $io);
+		$adder = $this->_getAdder();
+
+		$controller = $args->getArgument('controller');
+		if ($controller === null) {
+			$controllerNames = $adder->controllers($args);
+			$io->out('Select a controller:');
+			foreach ($controllerNames as $controllerName) {
+				$io->out(' - ' . $controllerName);
+			}
+			while (!$controller || !in_array($controller, $controllerNames, true)) {
+				$controller = $io->ask('Controller name');
+			}
+		}
+
+		$action = $args->getArgument('action') ?: '*';
+		$roles = $args->getArgument('roles') ?: '*';
+		$roles = array_map('trim', explode(',', $roles));
+		$adder->addAcl($controller, $action, $roles, $args, $io);
 		$io->out('Controllers and ACL synced.');
 
 		return static::CODE_SUCCESS;
 	}
 
 	/**
-	 * @return \TinyAuth\Sync\Syncer
+	 * @return \TinyAuth\Sync\Adder
 	 */
-	protected function _getSyncer() {
-		return new Syncer();
+	protected function _getAdder() {
+		return new Adder();
 	}
 
 	/**
@@ -47,9 +63,15 @@ class TinyAuthSyncCommand extends Command {
 
 		$parser->setDescription(
 			'Get the list of controllers and make sure, they are synced into the ACL file.',
-		)->addArgument('roles', [
-			'help' => 'Role names, comma separated, e.g. `user,admin`.' . ($roles ? PHP_EOL . 'Available roles: ' . implode(', ', $roles) . '.' : ''),
-			'required' => true,
+		)->addArgument('controller', [
+			'help' => 'Controller name (Plugin.Prefix/Name) without Controller suffix.',
+			'required' => false,
+		])->addArgument('action', [
+			'help' => 'Action name (camelCased or under_scored), defaults to `*` (all).',
+			'required' => false,
+		])->addArgument('roles', [
+			'help' => 'Role names, comma separated, e.g. `user,admin`, defaults to `*` (all).' . ($roles ? PHP_EOL . 'Available roles: ' . implode(', ', $roles) . '.' : ''),
+			'required' => false,
 		])->addOption('plugin', [
 			'short' => 'p',
 			'help' => 'Plugin, use `all` to include all loaded plugins.',
