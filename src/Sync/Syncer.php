@@ -40,7 +40,7 @@ class Syncer {
 			}
 
 			$io->info('Add ' . $controller);
-			$roles = $args->getArgument('roles');
+			$roles = (string)$args->getArgument('roles');
 			$roles = array_map('trim', explode(',', $roles));
 			$map = [
 				'*' => implode(', ', $roles),
