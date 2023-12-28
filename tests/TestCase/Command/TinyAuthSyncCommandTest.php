@@ -44,7 +44,7 @@ class TinyAuthSyncCommandTest extends TestCase {
 		$this->assertExitCode(Command::CODE_SUCCESS);
 		$this->assertOutputContains('index = admin');
 		$this->assertOutputContains('[Offers]');
-		$this->assertOutputContains('* = foo,bar');
+		$this->assertOutputContains('* = foo, bar');
 	}
 
 }
