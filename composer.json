@@ -27,7 +27,7 @@
 		"cakephp/debug_kit": "^4.2.0",
 		"cakephp/authentication": "^2.2",
 		"cakephp/authorization": "^2.0",
-		"fig-r/psr2r-sniffer": "dev-master",
+		"fig-r/psr2r-sniffer": "^1.5.1",
 		"composer/semver": "^2.0 || ^3.0",
 		"phpunit/phpunit": "^9.5"
 	},
