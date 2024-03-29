@@ -31,7 +31,7 @@
 		"cakephp/authorization": "^3.0.1",
 		"cakephp/debug_kit": "^5.0.1",
 		"composer/semver": "^3.0",
-		"fig-r/psr2r-sniffer": "dev-next",
+		"fig-r/psr2r-sniffer": "dev-master",
 		"phpunit/phpunit": "^10.2"
 	},
 	"minimum-stability": "stable",
