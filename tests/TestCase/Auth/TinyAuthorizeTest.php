@@ -1,6 +1,6 @@
 <?php
 
-namespace TinyAuth\Test\Auth;
+namespace TinyAuth\Test\TestCase\Auth;
 
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;

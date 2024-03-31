@@ -1,6 +1,6 @@
 <?php
 
-namespace TinyAuth\Test\Auth\AclAdapter;
+namespace TinyAuth\Test\TestCase\Auth\AclAdapter;
 
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;

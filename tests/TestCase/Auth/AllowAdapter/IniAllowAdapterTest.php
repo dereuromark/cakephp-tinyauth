@@ -1,6 +1,6 @@
 <?php
 
-namespace TinyAuth\Test\Auth\AllowAdapter;
+namespace TinyAuth\Test\TestCase\Auth\AllowAdapter;
 
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;

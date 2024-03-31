@@ -1,6 +1,6 @@
 <?php
 
-namespace TinyAuth\Test\TestCase\Controller\Component;
+namespace TinyAuth\Test\TestCase\Panel;
 
 use Cake\Controller\Controller;
 use Cake\Core\Configure;

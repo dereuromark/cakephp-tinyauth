@@ -1,6 +1,6 @@
 <?php
 
-namespace TinyAuth\Test\TestCase\Controller\Component;
+namespace TinyAuth\Test\TestCase\View\Helper;
 
 use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;

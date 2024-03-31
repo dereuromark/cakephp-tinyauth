@@ -1,6 +1,6 @@
 <?php
 
-namespace TestCase\Command;
+namespace TinyAuth\Test\TestCase\Command;
 
 use Cake\Command\Command;
 use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
