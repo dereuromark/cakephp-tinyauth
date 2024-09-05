@@ -9,9 +9,6 @@ use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use TinyAuth\Auth\MultiColumnAuthenticate;
 
-/**
- * Test case for TinyAuth Authentication
- */
 class MultiColumnAuthenticateTest extends TestCase {
 
 	/**
@@ -22,11 +19,9 @@ class MultiColumnAuthenticateTest extends TestCase {
 	];
 
 	/**
-	 * Test applying config in the constructor
-	 *
 	 * @return void
 	 */
-	public function testGetUser() {
+	public function testAuthenticate() {
 		$request = new ServerRequest();
 		$request = $request->withData('login', 'dereuromark');
 		$request = $request->withData('password', '123');
