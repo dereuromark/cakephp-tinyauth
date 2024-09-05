@@ -39,7 +39,7 @@ class MultiColumnAuthenticateTest extends TestCase {
 			'columns' => ['username', 'email'],
 		]);
 		$result = $object->authenticate($request, new Response());
-		$this->assertFalse($result);
+		$this->assertTrue((bool)$result);
 	}
 
 }
