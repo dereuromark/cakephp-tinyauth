@@ -17,6 +17,7 @@ class UsersFixture extends TestFixture {
 	public array $fields = [
 		'id' => ['type' => 'integer'],
 		'username' => ['type' => 'string', 'null' => false, 'length' => 64, 'comment' => '', 'charset' => 'utf8'],
+		'email' => ['type' => 'string', 'null' => false, 'length' => 64, 'comment' => '', 'charset' => 'utf8'],
 		'role_id' => ['type' => 'integer', 'null' => false, 'default' => '0', 'length' => 11, 'collate' => null, 'comment' => ''],
 		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
 	];
@@ -30,16 +31,19 @@ class UsersFixture extends TestFixture {
 		[
 			'id' => '1',
 			'username' => 'dereuromark',
+			'email' => 'dereuromark@test.de',
 			'role_id' => ROLE_USER,
 		],
 		[
 			'id' => '2',
 			'username' => 'bravo-kernel',
+			'email' => 'bravo-kernel@test.de',
 			'role_id' => ROLE_ADMIN,
 		],
 		[
 			'id' => '3',
 			'username' => 'adriana',
+			'email' => 'adriana@test.de',
 			'role_id' => ROLE_MODERATOR,
 		],
 	];

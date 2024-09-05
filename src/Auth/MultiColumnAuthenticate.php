@@ -83,7 +83,7 @@ class MultiColumnAuthenticate extends FormAuthenticate {
 			$options['username'] = $username;
 		}
 
-		return $table->find($finder, $options);
+		return $table->find($finder, ...$options);
 	}
 
 }

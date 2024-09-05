@@ -21,7 +21,7 @@ use TestApp\Auth\TestTinyAuthorize;
 class TinyAuthorizeTest extends TestCase {
 
 	/**
-	 * @var array
+	 * @var array<string>
 	 */
 	protected array $fixtures = [
 		'plugin.TinyAuth.Users',

@@ -15,7 +15,7 @@ use TinyAuth\Utility\Cache;
 class AuthUserComponentTest extends TestCase {
 
 	/**
-	 * @var array
+	 * @var array<string>
 	 */
 	protected array $fixtures = [
 		'core.Sessions',
