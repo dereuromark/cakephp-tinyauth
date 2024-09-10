@@ -5,7 +5,6 @@ namespace TinyAuth\Panel;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Event\EventInterface;
 use DebugKit\DebugPanel;
-use RuntimeException;
 use TinyAuth\Auth\AclTrait;
 use TinyAuth\Auth\AllowTrait;
 use TinyAuth\Utility\Config;
@@ -76,7 +75,7 @@ class AuthPanel extends DebugPanel {
 		$this->isPublic = $this->_isActionAllowed($rule, $params['action']);
 
 		if (!$controller->components()->has('AuthUser')) {
-			throw new RuntimeException('You must have TinyAuth.AuthUser component installed');
+			$controller->loadComponent('TinyAuth.AuthUser');
 		}
 
 		/** @var \TinyAuth\Controller\Component\AuthUserComponent $authUserComponent */

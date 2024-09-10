@@ -61,7 +61,6 @@ class AuthPanelTest extends TestCase {
 	 */
 	public function testPanelRestrictedAction() {
 		$controller = new Controller(new ServerRequest());
-		$controller->loadComponent('TinyAuth.AuthUser');
 		$event = new Event('event', $controller);
 
 		$this->panel->shutdown($event);
@@ -87,7 +86,6 @@ class AuthPanelTest extends TestCase {
 		$request = new ServerRequest(['url' => '/users']);
 		$request = $request->withAttribute('params', $url);
 		$controller = new Controller($request);
-		$controller->loadComponent('TinyAuth.AuthUser');
 		$event = new Event('event', $controller);
 
 		$this->panel->shutdown($event);
@@ -117,7 +115,6 @@ class AuthPanelTest extends TestCase {
 		$request = new ServerRequest(['url' => '/tags']);
 		$request = $request->withAttribute('params', $url);
 		$controller = new Controller($request);
-		$controller->loadComponent('TinyAuth.AuthUser');
 		$event = new Event('event', $controller);
 
 		$this->panel->shutdown($event);
@@ -150,7 +147,6 @@ class AuthPanelTest extends TestCase {
 			'role_id' => 1,
 		]);
 		$controller = new Controller($request);
-		$controller->loadComponent('TinyAuth.AuthUser');
 		$event = new Event('event', $controller);
 
 		$this->panel->shutdown($event);
