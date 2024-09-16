@@ -28,7 +28,7 @@ class Cache {
 	 * @var array
 	 */
 	protected static $_defaultConfig = [
-		'cache' => '_cake_core_',
+		'cache' => '_cake_translations_',
 		'cachePrefix' => 'tiny_auth_',
 		'allowCacheKey' => self::KEY_ALLOW,
 		'aclCacheKey' => self::KEY_ACL,
