@@ -27,8 +27,8 @@ class Cache {
 	/**
 	 * @var array
 	 */
-	protected static $_defaultConfig = [
-		'cache' => '_cake_translations_',
+	protected static array $_defaultConfig = [
+		'cache' => '_cake_model_',
 		'cachePrefix' => 'tiny_auth_',
 		'allowCacheKey' => self::KEY_ALLOW,
 		'aclCacheKey' => self::KEY_ACL,
@@ -41,7 +41,7 @@ class Cache {
 	 *
 	 * @return void
 	 */
-	public static function clear($type = null) {
+	public static function clear(?string $type = null): void {
 		$config = static::prepareConfig();
 		static::assertValidCacheSetup($config);
 
@@ -62,7 +62,7 @@ class Cache {
 	 *
 	 * @return void
 	 */
-	public static function write($type, $data) {
+	public static function write(string $type, array $data): void {
 		$config = static::prepareConfig();
 
 		CoreCache::write(static::key($type), $data, $config['cache']);
@@ -73,7 +73,7 @@ class Cache {
 	 *
 	 * @return array|null
 	 */
-	public static function read($type) {
+	public static function read(string $type): ?array {
 		$config = static::prepareConfig();
 
 		return CoreCache::read(static::key($type), $config['cache']) ?: null;
@@ -81,10 +81,10 @@ class Cache {
 
 	/**
 	 * @param string $type
-	 * @throws \Cake\Core\Exception\CakeException
+	 *@throws \Cake\Core\Exception\CakeException
 	 * @return string
 	 */
-	public static function key($type) {
+	public static function key(string $type): string {
 		$config = static::prepareConfig();
 
 		static::assertValidCacheSetup($config);
@@ -102,7 +102,7 @@ class Cache {
 	 * @throws \Cake\Core\Exception\CakeException
 	 * @return void
 	 */
-	protected static function assertValidCacheSetup(array $config) {
+	protected static function assertValidCacheSetup(array $config): void {
 		if (!in_array($config['cache'], CoreCache::configured(), true)) {
 			throw new CakeException(sprintf('Invalid or not configured TinyAuth cache `%s`', $config['cache']));
 		}
@@ -111,10 +111,16 @@ class Cache {
 	/**
 	 * @return array
 	 */
-	protected static function prepareConfig() {
-		$config = (array)Configure::read('TinyAuth') + static::$_defaultConfig;
+	protected static function prepareConfig(): array {
+		$defaultConfig = static::$_defaultConfig;
 
-		return $config;
+		//BC with 5.0.x
+		$configured = CoreCache::getRegistry();
+		if ($configured->has('_cake_core_')) {
+			$defaultConfig['cache'] = '_cake_core_';
+		}
+
+		return (array)Configure::read('TinyAuth') + $defaultConfig;
 	}
 
 }
