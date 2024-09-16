@@ -27,6 +27,7 @@ class TinyAuthSyncCommandTest extends TestCase {
 		]);
 
 		$this->setAppNamespace();
+		$this->loadPlugins(['TinyAuth']);
 	}
 
 	/**
