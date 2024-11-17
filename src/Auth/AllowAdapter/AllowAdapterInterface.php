@@ -7,7 +7,7 @@ interface AllowAdapterInterface {
 	/**
 	 * Generates and returns a TinyAuth authentication allow/deny list.
 	 *
-	 * @param array $config Current TinyAuth configuration values.
+	 * @param array<string, mixed> $config Current TinyAuth configuration values.
 	 *
 	 * @return array
 	 */
