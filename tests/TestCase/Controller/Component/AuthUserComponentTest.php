@@ -5,6 +5,7 @@ namespace TinyAuth\Test\TestCase\Controller\Component;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
+use Cake\Core\Plugin;
 use Cake\Event\Event;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
@@ -27,6 +28,11 @@ class AuthUserComponentTest extends TestCase {
 	protected $AuthUser;
 
 	/**
+	 * @var \Cake\Controller\Controller
+	 */
+	protected $controller;
+
+	/**
 	 * @return void
 	 */
 	public function setUp(): void {
@@ -34,10 +40,13 @@ class AuthUserComponentTest extends TestCase {
 			'allowFilePath' => ROOT . DS . 'tests' . DS . 'test_files' . DS,
 		];
 
-		$controller = new Controller(new ServerRequest());
-		$componentRegistry = new ComponentRegistry($controller);
+		$this->controller = new Controller(new ServerRequest());
+		$componentRegistry = new ComponentRegistry($this->controller);
 		$this->AuthUser = new TestAuthUserComponent($componentRegistry);
-		$this->AuthUser->Auth = $this->getMockBuilder(AuthComponent::class)->onlyMethods(['user'])->setConstructorArgs([$componentRegistry, $config])->getMock();
+		$this->controller->loadComponent('TinyAuth.Auth', [
+			'allowFilePath' => Plugin::path('TinyAuth') . 'tests' . DS . 'test_files' . DS,
+		]);
+		$this->controller->Auth = $this->getMockBuilder(AuthComponent::class)->onlyMethods(['user'])->setConstructorArgs([$componentRegistry, $config])->getMock();
 
 		Configure::write('Roles', [
 			'user' => 1,
@@ -55,7 +64,7 @@ class AuthUserComponentTest extends TestCase {
 			'id' => 1,
 			'role_id' => 1,
 		];
-		$this->AuthUser->Auth->expects($this->once())
+		$this->controller->Auth->expects($this->once())
 			->method('user')
 			->with(null)
 			->will($this->returnValue($user));
@@ -76,7 +85,7 @@ class AuthUserComponentTest extends TestCase {
 			'id' => 1,
 			'role_id' => 1,
 		];
-		$this->AuthUser->Auth->expects($this->once())
+		$this->controller->Auth->expects($this->once())
 			->method('user')
 			->with(null)
 			->will($this->returnValue($user));
@@ -95,7 +104,7 @@ class AuthUserComponentTest extends TestCase {
 	public function testIsAuthorizedNotLoggedIn() {
 		$user = [
 		];
-		$this->AuthUser->Auth->expects($this->once())
+		$this->controller->Auth->expects($this->once())
 			->method('user')
 			->with(null)
 			->will($this->returnValue($user));
@@ -180,7 +189,7 @@ class AuthUserComponentTest extends TestCase {
 	 * @return void
 	 */
 	public function testId() {
-		$this->AuthUser->Auth->expects($this->once())
+		$this->controller->Auth->expects($this->once())
 			->method('user')
 			->with(null)
 			->will($this->returnValue(['id' => '1']));
@@ -192,7 +201,7 @@ class AuthUserComponentTest extends TestCase {
 	 * @return void
 	 */
 	public function testIsMe() {
-		$this->AuthUser->Auth->expects($this->any())
+		$this->controller->Auth->expects($this->any())
 			->method('user')
 			->with(null)
 			->will($this->returnValue(['id' => '1']));
@@ -209,7 +218,7 @@ class AuthUserComponentTest extends TestCase {
 	 * @return void
 	 */
 	public function testUser() {
-		$this->AuthUser->Auth->expects($this->any())
+		$this->controller->Auth->expects($this->any())
 			->method('user')
 			->with(null)
 			->will($this->returnValue(['id' => '1', 'username' => 'foo']));
@@ -225,7 +234,7 @@ class AuthUserComponentTest extends TestCase {
 	public function testRoles() {
 		$this->AuthUser->setConfig('multiRole', true);
 
-		$this->AuthUser->Auth->expects($this->once())
+		$this->controller->Auth->expects($this->once())
 			->method('user')
 			->will($this->returnValue(['id' => '1', 'Roles' => ['1', '2']]));
 
@@ -238,7 +247,7 @@ class AuthUserComponentTest extends TestCase {
 	public function testRolesDeep() {
 		$this->AuthUser->setConfig('multiRole', true);
 
-		$this->AuthUser->Auth->expects($this->once())
+		$this->controller->Auth->expects($this->once())
 			->method('user')
 			->with(null)
 			->will($this->returnValue(['id' => '1', 'Roles' => [['id' => '1'], ['id' => '2']]]));
@@ -252,7 +261,7 @@ class AuthUserComponentTest extends TestCase {
 	public function testHasRole() {
 		$this->AuthUser->setConfig('multiRole', true);
 
-		$this->AuthUser->Auth->expects($this->exactly(3))
+		$this->controller->Auth->expects($this->exactly(3))
 			->method('user')
 			->with(null)
 			->will($this->returnValue(['id' => '1', 'Roles' => [['id' => '1'], ['id' => '2']]]));
@@ -271,7 +280,7 @@ class AuthUserComponentTest extends TestCase {
 	public function testHasRoles() {
 		$this->AuthUser->setConfig('multiRole', true);
 
-		$this->AuthUser->Auth->expects($this->exactly(6))
+		$this->controller->Auth->expects($this->exactly(6))
 			->method('user')
 			->with(null)
 			->will($this->returnValue(['id' => '1', 'Roles' => [['id' => '1'], ['id' => '2']]]));

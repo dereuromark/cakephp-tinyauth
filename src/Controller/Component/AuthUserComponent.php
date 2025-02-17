@@ -12,19 +12,12 @@ use TinyAuth\Utility\Config;
 
 /**
  * Easy access to the current logged-in user and the corresponding auth data.
- *
- * @property \TinyAuth\Controller\Component\AuthComponent $Auth
  */
 class AuthUserComponent extends Component {
 
 	use AclTrait;
 	use AllowTrait;
 	use AuthUserTrait;
-
-	/**
-	 * @var array
-	 */
-	protected array $components = ['TinyAuth.Auth'];
 
 	/**
 	 * @param \Cake\Controller\ComponentRegistry $registry
@@ -63,14 +56,38 @@ class AuthUserComponent extends Component {
 			'action' => 'index',
 		];
 
-		return $this->_checkUser((array)$this->Auth->user(), $url);
+		return $this->_checkUser($this->_getUser(), $url);
 	}
 
 	/**
 	 * @return array
 	 */
 	protected function _getUser() {
-		return (array)$this->Auth->user();
+		/** @var \Authentication\Identity|null $identity */
+		$identity = $this->getController()->getRequest()->getAttribute('identity');
+		if ($identity) {
+			/** @var \Cake\Datasource\EntityInterface|array $data */
+			$data = $identity->getOriginalData();
+			if (!is_array($data)) {
+				return $data->toArray();
+			}
+
+			return $data;
+		}
+
+		// We skip for new plugin(s)
+		if ($this->getController()->components()->has('Authentication')) {
+			return [];
+		}
+
+		// Fallback to old Auth style
+		if (!$this->getController()->components()->has('Auth')) {
+			$this->getController()->loadComponent('TinyAuth.Auth');
+		}
+
+		assert(property_exists($this->getController(), 'Auth'));
+
+		return (array)$this->getController()->Auth->user();
 	}
 
 }
