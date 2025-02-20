@@ -85,7 +85,8 @@ class AuthUserComponent extends Component {
 			$this->getController()->loadComponent('TinyAuth.Auth');
 		}
 
-		return (array)$this->getController()->components()->get('Auth')->user();
+		/** @phpstan-ignore property.notFound */
+		return (array)$this->getController()->Auth->user();
 	}
 
 }
