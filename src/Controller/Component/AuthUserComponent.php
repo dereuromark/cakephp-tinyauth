@@ -85,9 +85,7 @@ class AuthUserComponent extends Component {
 			$this->getController()->loadComponent('TinyAuth.Auth');
 		}
 
-		assert(property_exists($this->getController(), 'Auth'));
-
-		return (array)$this->getController()->Auth->user();
+		return (array)$this->getController()->components()->get('Auth')->user();
 	}
 
 }
