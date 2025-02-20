@@ -91,6 +91,9 @@ If you only need the basic request policy provided by this plugin, and no furthe
 then it is best to stick to the Auth component as simple wrapper.
 It is then limited to controller scope (no middleware/routing support) as it always has been so far.
 
+You can seamlessly upgrade to the new plugins while keeping your INI files.
+They are also compatible with AuthUser component and helper as well as the Auth panel.
+
 ## Upgrade notes
 Coming from CakePHP 4.x the following major changes will affect your app:
 - Cake\Auth namespace has been removed and is now migrated to TinyAuth\Auth, that includes the

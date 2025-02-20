@@ -4,8 +4,8 @@ parameters:
 		- src/
 	bootstrapFiles:
 		- tests/bootstrap.php
-	checkMissingIterableValueType: false
-	checkGenericClassInNonGenericObjectType: false
 	ignoreErrors:
+		- identifier: missingType.iterableValue
+		- identifier: missingType.generics
 		- '#Constructor of class .+SessionStorage has an unused parameter \$response#'
 		- '#PHPDoc tag @mixin contains invalid type .+InstanceConfigTrait.#'
