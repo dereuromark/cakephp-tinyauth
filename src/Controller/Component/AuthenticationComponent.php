@@ -24,7 +24,7 @@ class AuthenticationComponent extends CakeAuthenticationComponent {
 
 	/**
 	 * @param \Cake\Controller\ComponentRegistry $registry
-	 * @param array $config
+	 * @param array<string, mixed> $config
 	 * @throws \RuntimeException
 	 */
 	public function __construct(ComponentRegistry $registry, array $config = []) {

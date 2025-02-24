@@ -5,15 +5,14 @@ namespace TinyAuth\Middleware\UnauthorizedHandler;
 
 use Authorization\Exception\Exception;
 use Authorization\Exception\ForbiddenException;
-use Authorization\Exception\MissingIdentityException;
-use Authorization\Middleware\UnauthorizedHandler\RedirectHandler as CakeRedirectHandler;
+use Authorization\Middleware\UnauthorizedHandler\RedirectHandler;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * This handler will redirect the response if one of configured exception classes is encountered.
  */
-class RedirectHandler extends CakeRedirectHandler {
+class ForbiddenRedirectHandler extends RedirectHandler {
 
 	/**
 	 * Default config:
@@ -27,11 +26,10 @@ class RedirectHandler extends CakeRedirectHandler {
 	 */
 	protected array $defaultOptions = [
 		'exceptions' => [
-			MissingIdentityException::class,
 			ForbiddenException::class,
 		],
-		'url' => '/login',
-		'queryParam' => 'redirect',
+		'url' => '/',
+		'queryParam' => null,
 		'statusCode' => 302,
 		'unauthorizedMessage' => null,
 	];

@@ -98,7 +98,7 @@ class Cache {
 	}
 
 	/**
-	 * @param array $config
+	 * @param array<string, mixed> $config
 	 * @throws \Cake\Core\Exception\CakeException
 	 * @return void
 	 */

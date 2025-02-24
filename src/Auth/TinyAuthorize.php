@@ -31,7 +31,7 @@ class TinyAuthorize extends BaseAuthorize {
 
 	/**
 	 * @param \Cake\Controller\ComponentRegistry $registry
-	 * @param array $config
+	 * @param array<string, mixed> $config
 	 * @throws \Cake\Core\Exception\CakeException
 	 */
 	public function __construct(ComponentRegistry $registry, array $config = []) {

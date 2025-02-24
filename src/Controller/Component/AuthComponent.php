@@ -20,7 +20,7 @@ class AuthComponent extends LegacyAuthComponent {
 
 	/**
 	 * @param \Cake\Controller\ComponentRegistry $registry
-	 * @param array $config
+	 * @param array<string, mixed> $config
 	 * @throws \RuntimeException
 	 */
 	public function __construct(ComponentRegistry $registry, array $config = []) {
@@ -39,7 +39,7 @@ class AuthComponent extends LegacyAuthComponent {
 	}
 
 	/**
-	 * @param array $config The config data.
+	 * @param array<string, mixed> $config The config data.
 	 * @return void
 	 */
 	public function initialize(array $config): void {

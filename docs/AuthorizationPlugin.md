@@ -26,7 +26,7 @@ $middlewareQueue->add(new AuthorizationMiddleware($this, [
 ]));
 $middlewareQueue->add(new RequestAuthorizationMiddleware([
     'unauthorizedHandler' => [
-        'className' => 'TinyAuth.Redirect',
+        'className' => 'TinyAuth.ForbiddenRedirect',
         'url' => '...',
         'unauthorizedMessage' => '...',
     ],

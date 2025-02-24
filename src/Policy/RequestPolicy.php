@@ -21,13 +21,13 @@ class RequestPolicy implements RequestPolicyInterface {
 	use InstanceConfigTrait;
 
 	/**
-	 * @var array
+	 * @var array<string, mixed>
 	 */
 	protected array $_defaultConfig = [
 	];
 
 	/**
-	 * @param array $config
+	 * @param array<string, mixed> $config
 	 */
 	public function __construct(array $config = []) {
 		$config += Config::all();

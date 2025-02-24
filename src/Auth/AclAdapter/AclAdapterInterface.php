@@ -8,7 +8,7 @@ interface AclAdapterInterface {
 	 * Generates and returns a TinyAuth access control list.
 	 *
 	 * @param array $availableRoles A list of available user roles.
-	 * @param array $config Current TinyAuth configuration values.
+	 * @param array<string, mixed> $config Current TinyAuth configuration values.
 	 *
 	 * @return array
 	 */

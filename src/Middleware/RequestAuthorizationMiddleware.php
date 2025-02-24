@@ -29,7 +29,7 @@ class RequestAuthorizationMiddleware extends PluginRequestAuthorizationMiddlewar
 	use AllowTrait;
 
 	/**
-	 * @param array $config Configuration options
+	 * @param array<string, mixed> $config Configuration options
 	 */
 	public function __construct(array $config = []) {
 		$config += Config::all();

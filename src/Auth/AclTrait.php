@@ -83,8 +83,8 @@ trait AclTrait {
 	 *
 	 * Allows single or multi role based authorization
 	 *
-	 * @param array $user User data
-	 * @param array $params Request params
+	 * @param array<string, mixed> $user User data
+	 * @param array<string, mixed> $params Request params
 	 * @throws \Cake\Core\Exception\CakeException
 	 * @return bool Success
 	 */
@@ -110,7 +110,7 @@ trait AclTrait {
 			}
 		}
 
-		// Give any logged in user access to ALL actions when `allowLoggedIn` is
+		// Give any logged-in user access to ALL actions when `allowLoggedIn` is
 		// enabled except when the `protectedPrefix` is being used.
 		if ($this->getConfig('allowLoggedIn')) {
 			if (empty($params['prefix'])) {
@@ -516,7 +516,7 @@ trait AclTrait {
 	 * @throws \Cake\Core\Exception\CakeException
 	 * @return array<string, int|string> List with all role ids belonging to the user
 	 */
-	protected function _getUserRoles($user) {
+	protected function _getUserRoles(array $user) {
 		// Single-role from session
 		if (!$this->getConfig('multiRole')) {
 			$roleColumn = $this->getConfig('roleColumn');
@@ -531,7 +531,9 @@ trait AclTrait {
 				return [];
 			}
 
-			return $this->_mapped([$user[$this->getConfig('roleColumn')]]);
+			$role = $user[$this->getConfig('roleColumn')];
+
+			return $this->_mapped([$role]);
 		}
 
 		// Multi-role from session

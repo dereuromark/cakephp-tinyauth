@@ -21,7 +21,7 @@ class AuthUserComponent extends Component {
 
 	/**
 	 * @param \Cake\Controller\ComponentRegistry $registry
-	 * @param array $config
+	 * @param array<string, mixed> $config
 	 */
 	public function __construct(ComponentRegistry $registry, array $config = []) {
 		$config += Config::all();

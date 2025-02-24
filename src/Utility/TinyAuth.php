@@ -19,7 +19,7 @@ class TinyAuth {
 	];
 
 	/**
-	 * @param array $config
+	 * @param array<string, mixed> $config
 	 */
 	public function __construct(array $config = []) {
 		$config += Config::all();
