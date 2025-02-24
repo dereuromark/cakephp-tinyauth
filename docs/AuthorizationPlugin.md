@@ -18,14 +18,19 @@ use Authorization\Middleware\AuthorizationMiddleware;
 use TinyAuth\Middleware\RequestAuthorizationMiddleware;
 
 // in Application::middleware()
-$config = [
+$middlewareQueue->add(new AuthorizationMiddleware($this, [
     'unauthorizedHandler' => [
         'className' => 'Authorization.Redirect',
-        ...
+        'url' => '...',
     ],
-];
-$middlewareQueue->add(new AuthorizationMiddleware($this, $config));
-$middlewareQueue->add(new RequestAuthorizationMiddleware());
+]));
+$middlewareQueue->add(new RequestAuthorizationMiddleware([
+    'unauthorizedHandler' => [
+        'className' => 'TinyAuth.Redirect',
+        'url' => '...',
+        'unauthorizedMessage' => '...',
+    ],
+])));
 ```
 
 For all the rest just follow the plugin's documentation.

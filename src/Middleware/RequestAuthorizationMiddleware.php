@@ -2,6 +2,7 @@
 
 namespace TinyAuth\Middleware;
 
+use Authorization\Exception\Exception;
 use Authorization\Exception\ForbiddenException;
 use Authorization\Middleware\RequestAuthorizationMiddleware as PluginRequestAuthorizationMiddleware;
 use Authorization\Policy\Result;
@@ -30,7 +31,7 @@ class RequestAuthorizationMiddleware extends PluginRequestAuthorizationMiddlewar
 	/**
 	 * @param array $config Configuration options
 	 */
-	public function __construct($config = []) {
+	public function __construct(array $config = []) {
 		$config += Config::all();
 
 		parent::__construct($config);
@@ -56,10 +57,14 @@ class RequestAuthorizationMiddleware extends PluginRequestAuthorizationMiddlewar
 		$identity = $request->getAttribute($this->getConfig('identityAttribute'));
 
 		$can = $service->can($identity, $this->getConfig('method'), $request);
-		if (!$can) {
-			$result = new Result($can, 'Can not ' . $this->getConfig('method') . ' request');
+		try {
+			if (!$can) {
+				$result = new Result($can, 'Can not ' . $this->getConfig('method') . ' request');
 
-			throw new ForbiddenException($result);
+				throw new ForbiddenException($result);
+			}
+		} catch (Exception $exception) {
+			return $this->handleException($exception, $request, $this->getConfig('unauthorizedHandler'));
 		}
 
 		return $handler->handle($request);

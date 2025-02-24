@@ -32,7 +32,8 @@
 		"cakephp/debug_kit": "^5.0.1",
 		"composer/semver": "^3.0",
 		"fig-r/psr2r-sniffer": "dev-master",
-		"phpunit/phpunit": "^10.2"
+		"phpunit/phpunit": "^10.2",
+		"slevomat/coding-standard": "~8.15.0"
 	},
 	"minimum-stability": "stable",
 	"prefer-stable": true,
