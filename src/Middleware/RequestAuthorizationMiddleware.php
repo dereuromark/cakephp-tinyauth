@@ -61,7 +61,7 @@ class RequestAuthorizationMiddleware extends PluginRequestAuthorizationMiddlewar
 			if (!$can) {
 				$result = new Result($can, 'Can not ' . $this->getConfig('method') . ' request');
 
-				throw new ForbiddenException($result);
+				throw new ForbiddenException($result, [$this->getConfig('method'), $request->getRequestTarget()]);
 			}
 		} catch (Exception $exception) {
 			return $this->handleException($exception, $request, $this->getConfig('unauthorizedHandler'));
