@@ -56,3 +56,24 @@ public function getAuthorizationService(ServerRequestInterface $request, Respons
 ```
 
 Then you use the [Authorization documentation](Authorization.md) to set up roles and fill your INI config file.
+
+#### Tips
+
+It is recommended to use a POST check for the login flash message, and silently redirect away otherwise.
+
+```php
+// Inside your AccountController::login() method
+    $result = $this->Authentication->getResult();
+    // If the user is logged in send them away.
+    if ($result && $result->isValid()) {
+        if ($this->request->is('post')) {
+            $this->Users->loginUpdate($result);
+            $target = $this->Authentication->getLoginRedirect() ?? '/';
+            $this->Flash->success(__('You are now logged in.'));
+
+            return $this->redirect($target);
+        }
+
+        return $this->redirect(['controller' => 'Account', 'action' => 'index']);
+    }
+```
