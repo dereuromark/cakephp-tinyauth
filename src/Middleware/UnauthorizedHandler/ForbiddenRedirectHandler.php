@@ -18,9 +18,10 @@ class ForbiddenRedirectHandler extends RedirectHandler {
 	 * Default config:
 	 *
 	 *  - `exceptions` - A list of exception classes.
-	 *  - `url` - Url to redirect to.
-	 *  - `queryParam` - Query parameter name for the target url.
+	 *  - `url` - URL to redirect to.
+	 *  - `queryParam` - Query parameter name for the target URL.
 	 *  - `statusCode` - Redirection status code.
+	 *  - `unauthorizedMessage` - Error message. Set to false to disable.
 	 *
 	 * @var array<string, mixed>
 	 */
@@ -43,7 +44,7 @@ class ForbiddenRedirectHandler extends RedirectHandler {
 	public function handle(Exception $exception, ServerRequestInterface $request, array $options = []): ResponseInterface {
 		$response = parent::handle($exception, $request, $options);
 
-		$message = $options['unauthorizedMessage'] ?? __('You are not authorized to access that location');
+		$message = $options['unauthorizedMessage'] ?? __('You are not authorized to access that location.');
 		if ($message) {
 			/** @var \Cake\Http\ServerRequest $request */
 			$request->getFlash()->error($message);
