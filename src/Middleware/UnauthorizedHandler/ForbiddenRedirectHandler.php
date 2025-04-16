@@ -30,7 +30,7 @@ class ForbiddenRedirectHandler extends RedirectHandler {
 			ForbiddenException::class,
 		],
 		'url' => '/',
-		'queryParam' => null,
+		'queryParam' => 'redirect',
 		'statusCode' => 302,
 		'unauthorizedMessage' => null,
 	];
