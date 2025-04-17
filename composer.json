@@ -32,7 +32,7 @@
 		"cakephp/debug_kit": "^5.0.1",
 		"composer/semver": "^3.0",
 		"fig-r/psr2r-sniffer": "dev-master",
-		"phpunit/phpunit": "^10.2 || ^11.5"
+		"phpunit/phpunit": "^10.5 || ^11.5 || ^12.1"
 	},
 	"minimum-stability": "stable",
 	"prefer-stable": true,
