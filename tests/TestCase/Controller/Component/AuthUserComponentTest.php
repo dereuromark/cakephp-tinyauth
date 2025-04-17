@@ -67,7 +67,7 @@ class AuthUserComponentTest extends TestCase {
 		$this->controller->Auth->expects($this->once())
 			->method('user')
 			->with(null)
-			->will($this->returnValue($user));
+			->willReturn($user);
 
 		$request = [
 			'controller' => 'Tags',
@@ -88,7 +88,7 @@ class AuthUserComponentTest extends TestCase {
 		$this->controller->Auth->expects($this->once())
 			->method('user')
 			->with(null)
-			->will($this->returnValue($user));
+			->willReturn($user);
 
 		$request = [
 			'controller' => 'Tags',
@@ -107,7 +107,7 @@ class AuthUserComponentTest extends TestCase {
 		$this->controller->Auth->expects($this->once())
 			->method('user')
 			->with(null)
-			->will($this->returnValue($user));
+			->willReturn($user);
 
 		$request = [
 			'controller' => 'Tags',
@@ -192,7 +192,7 @@ class AuthUserComponentTest extends TestCase {
 		$this->controller->Auth->expects($this->once())
 			->method('user')
 			->with(null)
-			->will($this->returnValue(['id' => '1']));
+			->willReturn(['id' => '1']);
 
 		$this->assertSame('1', $this->AuthUser->id());
 	}
@@ -204,7 +204,7 @@ class AuthUserComponentTest extends TestCase {
 		$this->controller->Auth->expects($this->any())
 			->method('user')
 			->with(null)
-			->will($this->returnValue(['id' => '1']));
+			->willReturn(['id' => '1']);
 
 		$this->assertFalse($this->AuthUser->isMe(null));
 		$this->assertFalse($this->AuthUser->isMe(''));
@@ -221,7 +221,7 @@ class AuthUserComponentTest extends TestCase {
 		$this->controller->Auth->expects($this->any())
 			->method('user')
 			->with(null)
-			->will($this->returnValue(['id' => '1', 'username' => 'foo']));
+			->willReturn(['id' => '1', 'username' => 'foo']);
 
 		$this->assertSame(['id' => '1', 'username' => 'foo'], $this->AuthUser->user());
 		$this->assertSame('foo', $this->AuthUser->user('username'));
@@ -236,7 +236,7 @@ class AuthUserComponentTest extends TestCase {
 
 		$this->controller->Auth->expects($this->once())
 			->method('user')
-			->will($this->returnValue(['id' => '1', 'Roles' => ['1', '2']]));
+			->willReturn(['id' => '1', 'Roles' => ['1', '2']]);
 
 		$this->assertSame(['user' => '1', 'moderator' => '2'], $this->AuthUser->roles());
 	}
@@ -250,7 +250,7 @@ class AuthUserComponentTest extends TestCase {
 		$this->controller->Auth->expects($this->once())
 			->method('user')
 			->with(null)
-			->will($this->returnValue(['id' => '1', 'Roles' => [['id' => '1'], ['id' => '2']]]));
+			->willReturn(['id' => '1', 'Roles' => [['id' => '1'], ['id' => '2']]]);
 
 		$this->assertSame(['user' => '1', 'moderator' => '2'], $this->AuthUser->roles());
 	}
@@ -264,7 +264,7 @@ class AuthUserComponentTest extends TestCase {
 		$this->controller->Auth->expects($this->exactly(3))
 			->method('user')
 			->with(null)
-			->will($this->returnValue(['id' => '1', 'Roles' => [['id' => '1'], ['id' => '2']]]));
+			->willReturn(['id' => '1', 'Roles' => [['id' => '1'], ['id' => '2']]]);
 
 		$this->assertTrue($this->AuthUser->hasRole(2));
 		$this->assertTrue($this->AuthUser->hasRole('2'));
@@ -283,7 +283,7 @@ class AuthUserComponentTest extends TestCase {
 		$this->controller->Auth->expects($this->exactly(6))
 			->method('user')
 			->with(null)
-			->will($this->returnValue(['id' => '1', 'Roles' => [['id' => '1'], ['id' => '2']]]));
+			->willReturn(['id' => '1', 'Roles' => [['id' => '1'], ['id' => '2']]]);
 
 		$this->assertTrue($this->AuthUser->hasRoles([2]));
 		$this->assertTrue($this->AuthUser->hasRoles('2'));
