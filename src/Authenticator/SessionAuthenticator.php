@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace TinyAuth\Authenticator;
 
 use ArrayAccess;
-use ArrayObject;
 use Authentication\Authenticator\Result;
 use Authentication\Authenticator\ResultInterface;
 use Authentication\Authenticator\SessionAuthenticator as AuthenticationSessionAuthenticator;
@@ -27,6 +26,8 @@ class SessionAuthenticator extends AuthenticationSessionAuthenticator {
 	public function __construct(IdentifierInterface $identifier, array $config = []) {
 		$config += [
 			'modelClass' => 'Users',
+			'finder' => null,
+			'identify' => false,
 		];
 
 		parent::__construct($identifier, $config);
@@ -48,22 +49,9 @@ class SessionAuthenticator extends AuthenticationSessionAuthenticator {
 			return new Result(null, Result::FAILURE_IDENTITY_NOT_FOUND);
 		}
 
-		if ($this->getConfig('identify') === true) {
-			$credentials = [];
-			foreach ($this->getConfig('fields') as $key => $field) {
-				$credentials[$key] = $user[$field];
-			}
-			$user = $this->_identifier->identify($credentials);
-
-			if (!$user) {
-				return new Result(null, Result::FAILURE_CREDENTIALS_INVALID);
-			}
-		} else {
-			$user = $this->hydrateFromSession($user);
-		}
-
-		if (!($user instanceof ArrayAccess)) {
-			$user = new ArrayObject($user);
+		$user = $this->hydrate($user);
+		if (!$user) {
+			return new Result(null, Result::FAILURE_IDENTITY_NOT_FOUND);
 		}
 
 		return new Result($user, Result::SUCCESS);
@@ -164,10 +152,15 @@ class SessionAuthenticator extends AuthenticationSessionAuthenticator {
 
 	/**
 	 * @param string|int $user
-	 * @return \Cake\Datasource\EntityInterface
+	 * @return \Cake\Datasource\EntityInterface|null
 	 */
-	protected function hydrateFromSession(string|int $user): EntityInterface {
-		return TableRegistry::getTableLocator()->get($this->getConfig('modelClass'))->get($user);
+	protected function hydrate(string|int $user): ?EntityInterface {
+		$table = TableRegistry::getTableLocator()->get($this->getConfig('modelClass'));
+		if ($this->getConfig('finder')) {
+			return $table->find($this->getConfig('finder'))->first();
+		}
+
+		return $table->find()->where(['id' => $user])->first();
 	}
 
 }
