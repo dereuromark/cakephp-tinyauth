@@ -8,9 +8,7 @@ use Authentication\Authenticator\Result;
 use Authentication\Authenticator\ResultInterface;
 use Authentication\Authenticator\SessionAuthenticator as AuthenticationSessionAuthenticator;
 use Authentication\Identifier\IdentifierInterface;
-use Cake\Datasource\EntityInterface;
 use Cake\Http\Exception\UnauthorizedException;
-use Cake\ORM\TableRegistry;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -25,9 +23,7 @@ class SessionAuthenticator extends AuthenticationSessionAuthenticator {
 	 */
 	public function __construct(IdentifierInterface $identifier, array $config = []) {
 		$config += [
-			'modelClass' => 'Users',
-			'finder' => null,
-			'identify' => false,
+			'identify' => false, // Not in use
 		];
 
 		parent::__construct($identifier, $config);
@@ -43,13 +39,13 @@ class SessionAuthenticator extends AuthenticationSessionAuthenticator {
 		$sessionKey = $this->getConfig('sessionKey');
 		/** @var \Cake\Http\Session $session */
 		$session = $request->getAttribute('session');
-		$user = $session->read($sessionKey);
 
-		if (!$user) {
+		$userId = $session->read($sessionKey);
+		if (!$userId) {
 			return new Result(null, Result::FAILURE_IDENTITY_NOT_FOUND);
 		}
 
-		$user = $this->hydrate($user);
+		$user = $this->_identifier->identify(['id' => $userId]);
 		if (!$user) {
 			return new Result(null, Result::FAILURE_IDENTITY_NOT_FOUND);
 		}
@@ -109,58 +105,6 @@ class SessionAuthenticator extends AuthenticationSessionAuthenticator {
 			'request' => $request,
 			'response' => $response,
 		];
-	}
-
-	/**
-	 * Stops impersonation
-	 *
-	 * @param \Psr\Http\Message\ServerRequestInterface $request The request
-	 * @param \Psr\Http\Message\ResponseInterface $response The response
-	 * @return array
-	 */
-	public function stopImpersonating(ServerRequestInterface $request, ResponseInterface $response): array {
-		$sessionKey = $this->getConfig('sessionKey');
-		$impersonateSessionKey = $this->getConfig('impersonateSessionKey');
-		/** @var \Cake\Http\Session $session */
-		$session = $request->getAttribute('session');
-		if ($session->check($impersonateSessionKey)) {
-			$id = $session->read($impersonateSessionKey);
-			$session->delete($impersonateSessionKey);
-			$session->write($sessionKey, $id);
-			$this->setConfig('identify', true);
-		}
-
-		return [
-			'request' => $request,
-			'response' => $response,
-		];
-	}
-
-	/**
-	 * Returns true if impersonation is being done
-	 *
-	 * @param \Psr\Http\Message\ServerRequestInterface $request The request
-	 * @return bool
-	 */
-	public function isImpersonating(ServerRequestInterface $request): bool {
-		$impersonateSessionKey = $this->getConfig('impersonateSessionKey');
-		/** @var \Cake\Http\Session $session */
-		$session = $request->getAttribute('session');
-
-		return $session->check($impersonateSessionKey);
-	}
-
-	/**
-	 * @param string|int $user
-	 * @return \Cake\Datasource\EntityInterface|null
-	 */
-	protected function hydrate(string|int $user): ?EntityInterface {
-		$table = TableRegistry::getTableLocator()->get($this->getConfig('modelClass'));
-		if ($this->getConfig('finder')) {
-			return $table->find($this->getConfig('finder'))->first();
-		}
-
-		return $table->find()->where(['id' => $user])->first();
 	}
 
 }

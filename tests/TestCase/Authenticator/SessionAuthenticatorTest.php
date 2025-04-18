@@ -66,6 +66,17 @@ class SessionAuthenticatorTest extends TestCase {
 
 		$request = $request->withAttribute('session', $this->sessionMock);
 
+		$this->identifiers = new IdentifierCollection([
+			'Authentication.Token' => [
+				'tokenField' => 'id',
+				'dataField' => 'id',
+				'resolver' => [
+					'className' => 'Authentication.Orm',
+					'finder' => 'active',
+				],
+			],
+		]);
+
 		$authenticator = new SessionAuthenticator($this->identifiers);
 		$result = $authenticator->authenticate($request);
 
@@ -95,8 +106,18 @@ class SessionAuthenticatorTest extends TestCase {
 
 		$request = $request->withAttribute('session', $this->sessionMock);
 
+		$this->identifiers = new IdentifierCollection([
+			'Authentication.Token' => [
+				'tokenField' => 'id',
+				'dataField' => 'id',
+				'resolver' => [
+					'className' => 'Authentication.Orm',
+					'finder' => 'active',
+				],
+			],
+		]);
+
 		$authenticator = new SessionAuthenticator($this->identifiers, [
-			'finder' => 'active',
 		]);
 		$result = $authenticator->authenticate($request);
 
