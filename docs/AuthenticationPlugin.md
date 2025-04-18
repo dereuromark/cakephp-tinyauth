@@ -24,6 +24,6 @@ $this->AuthUser->identity();
 ```
 
 
-For all the rest just follow the plugin's documentation.
+For all the rest follow the plugin's documentation.
 
 Then you use the [Authentication documentation](Authentication.md) to fill your INI config file.
