@@ -107,43 +107,4 @@ class SessionAuthenticator extends AuthenticationSessionAuthenticator {
 		];
 	}
 
-	/**
-	 * Stops impersonation
-	 *
-	 * @param \Psr\Http\Message\ServerRequestInterface $request The request
-	 * @param \Psr\Http\Message\ResponseInterface $response The response
-	 * @return array
-	 */
-	public function stopImpersonating(ServerRequestInterface $request, ResponseInterface $response): array {
-		$sessionKey = $this->getConfig('sessionKey');
-		$impersonateSessionKey = $this->getConfig('impersonateSessionKey');
-		/** @var \Cake\Http\Session $session */
-		$session = $request->getAttribute('session');
-		if ($session->check($impersonateSessionKey)) {
-			$id = $session->read($impersonateSessionKey);
-			$session->delete($impersonateSessionKey);
-			$session->write($sessionKey, $id);
-			$this->setConfig('identify', true);
-		}
-
-		return [
-			'request' => $request,
-			'response' => $response,
-		];
-	}
-
-	/**
-	 * Returns true if impersonation is being done
-	 *
-	 * @param \Psr\Http\Message\ServerRequestInterface $request The request
-	 * @return bool
-	 */
-	public function isImpersonating(ServerRequestInterface $request): bool {
-		$impersonateSessionKey = $this->getConfig('impersonateSessionKey');
-		/** @var \Cake\Http\Session $session */
-		$session = $request->getAttribute('session');
-
-		return $session->check($impersonateSessionKey);
-	}
-
 }
