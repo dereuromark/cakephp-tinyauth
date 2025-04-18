@@ -23,7 +23,7 @@ class SessionAuthenticator extends AuthenticationSessionAuthenticator {
 	 */
 	public function __construct(IdentifierInterface $identifier, array $config = []) {
 		$config += [
-			'identify' => false, // Not in use
+			'identifierKey' => 'key',
 		];
 
 		parent::__construct($identifier, $config);
@@ -45,7 +45,7 @@ class SessionAuthenticator extends AuthenticationSessionAuthenticator {
 			return new Result(null, Result::FAILURE_IDENTITY_NOT_FOUND);
 		}
 
-		$user = $this->_identifier->identify(['id' => $userId]);
+		$user = $this->_identifier->identify([$this->getConfig('identifierKey') => $userId]);
 		if (!$user) {
 			return new Result(null, Result::FAILURE_IDENTITY_NOT_FOUND);
 		}

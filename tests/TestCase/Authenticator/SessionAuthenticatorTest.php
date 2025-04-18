@@ -69,7 +69,7 @@ class SessionAuthenticatorTest extends TestCase {
 		$this->identifiers = new IdentifierCollection([
 			'Authentication.Token' => [
 				'tokenField' => 'id',
-				'dataField' => 'id',
+				'dataField' => 'key',
 				'resolver' => [
 					'className' => 'Authentication.Orm',
 					'finder' => 'active',
@@ -109,7 +109,7 @@ class SessionAuthenticatorTest extends TestCase {
 		$this->identifiers = new IdentifierCollection([
 			'Authentication.Token' => [
 				'tokenField' => 'id',
-				'dataField' => 'id',
+				'dataField' => 'key',
 				'resolver' => [
 					'className' => 'Authentication.Orm',
 					'finder' => 'active',
