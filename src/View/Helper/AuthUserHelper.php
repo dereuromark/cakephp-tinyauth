@@ -3,7 +3,9 @@
 namespace TinyAuth\View\Helper;
 
 use ArrayAccess;
+use Authentication\Identity;
 use Cake\Core\Exception\CakeException;
+use Cake\Datasource\EntityInterface;
 use Cake\Routing\Router;
 use Cake\View\Helper;
 use Cake\View\View;
@@ -35,6 +37,20 @@ class AuthUserHelper extends Helper {
 		$config += Config::all();
 
 		parent::__construct($View, $config);
+	}
+
+	/**
+	 * @return \Cake\Datasource\EntityInterface|null
+	 */
+	public function identity(): ?EntityInterface {
+		/** @var \Authorization\Identity|\Authentication\Identity|null $identity */
+		$identity = $this->_View->getRequest()->getAttribute('identity');
+		if (!$identity) {
+			return null;
+		}
+
+		/** @var \Cake\Datasource\EntityInterface */
+		return $identity->getOriginalData();
 	}
 
 	/**
@@ -144,6 +160,13 @@ class AuthUserHelper extends Helper {
 	 * @return array
 	 */
 	protected function _getUser() {
+		if (class_exists(Identity::class)) {
+			$identity = $this->identity();
+			if ($identity) {
+				return $identity->toArray();
+			}
+		}
+
 		$authUser = $this->_View->get('_authUser');
 		if ($authUser === null) {
 			throw new CakeException('TinyAuth.AuthUser helper needs TinyAuth.AuthUser component to function. Please make sure it is loaded in your controller.');

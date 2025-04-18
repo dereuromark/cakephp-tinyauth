@@ -18,6 +18,12 @@ use Authentication\Middleware\AuthenticationMiddleware;
 $middlewareQueue->add(new AuthenticationMiddleware($this));
 ```
 
+You can always get the identity from the AuthUser component and helper:
+```php
+$this->AuthUser->identity();
+```
+
+
 For all the rest just follow the plugin's documentation.
 
 Then you use the [Authentication documentation](Authentication.md) to fill your INI config file.

@@ -2,8 +2,10 @@
 
 namespace TinyAuth\Controller\Component;
 
+use Authentication\Identity;
 use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
+use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use TinyAuth\Auth\AclTrait;
 use TinyAuth\Auth\AllowTrait;
@@ -42,6 +44,22 @@ class AuthUserComponent extends Component {
 	}
 
 	/**
+	 * @return \Cake\Datasource\EntityInterface|null
+	 */
+	public function identity(): ?EntityInterface {
+		/** @var \Authorization\Identity|\Authentication\Identity|null $identity */
+		$identity = $this->getController()->getRequest()->getAttribute('identity');
+		if (!$identity) {
+			return null;
+		}
+
+		/** @var \Cake\Datasource\EntityInterface $data */
+		$data = $identity->getOriginalData();
+
+		return $data;
+	}
+
+	/**
 	 * This is only for usage with already logged in persons as this uses the ACL (not allow) data.
 	 *
 	 * @param array $url
@@ -63,16 +81,11 @@ class AuthUserComponent extends Component {
 	 * @return array
 	 */
 	protected function _getUser() {
-		/** @var \Authentication\Identity|null $identity */
-		$identity = $this->getController()->getRequest()->getAttribute('identity');
-		if ($identity) {
-			/** @var \Cake\Datasource\EntityInterface|array $data */
-			$data = $identity->getOriginalData();
-			if (!is_array($data)) {
-				return $data->toArray();
+		if (class_exists(Identity::class)) {
+			$identity = $this->identity();
+			if ($identity) {
+				return $identity->toArray();
 			}
-
-			return $data;
 		}
 
 		// We skip for new plugin(s)
