@@ -24,6 +24,7 @@ class SessionAuthenticator extends AuthenticationSessionAuthenticator {
 	public function __construct(IdentifierInterface $identifier, array $config = []) {
 		$config += [
 			'identifierKey' => 'key',
+			'idField' => 'id',
 		];
 
 		parent::__construct($identifier, $config);
@@ -63,7 +64,7 @@ class SessionAuthenticator extends AuthenticationSessionAuthenticator {
 
 		if (!$session->check($sessionKey)) {
 			$session->renew();
-			$session->write($sessionKey, $identity['id']);
+			$session->write($sessionKey, $identity[$this->getConfig('idField')]);
 		}
 
 		return [
@@ -97,8 +98,8 @@ class SessionAuthenticator extends AuthenticationSessionAuthenticator {
 				'Stop the current impersonation before impersonating another user.',
 			);
 		}
-		$session->write($impersonateSessionKey, $impersonator['id']);
-		$session->write($sessionKey, $impersonated['id']);
+		$session->write($impersonateSessionKey, $impersonator[$this->getConfig('idField')]);
+		$session->write($sessionKey, $impersonated[$this->getConfig('idField')]);
 		$this->setConfig('identify', true);
 
 		return [
