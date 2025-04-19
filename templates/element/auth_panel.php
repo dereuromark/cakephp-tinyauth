@@ -8,6 +8,7 @@
  * @var array $availableRoles
  * @var bool[] $access
  * @var string $path;
+ * @var array<string, mixed> $config
  */
 
 use Cake\Error\Debugger;
@@ -27,7 +28,7 @@ if (!isset($isPublic)) {
 ?>
 
 <section class="section-tile">
-    <h1>TinyAuth</h1>
+	<h1>TinyAuth</h1>
 
 	<h2>Current URL</h2>
 	<?php
@@ -59,8 +60,9 @@ if (!isset($isPublic)) {
 	<?php
 	if (Config::get('aclAdapter')) {
 		if (!empty($user)) {
+			$primaryKey = $config['idColumn'];
 
-			echo '<p>Logged in with ID <b style="font-weight: bold">' . h($user['id']) . '</b></p>';
+			echo '<p>Logged in with ID <b style="font-weight: bold">' . h($user[$primaryKey]) . '</b></p>';
 
 			echo 'Roles:<br/>';
 			Debugger::dump($roles);
@@ -77,23 +79,23 @@ if (!isset($isPublic)) {
 	<br/>
 
 	<?php if (!empty($access)) { ?>
-	<p>
-		<?php if (!$isPublic) { ?>
-		The following roles have access to this action:
-		<?php } else { ?>
-		The following roles would have access to this action once you revoke public access:
-		<?php } ?>
-	</p>
-	<ul>
-		<?php
-		foreach ($availableRoles as $role => $id) {
-			echo '<li>';
-			echo ($access[$role] ? '<b style="font-weight: bold; color: green">&#10003;</b>' : '<b style="font-weight: bold; color: red">&#128683;</b>') . ' ';
-			echo h($role) . ' (id ' . $id . ')';
-			echo '</li>';
-		}
-		?>
-	</ul>
+		<p>
+			<?php if (!$isPublic) { ?>
+				The following roles have access to this action:
+			<?php } else { ?>
+				The following roles would have access to this action once you revoke public access:
+			<?php } ?>
+		</p>
+		<ul>
+			<?php
+			foreach ($availableRoles as $role => $id) {
+				echo '<li>';
+				echo ($access[$role] ? '<b style="font-weight: bold; color: green">&#10003;</b>' : '<b style="font-weight: bold; color: red">&#128683;</b>') . ' ';
+				echo h($role) . ' (id ' . $id . ')';
+				echo '</li>';
+			}
+			?>
+		</ul>
 	<?php } ?>
 
 </section>

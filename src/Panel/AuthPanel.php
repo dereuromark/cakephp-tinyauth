@@ -100,6 +100,8 @@ class AuthPanel extends DebugPanel {
 			}
 			$access[$role] = $this->_checkUser($tmpUser, $params);
 		}
+
+		$data['config'] = $authUserComponent->getConfig();
 		$data['access'] = $access;
 
 		$this->_data = $data;
