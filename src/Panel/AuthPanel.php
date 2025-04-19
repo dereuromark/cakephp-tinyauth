@@ -5,6 +5,7 @@ namespace TinyAuth\Panel;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Event\EventInterface;
 use DebugKit\DebugPanel;
+use Exception;
 use TinyAuth\Auth\AclTrait;
 use TinyAuth\Auth\AllowTrait;
 use TinyAuth\Utility\Config;
@@ -83,7 +84,11 @@ class AuthPanel extends DebugPanel {
 		$user = $authUserComponent->user();
 		$data['user'] = $user;
 
-		$roles = $authUserComponent->roles();
+		try {
+			$roles = $authUserComponent->roles();
+		} catch (Exception) {
+			$roles = [];
+		}
 		$data['roles'] = $roles;
 
 		$access = [];
@@ -95,6 +100,8 @@ class AuthPanel extends DebugPanel {
 			}
 			$access[$role] = $this->_checkUser($tmpUser, $params);
 		}
+
+		$data['config'] = $authUserComponent->getConfig();
 		$data['access'] = $access;
 
 		$this->_data = $data;
