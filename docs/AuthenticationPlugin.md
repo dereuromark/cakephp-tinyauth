@@ -18,7 +18,17 @@ use Authentication\Middleware\AuthenticationMiddleware;
 $middlewareQueue->add(new AuthenticationMiddleware($this));
 ```
 
-Then make sure to load your Authenticators, e.g.
+This plugin ships with an improved session authenticator:
+
+- PrimaryKeySession authenticator (extending the Authentication.Session one):
+  stores only the ID and fetches the rest from DB (keeping it always up to date)
+
+It also ships with an enhanced redirect handler:
+
+- ForbiddenCakeRedirect: Allows an `unauthorizedMessage` to be set as error flash message.
+
+
+Now let's set up `getAuthenticationService()` and make sure to load all needed Authenticators, e.g.:
 
 ```php
     /**
@@ -64,7 +74,7 @@ Then make sure to load your Authenticators, e.g.
         ]);
 
         // Load the authenticators. Session should be first.
-        $service->loadAuthenticator('TinyAuth.Session', [
+        $service->loadAuthenticator('TinyAuth.PrimaryKeySession', [
             'urlChecker' => 'Authentication.CakeRouter',
         ]);
         $service->loadAuthenticator('Authentication.Form', [

@@ -15,7 +15,7 @@ use Psr\Http\Message\ServerRequestInterface;
 /**
  * Session Authenticator with only ID
  */
-class SessionAuthenticator extends AuthenticationSessionAuthenticator {
+class PrimaryKeySessionAuthenticator extends AuthenticationSessionAuthenticator {
 
 	/**
 	 * @param \Authentication\Identifier\IdentifierInterface $identifier
