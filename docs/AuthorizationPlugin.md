@@ -20,14 +20,18 @@ use TinyAuth\Middleware\RequestAuthorizationMiddleware;
 // in Application::middleware()
 $middlewareQueue->add(new AuthorizationMiddleware($this, [
     'unauthorizedHandler' => [
-        'className' => 'Authorization.Redirect',
-        'url' => '...',
+        'className' => 'Authorization.CakeRedirect',
+        'url' => [
+            ...
+        ],
     ],
 ]));
 $middlewareQueue->add(new RequestAuthorizationMiddleware([
     'unauthorizedHandler' => [
-        'className' => 'TinyAuth.ForbiddenRedirect',
-        'url' => '...',
+        'className' => 'TinyAuth.ForbiddenCakeRedirect',
+        'url' => [
+            ...
+        ],
         'unauthorizedMessage' => '...',
     ],
 ])));
