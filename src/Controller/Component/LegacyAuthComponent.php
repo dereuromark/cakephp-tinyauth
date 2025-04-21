@@ -691,8 +691,9 @@ abstract class LegacyAuthComponent extends Component implements EventDispatcherI
 		}
 		foreach ($this->_authenticateObjects as $auth) {
 			$result = $auth->getUser($this->getController()->getRequest());
-			if (!empty($result) && is_array($result)) {
+			if ($result) {
 				$this->_authenticationProvider = $auth;
+				/** @var \Cake\Event\Event $event */
 				$event = $this->dispatchEvent('Auth.afterIdentify', [$result, $auth]);
 				if ($event->getResult() !== null) {
 					$result = $event->getResult();
