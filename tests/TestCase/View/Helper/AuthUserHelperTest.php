@@ -2,6 +2,7 @@
 
 namespace TinyAuth\Test\TestCase\View\Helper;
 
+use Authentication\Identity;
 use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
 use Cake\Core\Plugin;
@@ -349,7 +350,8 @@ class AuthUserHelperTest extends TestCase {
 	 */
 	public function testIsMe() {
 		$user = ['id' => '1'];
-		$this->View->set('_authUser', $user);
+		$identity = new Identity($user);
+		$this->View->setRequest($this->View->getRequest()->withAttribute('identity', $identity));
 
 		$this->assertFalse($this->AuthUserHelper->isMe(0));
 		$this->assertTrue($this->AuthUserHelper->isMe(1));
@@ -360,7 +362,8 @@ class AuthUserHelperTest extends TestCase {
 	 */
 	public function testUser() {
 		$user = ['id' => '1', 'username' => 'foo'];
-		$this->View->set('_authUser', $user);
+		$identity = new Identity($user);
+		$this->View->setRequest($this->View->getRequest()->withAttribute('identity', $identity));
 
 		$this->assertSame(['id' => '1', 'username' => 'foo'], $this->AuthUserHelper->user());
 		$this->assertSame('foo', $this->AuthUserHelper->user('username'));
@@ -372,8 +375,13 @@ class AuthUserHelperTest extends TestCase {
 	 */
 	public function testRoles() {
 		$this->AuthUserHelper->setConfig('multiRole', true);
-		$user = ['id' => '1', 'Roles' => ['1', '2']];
-		$this->View->set('_authUser', $user);
+
+		$user = [
+			'id' => 1,
+			'Roles' => ['1', '2'],
+		];
+		$identity = new Identity($user);
+		$this->View->setRequest($this->View->getRequest()->withAttribute('identity', $identity));
 
 		$this->assertSame(['user' => '1', 'moderator' => '2'], $this->AuthUserHelper->roles());
 	}

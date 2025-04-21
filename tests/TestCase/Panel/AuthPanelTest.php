@@ -2,6 +2,7 @@
 
 namespace TinyAuth\Test\TestCase\Panel;
 
+use Authentication\Identity;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
@@ -145,10 +146,14 @@ class AuthPanelTest extends TestCase {
 
 		$request = new ServerRequest(['url' => '/tags']);
 		$request = $request->withAttribute('params', $url);
-		$request->getSession()->write('Auth.User', [
+
+		$user = [
 			'id' => 1,
 			'role_id' => 1,
-		]);
+		];
+		$identity = new Identity($user);
+		$request = $request->withAttribute('identity', $identity);
+
 		$controller = new Controller($request);
 		$controller->loadComponent('TinyAuth.Auth');
 		$event = new Event('event', $controller);

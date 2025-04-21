@@ -2,6 +2,8 @@
 
 namespace TinyAuth\Test\TestCase\Controller\Component;
 
+use ArrayAccess;
+use ArrayIterator;
 use Authentication\Identity;
 use Authorization\AuthorizationServiceInterface;
 use Authorization\IdentityDecorator;
@@ -15,9 +17,12 @@ use Cake\Event\Event;
 use Cake\Http\ServerRequest;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
+use IteratorAggregate;
 use TestApp\Controller\Component\TestAuthUserComponent;
 use TinyAuth\Controller\Component\AuthComponent;
 use TinyAuth\Utility\Cache;
+use Traversable;
 
 class AuthUserComponentTest extends TestCase {
 
@@ -70,10 +75,8 @@ class AuthUserComponentTest extends TestCase {
 			'id' => 1,
 			'role_id' => 1,
 		];
-		$this->controller->Auth->expects($this->once())
-			->method('user')
-			->with(null)
-			->willReturn($user);
+		$identity = new Identity($user);
+		$this->AuthUser->getController()->setRequest($this->AuthUser->getController()->getRequest()->withAttribute('identity', $identity));
 
 		$request = [
 			'controller' => 'Tags',
@@ -91,10 +94,8 @@ class AuthUserComponentTest extends TestCase {
 			'id' => 1,
 			'role_id' => 1,
 		];
-		$this->controller->Auth->expects($this->once())
-			->method('user')
-			->with(null)
-			->willReturn($user);
+		$identity = new Identity($user);
+		$this->AuthUser->getController()->setRequest($this->AuthUser->getController()->getRequest()->withAttribute('identity', $identity));
 
 		$request = [
 			'controller' => 'Tags',
@@ -110,10 +111,8 @@ class AuthUserComponentTest extends TestCase {
 	public function testIsAuthorizedNotLoggedIn() {
 		$user = [
 		];
-		$this->controller->Auth->expects($this->once())
-			->method('user')
-			->with(null)
-			->willReturn($user);
+		$identity = new Identity($user);
+		$this->AuthUser->getController()->setRequest($this->AuthUser->getController()->getRequest()->withAttribute('identity', $identity));
 
 		$request = [
 			'controller' => 'Tags',
@@ -195,10 +194,9 @@ class AuthUserComponentTest extends TestCase {
 	 * @return void
 	 */
 	public function testId() {
-		$this->controller->Auth->expects($this->once())
-			->method('user')
-			->with(null)
-			->willReturn(['id' => '1']);
+		$user = ['id' => '1'];
+		$identity = new Identity($user);
+		$this->AuthUser->getController()->setRequest($this->AuthUser->getController()->getRequest()->withAttribute('identity', $identity));
 
 		$this->assertSame('1', $this->AuthUser->id());
 	}
@@ -207,10 +205,9 @@ class AuthUserComponentTest extends TestCase {
 	 * @return void
 	 */
 	public function testIsMe() {
-		$this->controller->Auth->expects($this->any())
-			->method('user')
-			->with(null)
-			->willReturn(['id' => '1']);
+		$user = ['id' => '1'];
+		$identity = new Identity($user);
+		$this->AuthUser->getController()->setRequest($this->AuthUser->getController()->getRequest()->withAttribute('identity', $identity));
 
 		$this->assertFalse($this->AuthUser->isMe(null));
 		$this->assertFalse($this->AuthUser->isMe(''));
@@ -224,10 +221,9 @@ class AuthUserComponentTest extends TestCase {
 	 * @return void
 	 */
 	public function testUser() {
-		$this->controller->Auth->expects($this->any())
-			->method('user')
-			->with(null)
-			->willReturn(['id' => '1', 'username' => 'foo']);
+		$user = ['id' => '1', 'username' => 'foo'];
+		$identity = new Identity($user);
+		$this->AuthUser->getController()->setRequest($this->AuthUser->getController()->getRequest()->withAttribute('identity', $identity));
 
 		$this->assertSame(['id' => '1', 'username' => 'foo'], $this->AuthUser->user());
 		$this->assertSame('foo', $this->AuthUser->user('username'));
@@ -246,6 +242,108 @@ class AuthUserComponentTest extends TestCase {
 		$this->assertSame(1, $this->AuthUser->id());
 		$this->assertSame('user', $this->AuthUser->user('username'));
 		$this->assertNull($this->AuthUser->user('foofoo'));
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testUserFromIdentityTraversable() {
+		$object = new class implements ArrayAccess, IteratorAggregate {
+			/**
+			 * @return \Traversable
+			 */
+			public function getIterator(): Traversable {
+				return new ArrayIterator(['id' => 1, 'username' => 'user']);
+			}
+
+			/**
+			 * @param int $offset
+			 * @return bool
+			 */
+			public function offsetExists($offset): bool {
+				return isset($this->data[$offset]);
+			}
+
+			/**
+			 * @param int $offset
+			 * @return mixed
+			 */
+			public function offsetGet($offset) {
+				return $this->data[$offset];
+			}
+
+			/**
+			 * @param int $offset
+			 * @param mixed $value
+			 * @return void
+			 */
+			public function offsetSet($offset, $value): void {
+				$this->data[$offset] = $value;
+			}
+
+			/**
+			 * @param int $offset
+			 * @return void
+			 */
+			public function offsetUnset($offset): void {
+				unset($this->data[$offset]);
+			}
+		};
+		$identity = new Identity($object);
+		$this->controller->setRequest($this->controller->getRequest()->withAttribute('identity', $identity));
+
+		$this->assertSame(['id' => 1, 'username' => 'user'], $this->AuthUser->user());
+		$this->assertSame(1, $this->AuthUser->id());
+		$this->assertSame('user', $this->AuthUser->user('username'));
+		$this->assertNull($this->AuthUser->user('foofoo'));
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testUserFromIdentityArrayAccess() {
+		$object = new class implements ArrayAccess {
+			private array $data = ['id' => 1, 'username' => 'user'];
+
+			/**
+			 * @param int $offset
+			 * @return bool
+			 */
+			public function offsetExists($offset): bool {
+				return isset($this->data[$offset]);
+			}
+
+			/**
+			 * @param int $offset
+			 * @return mixed
+			 */
+			public function offsetGet($offset) {
+				return $this->data[$offset];
+			}
+
+			/**
+			 * @param int $offset
+			 * @param mixed $value
+			 * @return void
+			 */
+			public function offsetSet($offset, $value): void {
+				$this->data[$offset] = $value;
+			}
+
+			/**
+			 * @param int $offset
+			 * @return void
+			 */
+			public function offsetUnset($offset): void {
+				unset($this->data[$offset]);
+			}
+		};
+		$identity = new Identity($object);
+		$this->controller->setRequest($this->controller->getRequest()->withAttribute('identity', $identity));
+
+		$this->expectException(InvalidArgumentException::class);
+
+		$this->AuthUser->user();
 	}
 
 	/**
@@ -332,9 +430,9 @@ class AuthUserComponentTest extends TestCase {
 	public function testRoles() {
 		$this->AuthUser->setConfig('multiRole', true);
 
-		$this->controller->Auth->expects($this->once())
-			->method('user')
-			->willReturn(['id' => '1', 'Roles' => ['1', '2']]);
+		$user = ['id' => '1', 'Roles' => ['1', '2']];
+		$identity = new Identity($user);
+		$this->AuthUser->getController()->setRequest($this->AuthUser->getController()->getRequest()->withAttribute('identity', $identity));
 
 		$this->assertSame(['user' => '1', 'moderator' => '2'], $this->AuthUser->roles());
 	}
@@ -345,10 +443,9 @@ class AuthUserComponentTest extends TestCase {
 	public function testRolesDeep() {
 		$this->AuthUser->setConfig('multiRole', true);
 
-		$this->controller->Auth->expects($this->once())
-			->method('user')
-			->with(null)
-			->willReturn(['id' => '1', 'Roles' => [['id' => '1'], ['id' => '2']]]);
+		$user = ['id' => '1', 'Roles' => [['id' => '1'], ['id' => '2']]];
+		$identity = new Identity($user);
+		$this->AuthUser->getController()->setRequest($this->AuthUser->getController()->getRequest()->withAttribute('identity', $identity));
 
 		$this->assertSame(['user' => '1', 'moderator' => '2'], $this->AuthUser->roles());
 	}
@@ -359,10 +456,9 @@ class AuthUserComponentTest extends TestCase {
 	public function testHasRole() {
 		$this->AuthUser->setConfig('multiRole', true);
 
-		$this->controller->Auth->expects($this->exactly(3))
-			->method('user')
-			->with(null)
-			->willReturn(['id' => '1', 'Roles' => [['id' => '1'], ['id' => '2']]]);
+		$user = ['id' => '1', 'Roles' => [['id' => '1'], ['id' => '2']]];
+		$identity = new Identity($user);
+		$this->AuthUser->getController()->setRequest($this->AuthUser->getController()->getRequest()->withAttribute('identity', $identity));
 
 		$this->assertTrue($this->AuthUser->hasRole(2));
 		$this->assertTrue($this->AuthUser->hasRole('2'));
@@ -378,10 +474,9 @@ class AuthUserComponentTest extends TestCase {
 	public function testHasRoles() {
 		$this->AuthUser->setConfig('multiRole', true);
 
-		$this->controller->Auth->expects($this->exactly(6))
-			->method('user')
-			->with(null)
-			->willReturn(['id' => '1', 'Roles' => [['id' => '1'], ['id' => '2']]]);
+		$user = ['id' => '1', 'Roles' => [['id' => '1'], ['id' => '2']]];
+		$identity = new Identity($user);
+		$this->AuthUser->getController()->setRequest($this->AuthUser->getController()->getRequest()->withAttribute('identity', $identity));
 
 		$this->assertTrue($this->AuthUser->hasRoles([2]));
 		$this->assertTrue($this->AuthUser->hasRoles('2'));

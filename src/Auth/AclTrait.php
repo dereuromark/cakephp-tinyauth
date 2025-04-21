@@ -2,6 +2,7 @@
 
 namespace TinyAuth\Auth;
 
+use ArrayAccess;
 use BackedEnum;
 use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
@@ -83,12 +84,12 @@ trait AclTrait {
 	 *
 	 * Allows single or multi role based authorization
 	 *
-	 * @param array<string, mixed> $user User data
+	 * @param \ArrayAccess|array<string, mixed> $user User data
 	 * @param array<string, mixed> $params Request params
 	 * @throws \Cake\Core\Exception\CakeException
 	 * @return bool Success
 	 */
-	protected function _checkUser(array $user, array $params) {
+	protected function _checkUser(ArrayAccess|array $user, array $params): bool {
 		if ($this->getConfig('includeAuthentication') && $this->_isPublic($params)) {
 			return true;
 		}
@@ -512,11 +513,10 @@ trait AclTrait {
 	 * - direct lookup in the pivot table (to support both Configure and Model
 	 *   in multi-role mode)
 	 *
-	 * @param array $user The user to get the roles for
-	 * @throws \Cake\Core\Exception\CakeException
+	 * @param \ArrayAccess|array $user The user to get the roles for
 	 * @return array<string, int|string> List with all role ids belonging to the user
 	 */
-	protected function _getUserRoles(array $user) {
+	protected function _getUserRoles(ArrayAccess|array $user) {
 		// Single-role from session
 		if (!$this->getConfig('multiRole')) {
 			$roleColumn = $this->getConfig('roleColumn');
@@ -524,7 +524,7 @@ trait AclTrait {
 				throw new CakeException('Invalid TinyAuth config, `roleColumn` config missing.');
 			}
 
-			if (!array_key_exists($roleColumn, $user)) {
+			if (!array_key_exists($roleColumn, (array)$user)) {
 				throw new CakeException(sprintf('Missing TinyAuth role id field (%s) in user session', 'Auth.User.' . $this->getConfig('roleColumn')));
 			}
 			if (!isset($user[$this->getConfig('roleColumn')])) {

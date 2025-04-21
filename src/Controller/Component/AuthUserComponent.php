@@ -2,10 +2,10 @@
 
 namespace TinyAuth\Controller\Component;
 
+use ArrayAccess;
 use Authentication\Identity;
 use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
-use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use TinyAuth\Auth\AclTrait;
 use TinyAuth\Auth\AllowTrait;
@@ -44,19 +44,17 @@ class AuthUserComponent extends Component {
 	}
 
 	/**
-	 * @return \Cake\Datasource\EntityInterface|null
+	 * @return \ArrayAccess|array|null
 	 */
-	public function identity(): ?EntityInterface {
+	public function identity(): ArrayAccess|array|null {
 		/** @var \Authorization\Identity|\Authentication\Identity|null $identity */
 		$identity = $this->getController()->getRequest()->getAttribute('identity');
 		if (!$identity) {
 			return null;
 		}
 
-		/** @var \Cake\Datasource\EntityInterface $data */
-		$data = $identity->getOriginalData();
-
-		return $data;
+		/** @var \ArrayAccess|array|null */
+		return $identity->getOriginalData();
 	}
 
 	/**
@@ -80,13 +78,11 @@ class AuthUserComponent extends Component {
 	/**
 	 * @return array
 	 */
-	protected function _getUser() {
+	protected function _getUser(): array {
 		if (class_exists(Identity::class)) {
-			/** @var \Cake\ORM\Entity|null $identity */
 			$identity = $this->identity();
-			if ($identity) {
-				return $identity->toArray();
-			}
+
+			return $identity ? $this->_toArray($identity) : [];
 		}
 
 		// We skip for new plugin(s)

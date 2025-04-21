@@ -2,7 +2,10 @@
 
 namespace TinyAuth\Auth;
 
+use ArrayAccess;
 use Cake\Utility\Hash;
+use InvalidArgumentException;
+use Traversable;
 
 /**
  * Convenience wrapper to access Auth data and check on rights/roles.
@@ -42,7 +45,7 @@ trait AuthUserTrait {
 	 *
 	 * This can be used anywhere to check if a user is logged in.
 	 *
-	 * @return mixed User id if existent, null otherwise.
+	 * @return string|int|null User id if existent, null otherwise.
 	 */
 	public function id() {
 		$field = $this->getConfig('idColumn');
@@ -57,7 +60,7 @@ trait AuthUserTrait {
 	 * @param string|int $userId
 	 * @return bool
 	 */
-	public function isMe($userId) {
+	public function isMe($userId): bool {
 		$field = $this->getConfig('idColumn');
 
 		return $userId && (string)$userId === (string)$this->user($field);
@@ -69,7 +72,7 @@ trait AuthUserTrait {
 	 * @param string|null $key Key in dot syntax.
 	 * @return mixed Data
 	 */
-	public function user($key = null) {
+	public function user(?string $key = null) {
 		$user = $this->_getUser();
 		if ($key === null) {
 			return $user;
@@ -86,7 +89,7 @@ trait AuthUserTrait {
 	 *
 	 * @return array Array of roles
 	 */
-	public function roles() {
+	public function roles(): array {
 		$user = $this->user();
 		if (!$user) {
 			return [];
@@ -133,7 +136,7 @@ trait AuthUserTrait {
 	 * @param mixed|null $providedRoles
 	 * @return bool Success
 	 */
-	public function hasRoles($expectedRoles, $oneRoleIsEnough = true, $providedRoles = null) {
+	public function hasRoles($expectedRoles, $oneRoleIsEnough = true, $providedRoles = null): bool {
 		if ($providedRoles !== null) {
 			$roles = $providedRoles;
 		} else {
@@ -164,6 +167,28 @@ trait AuthUserTrait {
 		}
 
 		return false;
+	}
+
+	/**
+	 * @param \ArrayAccess|array $identity
+	 * @return array
+	 */
+	protected function _toArray(ArrayAccess|array $identity): array {
+		if (is_array($identity)) {
+			return $identity;
+		}
+
+		if (method_exists($identity, 'toArray')) {
+			return $identity->toArray();
+		}
+		if ($identity instanceof Traversable) {
+			return iterator_to_array($identity);
+		}
+		if (!$identity instanceof \Countable) {
+			throw new InvalidArgumentException('You cannot use a pure ArrayAccess object as identity. Use Entity or ArrayObject at least.');
+		}
+
+		return (array)$identity;
 	}
 
 }
