@@ -2,12 +2,18 @@
 
 namespace TinyAuth\Test\TestCase\Controller\Component;
 
+use Authentication\Identity;
+use Authorization\AuthorizationServiceInterface;
+use Authorization\IdentityDecorator;
+use Authorization\IdentityInterface;
+use Authorization\Policy\ResultInterface;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Event\Event;
 use Cake\Http\ServerRequest;
+use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use TestApp\Controller\Component\TestAuthUserComponent;
 use TinyAuth\Controller\Component\AuthComponent;
@@ -225,6 +231,98 @@ class AuthUserComponentTest extends TestCase {
 
 		$this->assertSame(['id' => '1', 'username' => 'foo'], $this->AuthUser->user());
 		$this->assertSame('foo', $this->AuthUser->user('username'));
+		$this->assertNull($this->AuthUser->user('foofoo'));
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testUserFromIdentity() {
+		$object = new Entity(['id' => 1, 'username' => 'user']);
+		$identity = new Identity($object);
+		$this->controller->setRequest($this->controller->getRequest()->withAttribute('identity', $identity));
+
+		$this->assertSame(['id' => 1, 'username' => 'user'], $this->AuthUser->user());
+		$this->assertSame(1, $this->AuthUser->id());
+		$this->assertSame('user', $this->AuthUser->user('username'));
+		$this->assertNull($this->AuthUser->user('foofoo'));
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testUserFromDecoratedIdentity() {
+		$object = new Entity(['id' => 1, 'username' => 'user']);
+		$auth = new class implements AuthorizationServiceInterface {
+
+			/**
+			 * @param \Authorization\IdentityInterface|null $user
+			 * @param string $action
+			 * @param mixed $resource
+			 * @param ...$optionalArgs
+			 * @return bool
+			 */
+			public function can(?IdentityInterface $user, string $action, mixed $resource, ...$optionalArgs): bool {
+				return false;
+			}
+
+			/**
+			 * @param \Authorization\IdentityInterface|null $user
+			 * @param string $action
+			 * @param mixed $resource
+			 * @param ...$optionalArgs
+			 * @return \Authorization\Policy\ResultInterface
+			 */
+			public function canResult(?IdentityInterface $user, string $action, mixed $resource, ...$optionalArgs): ResultInterface {
+				$x = new class implements ResultInterface {
+					/**
+					 * @return bool
+					 */
+					public function getStatus(): bool {
+						return false;
+					}
+
+					/**
+					 * @return string|null
+					 */
+					public function getReason(): ?string {
+						return null;
+					}
+				};
+
+				return $x;
+			}
+
+			/**
+			 * @param \Authorization\IdentityInterface|null $user
+			 * @param string $action
+			 * @param mixed $resource
+			 * @param ...$optionalArgs
+			 * @return mixed
+			 */
+			public function applyScope(?IdentityInterface $user, string $action, mixed $resource, ...$optionalArgs): mixed {
+				return null;
+			}
+
+			/**
+			 * @return bool
+			 */
+			public function authorizationChecked(): bool {
+				return false;
+			}
+
+			/**
+			 * @return void
+			 */
+			public function skipAuthorization() {
+			}
+		};
+		$identity = new IdentityDecorator($auth, $object);
+		$this->controller->setRequest($this->controller->getRequest()->withAttribute('identity', $identity));
+
+		$this->assertSame(['id' => 1, 'username' => 'user'], $this->AuthUser->user());
+		$this->assertSame(1, $this->AuthUser->id());
+		$this->assertSame('user', $this->AuthUser->user('username'));
 		$this->assertNull($this->AuthUser->user('foofoo'));
 	}
 

@@ -82,6 +82,7 @@ class AuthUserComponent extends Component {
 	 */
 	protected function _getUser() {
 		if (class_exists(Identity::class)) {
+			/** @var \Cake\ORM\Entity|null $identity */
 			$identity = $this->identity();
 			if ($identity) {
 				return $identity->toArray();
