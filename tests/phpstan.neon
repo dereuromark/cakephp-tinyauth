@@ -4,6 +4,6 @@ parameters:
 		- TestCase/
 	bootstrapFiles:
 		- %rootDir%/../../../tests/bootstrap.php
-	checkMissingIterableValueType: false
-	checkGenericClassInNonGenericObjectType: false
 	ignoreErrors:
+		- identifier: missingType.iterableValue
+		- identifier: missingType.generics
