@@ -21,6 +21,8 @@ frontend yourself)
 Assuming you already have authentication set up correctly you can enable
 authorization in your controller's `beforeFilter()` method like this example:
 
+**DEPRECATED** Use middleware approach and `TinyAuth.Authorization` instead. Rest of the page is accurate.
+
 ```php
 // src/Controller/AppController
 

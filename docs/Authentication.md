@@ -42,6 +42,8 @@ At the same time you can always set up "deny" rules for any allowed prefix to re
 
 ## Enabling
 
+**DEPRECATED** Use `TinyAuth.Authentication` instead. Rest of the page is accurate.
+
 Authentication is set up in your controller's `initialize()` method:
 
 ```php

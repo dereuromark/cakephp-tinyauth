@@ -12,6 +12,7 @@ use TinyAuth\Utility\Config;
  * TinyAuth AuthComponent to handle all authentication in a central INI file.
  *
  * @property \Cake\Controller\Component\FlashComponent $Flash
+ * @deprecated Use TinyAuth.Authentication and TinyAuth.Authorization instead.
  */
 class AuthComponent extends LegacyAuthComponent {
 
