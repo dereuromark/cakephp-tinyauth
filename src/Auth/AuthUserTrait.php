@@ -21,10 +21,10 @@ use Traversable;
  * to be implemented in the using class.
  *
  * Expects the Role session infos to be either
- *     - `Auth.User.role_id` (single) or
- *     - `Auth.User.Role` (multi - flat array of roles, or array role data)
+ *     - `Auth.role_id` (single) or
+ *     - `Auth.user_role` (multi - flat array of roles, or array role data)
  * and can be adjusted via constants and defined().
- * Same goes for Right data.
+ * Same goes for user_right data.
  *
  * If roles are defined in configuration file (non-db roles setup) the constant
  * `USER_ROLE_KEY` has to be defined in `bootstrap.php`.
@@ -33,7 +33,7 @@ use Traversable;
  * define('USER_ROLE_KEY', 'role_id');
  * ```
  *
- * Note: This uses AuthComponent internally to work with both stateful and stateless auth.
+ * Note: This uses Auth components internally to work with both stateful and stateless auth.
  *
  * @author Mark Scherer
  * @license MIT

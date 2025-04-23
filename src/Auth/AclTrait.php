@@ -525,7 +525,7 @@ trait AclTrait {
 			}
 
 			if (!array_key_exists($roleColumn, (array)$user)) {
-				throw new CakeException(sprintf('Missing TinyAuth role id field (%s) in user session', 'Auth.User.' . $this->getConfig('roleColumn')));
+				throw new CakeException(sprintf('Missing TinyAuth role id field (%s) in user session', 'Auth.' . $this->getConfig('roleColumn')));
 			}
 			if (!isset($user[$this->getConfig('roleColumn')])) {
 				return [];
