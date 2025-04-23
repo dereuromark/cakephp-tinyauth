@@ -104,7 +104,7 @@ trait AclTrait {
 				$superAdminColumn = $this->getConfig('idColumn');
 			}
 			if (!isset($user[$superAdminColumn])) {
-				throw new CakeException('Missing super Admin Column in user table');
+				throw new CakeException('Missing super admin column `' . $superAdminColumn . '` in user table');
 			}
 			if ($user[$superAdminColumn] === $this->getConfig('superAdmin')) {
 				return true;

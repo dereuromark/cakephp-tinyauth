@@ -11,6 +11,7 @@ use Authentication\Identifier\IdentifierInterface;
 use Cake\Http\Exception\UnauthorizedException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use TinyAuth\Utility\SessionCache;
 
 /**
  * Session Authenticator with only ID
@@ -25,6 +26,7 @@ class PrimaryKeySessionAuthenticator extends AuthenticationSessionAuthenticator 
 		$config += [
 			'identifierKey' => 'key',
 			'idField' => 'id',
+			'cache' => false, // `true` to activate caching layer
 		];
 
 		parent::__construct($identifier, $config);
@@ -46,9 +48,20 @@ class PrimaryKeySessionAuthenticator extends AuthenticationSessionAuthenticator 
 			return new Result(null, Result::FAILURE_IDENTITY_NOT_FOUND);
 		}
 
+		if ($this->getConfig('cache')) {
+			$user = SessionCache::read($userId);
+			if ($user) {
+				return new Result($user, Result::SUCCESS);
+			}
+		}
+
 		$user = $this->_identifier->identify([$this->getConfig('identifierKey') => $userId]);
 		if (!$user) {
 			return new Result(null, Result::FAILURE_IDENTITY_NOT_FOUND);
+		}
+
+		if ($this->getConfig('cache')) {
+			SessionCache::write($userId, $user);
 		}
 
 		return new Result($user, Result::SUCCESS);

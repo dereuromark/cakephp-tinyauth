@@ -104,6 +104,13 @@ class AuthPanel extends DebugPanel {
 		$data['config'] = $authUserComponent->getConfig();
 		$data['access'] = $access;
 
+		$data['identity'] = $request->getAttribute('identity');
+
+		/** @var \Authentication\AuthenticationService|null $auth */
+		$auth = $request->getAttribute('authentication');
+		$data['authenticationProvider'] = $auth ? $auth->getAuthenticationProvider() : null;
+		$data['identificationProvider'] = $auth ? $auth->getIdentificationProvider() : null;
+
 		$this->_data = $data;
 	}
 
@@ -173,7 +180,7 @@ class AuthPanel extends DebugPanel {
 	 *
 	 * @return array
 	 */
-	protected function _generateUser($role, $id) {
+	protected function _generateUser($role, $id): array {
 		$user = [
 			'id' => 0,
 		];
