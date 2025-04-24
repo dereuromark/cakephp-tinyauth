@@ -125,16 +125,16 @@ if (!isset($isPublic)) {
 		</tr>
 	</table>
 
+	<?php if ($identity) { ?>
 	<h2>Identity</h2>
-	<?php
-	if ($identity) {
+		<?php
 		echo '<h4>' . get_class($identity) . '</h4>';
-	}
-	?>
+		?>
 
-	<?php
-	$user = $identity->getOriginalData();
-	echo Debugger::exportVar($user);
-	?>
+		<?php
+		$user = $identity->getOriginalData();
+		echo Debugger::exportVar($user);
+		?>
+	<?php } ?>
 
 </section>

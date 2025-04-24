@@ -63,21 +63,31 @@ Then you use the [Authorization documentation](Authorization.md) to set up roles
 
 #### Tips
 
-It is recommended to use a POST check for the login flash message, and silently redirect away otherwise.
+You can add loginUpdate() method to your UsersTable to update the user's data here accordingly:
 
+```php
+    /**
+     * @param \Authentication\Authenticator\ResultInterface $result
+     *
+     * @return void
+     */
+    public function loginUpdate(ResultInterface $result): void
+    {
+        /** @var \App\Model\Entity\User $user */
+        $user = $result->getData();
+        $this->updateAll(['last_login' => new DateTime()], ['id' => $user->id]);
+    }
+```
+Then hook it in:
 ```php
 // Inside your AccountController::login() method
     $result = $this->Authentication->getResult();
     // If the user is logged in send them away.
     if ($result && $result->isValid()) {
-        if ($this->request->is('post')) {
-            $this->Users->loginUpdate($result);
-            $target = $this->Authentication->getLoginRedirect() ?? '/';
-            $this->Flash->success(__('You are now logged in.'));
+        $this->Users->loginUpdate($result);
+        $target = $this->Authentication->getLoginRedirect() ?? '/';
+        $this->Flash->success(__('You are now logged in.'));
 
-            return $this->redirect($target);
-        }
-
-        return $this->redirect(['controller' => 'Account', 'action' => 'index']);
+        return $this->redirect($target);
     }
 ```
