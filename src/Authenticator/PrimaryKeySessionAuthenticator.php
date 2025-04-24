@@ -48,6 +48,13 @@ class PrimaryKeySessionAuthenticator extends AuthenticationSessionAuthenticator 
 			return new Result(null, Result::FAILURE_IDENTITY_NOT_FOUND);
 		}
 
+		if (!is_scalar($userId)) {
+			// Maybe during migration? Let's remove this old one then
+			$session->delete($sessionKey);
+
+			return new Result(null, Result::FAILURE_IDENTITY_NOT_FOUND);
+		}
+
 		if ($this->getConfig('cache')) {
 			$user = SessionCache::read($userId);
 			if ($user) {
