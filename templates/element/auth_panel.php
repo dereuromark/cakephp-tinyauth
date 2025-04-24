@@ -9,6 +9,9 @@
  * @var bool[] $access
  * @var string $path;
  * @var array<string, mixed> $config
+ * @var \Authorization\Identity|\Authentication\Identity|null $identity
+ * @var \Authentication\Authenticator\AuthenticatorInterface|null $authenticationProvider
+ * @var \Authentication\Identifier\IdentifierInterface|null $identificationProvider
  */
 
 use Cake\Error\Debugger;
@@ -32,12 +35,13 @@ if (!isset($isPublic)) {
 
 	<h2>Current URL</h2>
 	<?php
-	Debugger::dump($params);
+	echo Debugger::exportVar($params);
 	?>
 	<br/>
 	<p>TinyAuth URL path: <b style="font-weight: bold"><?php echo h($path); ?></b></p>
 
 	<h2>Authentication (allow)</h2>
+	<p>
 	<?php
 	if (Config::get('allowAdapter')) {
 		if ($isPublic === null) {
@@ -55,6 +59,18 @@ if (!isset($isPublic)) {
 		echo '<i>disabled</i>';
 	}
 	?>
+	</p>
+
+	<?php if ($authenticationProvider) {
+		echo '<p>';
+		echo 'Authentication provider used: ' . get_class($authenticationProvider);
+		echo '</p>';
+	} ?>
+	<?php if ($identificationProvider) {
+		echo '<p>';
+		echo 'Identification provider used: ' . get_class($identificationProvider);
+		echo '</p>';
+	} ?>
 
 	<h2>Authorization (ACL)</h2>
 	<?php
@@ -64,7 +80,7 @@ if (!isset($isPublic)) {
 
 			echo '<p>Logged in with ID <b style="font-weight: bold">' . h($user[$primaryKey]) . '</b></p>';
 
-			echo 'Roles:<br/>';
+			echo '<h4>Roles</h4>';
 			Debugger::dump($roles);
 
 		} else {
@@ -97,5 +113,17 @@ if (!isset($isPublic)) {
 			?>
 		</ul>
 	<?php } ?>
+
+	<h2>Identity</h2>
+	<?php
+	if ($identity) {
+		echo '<h4>' . get_class($identity) . '</h4>';
+	}
+	?>
+
+	<?php
+	$user = $identity->getOriginalData();
+	echo Debugger::exportVar($user);
+	?>
 
 </section>

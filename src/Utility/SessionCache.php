@@ -65,6 +65,17 @@ class SessionCache {
 
 	/**
 	 * @param string|int $userId
+	 *
+	 * @return bool
+	 */
+	public static function delete(int|string $userId): bool {
+		$config = static::prepareConfig();
+
+		return Cache::delete(static::key($userId), $config['cache']);
+	}
+
+	/**
+	 * @param string|int $userId
 	 * @return string
 	 */
 	public static function key(int|string $userId): string {

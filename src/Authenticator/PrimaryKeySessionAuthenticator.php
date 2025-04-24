@@ -56,7 +56,7 @@ class PrimaryKeySessionAuthenticator extends AuthenticationSessionAuthenticator 
 		}
 
 		if ($this->getConfig('cache')) {
-			$user = SessionCache::read($userId);
+			$user = SessionCache::read((string)$userId);
 			if ($user) {
 				return new Result($user, Result::SUCCESS);
 			}
@@ -68,7 +68,7 @@ class PrimaryKeySessionAuthenticator extends AuthenticationSessionAuthenticator 
 		}
 
 		if ($this->getConfig('cache')) {
-			SessionCache::write($userId, $user);
+			SessionCache::write((string)$userId, $user);
 		}
 
 		return new Result($user, Result::SUCCESS);
@@ -91,6 +91,21 @@ class PrimaryKeySessionAuthenticator extends AuthenticationSessionAuthenticator 
 			'request' => $request,
 			'response' => $response,
 		];
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function clearIdentity(ServerRequestInterface $request, ResponseInterface $response): array {
+		if ($this->getConfig('cache')) {
+			$sessionKey = $this->getConfig('sessionKey');
+			/** @var \Cake\Http\Session $session */
+			$session = $request->getAttribute('session');
+			$userId = $session->read($sessionKey);
+			SessionCache::drop($userId);
+		}
+
+		return parent::clearIdentity($request, $response);
 	}
 
 	/**
