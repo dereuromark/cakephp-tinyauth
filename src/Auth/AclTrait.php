@@ -290,7 +290,7 @@ trait AclTrait {
 	 *
 	 * @param array<string> $prefixes
 	 *
-	 * @return array
+	 * @return array<string, mixed>
 	 */
 	protected function _normalizePrefixes(array $prefixes) {
 		$normalized = [];
@@ -410,7 +410,7 @@ trait AclTrait {
 	 * Deconstructs an ACL INI section key into a named array with ACL parts.
 	 *
 	 * @param string $key INI section key as found in acl.ini
-	 * @return array Array with named keys for controller, plugin and prefix
+	 * @return array<string, mixed> Array with named keys for controller, plugin and prefix
 	 */
 	protected function _deconstructIniKey($key) {
 		return Utility::deconstructIniKey($key);

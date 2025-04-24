@@ -171,7 +171,7 @@ trait AuthUserTrait {
 
 	/**
 	 * @param \ArrayAccess|array $identity
-	 * @return array
+	 * @return array<string, mixed>
 	 */
 	protected function _toArray(ArrayAccess|array $identity): array {
 		if (is_array($identity)) {

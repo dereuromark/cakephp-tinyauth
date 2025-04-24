@@ -11,7 +11,7 @@ class Utility {
 	 * Deconstructs an authentication ini section key into a named array with authentication parts.
 	 *
 	 * @param string $key INI section key as found in authentication.ini
-	 * @return array Array with named keys for controller, plugin and prefix
+	 * @return array<string, mixed> Array with named keys for controller, plugin and prefix
 	 */
 	public static function deconstructIniKey($key) {
 		$res = [
@@ -19,7 +19,7 @@ class Utility {
 			'prefix' => null,
 		];
 
-		if (strpos($key, '.') !== false) {
+		if (str_contains($key, '.')) {
 			[$res['plugin'], $key] = explode('.', $key);
 		}
 		$lastSlashPos = strrpos($key, '/');

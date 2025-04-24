@@ -109,7 +109,7 @@ class Cache {
 	}
 
 	/**
-	 * @return array
+	 * @return array<string, mixed>
 	 */
 	protected static function prepareConfig(): array {
 		$defaultConfig = static::$_defaultConfig;
