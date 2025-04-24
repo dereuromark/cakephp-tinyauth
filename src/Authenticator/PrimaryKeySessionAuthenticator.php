@@ -11,6 +11,7 @@ use Authentication\Identifier\IdentifierInterface;
 use Cake\Http\Exception\UnauthorizedException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use TinyAuth\Utility\SessionCache;
 
 /**
  * Session Authenticator with only ID
@@ -25,6 +26,7 @@ class PrimaryKeySessionAuthenticator extends AuthenticationSessionAuthenticator 
 		$config += [
 			'identifierKey' => 'key',
 			'idField' => 'id',
+			'cache' => false, // `true` to activate caching layer
 		];
 
 		parent::__construct($identifier, $config);
@@ -46,9 +48,27 @@ class PrimaryKeySessionAuthenticator extends AuthenticationSessionAuthenticator 
 			return new Result(null, Result::FAILURE_IDENTITY_NOT_FOUND);
 		}
 
+		if (!is_scalar($userId)) {
+			// Maybe during migration? Let's remove this old one then
+			$session->delete($sessionKey);
+
+			return new Result(null, Result::FAILURE_IDENTITY_NOT_FOUND);
+		}
+
+		if ($this->getConfig('cache')) {
+			$user = SessionCache::read((string)$userId);
+			if ($user) {
+				return new Result($user, Result::SUCCESS);
+			}
+		}
+
 		$user = $this->_identifier->identify([$this->getConfig('identifierKey') => $userId]);
 		if (!$user) {
 			return new Result(null, Result::FAILURE_IDENTITY_NOT_FOUND);
+		}
+
+		if ($this->getConfig('cache')) {
+			SessionCache::write((string)$userId, $user);
 		}
 
 		return new Result($user, Result::SUCCESS);
@@ -71,6 +91,21 @@ class PrimaryKeySessionAuthenticator extends AuthenticationSessionAuthenticator 
 			'request' => $request,
 			'response' => $response,
 		];
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function clearIdentity(ServerRequestInterface $request, ResponseInterface $response): array {
+		if ($this->getConfig('cache')) {
+			$sessionKey = $this->getConfig('sessionKey');
+			/** @var \Cake\Http\Session $session */
+			$session = $request->getAttribute('session');
+			$userId = $session->read($sessionKey);
+			SessionCache::drop($userId);
+		}
+
+		return parent::clearIdentity($request, $response);
 	}
 
 	/**

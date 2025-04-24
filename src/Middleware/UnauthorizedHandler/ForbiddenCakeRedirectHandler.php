@@ -45,6 +45,11 @@ class ForbiddenCakeRedirectHandler extends CakeRedirectHandler {
 	 * @return \Psr\Http\Message\ResponseInterface
 	 */
 	public function handle(Exception $exception, ServerRequestInterface $request, array $options = []): ResponseInterface {
+		$params = (array)$request->getAttribute('params');
+		if (!empty($params['_ext']) && $params['_ext'] !== 'html') {
+			throw $exception;
+		}
+
 		$response = parent::handle($exception, $request, $options);
 
 		$message = $options['unauthorizedMessage'] ?? __('You are not authorized to access that location.');

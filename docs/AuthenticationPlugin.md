@@ -133,6 +133,25 @@ $this->AuthUser->identity();
 ```
 
 
-For all the rest follow the plugin's documentation.
+### Caching
+Especially when you use the PrimaryKeySession authenticator and always pulling the live data
+from DB, you might want to consider adding a short-lived cache in between.
+The authenticator supports this directly:
+
+In this case you need to manually invalidate the session cache every time a user modifies some of their
+data that is part of the session (e.g. username, email, roles, birthday, ...).
+For that you can use the following after the change was successful:
+```php
+use TinyAuth\Utility\SessionCache;
+
+SessionCache::delete($userId);
+```
+This will force the session to be pulled (the ID), and the cache refilled with up-to-date data.
+
+
+---
+
+
+For all the rest, follow the plugin's documentation.
 
 Then you use the [Authentication documentation](Authentication.md) to fill your INI config file.

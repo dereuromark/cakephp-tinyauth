@@ -17,7 +17,7 @@ This branch is for **CakePHP 5.0+**. For details see [version map](https://githu
 ### Authentication
 What are public actions, which ones need login?
 
-- Powerful wildcard (*) operator.
+- Powerful default configs to get you started right away.
 - [Quick Setup](https://github.com/dereuromark/cakephp-tinyauth/blob/master/docs/Authentication.md#quick-setups) for 5 minute integration.
 
 ### Authorization
@@ -30,7 +30,7 @@ Once you are logged in, what actions can you see with your role(s)?
 ### Useful helpers
 - AuthUser Component and Helper for stateful and stateless "auth data" access.
 - Authentication Component and Helper for `isPublic()` check on current other other actions.
-- Auth DebugKit panel for detailed insights into current URL and auth status.
+- Auth DebugKit panel for detailed insights into current URL and auth status, identity content and more.
 
 ## What's the idea?
 Default CakePHP authentication and authorization depends on code changes in at least each controller, maybe more classes.
@@ -39,10 +39,11 @@ This plugin hooks in with a single line of change and manages all that using con
 It is also possible to manage the config files without the need to code.
 And it can with adapters also be moved completely to the DB and managed by CRUD backend.
 
-Ask yourself: Do you need the overhead and complexity involved with the full blown (RBAC DB) ACL? See also my post [acl-access-control-lists-revised/](https://www.dereuromark.de/2015/01/06/acl-access-control-lists-revised/).
+Ask yourself: Do you need the overhead and complexity involved with a full blown (RBAC DB) ACL or very specific Policy approaches? 
+See also my post [acl-access-control-lists-revised/](https://www.dereuromark.de/2015/01/06/acl-access-control-lists-revised/).
 If not, then this plugin could very well be your answer and a super quick solution to your auth problem :)
 
-But even if you don't leverage the authentication or authorization, the available AuthUserComponent and AuthUserHelper
+But even if you don't leverage the full authentication or authorization potential, the available AuthUserComponent and AuthUserHelper
 can be very useful when dealing with role based decisions in your controller or view level. They also work stand-alone.
 
 
