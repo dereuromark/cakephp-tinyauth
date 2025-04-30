@@ -102,7 +102,9 @@ class PrimaryKeySessionAuthenticator extends AuthenticationSessionAuthenticator 
 			/** @var \Cake\Http\Session $session */
 			$session = $request->getAttribute('session');
 			$userId = $session->read($sessionKey);
-			SessionCache::drop($userId);
+			if (is_scalar($userId)) {
+				SessionCache::delete((string)$userId);
+			}
 		}
 
 		return parent::clearIdentity($request, $response);
