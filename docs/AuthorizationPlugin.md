@@ -91,3 +91,31 @@ Then hook it in:
         return $this->redirect($target);
     }
 ```
+
+#### Controller specific Authorization
+
+In some cases with default fallback routing in place, it can make more sense to have the authorization part more coupled to your controllers (extending AppController).
+In that case only keep Authentication/Authorization middlewares in Application, and move RequestAuthorizationMiddleware to `AppController::initialize()`:
+
+```php
+    $this->middleware(function (ServerRequest $request, $handler): ResponseInterface {
+        $config = [
+            'unauthorizedHandler' => [
+                'className' => 'TinyAuth.ForbiddenCakeRedirect',
+                'url' => [
+                    'prefix' => false,
+                    'plugin' => false,
+                    'controller' => 'Account',
+                    'action' => 'login',
+                ],
+            ],
+        ];
+        $middleware = new RequestAuthorizationMiddleware($config);
+        $result = $middleware->process($request, $handler);
+
+        return $result;
+    });
+```
+In case there are redirect loops, you might have to wrap the whole thing in `if ($this->AuthUser->id()) {}`.
+Since authentication needs to trigger first anway, the methods are protected. Only once there is a valid user, the authorization makes sense anyway.
+
