@@ -33,9 +33,9 @@ class AuthUserComponent extends Component {
 
 	/**
 	 * @param \Cake\Event\EventInterface $event
-	 * @return \Cake\Http\Response|null|void
+	 * @return void
 	 */
-	public function beforeRender(EventInterface $event) {
+	public function beforeRender(EventInterface $event): void {
 		/** @var \Cake\Controller\Controller $controller */
 		$controller = $event->getSubject();
 

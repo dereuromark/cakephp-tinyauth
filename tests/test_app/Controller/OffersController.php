@@ -10,9 +10,9 @@ class OffersController extends Controller {
 
 	/**
 	 * @param \Cake\Event\Event $event
-	 * @return \Cake\Http\Response|null
+	 * @return void
 	 */
-	public function beforeFilter(EventInterface $event) {
+	public function beforeFilter(EventInterface $event): void {
 		$this->Auth->deny(['denied']);
 	}
 
