@@ -10,7 +10,7 @@
 
 A CakePHP plugin to handle authentication and user authorization the easy way.
 
-This branch is for **CakePHP 5.0+**. For details see [version map](https://github.com/dereuromark/cakephp-tinyauth/wiki#cakephp-version-map).
+This branch is for **CakePHP 5.1+**. For details see [version map](https://github.com/dereuromark/cakephp-tinyauth/wiki#cakephp-version-map).
 
 ## Features
 
@@ -39,7 +39,7 @@ This plugin hooks in with a single line of change and manages all that using con
 It is also possible to manage the config files without the need to code.
 And it can with adapters also be moved completely to the DB and managed by CRUD backend.
 
-Ask yourself: Do you need the overhead and complexity involved with a full blown (RBAC DB) ACL or very specific Policy approaches? 
+Ask yourself: Do you need the overhead and complexity involved with a full blown (RBAC DB) ACL or very specific Policy approaches?
 See also my post [acl-access-control-lists-revised/](https://www.dereuromark.de/2015/01/06/acl-access-control-lists-revised/).
 If not, then this plugin could very well be your answer and a super quick solution to your auth problem :)
 
