@@ -239,10 +239,13 @@ abstract class LegacyAuthComponent extends Component implements EventDispatcherI
 	 * Callback for Controller.startup event.
 	 *
 	 * @param \Cake\Event\EventInterface $event Event instance.
-	 * @return \Cake\Http\Response|null
+	 * @return void
 	 */
-	public function startup(EventInterface $event): ?Response {
-		return $this->authCheck($event);
+	public function startup(EventInterface $event): void {
+		$check = $this->authCheck($event);
+		if ($check !== null) {
+			$event->setResult($check);
+		}
 	}
 
 	/**
