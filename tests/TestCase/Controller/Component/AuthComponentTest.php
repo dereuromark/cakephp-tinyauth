@@ -65,7 +65,9 @@ class AuthComponentTest extends TestCase {
 		$this->AuthComponent->initialize($config);
 
 		$event = new Event('Controller.startup', $controller);
-		$response = $this->AuthComponent->startup($event);
+		$this->AuthComponent->startup($event);
+
+		$response = $event->getResult();
 		$this->assertNull($response);
 	}
 
@@ -90,7 +92,9 @@ class AuthComponentTest extends TestCase {
 		$this->AuthComponent->initialize($config);
 
 		$event = new Event('Controller.startup', $controller);
-		$response = $this->AuthComponent->startup($event);
+		$this->AuthComponent->startup($event);
+
+		$response = $event->getResult();
 		$this->assertNull($response);
 	}
 
@@ -116,7 +120,9 @@ class AuthComponentTest extends TestCase {
 		$controller->beforeFilter($event);
 
 		$event = new Event('Controller.startup', $controller);
-		$response = $controller->Auth->startup($event);
+		$controller->Auth->startup($event);
+
+		$response = $event->getResult();
 		$this->assertInstanceOf(Response::class, $response);
 		$this->assertSame(302, $response->getStatusCode());
 	}
@@ -144,7 +150,9 @@ class AuthComponentTest extends TestCase {
 		$controller->beforeFilter($event);
 
 		$event = new Event('Controller.startup', $controller);
-		$response = $controller->Auth->startup($event);
+		$controller->Auth->startup($event);
+
+		$response = $event->getResult();
 		$this->assertInstanceOf(Response::class, $response);
 		$this->assertSame(302, $response->getStatusCode());
 	}
@@ -169,7 +177,9 @@ class AuthComponentTest extends TestCase {
 		$this->AuthComponent->initialize($config);
 
 		$event = new Event('Controller.startup', $controller);
-		$response = $this->AuthComponent->startup($event);
+		$this->AuthComponent->startup($event);
+
+		$response = $event->getResult();
 		$this->assertNull($response);
 	}
 
@@ -194,7 +204,9 @@ class AuthComponentTest extends TestCase {
 		$controller->beforeFilter($event);
 
 		$event = new Event('Controller.startup', $controller);
-		$response = $controller->Auth->startup($event);
+		$controller->Auth->startup($event);
+
+		$response = $event->getResult();
 		$this->assertInstanceOf(Response::class, $response);
 		$this->assertSame(302, $response->getStatusCode());
 	}
@@ -220,8 +232,9 @@ class AuthComponentTest extends TestCase {
 		$this->AuthComponent->initialize($config);
 
 		$event = new Event('Controller.startup', $controller);
-		$response = $this->AuthComponent->startup($event);
+		$this->AuthComponent->startup($event);
 
+		$response = $event->getResult();
 		$this->assertInstanceOf(Response::class, $response);
 		$this->assertSame(302, $response->getStatusCode());
 	}
