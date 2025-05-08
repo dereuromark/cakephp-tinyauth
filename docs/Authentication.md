@@ -127,7 +127,7 @@ So in case any of your controllers (or plugin controllers) contain such a statem
 use Cake\Event\EventInterface;
 ...
 
-    public function beforeFilter(EventInterface $event) {
+    public function beforeFilter(EventInterface $event): void {
         parent::beforeFilter($event);
 
         $this->Auth->allow(['index', 'view']);
