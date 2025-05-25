@@ -1,5 +1,5 @@
 <?php
-use Migrations\AbstractMigration;
+use Migrations\BaseMigration;
 
 class TinyAuthMultiSample extends AbstractMigration
 {
