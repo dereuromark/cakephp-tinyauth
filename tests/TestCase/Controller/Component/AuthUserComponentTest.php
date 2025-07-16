@@ -490,4 +490,18 @@ class AuthUserComponentTest extends TestCase {
 		$this->assertTrue($this->AuthUser->hasRoles([1, 3, 5], false, [1, 3, 5]));
 	}
 
+	/**
+	 * @return void
+	 */
+	public function testHasRoleHash() {
+		$this->AuthUser->setConfig('roleColumn', 'Role.id');
+
+		$user = ['id' => '1', 'Role' => ['id' => '1']];
+		$identity = new Identity($user);
+		$this->AuthUser->getController()->setRequest($this->AuthUser->getController()->getRequest()->withAttribute('identity', $identity));
+
+		$this->assertTrue($this->AuthUser->hasRole(1));
+		$this->assertFalse($this->AuthUser->hasRole(3));
+	}
+
 }

@@ -530,7 +530,7 @@ trait AclTrait {
 				if (!$role) {
 					throw new CakeException(sprintf('Missing TinyAuth role id field (%s) in user session', 'Auth.User.' . $roleColumn));
 				}
-			
+
 				return $this->_mapped([$role]);
 			}
 
