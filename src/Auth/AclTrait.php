@@ -524,6 +524,16 @@ trait AclTrait {
 				throw new CakeException('Invalid TinyAuth config, `roleColumn` config missing.');
 			}
 
+			// Check if the roleColumn is a dot notation path
+			if (str_contains($roleColumn, '.')) {
+				$role = Hash::get($user, $roleColumn);
+				if (!$role) {
+					throw new CakeException(sprintf('Missing TinyAuth role id field (%s) in user session', 'Auth.User.' . $roleColumn));
+				}
+
+				return $this->_mapped([$role]);
+			}
+
 			if (!array_key_exists($roleColumn, (array)$user)) {
 				throw new CakeException(sprintf('Missing TinyAuth role id field (%s) in user session', 'Auth.User.' . $this->getConfig('roleColumn')));
 			}

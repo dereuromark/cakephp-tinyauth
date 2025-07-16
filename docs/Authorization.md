@@ -118,8 +118,9 @@ Multi words like `Super Admin` would be `super-admin` etc.
 ### Single-role
 
 When using the single-role-per-user model TinyAuth expects your Users model to
-contain an column named ``role_id``. If you prefer to use another column name
+contain a column named ``role_id``. If you prefer to use another column name
 simply specify it using the ``roleColumn`` configuration option.
+If it is a nested relationship of sort, you can use the dot notation to specify the path, e.g. `Role.id`.
 
 The ``roleColumn`` option is also used on pivot table in a multi-role setup.
 
