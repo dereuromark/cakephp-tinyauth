@@ -57,31 +57,34 @@ Now let's set up `getAuthenticationService()` and make sure to load all needed A
             AbstractIdentifier::CREDENTIAL_USERNAME => 'email',
             AbstractIdentifier::CREDENTIAL_PASSWORD => 'password',
         ];
-
-        // Load identifiers
-        $service->loadIdentifier('Authentication.Password', [
-            'fields' => $fields,
-            'resolver' => [
-                'className' => 'Authentication.Orm',
-                'finder' => 'active',
+        $passwordIdentifier = [
+            'Authentication.Password' => [
+                'fields' => $fields,
+                'resolver' => [
+                    'className' => 'Authentication.Orm',
+                    'finder' => 'active',
+                ],
             ],
-        ]);
-        $service->loadIdentifier('Authentication.Token', [
-            'tokenField' => 'id',
-            'dataField' => 'key',
-            'resolver' => [
-                'className' => 'Authentication.Orm',
-                'finder' => 'active',
-            ],
-        ]);
+        ];
 
         // Load the authenticators. Session should be first.
         $service->loadAuthenticator('TinyAuth.PrimaryKeySession', [
+            'identifier' => [
+                'Authentication.Token' => [
+                    'tokenField' => 'id',
+                    'dataField' => 'key',
+                    'resolver' => [
+                        'className' => 'Authentication.Orm',
+                        'finder' => 'active',
+                    ],
+                ],
+            ],
             'urlChecker' => 'Authentication.CakeRouter',
         ]);
         $service->loadAuthenticator('Authentication.Form', [
-            'urlChecker' => 'Authentication.CakeRouter',
+            'identifier' => $passwordIdentifier,
             'fields' => $fields,
+            'urlChecker' => 'Authentication.CakeRouter',
             'loginUrl' => [
                 'prefix' => false,
                 'plugin' => false,
@@ -90,12 +93,10 @@ Now let's set up `getAuthenticationService()` and make sure to load all needed A
             ],
         ]);
         $service->loadAuthenticator('Authentication.Cookie', [
-            'urlChecker' => 'Authentication.CakeRouter',
+            'identifier' => $passwordIdentifier,
             'rememberMeField' => 'remember_me',
-            'fields' => [
-                'username' => 'email',
-                'password' => 'password',
-            ],
+            'fields' => $fields,
+            'urlChecker' => 'Authentication.CakeRouter',
             'loginUrl' => [
                 'prefix' => false,
                 'plugin' => false,
@@ -105,16 +106,18 @@ Now let's set up `getAuthenticationService()` and make sure to load all needed A
         ]);
 
         // This is a one click token login as optional addition
-        $service->loadIdentifier('Tools.LoginLink', [
-            'resolver' => [
-                'className' => 'Authentication.Orm',
-                'finder' => 'active',
-            ],
-            'preCallback' => function (int $id) {
-                TableRegistry::getTableLocator()->get('Users')->confirmEmail($id);
-            },
-        ]);
         $service->loadAuthenticator('Tools.LoginLink', [
+            'identifier' => [
+                'Tools.LoginLink' => [
+                    'resolver' => [
+                        'className' => 'Authentication.Orm',
+                        'finder' => 'active',
+                    ],
+                    'preCallback' => function (int $id) {
+                        TableRegistry::getTableLocator()->get('Users')->confirmEmail($id);
+                    },
+                ],
+            ],
             'urlChecker' => 'Authentication.CakeRouter',
             'loginUrl' => [
                 'prefix' => false,
