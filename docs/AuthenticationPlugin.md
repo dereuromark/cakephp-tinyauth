@@ -18,7 +18,7 @@ use Authentication\Middleware\AuthenticationMiddleware;
 $middlewareQueue->add(new AuthenticationMiddleware($this));
 ```
 
-This plugin ships with an improved session authenticator:
+This plugin ships with an improved session authenticator that is optional:
 
 - PrimaryKeySession authenticator (extending the Authentication.Session one):
   stores only the ID and fetches the rest from DB (keeping it always up to date)
@@ -27,6 +27,8 @@ It also ships with an enhanced redirect handler:
 
 - ForbiddenCakeRedirect: Allows an `unauthorizedMessage` to be set as error flash message.
 
+
+You can, of course, stick to the official ones, as well.
 
 Now let's set up `getAuthenticationService()` and make sure to load all needed Authenticators, e.g.:
 
