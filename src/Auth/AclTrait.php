@@ -640,7 +640,7 @@ trait AclTrait {
 
 			$alias = array_keys($availableRoles, $role);
 			$alias = array_shift($alias);
-			if (!$alias || !is_string($alias)) {
+			if (!$alias) {
 				continue;
 			}
 
