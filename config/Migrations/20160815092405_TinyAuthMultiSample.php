@@ -1,7 +1,7 @@
 <?php
 use Migrations\BaseMigration;
 
-class TinyAuthMultiSample extends AbstractMigration
+class TinyAuthMultiSample extends BaseMigration
 {
     /**
      * Creates tables
