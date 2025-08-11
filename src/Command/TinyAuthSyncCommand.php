@@ -26,6 +26,13 @@ use TinyAuth\Utility\TinyAuth;
 class TinyAuthSyncCommand extends Command {
 
 	/**
+	 * @inheritDoc
+	 */
+	public static function getDescription(): string {
+		return 'Scan all controllers and add missing ones to the ACL configuration.';
+	}
+
+	/**
 	 * Execute the command - syncs all discovered controllers to the ACL file.
 	 *
 	 * Files modified:
@@ -71,7 +78,7 @@ class TinyAuthSyncCommand extends Command {
 		$roles = $this->_getAvailableRoles();
 
 		$parser->setDescription(
-			'Scan all controllers and add missing ones to the ACL configuration.' . PHP_EOL .
+			static::getDescription() . PHP_EOL .
 			PHP_EOL .
 			'This command modifies: config/auth_acl.ini (or custom path via TinyAuth.aclFilePath)' . PHP_EOL .
 			PHP_EOL .

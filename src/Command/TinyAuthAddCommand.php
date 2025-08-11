@@ -26,6 +26,13 @@ use TinyAuth\Utility\TinyAuth;
 class TinyAuthAddCommand extends Command {
 
 	/**
+	 * @inheritDoc
+	 */
+	public static function getDescription(): string {
+		return 'Add or update specific controller/action permissions in the ACL configuration.';
+	}
+
+	/**
 	 * Execute the command - adds a specific controller/action/roles entry to the ACL file.
 	 *
 	 * Files modified:
@@ -84,7 +91,7 @@ class TinyAuthAddCommand extends Command {
 		$roles = $this->_getAvailableRoles();
 
 		$parser->setDescription(
-			'Add or update specific controller/action permissions in the ACL configuration.' . PHP_EOL .
+			static::getDescription() . PHP_EOL .
 			PHP_EOL .
 			'This command modifies: config/auth_acl.ini (or custom path via TinyAuth.aclFilePath)' . PHP_EOL .
 			PHP_EOL .
