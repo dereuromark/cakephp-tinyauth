@@ -6,16 +6,35 @@ use Cake\Command\Command;
 use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
+use Cake\Core\Configure;
 use TinyAuth\Sync\Adder;
 use TinyAuth\Utility\TinyAuth;
 
 /**
- * Auth and ACL helper
+ * Command to add specific controller/action entries to ACL configuration.
+ *
+ * This command modifies the ACL INI file (default: config/auth_acl.ini) by adding
+ * or updating specific controller/action permissions for given roles.
+ *
+ * Usage examples:
+ * - `bin/cake tiny_auth_add Articles index user,admin` - Allow users and admins to access Articles::index
+ * - `bin/cake tiny_auth_add Articles` - Interactive mode, prompts for action and roles
+ * - `bin/cake tiny_auth_add Articles "*" "*"` - Allow all roles to access all Articles actions
+ *
+ * @see config/auth_acl.ini - The file that gets modified by this command
  */
 class TinyAuthAddCommand extends Command {
 
 	/**
-	 * Main function Prints out the list of shells.
+	 * Execute the command - adds a specific controller/action/roles entry to the ACL file.
+	 *
+	 * Files modified:
+	 * - config/auth_acl.ini (or custom path via TinyAuth.aclFilePath config)
+	 *
+	 * The command will:
+	 * 1. Read the existing ACL configuration
+	 * 2. Add or update the specified controller/action with the given roles
+	 * 3. Write the updated configuration back to the INI file
 	 *
 	 * @param \Cake\Console\Arguments $args The command arguments.
 	 * @param \Cake\Console\ConsoleIo $io The console io
@@ -40,7 +59,10 @@ class TinyAuthAddCommand extends Command {
 		$roles = $args->getArgument('roles') ?: '*';
 		$roles = array_map('trim', explode(',', $roles));
 		$adder->addAcl($controller, $action, $roles, $args, $io);
-		$io->out('Controllers and ACL synced.');
+
+		$path = Configure::read('TinyAuth.aclFilePath', ROOT . DS . 'config' . DS);
+		$file = Configure::read('TinyAuth.aclFile', 'auth_acl.ini');
+		$io->success('ACL entry added/updated in: ' . $path . $file);
 
 		return static::CODE_SUCCESS;
 	}
@@ -62,7 +84,19 @@ class TinyAuthAddCommand extends Command {
 		$roles = $this->_getAvailableRoles();
 
 		$parser->setDescription(
-			'Get the list of controllers and make sure, they are synced into the ACL file.',
+			'Add or update specific controller/action permissions in the ACL configuration.' . PHP_EOL .
+			PHP_EOL .
+			'This command modifies: config/auth_acl.ini (or custom path via TinyAuth.aclFilePath)' . PHP_EOL .
+			PHP_EOL .
+			'Examples:' . PHP_EOL .
+			'  bin/cake tiny_auth_add Articles index user,admin' . PHP_EOL .
+			'    → Adds: [Articles] index = user, admin' . PHP_EOL .
+			PHP_EOL .
+			'  bin/cake tiny_auth_add Articles "*" admin' . PHP_EOL .
+			'    → Adds: [Articles] * = admin' . PHP_EOL .
+			PHP_EOL .
+			'  bin/cake tiny_auth_add MyPlugin.Admin/Articles edit admin' . PHP_EOL .
+			'    → Adds: [MyPlugin.Admin/Articles] edit = admin',
 		)->addArgument('controller', [
 			'help' => 'Controller name (Plugin.Prefix/Name) without Controller suffix.',
 			'required' => false,

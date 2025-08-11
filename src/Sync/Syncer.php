@@ -18,8 +18,26 @@ class Syncer {
 	protected $authAllow;
 
 	/**
-	 * @param \Cake\Console\Arguments $args
-	 * @param \Cake\Console\ConsoleIo $io
+	 * Synchronizes all discovered controllers with the ACL INI file.
+	 *
+	 * Files modified:
+	 * - config/auth_acl.ini (default) or custom path from TinyAuth.aclFilePath
+	 *
+	 * Process:
+	 * 1. Scans src/Controller/ (and plugin controllers if specified)
+	 * 2. Finds all controllers that don't have ACL entries
+	 * 3. Adds missing controllers with wildcard (*) action and specified roles
+	 *
+	 * Example result in auth_acl.ini:
+	 * ```ini
+	 * [NewController]
+	 * * = user, admin
+	 * ```
+	 *
+	 * Note: Existing controller entries are preserved and not modified.
+	 *
+	 * @param \Cake\Console\Arguments $args Command arguments including roles
+	 * @param \Cake\Console\ConsoleIo $io Console I/O for output
 	 * @return void
 	 */
 	public function syncAcl(Arguments $args, ConsoleIo $io) {
