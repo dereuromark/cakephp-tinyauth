@@ -16,7 +16,7 @@ You can activate an "Auth" DebugKit panel to have useful insights per URL.
 See [AuthPanel](AuthPanel.md) docs.
 
 ## Authentication
-This is done via TinyAuth AuthComponent.
+This is done via TinyAuth Authentication component.
 
 The component plays well together with the authorization part (see below).
 If you do not have any roles and either all are logged in or not logged in you can also use this stand-alone to make certain pages public.
@@ -27,7 +27,7 @@ See [Authentication](Authentication.md) docs.
 The TinyAuthorize adapter takes care of authorization.
 
 The adapter plays well together with the component above.
-But if you prefer to control the action whitelisting for authentication via code and `$this->Auth->allow()` calls, you can
+But if you prefer to control the action whitelisting for authentication via code and `$this->Authentication->allowUnauthenticated()` calls, you can
 also just use this adapter stand-alone for the ACL part of your application.
 
 There is also an AuthUserComponent and AuthUserHelper to assist you in making role based decisions or displaying role based links in your templates.
@@ -82,14 +82,29 @@ See the docs for details:
 - [TinyAuth and Authentication plugin](AuthenticationPlugin.md)
 - [TinyAuth and Authorization plugin](AuthorizationPlugin.md)
 
-### When to use the new plugins?
-They are super powerful, but they also require a load of config to get them to run.
-If you need authentication/authorization on middleware/routing level however, you need
-to use them.
+### Why use TinyAuth with the new plugins?
 
-If you only need the basic request policy provided by this plugin, and no further ORM or other policies,
-then it is best to stick to the Auth component as simple wrapper.
-It is then limited to controller scope (no middleware/routing support) as it always has been so far.
+TinyAuth provides a powerful abstraction layer over the official Authentication and Authorization plugins:
+
+**Benefits of using TinyAuth:**
+- **Zero-code configuration**: All auth rules in INI files, no controller modifications needed
+- **Instant setup**: Working authentication/authorization in under 5 minutes
+- **Plugin compatibility**: Works automatically with all plugins without modifications
+- **Centralized management**: All rules in one place, not scattered across controllers
+- **Performance**: Built-in caching for optimal speed
+- **Developer friendly**: DebugKit panel, clear error messages, easy debugging
+
+**When to use vanilla plugins directly:**
+They are super powerful, but they also require a load of config to get them to run.
+Consider using them (partially) directly when you need:
+- Authentication/authorization on middleware/routing level
+- Complex policy-based authorization (ORM policies, custom voters)
+- Per-entity authorization rules
+- Custom authentication flows
+
+**When to use TinyAuth wrapper:**
+If you only need the basic request policy provided by this plugin (controller-action level permissions),
+then TinyAuth provides a much simpler and faster solution.
 
 You can seamlessly upgrade to the new plugins while keeping your INI files.
 They are also compatible with AuthUser component and helper as well as the Auth panel.
