@@ -94,7 +94,7 @@ TinyAuth provides a powerful abstraction layer over the official Authentication 
 - **Performance**: Built-in caching for optimal speed
 - **Developer friendly**: DebugKit panel, clear error messages, easy debugging
 
-**When to use vanilla plugins directly:**
+**When to use vanilla plugins' functionality directly:**
 They are super powerful, but they also require a load of config to get them to run.
 Consider using them (partially) directly when you need:
 - Authentication/authorization on middleware/routing level

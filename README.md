@@ -46,11 +46,13 @@ Choose TinyAuth when you want:
 - ✅ Easy-to-manage access rules
 - ✅ Minimal code changes
 
-Since this plugin just further extends the official ones, you can skip the plugin's authentication and authorization components, and use the original plugins if you want:
+Since this plugin just further extends the official ones, you can skip the plugin's authentication and authorization components, and use the original plugins' functionality if you want:
 - ❌ Complex policy-based authorization
 - ❌ Resource-level permissions (per-entity authorization)
 - ❌ Middleware/routing level authentication
 - ❌ Custom authentication flows
+
+You can still use the other helpers of this plugin, however.
 
 ## What's the idea?
 Default CakePHP authentication and authorization depends on code changes in at least each controller, maybe more classes.
