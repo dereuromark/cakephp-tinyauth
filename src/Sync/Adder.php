@@ -10,6 +10,14 @@ use Cake\Core\Plugin;
 use TinyAuth\Filesystem\Folder;
 use TinyAuth\Utility\Utility;
 
+/**
+ * Helper class for adding specific ACL entries to the INI configuration file.
+ *
+ * Used by TinyAuthAddCommand to modify auth_acl.ini file with new or updated
+ * controller/action/role mappings.
+ *
+ * @internal
+ */
 class Adder {
 
 	/**
@@ -31,9 +39,22 @@ class Adder {
 	protected $authAllow;
 
 	/**
-	 * @param string $controller
-	 * @param string $action
-	 * @param array<string> $roles
+	 * Adds or updates a controller/action entry in the ACL INI file.
+	 *
+	 * Files modified:
+	 * - config/auth_acl.ini (default) or custom path from TinyAuth.aclFilePath
+	 *
+	 * File format example:
+	 * ```ini
+	 * [Articles]
+	 * index = user, admin
+	 * add = admin
+	 * * = admin
+	 * ```
+	 *
+	 * @param string $controller Controller name (e.g., 'Articles' or 'MyPlugin.Admin/Articles')
+	 * @param string $action Action name (e.g., 'index') or '*' for all actions
+	 * @param array<string> $roles Role names to grant access (e.g., ['user', 'admin'])
 	 * @param \Cake\Console\Arguments $args
 	 * @param \Cake\Console\ConsoleIo $io
 	 *

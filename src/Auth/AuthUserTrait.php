@@ -33,7 +33,7 @@ use Traversable;
  * define('USER_ROLE_KEY', 'role_id');
  * ```
  *
- * Note: This uses AuthComponent internally to work with both stateful and stateless auth.
+ * Note: This uses Identity from Authentication plugin.
  *
  * @author Mark Scherer
  * @license MIT

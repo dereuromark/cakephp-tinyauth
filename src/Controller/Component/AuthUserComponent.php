@@ -3,7 +3,6 @@
 namespace TinyAuth\Controller\Component;
 
 use ArrayAccess;
-use Authentication\Identity;
 use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
 use Cake\Event\EventInterface;
@@ -79,24 +78,9 @@ class AuthUserComponent extends Component {
 	 * @return array
 	 */
 	protected function _getUser(): array {
-		if (class_exists(Identity::class)) {
-			$identity = $this->identity();
+		$identity = $this->identity();
 
-			return $identity ? $this->_toArray($identity) : [];
-		}
-
-		// We skip for new plugin(s)
-		if ($this->getController()->components()->has('Authentication')) {
-			return [];
-		}
-
-		// Fallback to old Auth style
-		if (!$this->getController()->components()->has('Auth')) {
-			$this->getController()->loadComponent('TinyAuth.Auth');
-		}
-
-		/** @phpstan-ignore property.notFound */
-		return (array)$this->getController()->Auth->user();
+		return $identity ? $this->_toArray($identity) : [];
 	}
 
 }
