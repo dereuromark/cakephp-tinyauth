@@ -644,6 +644,7 @@ trait AclTrait {
 				continue;
 			}
 
+			/** @var string $alias */
 			$array[$alias] = $role;
 		}
 
