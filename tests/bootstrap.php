@@ -20,7 +20,7 @@ if (!is_dir(APP)) {
 }
 define('TESTS', ROOT . DS . 'tests' . DS);
 
-define('CONFIG', dirname(__FILE__) . DS . 'config' . DS);
+define('CONFIG', __DIR__ . DS . 'config' . DS);
 
 define('TMP', ROOT . DS . 'tmp' . DS);
 if (!is_dir(TMP)) {

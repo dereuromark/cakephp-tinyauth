@@ -42,7 +42,7 @@ class PrimaryKeySessionAuthenticatorTest extends TestCase {
 		parent::setUp();
 
 		$this->identifiers = new IdentifierCollection([
-		   'Authentication.Password',
+			'Authentication.Password',
 		]);
 
 		$this->sessionMock = $this->getMockBuilder(Session::class)
@@ -117,8 +117,7 @@ class PrimaryKeySessionAuthenticatorTest extends TestCase {
 			],
 		]);
 
-		$authenticator = new PrimaryKeySessionAuthenticator($this->identifiers, [
-		]);
+		$authenticator = new PrimaryKeySessionAuthenticator($this->identifiers, []);
 		$result = $authenticator->authenticate($request);
 
 		$this->assertInstanceOf(Result::class, $result);
@@ -165,8 +164,7 @@ class PrimaryKeySessionAuthenticatorTest extends TestCase {
 
 		$request = $request->withAttribute('session', $this->sessionMock);
 
-		$authenticator = new PrimaryKeySessionAuthenticator($this->identifiers, [
-		]);
+		$authenticator = new PrimaryKeySessionAuthenticator($this->identifiers, []);
 		$result = $authenticator->authenticate($request);
 
 		$this->assertInstanceOf(Result::class, $result);

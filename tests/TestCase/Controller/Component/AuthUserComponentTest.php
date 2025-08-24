@@ -109,8 +109,7 @@ class AuthUserComponentTest extends TestCase {
 	 * @return void
 	 */
 	public function testIsAuthorizedNotLoggedIn() {
-		$user = [
-		];
+		$user = [];
 		$identity = new Identity($user);
 		$this->AuthUser->getController()->setRequest($this->AuthUser->getController()->getRequest()->withAttribute('identity', $identity));
 

@@ -45,8 +45,7 @@ class AuthPanel extends DebugPanel {
 	/**
 	 * @var array
 	 */
-	protected array $_defaultConfig = [
-	];
+	protected array $_defaultConfig = [];
 
 	public function __construct() {
 		$this->setConfig(Config::all());

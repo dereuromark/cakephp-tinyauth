@@ -749,8 +749,7 @@ class TinyAuthorizeTest extends TestCase {
 	 * @return void
 	 */
 	public function testDeny() {
-		$object = new TestTinyAuthorize($this->collection, [
-		]);
+		$object = new TestTinyAuthorize($this->collection, []);
 
 		// All tests performed against this action
 		$this->request = $this->request->withParam('action', 'foo');
@@ -771,8 +770,7 @@ class TinyAuthorizeTest extends TestCase {
 	 * @return void
 	 */
 	public function testAllowNestedPrefix() {
-		$object = new TestTinyAuthorize($this->collection, [
-		]);
+		$object = new TestTinyAuthorize($this->collection, []);
 
 		// All tests performed against this action
 		$this->request = $this->request->withParam('action', 'myModerator');
@@ -1091,7 +1089,8 @@ class TinyAuthorizeTest extends TestCase {
 
 		$method->invokeArgs($object, [
 			Plugin::path('TinyAuth') . 'non' . DS . 'existent' . DS,
-			'auth_acl.ini']);
+			'auth_acl.ini',
+		]);
 	}
 
 	/**

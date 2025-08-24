@@ -49,13 +49,14 @@ class AuthComponentTest extends TestCase {
 	 */
 	public function testValid() {
 		$request = new ServerRequest([
-		'params' => [
-			'controller' => 'Users',
-			'action' => 'view',
-			'plugin' => null,
-			'_ext' => null,
-			'pass' => [1],
-		]]);
+			'params' => [
+				'controller' => 'Users',
+				'action' => 'view',
+				'plugin' => null,
+				'_ext' => null,
+				'pass' => [1],
+			],
+		]);
 		$controller = $this->getControllerMock($request);
 
 		$registry = new ComponentRegistry($controller);
@@ -76,13 +77,14 @@ class AuthComponentTest extends TestCase {
 	 */
 	public function testValidAnyAction() {
 		$request = new ServerRequest([
-		'params' => [
-			'plugin' => 'Extras',
-			'controller' => 'Offers',
-			'action' => 'index',
-			'_ext' => null,
-			'pass' => [1],
-		]]);
+			'params' => [
+				'plugin' => 'Extras',
+				'controller' => 'Offers',
+				'action' => 'index',
+				'_ext' => null,
+				'pass' => [1],
+			],
+		]);
 		$controller = new OffersController($request);
 
 		$registry = new ComponentRegistry($controller);
@@ -103,13 +105,14 @@ class AuthComponentTest extends TestCase {
 	 */
 	public function testDeniedActionInController() {
 		$request = new ServerRequest([
-		'params' => [
-			'plugin' => 'Extras',
-			'controller' => 'Offers',
-			'action' => 'denied',
-			'_ext' => null,
-			'pass' => [1],
-		]]);
+			'params' => [
+				'plugin' => 'Extras',
+				'controller' => 'Offers',
+				'action' => 'denied',
+				'_ext' => null,
+				'pass' => [1],
+			],
+		]);
 		$controller = new OffersController($request);
 		$controller->loadComponent('TinyAuth.Auth', $this->componentConfig);
 
@@ -162,12 +165,13 @@ class AuthComponentTest extends TestCase {
 	 */
 	public function testValidActionNestedPrefix() {
 		$request = new ServerRequest([
-		'params' => [
-			'plugin' => null,
-			'prefix' => 'Admin/MyPrefix',
-			'controller' => 'MyTest',
-			'action' => 'myPublic',
-		]]);
+			'params' => [
+				'plugin' => null,
+				'prefix' => 'Admin/MyPrefix',
+				'controller' => 'MyTest',
+				'action' => 'myPublic',
+			],
+		]);
 		$controller = new MyTestController($request);
 
 		$registry = new ComponentRegistry($controller);
@@ -188,12 +192,13 @@ class AuthComponentTest extends TestCase {
 	 */
 	public function testDeniedActionNestedPrefix() {
 		$request = new ServerRequest([
-		'params' => [
-			'plugin' => null,
-			'prefix' => 'admin/my_prefix',
-			'controller' => 'MyTest',
-			'action' => 'myAll',
-		]]);
+			'params' => [
+				'plugin' => null,
+				'prefix' => 'admin/my_prefix',
+				'controller' => 'MyTest',
+				'action' => 'myAll',
+			],
+		]);
 		$controller = new MyTestController($request);
 		$controller->loadComponent('TinyAuth.Auth', $this->componentConfig);
 
@@ -216,13 +221,14 @@ class AuthComponentTest extends TestCase {
 	 */
 	public function testInvalid() {
 		$request = new ServerRequest([
-		'params' => [
-			'controller' => 'FooBar',
-			'action' => 'index',
-			'plugin' => null,
-			'_ext' => null,
-			'pass' => [],
-		]]);
+			'params' => [
+				'controller' => 'FooBar',
+				'action' => 'index',
+				'plugin' => null,
+				'_ext' => null,
+				'pass' => [],
+			],
+		]);
 		$controller = $this->getControllerMock($request);
 
 		$registry = new ComponentRegistry($controller);
@@ -243,7 +249,7 @@ class AuthComponentTest extends TestCase {
 	 * @param \Cake\Http\ServerRequest $request
 	 * @return \Cake\Controller\Controller|\PHPUnit\Framework\MockObject\MockObject
 	 */
-	protected function getControllerMock(ServerRequest $request) {
+	protected function getControllerMock(ServerRequest $request): Controller {
 		$controller = $this->getMockBuilder(Controller::class)
 			->setConstructorArgs([$request])
 			->onlyMethods(['isAction'])

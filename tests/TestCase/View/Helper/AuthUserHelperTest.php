@@ -131,8 +131,7 @@ class AuthUserHelperTest extends TestCase {
 	 * @return void
 	 */
 	public function testIsAuthorizedNotLoggedIn() {
-		$user = [
-		];
+		$user = [];
 		$this->View->set('_authUser', $user);
 
 		$request = [
@@ -241,8 +240,7 @@ class AuthUserHelperTest extends TestCase {
 	 * @return void
 	 */
 	public function testLinkNotLoggedIn() {
-		$user = [
-		];
+		$user = [];
 		$this->View->set('_authUser', $user);
 
 		$url = [

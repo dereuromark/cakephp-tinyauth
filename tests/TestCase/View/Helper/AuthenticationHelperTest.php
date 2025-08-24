@@ -74,13 +74,14 @@ class AuthenticationHelperTest extends TestCase {
 	 */
 	public function testIsPublicFail() {
 		$request = new ServerRequest([
-		'params' => [
-			'controller' => 'Sales',
-			'action' => 'view',
-			'plugin' => null,
-			'_ext' => null,
-			'pass' => [1],
-		]]);
+			'params' => [
+				'controller' => 'Sales',
+				'action' => 'view',
+				'plugin' => null,
+				'_ext' => null,
+				'pass' => [1],
+			],
+		]);
 		$this->helper->getView()->setRequest($request);
 
 		$result = $this->helper->isPublic();

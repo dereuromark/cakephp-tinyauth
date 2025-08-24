@@ -15,8 +15,7 @@ class TinyAuth {
 	/**
 	 * @var array
 	 */
-	protected array $_defaultConfig = [
-	];
+	protected array $_defaultConfig = [];
 
 	/**
 	 * @param array<string, mixed> $config

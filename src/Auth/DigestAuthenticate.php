@@ -192,9 +192,9 @@ class DigestAuthenticate extends BasicAuthenticate {
 	 */
 	public function generateResponseHash(array $digest, string $password, string $method): string {
 		return md5(
-			$password .
-			':' . $digest['nonce'] . ':' . $digest['nc'] . ':' . $digest['cnonce'] . ':' . $digest['qop'] . ':' .
-			md5($method . ':' . $digest['uri']),
+			$password
+			. ':' . $digest['nonce'] . ':' . $digest['nc'] . ':' . $digest['cnonce'] . ':' . $digest['qop'] . ':'
+			. md5($method . ':' . $digest['uri']),
 		);
 	}
 
