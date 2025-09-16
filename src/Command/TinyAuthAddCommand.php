@@ -91,19 +91,19 @@ class TinyAuthAddCommand extends Command {
 		$roles = $this->_getAvailableRoles();
 
 		$parser->setDescription(
-			static::getDescription() . PHP_EOL .
-			PHP_EOL .
-			'This command modifies: config/auth_acl.ini (or custom path via TinyAuth.aclFilePath)' . PHP_EOL .
-			PHP_EOL .
-			'Examples:' . PHP_EOL .
-			'  bin/cake tiny_auth_add Articles index user,admin' . PHP_EOL .
-			'    → Adds: [Articles] index = user, admin' . PHP_EOL .
-			PHP_EOL .
-			'  bin/cake tiny_auth_add Articles "*" admin' . PHP_EOL .
-			'    → Adds: [Articles] * = admin' . PHP_EOL .
-			PHP_EOL .
-			'  bin/cake tiny_auth_add MyPlugin.Admin/Articles edit admin' . PHP_EOL .
-			'    → Adds: [MyPlugin.Admin/Articles] edit = admin',
+			static::getDescription() . PHP_EOL
+			. PHP_EOL
+			. 'This command modifies: config/auth_acl.ini (or custom path via TinyAuth.aclFilePath)' . PHP_EOL
+			. PHP_EOL
+			. 'Examples:' . PHP_EOL
+			. '  bin/cake tiny_auth_add Articles index user,admin' . PHP_EOL
+			. '    → Adds: [Articles] index = user, admin' . PHP_EOL
+			. PHP_EOL
+			. '  bin/cake tiny_auth_add Articles "*" admin' . PHP_EOL
+			. '    → Adds: [Articles] * = admin' . PHP_EOL
+			. PHP_EOL
+			. '  bin/cake tiny_auth_add MyPlugin.Admin/Articles edit admin' . PHP_EOL
+			. '    → Adds: [MyPlugin.Admin/Articles] edit = admin',
 		)->addArgument('controller', [
 			'help' => 'Controller name (Plugin.Prefix/Name) without Controller suffix.',
 			'required' => false,

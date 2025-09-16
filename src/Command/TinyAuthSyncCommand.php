@@ -78,24 +78,24 @@ class TinyAuthSyncCommand extends Command {
 		$roles = $this->_getAvailableRoles();
 
 		$parser->setDescription(
-			static::getDescription() . PHP_EOL .
-			PHP_EOL .
-			'This command modifies: config/auth_acl.ini (or custom path via TinyAuth.aclFilePath)' . PHP_EOL .
-			PHP_EOL .
-			'The command will:' . PHP_EOL .
-			'  1. Scan src/Controller/ for all controllers' . PHP_EOL .
-			'  2. Add any missing controllers with wildcard (*) access for specified roles' . PHP_EOL .
-			'  3. Preserve existing entries (never overwrites)' . PHP_EOL .
-			PHP_EOL .
-			'Examples:' . PHP_EOL .
-			'  bin/cake tiny_auth_sync user,admin' . PHP_EOL .
-			'    → Adds all missing controllers with: * = user, admin' . PHP_EOL .
-			PHP_EOL .
-			'  bin/cake tiny_auth_sync "*" -p all' . PHP_EOL .
-			'    → Adds all missing controllers (including plugins) with: * = *' . PHP_EOL .
-			PHP_EOL .
-			'  bin/cake tiny_auth_sync admin -d' . PHP_EOL .
-			'    → Dry run - shows what would be added without modifying files',
+			static::getDescription() . PHP_EOL
+			. PHP_EOL
+			. 'This command modifies: config/auth_acl.ini (or custom path via TinyAuth.aclFilePath)' . PHP_EOL
+			. PHP_EOL
+			. 'The command will:' . PHP_EOL
+			. '  1. Scan src/Controller/ for all controllers' . PHP_EOL
+			. '  2. Add any missing controllers with wildcard (*) access for specified roles' . PHP_EOL
+			. '  3. Preserve existing entries (never overwrites)' . PHP_EOL
+			. PHP_EOL
+			. 'Examples:' . PHP_EOL
+			. '  bin/cake tiny_auth_sync user,admin' . PHP_EOL
+			. '    → Adds all missing controllers with: * = user, admin' . PHP_EOL
+			. PHP_EOL
+			. '  bin/cake tiny_auth_sync "*" -p all' . PHP_EOL
+			. '    → Adds all missing controllers (including plugins) with: * = *' . PHP_EOL
+			. PHP_EOL
+			. '  bin/cake tiny_auth_sync admin -d' . PHP_EOL
+			. '    → Dry run - shows what would be added without modifying files',
 		)->addArgument('roles', [
 			'help' => 'Role names, comma separated, e.g. `user,admin`.' . ($roles ? PHP_EOL . 'Available roles: ' . implode(', ', $roles) . '.' : ''),
 			'required' => true,
