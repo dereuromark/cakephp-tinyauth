@@ -12,25 +12,47 @@ A CakePHP plugin to handle authentication and user authorization the easy way.
 
 This branch is for **CakePHP 5.1+**. For details see [version map](https://github.com/dereuromark/cakephp-tinyauth/wiki#cakephp-version-map).
 
-## Features
+## Why use TinyAuth as a wrapper for Authentication/Authorization plugins?
 
-### Authentication
-What are public actions, which ones need login?
+TinyAuth now acts as a powerful wrapper around CakePHP's official Authentication and Authorization plugins, providing significant advantages:
 
-- Powerful default configs to get you started right away.
-- [Quick Setup](https://github.com/dereuromark/cakephp-tinyauth/blob/master/docs/Authentication.md#quick-setups) for 5 minute integration.
+### 🚀 Zero-Code Configuration
+- **INI-based setup**: Define all your authentication and authorization rules in simple INI files
+- **No controller modifications**: Unlike vanilla plugins that require code in every controller
+- **Plugin-friendly**: Automatically works with third-party plugins without modifications
 
-### Authorization
-Once you are logged in, what actions can you see with your role(s)?
+### ⚡ Lightning Fast Setup
+- **5-minute integration**: Get authentication and authorization working in minutes, not hours
+- **Sensible defaults**: Pre-configured settings that work for 90% of use cases
+- **Quick setups**: Built-in configurations for common scenarios (public non-prefixed, admin areas, etc.)
 
-- Single-role: 1 user has 1 role (users and roles table for example)
-- Multi-role: 1 user can have 1...n roles (users, roles and a "roles_users" pivot table for example)
-- [Quick Setup](https://github.com/dereuromark/cakephp-tinyauth/blob/master/docs/Authorization.md#quick-setups) for 5 minute integration.
+### 🛠️ Developer Experience
+- **Centralized management**: All auth rules in one place, not scattered across controllers
+- **Easy maintenance**: Change access rules without touching code
+- **Cache optimized**: Built-in caching for maximum performance
+- **DebugKit panel**: Visualize auth status, identity, and permissions in real-time
 
-### Useful helpers
-- AuthUser Component and Helper for stateful and stateless "auth data" access.
-- Authentication Component and Helper for `isPublic()` check on current other other actions.
-- Auth DebugKit panel for detailed insights into current URL and auth status, identity content and more.
+### 🔧 Flexibility
+- **Adapter pattern**: Use INI files, database, or custom adapters for rule storage
+- **Progressive enhancement**: Start simple, add complexity only when needed
+- **Stand-alone components**: Use AuthUser component/helper independently if needed
+
+### 📊 When to Choose TinyAuth
+
+Choose TinyAuth when you want:
+- ✅ Simple role-based access control (RBAC)
+- ✅ Quick setup without extensive configuration
+- ✅ Controller-action level permissions
+- ✅ Easy-to-manage access rules
+- ✅ Minimal code changes
+
+Since this plugin just further extends the official ones, you can skip the plugin's authentication and authorization components, and use the original plugins' functionality if you want:
+- ❌ Complex policy-based authorization
+- ❌ Resource-level permissions (per-entity authorization)
+- ❌ Middleware/routing level authentication
+- ❌ Custom authentication flows
+
+You can still use the other helpers of this plugin, however.
 
 ## What's the idea?
 Default CakePHP authentication and authorization depends on code changes in at least each controller, maybe more classes.

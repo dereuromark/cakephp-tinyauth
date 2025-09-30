@@ -12,7 +12,6 @@ use Authorization\Policy\ResultInterface;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
-use Cake\Core\Plugin;
 use Cake\Event\Event;
 use Cake\Http\ServerRequest;
 use Cake\ORM\Entity;
@@ -20,7 +19,6 @@ use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use IteratorAggregate;
 use TestApp\Controller\Component\TestAuthUserComponent;
-use TinyAuth\Controller\Component\AuthComponent;
 use TinyAuth\Utility\Cache;
 use Traversable;
 
@@ -54,10 +52,6 @@ class AuthUserComponentTest extends TestCase {
 		$this->controller = new Controller(new ServerRequest());
 		$componentRegistry = new ComponentRegistry($this->controller);
 		$this->AuthUser = new TestAuthUserComponent($componentRegistry);
-		$this->controller->loadComponent('TinyAuth.Auth', [
-			'allowFilePath' => Plugin::path('TinyAuth') . 'tests' . DS . 'test_files' . DS,
-		]);
-		$this->controller->Auth = $this->getMockBuilder(AuthComponent::class)->onlyMethods(['user'])->setConstructorArgs([$componentRegistry, $config])->getMock();
 
 		Configure::write('Roles', [
 			'user' => 1,

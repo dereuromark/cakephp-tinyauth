@@ -22,9 +22,7 @@ use Cake\Core\InstanceConfigTrait;
 use Cake\Http\ServerRequest;
 
 /**
- * Abstract base authorization adapter for AuthComponent.
- *
- * @see \Cake\Controller\Component\AuthComponent::$authenticate
+ * Abstract base authorization adapter for TinyAuth.
  */
 abstract class BaseAuthorize {
 

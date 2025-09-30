@@ -42,8 +42,6 @@ At the same time you can always set up "deny" rules for any allowed prefix to re
 
 ## Enabling
 
-**DEPRECATED** Use `TinyAuth.Authentication` instead. Rest of the page is accurate.
-
 Authentication is set up in your controller's `initialize()` method:
 
 ```php
@@ -52,7 +50,7 @@ Authentication is set up in your controller's `initialize()` method:
 public function initialize() {
     parent::initialize();
 
-    $this->loadComponent('TinyAuth.Auth');
+    $this->loadComponent('TinyAuth.Authentication');
 }
 ```
 
@@ -130,14 +128,14 @@ use Cake\Event\EventInterface;
     public function beforeFilter(EventInterface $event): void {
         parent::beforeFilter($event);
 
-        $this->Auth->allow(['index', 'view']);
+        $this->Authentication->allowUnauthenticated(['index', 'view']);
     }
 ```
 This can be interested when migrating slowly to TinyAuth, for example.
 Once you move such a code based rule into the INI file, you can safely remove those lines of code in your controller :)
 
 ### allow() vs deny()
-Since 1.11.0 you can also mix it with `deny()` calls. From how the AuthComponent works, all allow() calls need be done before calling deny().
+Since 1.11.0 you can also mix it with `deny()` calls. From how the Authentication component works, all allow() calls need be done before calling deny().
 As such TinyAuth injects its list now before `Controller::beforeFilter()` gets called.
 
 Note: It is also advised to move away from these controller calls.
@@ -180,7 +178,7 @@ echo $this->Form->control('password', ['autocomplete' => 'off']);
 
 ## Configuration
 
-TinyAuth AuthComponent supports the following configuration options.
+TinyAuth Authentication component supports the following configuration options.
 
 Option | Type | Description
 :----- | :--- | :----------
