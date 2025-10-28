@@ -1056,7 +1056,6 @@ class TinyAuthorizeTest extends TestCase {
 		// Make protected function available
 		$reflection = new ReflectionClass(get_class($object));
 		$method = $reflection->getMethod('_parseFiles');
-		$method->setAccessible(true);
 		$res = $method->invokeArgs($object, [
 			[
 				Plugin::path('TinyAuth') . 'tests' . DS . 'test_files' . DS,
@@ -1083,7 +1082,6 @@ class TinyAuthorizeTest extends TestCase {
 		// Make protected function available
 		$reflection = new ReflectionClass(get_class($object));
 		$method = $reflection->getMethod('_parseFiles');
-		$method->setAccessible(true);
 
 		$this->expectException(CakeException::class);
 
@@ -1103,7 +1101,6 @@ class TinyAuthorizeTest extends TestCase {
 		$object = new TestTinyAuthorize($this->collection);
 		$reflection = new ReflectionClass(get_class($object));
 		$method = $reflection->getMethod('_constructIniKey');
-		$method->setAccessible(true);
 
 		// Test standard controller
 		$params = [
@@ -1160,7 +1157,6 @@ class TinyAuthorizeTest extends TestCase {
 		$object = new TestTinyAuthorize($this->collection);
 		$reflection = new ReflectionClass(get_class($object));
 		$method = $reflection->getMethod('_deconstructIniKey');
-		$method->setAccessible(true);
 
 		// Test standard controller
 		$key = 'Tags';
@@ -1260,7 +1256,6 @@ class TinyAuthorizeTest extends TestCase {
 		// Make protected function available
 		$reflection = new ReflectionClass(get_class($object));
 		$method = $reflection->getMethod('_getAvailableRoles');
-		$method->setAccessible(true);
 
 		// Test against roles array in Configure
 		$expected = [
@@ -1299,7 +1294,6 @@ class TinyAuthorizeTest extends TestCase {
 		// Make protected function available
 		$reflection = new ReflectionClass(get_class($object));
 		$method = $reflection->getMethod('_getAvailableRoles');
-		$method->setAccessible(true);
 
 		$this->expectException(Exception::class);
 
@@ -1321,7 +1315,6 @@ class TinyAuthorizeTest extends TestCase {
 		// Make protected function available
 		$reflection = new ReflectionClass(get_class($object));
 		$method = $reflection->getMethod('_getAvailableRoles');
-		$method->setAccessible(true);
 
 		$this->expectException(Exception::class);
 
@@ -1343,7 +1336,6 @@ class TinyAuthorizeTest extends TestCase {
 		// Make protected function available
 		$reflection = new ReflectionClass(get_class($object));
 		$method = $reflection->getMethod('_getUserRoles');
-		$method->setAccessible(true);
 
 		// Single-role: get role id from roleColumn in user table
 		$user = ['role_id' => ROLE_USER];
@@ -1381,7 +1373,6 @@ class TinyAuthorizeTest extends TestCase {
 		// Make protected function available
 		$reflection = new ReflectionClass(get_class($object));
 		$method = $reflection->getMethod('_getUserRoles');
-		$method->setAccessible(true);
 
 		$user = ['id' => 2];
 		$expected = [
@@ -1410,7 +1401,6 @@ class TinyAuthorizeTest extends TestCase {
 		// Make protected function available
 		$reflection = new ReflectionClass(get_class($object));
 		$method = $reflection->getMethod('_getUserRoles');
-		$method->setAccessible(true);
 
 		$user = [
 			'id' => 1,
@@ -1642,7 +1632,6 @@ class TinyAuthorizeTest extends TestCase {
 		// Make protected function available
 		$reflection = new ReflectionClass(get_class($object));
 		$method = $reflection->getMethod('_getUserRoles');
-		$method->setAccessible(true);
 
 		$this->expectException(Exception::class);
 
@@ -1664,7 +1653,6 @@ class TinyAuthorizeTest extends TestCase {
 		// Make protected function available
 		$reflection = new ReflectionClass(get_class($object));
 		$method = $reflection->getMethod('_getUserRoles');
-		$method->setAccessible(true);
 
 		$user = ['id' => 5];
 		$result = $method->invokeArgs($object, [$user]);
