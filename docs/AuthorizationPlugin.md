@@ -44,10 +44,45 @@ $middlewareQueue->add(new RequestAuthorizationMiddleware([
         'url' => [
             ...
         ],
-        'unauthorizedMessage' => '...',
+        'unauthorizedMessage' => 'You are not authorized to access that location.',
     ],
 ])));
 ```
+
+### Unauthorized Handlers
+
+TinyAuth provides two enhanced redirect handlers for authorization failures:
+
+#### `TinyAuth.ForbiddenCakeRedirect`
+Works with CakePHP's routing system and supports flash messages:
+
+```php
+'unauthorizedHandler' => [
+    'className' => 'TinyAuth.ForbiddenCakeRedirect',
+    'url' => ['controller' => 'Users', 'action' => 'login'],
+    'queryParam' => 'redirect',
+    'statusCode' => 302,
+    'unauthorizedMessage' => 'You need permission to access that page.', // Set to false to disable
+]
+```
+
+#### `TinyAuth.ForbiddenRedirect`
+Similar to `ForbiddenCakeRedirect` but with standard URL handling:
+
+```php
+'unauthorizedHandler' => [
+    'className' => 'TinyAuth.ForbiddenRedirect',
+    'url' => '/',
+    'queryParam' => 'redirect',
+    'statusCode' => 302,
+    'unauthorizedMessage' => 'Access denied.', // Set to false or null to disable
+]
+```
+
+**Key Features:**
+- Automatically sets a flash error message for unauthorized access
+- Skips JSON/XML requests (throws exception instead of redirecting)
+- Preserves the target URL in query parameter for redirect after login
 
 For all the rest just follow the plugin's documentation.
 

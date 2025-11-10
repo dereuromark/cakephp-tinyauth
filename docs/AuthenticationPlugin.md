@@ -30,17 +30,25 @@ use Authentication\Middleware\AuthenticationMiddleware;
 $middlewareQueue->add(new AuthenticationMiddleware($this));
 ```
 
-This plugin ships with an improved session authenticator that is optional:
+This plugin ships with optional enhanced components:
 
-- PrimaryKeySession authenticator (extending the Authentication.Session one):
-  stores only the ID and fetches the rest from DB (keeping it always up to date)
+### Session Authenticator
 
-It also ships with an enhanced redirect handler:
+- **PrimaryKeySession** (extending `Authentication.Session`): Stores only the ID in session and fetches the rest from DB on each request, keeping data always up to date
 
-- ForbiddenCakeRedirect: Allows an `unauthorizedMessage` to be set as error flash message.
+### Unauthorized Handlers
 
+TinyAuth provides enhanced redirect handlers for authentication failures:
 
-You can, of course, stick to the official ones, as well.
+- **TinyAuth.ForbiddenCakeRedirect**: Works with CakePHP routing and allows setting an `unauthorizedMessage` as flash message
+- **TinyAuth.ForbiddenRedirect**: Standard URL-based redirect with flash message support
+
+Both handlers:
+- Automatically set flash error messages for unauthorized access
+- Skip JSON/XML requests (throw exception instead of redirecting)
+- Preserve the target URL in query parameter for redirect after login
+
+You can, of course, stick to the official ones as well.
 
 Now let's set up `getAuthenticationService()` and make sure to load all needed Authenticators, e.g.:
 

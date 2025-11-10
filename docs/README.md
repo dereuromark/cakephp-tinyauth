@@ -30,9 +30,15 @@ The adapter plays well together with the component above.
 But if you prefer to control the action whitelisting for authentication via code and `$this->Authentication->allowUnauthenticated()` calls, you can
 also just use this adapter stand-alone for the ACL part of your application.
 
-There is also an AuthUserComponent and AuthUserHelper to assist you in making role based decisions or displaying role based links in your templates.
-
 See [Authorization](Authorization.md) docs.
+
+## AuthUser Component and Helper
+The AuthUser component and helper work **standalone** without requiring the official plugins.
+They provide convenient methods for working with the currently authenticated user in your controllers and views.
+
+These are useful for making role-based decisions or displaying role-based links in your templates.
+
+See [AuthUser](AuthUser.md) docs.
 
 
 ## Configuration

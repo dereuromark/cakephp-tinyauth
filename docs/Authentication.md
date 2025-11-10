@@ -155,6 +155,80 @@ $this->loadComponent('TinyAuth.Authentication', [
 ]);
 ```
 
+## Authentication Helper
+
+The Authentication helper provides template-level methods for checking if URLs are public.
+
+### Setup
+
+Load the helper in your AppView:
+
+```php
+// src/View/AppView.php
+
+public function initialize(): void {
+    parent::initialize();
+
+    $this->loadHelper('TinyAuth.Authentication');
+}
+```
+
+### Available Methods
+
+#### `isPublic(array $url = [])`
+
+Check if a given URL is public (allowed in `auth_allow.ini`):
+
+```php
+// Check if current page is public
+<?php if ($this->Authentication->isPublic()): ?>
+    <p>This page is public</p>
+<?php endif; ?>
+
+// Check if a specific URL is public
+<?php if ($this->Authentication->isPublic(['controller' => 'Users', 'action' => 'register'])): ?>
+    <?= $this->Html->link('Register', ['controller' => 'Users', 'action' => 'register']); ?>
+<?php endif; ?>
+```
+
+#### Named Routes Support
+
+The helper also supports named routes:
+
+```php
+<?php if ($this->Authentication->isPublic(['_name' => 'users:register'])): ?>
+    <p>Registration is public</p>
+<?php endif; ?>
+```
+
+### Example Usage
+
+#### Conditional Navigation
+
+```php
+<nav>
+    <ul>
+        <?php if ($this->Authentication->isPublic(['action' => 'index'])): ?>
+            <li><?= $this->Html->link('Home', ['action' => 'index']); ?></li>
+        <?php endif; ?>
+
+        <?php if ($this->Authentication->isPublic(['controller' => 'Articles', 'action' => 'view'])): ?>
+            <li><?= $this->Html->link('Articles', ['controller' => 'Articles']); ?></li>
+        <?php endif; ?>
+    </ul>
+</nav>
+```
+
+#### Show Login Link Only on Public Pages
+
+```php
+<?php if ($this->Authentication->isPublic() && !$this->AuthUser->id()): ?>
+    <div class="login-prompt">
+        <?= $this->Html->link('Login', ['controller' => 'Users', 'action' => 'login']); ?>
+    </div>
+<?php endif; ?>
+```
+
 ## Configuration
 
 TinyAuth Authentication component supports the following configuration options.

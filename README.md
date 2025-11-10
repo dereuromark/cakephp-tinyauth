@@ -139,7 +139,7 @@ Finally, load the plugin:
 bin/cake plugin load TinyAuth
 ```
 
-**Note:** The AuthUser component and helper can work standalone with any dependencies.
+**Note:** The AuthUser component and helper can work standalone without requiring the official plugins. They work with any authentication solution that sets an identity in the request.
 
 ## Docs
 For setup and usage see [Docs](/docs).
