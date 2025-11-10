@@ -1,5 +1,7 @@
 ## Configuration Multi-role
 
+**IMPORTANT:** First install the official plugins as described in [docs/README.md](README.md#required-dependencies)
+
 ```php
 // in your app.php
 'TinyAuth' => [
@@ -9,12 +11,17 @@
 
 ```php
 // in your AppController.php
-$this->loadComponent('TinyAuth.Auth', [
-    'autoClearCache' => true,
-    'authorize' => ['TinyAuth.Tiny'],
-    ...
-]);
+public function initialize() {
+    parent::initialize();
+
+    $this->loadComponent('TinyAuth.Authentication');
+    $this->loadComponent('TinyAuth.Authorization', [
+        'autoClearCache' => true,
+    ]);
+}
 ```
+
+See [AuthenticationPlugin.md](AuthenticationPlugin.md) and [AuthorizationPlugin.md](AuthorizationPlugin.md) for complete middleware setup instructions.
 
 ### auth_allow.ini
 ```ini

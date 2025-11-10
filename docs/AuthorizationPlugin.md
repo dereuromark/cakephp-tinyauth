@@ -2,6 +2,18 @@
 
 Support for [Authorization plugin](https://github.com/cakephp/authorization) usage.
 
+## Installation
+
+First, you need to install the official CakePHP Authorization plugin:
+
+```bash
+composer require cakephp/authorization
+```
+
+See the [official Authorization plugin documentation](https://book.cakephp.org/authorization/2/en/index.html) for more details.
+
+## Setup
+
 Instead of the core Auth component you load the Authorization component:
 
 ```php

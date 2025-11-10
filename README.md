@@ -12,9 +12,9 @@ A CakePHP plugin to handle authentication and user authorization the easy way.
 
 This branch is for **CakePHP 5.1+**. For details see [version map](https://github.com/dereuromark/cakephp-tinyauth/wiki#cakephp-version-map).
 
-## Why use TinyAuth as a wrapper for Authentication/Authorization plugins?
+## Why use TinyAuth?
 
-TinyAuth now acts as a powerful wrapper around CakePHP's official Authentication and Authorization plugins, providing significant advantages:
+**TinyAuth is a wrapper plugin** that extends CakePHP's official Authentication and Authorization plugins, providing significant advantages:
 
 ### 🚀 Zero-Code Configuration
 - **INI-based setup**: Define all your authentication and authorization rules in simple INI files
@@ -113,19 +113,32 @@ echo $this->AuthUser->postLink('Delete', ['action' => 'delete', $id], ['confirm'
 ```
 
 ## Installation
-Including the plugin is pretty much as with every other CakePHP plugin:
+
+### Required Dependencies
+
+TinyAuth acts as a wrapper around CakePHP's official Authentication and Authorization plugins. You need to install them first:
+
+```bash
+# Required for authentication features
+composer require cakephp/authentication
+
+# Required for authorization features
+composer require cakephp/authorization
+```
+
+Then install TinyAuth:
 
 ```bash
 composer require dereuromark/cakephp-tinyauth
 ```
 
-Then, to load the plugin:
+Finally, load the plugin:
 
 ```sh
 bin/cake plugin load TinyAuth
 ```
 
-That's it. It should be up and running.
+**Note:** The AuthUser component and helper can work standalone with any authentication solution. For the main TinyAuth.Authentication and TinyAuth.Authorization components, the official plugins are required dependencies.
 
 ## Docs
 For setup and usage see [Docs](/docs).

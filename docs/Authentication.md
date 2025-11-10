@@ -1,7 +1,10 @@
 # TinyAuth Authentication
 The fast and easy way for user authentication in CakePHP applications.
 
-Use TinyAuth Component if you want to add instant (and easy) action whitelisting to your application.
+**IMPORTANT:** This component wraps the official CakePHP Authentication plugin.
+You must install it first - see [AuthenticationPlugin.md](AuthenticationPlugin.md).
+
+Use TinyAuth Authentication Component if you want to add instant (and easy) INI-based action whitelisting to your application.
 You can allow/deny per controller action or with wildcards also per controller and more.
 
 ## Basic Features
@@ -147,42 +150,18 @@ By default, it will not use caching in debug mode, though.
 
 To modify the caching behavior set the ``autoClearCache`` configuration option:
 ```php
-$this->loadComponent('TinyAuth.Auth', [
-    'autoClearCache' => true|false
-)]
-```
-
-## Multi Column authentication
-Often times you want to allow logging in with either username or email.
-In this case you can use the built-in adapter for it:
-
-```php
-'authenticate' => [
-    'TinyAuth.MultiColumn' => [
-        'fields' => [
-            'username' => 'login',
-            'password' => 'password',
-        ],
-        'columns' => ['username', 'email'],
-        'userModel' => 'Users',
-    ],
-],
-```
-which you can pass in to Auth component as options.
-
-Your form would then contain e.g.
-```php
-echo $this->Form->control('login', ['label' => 'Your username or email']);
-echo $this->Form->control('password', ['autocomplete' => 'off']);
+$this->loadComponent('TinyAuth.Authentication', [
+    'autoClearCache' => true|false,
+]);
 ```
 
 ## Configuration
 
 TinyAuth Authentication component supports the following configuration options.
 
-Option | Type | Description
-:----- | :--- | :----------
-autoClearCache|bool|True will generate a new ACL cache file every time.
-allowFilePath|string|Full path to the INI file. Can also be an array of paths. Defaults to `ROOT . DS . 'config' . DS`.
-allowFile|string|Name of the INI file. Defaults to `auth_allow.ini`.
-allowAdapter|string|Class name, defaults to `IniAllowAdapter::class`.
+ Option         | Type   | Description
+:---------------|:-------|:---------------------------------------------------------------------------------------------------
+ autoClearCache | bool   | True will generate a new ACL cache file every time.
+ allowFilePath  | string | Full path to the INI file. Can also be an array of paths. Defaults to `ROOT . DS . 'config' . DS`.
+ allowFile      | string | Name of the INI file. Defaults to `auth_allow.ini`.
+ allowAdapter   | string | Class name, defaults to `IniAllowAdapter::class`.

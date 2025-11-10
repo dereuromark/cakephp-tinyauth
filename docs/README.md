@@ -74,15 +74,24 @@ By default it will now deny all logged in users any access to any protected acti
 Make sure that the session contains the correct data structure, also make sure the roles are configured or in the database and can be found as expected. The user with the right role should get access now to the corresponding action (make also sure cache is cleared).
 You then verified: authorization is working fine, as well - only with the correct role a user can now access protected actions.
 
-## Working with new plugins
-If you are using [Authentication](https://github.com/cakephp/authentication) or [Authorization](https://github.com/cakephp/authorization) plugin, you will need to use the
-Authentication/Authorization components of this plugin instead for them to work with TinyAuth.
+## Required Dependencies
 
-See the docs for details:
+**IMPORTANT:** TinyAuth is a wrapper plugin that extends the official CakePHP plugins.
+You must install them first, if you want to use Authentication or Authorization functionality:
+
+```bash
+# Required for TinyAuth.Authentication component
+composer require cakephp/authentication
+
+# Required for TinyAuth.Authorization component
+composer require cakephp/authorization
+```
+
+See the docs for setup details:
 - [TinyAuth and Authentication plugin](AuthenticationPlugin.md)
 - [TinyAuth and Authorization plugin](AuthorizationPlugin.md)
 
-### Why use TinyAuth with the new plugins?
+### Why use TinyAuth as a wrapper?
 
 TinyAuth provides a powerful abstraction layer over the official Authentication and Authorization plugins:
 
@@ -94,25 +103,57 @@ TinyAuth provides a powerful abstraction layer over the official Authentication 
 - **Performance**: Built-in caching for optimal speed
 - **Developer friendly**: DebugKit panel, clear error messages, easy debugging
 
-**When to use vanilla plugins' functionality directly:**
-They are super powerful, but they also require a load of config to get them to run.
-Consider using them (partially) directly when you need:
-- Authentication/authorization on middleware/routing level
-- Complex policy-based authorization (ORM policies, custom voters)
-- Per-entity authorization rules
-- Custom authentication flows
-
 **When to use TinyAuth wrapper:**
 If you only need the basic request policy provided by this plugin (controller-action level permissions),
 then TinyAuth provides a much simpler and faster solution.
 
-You can seamlessly upgrade to the new plugins while keeping your INI files.
-They are also compatible with AuthUser component and helper as well as the Auth panel.
+**When you might need vanilla plugin functionality directly:**
+Consider using the official plugins' features directly (alongside TinyAuth) when you need:
+- Complex policy-based authorization (ORM policies, custom voters)
+- Per-entity authorization rules
+- Custom authentication flows beyond what TinyAuth provides
+
+You can seamlessly use both approaches together. TinyAuth's INI files work alongside the official plugins,
+and AuthUser component and helper are compatible with the Auth panel.
 
 ## Upgrade notes
-Coming from CakePHP 4.x the following major changes will affect your app:
-- Cake\Auth namespace has been removed and is now migrated to TinyAuth\Auth, that includes the
-  Authentication and Authorization classes, hashers and alike.
+
+### Upgrading from TinyAuth 3.x (CakePHP 4.x)
+
+**BREAKING CHANGES:** TinyAuth has fundamentally changed from a standalone auth solution to a wrapper around the official CakePHP plugins.
+
+**What was removed:**
+- All custom authenticate adapters (`FormAuthenticate`, `MultiColumnAuthenticate`, `BasicAuthenticate`, `DigestAuthenticate`)
+- All custom password hashers (`DefaultPasswordHasher`, `FallbackPasswordHasher`, `WeakPasswordHasher`)
+- `TinyAuth.Auth` component (replaced by `TinyAuth.Authentication` and `TinyAuth.Authorization`)
+- `AuthComponent` and `LegacyAuthComponent`
+- Storage classes (`MemoryStorage`, `SessionStorage`)
+
+**What you need to do:**
+1. Install the official plugins:
+   ```bash
+   composer require cakephp/authentication cakephp/authorization
+   ```
+
+2. Replace component loading:
+   ```php
+   // OLD (removed):
+   $this->loadComponent('TinyAuth.Auth', [...]);
+
+   // NEW:
+   $this->loadComponent('TinyAuth.Authentication', [...]);
+   $this->loadComponent('TinyAuth.Authorization', [...]);
+   ```
+
+3. Set up middleware in your `Application` class (see [AuthenticationPlugin.md](AuthenticationPlugin.md) and [AuthorizationPlugin.md](AuthorizationPlugin.md))
+
+4. Your INI files (`auth_allow.ini` and `auth_acl.ini`) continue to work as before
+
+**What still works:**
+- AuthUser component and helper
+- INI-based configuration files
+- All role-based authorization features
+- DebugKit Auth panel
 
 ## Contributing
 Feel free to fork and pull request.

@@ -1,7 +1,9 @@
 # TinyAuth Authorization
 The fast and easy way for user authorization in CakePHP applications.
 
-Enable TinyAuth Authorize if you want to add instant (and easy) role
+**IMPORTANT:** This component wraps the official CakePHP Authorization plugin. You must install it first - see [AuthorizationPlugin.md](AuthorizationPlugin.md).
+
+Enable TinyAuth Authorization if you want to add instant (and easy) INI-based role
 based access control (RBAC) to your application.
 
 ## Basic Features
@@ -18,10 +20,9 @@ frontend yourself)
 
 ## Enabling
 
-Assuming you already have authentication set up correctly you can enable
-authorization in your controller's `beforeFilter()` method like this example:
+**IMPORTANT:** You must first install and configure the official Authorization plugin. See [AuthorizationPlugin.md](AuthorizationPlugin.md) for complete setup instructions.
 
-**DEPRECATED** Use middleware approach and `TinyAuth.Authorization` instead. Rest of the page is accurate.
+Load the Authorization component in your controller:
 
 ```php
 // src/Controller/AppController
@@ -29,30 +30,13 @@ authorization in your controller's `beforeFilter()` method like this example:
 public function initialize() {
     parent::initialize();
 
-    $this->loadComponent('TinyAuth.Auth', [
-        'authorize' => [
-            'TinyAuth.Tiny' => [
-                ...
-            ],
-            ...
-        ]
+    $this->loadComponent('TinyAuth.Authorization', [
+        ...
     ]);
 }
 ```
-TinyAuth Authorize can be used in combination with any [CakePHP Authentication Type](http://book.cakephp.org/3.0/en/controllers/components/authentication.html#choosing-an-authentication-type), as well.
 
-
-Please note that `TinyAuth.Auth` replaces the default CakePHP `Auth` component. Do not try to load both at once.
-You can also use the default one, if you only want to use ACL (authorization):
-```php
-    $this->loadComponent('Auth', [
-        'authorize' => [
-            'TinyAuth.Tiny' => [
-                ...
-            ]
-        ]
-    ]);
-```
+The TinyAuth.Authorization component extends the official `cakephp/authorization` plugin and adds INI-based access control on top of it.
 
 
 ## Roles
@@ -279,38 +263,38 @@ By default it will not use caching in debug mode, though.
 
 To modify the caching behavior set the ``autoClearCache`` configuration option:
 ```php
-'TinyAuth.Tiny' => [
-    'autoClearCache' => true|false
-]
+$this->loadComponent('TinyAuth.Authorization', [
+    'autoClearCache' => true|false,
+]);
 ```
 
 ## Configuration
 
 TinyAuthorize adapter supports the following configuration options.
 
-Option | Type | Description
-:----- | :--- | :----------
-roleColumn|string|Name of column in user table holding role id (used for foreign key in users table in a single role per user setup, or in the pivot table on multi-roles setup)
-userColumn|string|Name of column in pivot table holding role id (only used in pivot table on multi-roles setup)
-aliasColumn|string|Name of the column for the alias in the role table
-idColumn|string|Name of the ID Column in users table
-rolesTable|string|Name of Configure key holding all available roles OR class name of roles database table
-usersTable|string|Class name of the users table.
-pivotTable|string|Name of the pivot table, for a multi-group setup.
-rolesTablePlugin|string|Name of the plugin for the roles table, if any.
-pivotTablePlugin|string|Name of the plugin for the pivot table, if any.
-multiRole|bool|True will enable multi-role/HABTM authorization (requires a valid join table).
-superAdminRole|int|Id of the super admin role. Users with this role will have access to ALL resources.
-superAdmin|int or string|Id/name of the super admin. Users with this id/name will have access to ALL resources. null/0/'0' disable it.
-superAdminColumn|string|Column of super admin in user table. Default is idColumn option.
-authorizeByPrefix|bool/array|If prefixed routes should be auto-handled by their matching role name or a prefix=>role map.
-allowLoggedIn|bool|True will give authenticated users access to all resources except those using the `protectedPrefix`.
-protectedPrefix|string/array|Name of the prefix(es) used for admin pages. Defaults to `Admin`.
-autoClearCache|bool|True will generate a new ACL cache file every time.
-aclFilePath|string|Full path to the auth_acl.ini. Can also be an array of multiple paths. Defaults to `ROOT . DS . 'config' . DS`.
-aclFile|string|Name of the INI file. Defaults to `auth_acl.ini`.
-aclAdapter|string|Class name, defaults to `IniAclAdapter::class`.
-includeAuthentication|bool|Set to true to include public auth access into hasAccess() checks. Note, that this requires Configure configuration.
+ Option                | Type          | Description
+:----------------------|:--------------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------
+ roleColumn            | string        | Name of column in user table holding role id (used for foreign key in users table in a single role per user setup, or in the pivot table on multi-roles setup)
+ userColumn            | string        | Name of column in pivot table holding role id (only used in pivot table on multi-roles setup)
+ aliasColumn           | string        | Name of the column for the alias in the role table
+ idColumn              | string        | Name of the ID Column in users table
+ rolesTable            | string        | Name of Configure key holding all available roles OR class name of roles database table
+ usersTable            | string        | Class name of the users table.
+ pivotTable            | string        | Name of the pivot table, for a multi-group setup.
+ rolesTablePlugin      | string        | Name of the plugin for the roles table, if any.
+ pivotTablePlugin      | string        | Name of the plugin for the pivot table, if any.
+ multiRole             | bool          | True will enable multi-role/HABTM authorization (requires a valid join table).
+ superAdminRole        | int           | Id of the super admin role. Users with this role will have access to ALL resources.
+ superAdmin            | int or string | Id/name of the super admin. Users with this id/name will have access to ALL resources. null/0/'0' disable it.
+ superAdminColumn      | string        | Column of super admin in user table. Default is idColumn option.
+ authorizeByPrefix     | bool/array    | If prefixed routes should be auto-handled by their matching role name or a prefix=>role map.
+ allowLoggedIn         | bool          | True will give authenticated users access to all resources except those using the `protectedPrefix`.
+ protectedPrefix       | string/array  | Name of the prefix(es) used for admin pages. Defaults to `Admin`.
+ autoClearCache        | bool          | True will generate a new ACL cache file every time.
+ aclFilePath           | string        | Full path to the auth_acl.ini. Can also be an array of multiple paths. Defaults to `ROOT . DS . 'config' . DS`.
+ aclFile               | string        | Name of the INI file. Defaults to `auth_acl.ini`.
+ aclAdapter            | string        | Class name, defaults to `IniAclAdapter::class`.
+ includeAuthentication | bool          | Set to true to include public auth access into hasAccess() checks. Note, that this requires Configure configuration.
 
 ## AuthUser Component
 Add the AuthUserComponent and you can easily check permissions inside your controller scope:
