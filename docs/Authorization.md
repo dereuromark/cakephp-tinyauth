@@ -297,29 +297,29 @@ $this->loadComponent('TinyAuth.Authorization', [
 
 TinyAuthorize adapter supports the following configuration options.
 
- Option                | Type          | Description
-:----------------------|:--------------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------
- roleColumn            | string        | Name of column in user table holding role id (used for foreign key in users table in a single role per user setup, or in the pivot table on multi-roles setup)
- userColumn            | string        | Name of column in pivot table holding role id (only used in pivot table on multi-roles setup)
- aliasColumn           | string        | Name of the column for the alias in the role table
- idColumn              | string        | Name of the ID Column in users table
- rolesTable            | string        | Name of Configure key holding all available roles OR class name of roles database table
- usersTable            | string        | Class name of the users table.
- pivotTable            | string        | Name of the pivot table, for a multi-group setup.
- rolesTablePlugin      | string        | Name of the plugin for the roles table, if any.
- pivotTablePlugin      | string        | Name of the plugin for the pivot table, if any.
- multiRole             | bool          | True will enable multi-role/HABTM authorization (requires a valid join table).
- superAdminRole        | int           | Id of the super admin role. Users with this role will have access to ALL resources.
- superAdmin            | int or string | Id/name of the super admin. Users with this id/name will have access to ALL resources. null/0/'0' disable it.
- superAdminColumn      | string        | Column of super admin in user table. Default is idColumn option.
- authorizeByPrefix     | bool/array    | If prefixed routes should be auto-handled by their matching role name or a prefix=>role map.
- allowLoggedIn         | bool          | True will give authenticated users access to all resources except those using the `protectedPrefix`.
- protectedPrefix       | string/array  | Name of the prefix(es) used for admin pages. Defaults to `Admin`.
- autoClearCache        | bool          | True will generate a new ACL cache file every time.
- aclFilePath           | string        | Full path to the auth_acl.ini. Can also be an array of multiple paths. Defaults to `ROOT . DS . 'config' . DS`.
- aclFile               | string        | Name of the INI file. Defaults to `auth_acl.ini`.
- aclAdapter            | string        | Class name, defaults to `IniAclAdapter::class`.
- includeAuthentication | bool          | Set to true to include public auth access into hasAccess() checks. Note, that this requires Configure configuration.
+| Option                | Type          | Description                                                                                                                                                    |
+|:----------------------|:--------------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| roleColumn            | string        | Name of column in user table holding role id (used for foreign key in users table in a single role per user setup, or in the pivot table on multi-roles setup) |
+| userColumn            | string        | Name of column in pivot table holding role id (only used in pivot table on multi-roles setup)                                                                  |
+| aliasColumn           | string        | Name of the column for the alias in the role table                                                                                                             |
+| idColumn              | string        | Name of the ID Column in users table                                                                                                                           |
+| rolesTable            | string        | Name of Configure key holding all available roles OR class name of roles database table                                                                        |
+| usersTable            | string        | Class name of the users table.                                                                                                                                 |
+| pivotTable            | string        | Name of the pivot table, for a multi-group setup.                                                                                                              |
+| rolesTablePlugin      | string        | Name of the plugin for the roles table, if any.                                                                                                                |
+| pivotTablePlugin      | string        | Name of the plugin for the pivot table, if any.                                                                                                                |
+| multiRole             | bool          | True will enable multi-role/HABTM authorization (requires a valid join table).                                                                                 |
+| superAdminRole        | int           | Id of the super admin role. Users with this role will have access to ALL resources.                                                                            |
+| superAdmin            | int or string | Id/name of the super admin. Users with this id/name will have access to ALL resources. null/0/'0' disable it.                                                  |
+| superAdminColumn      | string        | Column of super admin in user table. Default is idColumn option.                                                                                               |
+| authorizeByPrefix     | bool/array    | If prefixed routes should be auto-handled by their matching role name or a prefix=>role map.                                                                   |
+| allowLoggedIn         | bool          | True will give authenticated users access to all resources except those using the `protectedPrefix`.                                                           |
+| protectedPrefix       | string/array  | Name of the prefix(es) used for admin pages. Defaults to `Admin`.                                                                                              |
+| autoClearCache        | bool          | True will generate a new ACL cache file every time.                                                                                                            |
+| aclFilePath           | string        | Full path to the auth_acl.ini. Can also be an array of multiple paths. Defaults to `ROOT . DS . 'config' . DS`.                                                |
+| aclFile               | string        | Name of the INI file. Defaults to `auth_acl.ini`.                                                                                                              |
+| aclAdapter            | string        | Class name, defaults to `IniAclAdapter::class`.                                                                                                                |
+| includeAuthentication | bool          | Set to true to include public auth access into hasAccess() checks. Note, that this requires Configure configuration.                                           |
 
 ## AuthUser Component
 Add the AuthUserComponent and you can easily check permissions inside your controller scope:

@@ -257,9 +257,9 @@ The helper also supports named routes:
 
 TinyAuth Authentication component supports the following configuration options.
 
- Option         | Type   | Description
-:---------------|:-------|:---------------------------------------------------------------------------------------------------
- autoClearCache | bool   | True will generate a new ACL cache file every time.
- allowFilePath  | string | Full path to the INI file. Can also be an array of paths. Defaults to `ROOT . DS . 'config' . DS`.
- allowFile      | string | Name of the INI file. Defaults to `auth_allow.ini`.
- allowAdapter   | string | Class name, defaults to `IniAllowAdapter::class`.
+| Option         | Type   | Description                                                                                             |
+|:---------------|:-------|:--------------------------------------------------------------------------------------------------------|
+| autoClearCache | bool   | True will generate a new ACL cache file every time.                                                     |
+| allowFilePath  | string | Full path to the INI file. Can also be an array of paths. <br/>Defaults to `ROOT . DS . 'config' . DS`. |
+| allowFile      | string | Name of the INI file. Defaults to `auth_allow.ini`.                                                     |
+| allowAdapter   | string | Class name, defaults to `IniAllowAdapter::class`.                                                       |
