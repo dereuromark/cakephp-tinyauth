@@ -64,39 +64,76 @@ Implement `getAuthenticationService()` in your `Application` class to configure 
 // src/Application.php
 use Authentication\AuthenticationService;
 use Authentication\AuthenticationServiceInterface;
+use Authentication\Identifier\AbstractIdentifier;
+use Cake\Routing\Router;
 use Psr\Http\Message\ServerRequestInterface;
 
 public function getAuthenticationService(ServerRequestInterface $request): AuthenticationServiceInterface
 {
     $service = new AuthenticationService();
 
-    // Configure redirect for unauthenticated users
+    // Define where users should be redirected to when they are not authenticated
     $service->setConfig([
-        'unauthenticatedRedirect' => '/users/login',
+        'unauthenticatedRedirect' => Router::url([
+            'prefix' => false,
+            'plugin' => false,
+            'controller' => 'Users',
+            'action' => 'login',
+        ]),
         'queryParam' => 'redirect',
     ]);
 
-    // Load authenticators - Session should be first
-    $service->loadAuthenticator('Authentication.Session');
-    $service->loadAuthenticator('Authentication.Form', [
-        'fields' => [
-            'username' => 'email',
-            'password' => 'password',
+    $fields = [
+        AbstractIdentifier::CREDENTIAL_USERNAME => 'email',
+        AbstractIdentifier::CREDENTIAL_PASSWORD => 'password',
+    ];
+
+    // Identifier configuration for password-based authentication
+    $passwordIdentifier = [
+        'Authentication.Password' => [
+            'fields' => $fields,
+            'resolver' => [
+                'className' => 'Authentication.Orm',
+                // Optional: Use custom finder for active users only
+                // 'finder' => 'active',
+            ],
         ],
-        'loginUrl' => '/users/login',
+    ];
+
+    // Load the authenticators. Session should be first.
+    $service->loadAuthenticator('Authentication.Session');
+
+    $service->loadAuthenticator('Authentication.Form', [
+        'identifier' => $passwordIdentifier,
+        'fields' => $fields,
+        'urlChecker' => 'Authentication.CakeRouter',
+        'loginUrl' => Router::url([
+            'prefix' => false,
+            'plugin' => false,
+            'controller' => 'Users',
+            'action' => 'login',
+        ]),
     ]);
 
-    // Load identifiers
-    $service->loadIdentifier('Authentication.Password', [
-        'fields' => [
-            'username' => 'email',
-            'password' => 'password',
-        ],
+    // Optional: Cookie authenticator for "remember me" functionality
+    $service->loadAuthenticator('Authentication.Cookie', [
+        'identifier' => $passwordIdentifier,
+        'rememberMeField' => 'remember_me',
+        'fields' => $fields,
+        'urlChecker' => 'Authentication.CakeRouter',
+        'loginUrl' => Router::url([
+            'prefix' => false,
+            'plugin' => false,
+            'controller' => 'Users',
+            'action' => 'login',
+        ]),
     ]);
 
     return $service;
 }
 ```
+
+**Note:** Each authenticator has its own `identifier` configuration. The Session authenticator doesn't need one as it uses the stored identity.
 
 **📖 See:** [Authentication Service](https://book.cakephp.org/authentication/3/en/authentication-service.html) in official docs
 
@@ -174,20 +211,26 @@ You can use the official handlers instead if you prefer.
 
 ## Complete Example with TinyAuth Enhancements
 
-Here's a complete example using TinyAuth's enhanced authenticator and handlers:
+Here's a complete example using TinyAuth's enhanced `PrimaryKeySession` authenticator:
 
 ```php
 // src/Application.php
 use Authentication\AuthenticationService;
 use Authentication\AuthenticationServiceInterface;
-use Psr\Http\Message\ServerRequestInterface;
+use Authentication\Identifier\AbstractIdentifier;
 use Cake\Routing\Router;
+use Psr\Http\Message\ServerRequestInterface;
 
+/**
+ * @param \Psr\Http\Message\ServerRequestInterface $request Request
+ *
+ * @return \Authentication\AuthenticationServiceInterface
+ */
 public function getAuthenticationService(ServerRequestInterface $request): AuthenticationServiceInterface
 {
     $service = new AuthenticationService();
 
-    // Configure redirects with TinyAuth enhanced handler
+    // Define where users should be redirected to when they are not authenticated
     $service->setConfig([
         'unauthenticatedRedirect' => Router::url([
             'prefix' => false,
@@ -199,20 +242,45 @@ public function getAuthenticationService(ServerRequestInterface $request): Authe
     ]);
 
     $fields = [
-        'username' => 'email',
-        'password' => 'password',
+        AbstractIdentifier::CREDENTIAL_USERNAME => 'email',
+        AbstractIdentifier::CREDENTIAL_PASSWORD => 'password',
+    ];
+
+    // Identifier configuration for password-based authentication
+    $passwordIdentifier = [
+        'Authentication.Password' => [
+            'fields' => $fields,
+            'resolver' => [
+                'className' => 'Authentication.Orm',
+                'finder' => 'active', // Optional: only find active users
+            ],
+        ],
     ];
 
     // Use TinyAuth's enhanced PrimaryKeySession authenticator
+    // This stores only user ID in session and fetches fresh data from DB
     $service->loadAuthenticator('TinyAuth.PrimaryKeySession', [
-        'identify' => true,
-        'fields' => $fields,
+        'identifier' => [
+            'Authentication.Token' => [
+                'tokenField' => 'id',
+                'dataField' => 'key',
+                'resolver' => [
+                    'className' => 'Authentication.Orm',
+                    'finder' => 'active',
+                ],
+            ],
+        ],
+        'urlChecker' => 'Authentication.CakeRouter',
     ]);
 
-    // Standard Form authenticator for login
+    // Form authenticator for login
     $service->loadAuthenticator('Authentication.Form', [
+        'identifier' => $passwordIdentifier,
         'fields' => $fields,
+        'urlChecker' => 'Authentication.CakeRouter',
         'loginUrl' => Router::url([
+            'prefix' => false,
+            'plugin' => false,
             'controller' => 'Users',
             'action' => 'login',
         ]),
@@ -220,25 +288,62 @@ public function getAuthenticationService(ServerRequestInterface $request): Authe
 
     // Optional: Cookie for "remember me" functionality
     $service->loadAuthenticator('Authentication.Cookie', [
-        'fields' => $fields,
+        'identifier' => $passwordIdentifier,
         'rememberMeField' => 'remember_me',
-    ]);
-
-    // Load identifier
-    $service->loadIdentifier('Authentication.Password', [
         'fields' => $fields,
-        'resolver' => [
-            'className' => 'Authentication.Orm',
-            // Optional: Use custom finder
-            // 'finder' => 'active',
-        ],
+        'urlChecker' => 'Authentication.CakeRouter',
+        'loginUrl' => Router::url([
+            'prefix' => false,
+            'plugin' => false,
+            'controller' => 'Users',
+            'action' => 'login',
+        ]),
     ]);
 
     return $service;
 }
 ```
 
+**Note:** Each authenticator has its own `identifier` configuration. The TinyAuth.PrimaryKeySession uses a Token identifier to fetch the user by ID.
+
+**📖 See:** [Authenticators](https://book.cakephp.org/authentication/3/en/authenticators.html) and [Identifiers](https://book.cakephp.org/authentication/3/en/identifiers.html) in official docs
+
 ## Advanced Topics
+
+### Adding LoginLink Authenticator
+
+For one-click token login (e.g., email verification, password reset), you can add the LoginLink authenticator from the [dereuromark/cakephp-tools](https://github.com/dereuromark/cakephp-tools) plugin:
+
+```php
+// Add to your getAuthenticationService() method after other authenticators
+
+// This is a one-click token login as optional addition
+$service->loadAuthenticator('Tools.LoginLink', [
+    'identifier' => [
+        'Tools.LoginLink' => [
+            'resolver' => [
+                'className' => 'Authentication.Orm',
+                'finder' => 'active',
+            ],
+            'preCallback' => function (int $id) {
+                // Optional: Perform action on successful login (e.g., confirm email)
+                TableRegistry::getTableLocator()->get('Users')->confirmEmail($id);
+            },
+        ],
+    ],
+    'urlChecker' => 'Authentication.CakeRouter',
+    'loginUrl' => Router::url([
+        'prefix' => false,
+        'plugin' => false,
+        'controller' => 'Users',
+        'action' => 'login',
+    ]),
+]);
+```
+
+**Note:** Requires `composer require dereuromark/cakephp-tools`
+
+**📖 See:** [Tools Plugin LoginLink](https://github.com/dereuromark/cakephp-tools/blob/master/docs/Authentication/LoginLink.md)
 
 ### Session Caching with PrimaryKeySession
 
