@@ -116,7 +116,8 @@ echo $this->AuthUser->postLink('Delete', ['action' => 'delete', $id], ['confirm'
 
 ### Required Dependencies
 
-TinyAuth acts as a wrapper around CakePHP's official Authentication and Authorization plugins. You need to install them first:
+TinyAuth acts as a wrapper around CakePHP's official [Authentication](https://github.com/cakephp/authentication) and [Authorization](https://github.com/cakephp/authorization) plugins.
+You need to install them first, depending on which part you want to use:
 
 ```bash
 # Required for authentication features
@@ -138,7 +139,7 @@ Finally, load the plugin:
 bin/cake plugin load TinyAuth
 ```
 
-**Note:** The AuthUser component and helper can work standalone with any authentication solution. For the main TinyAuth.Authentication and TinyAuth.Authorization components, the official plugins are required dependencies.
+**Note:** The AuthUser component and helper can work standalone with any dependencies.
 
 ## Docs
 For setup and usage see [Docs](/docs).
