@@ -1,14 +1,49 @@
-# TinyAuth Authentication and Authorization
+# TinyAuth Documentation
 
-This plugin ships with both
-- Authentication: Always comes first - "who is it"?
-- Authorization: Afterwards - "What can this person see"?
+TinyAuth provides simple, INI-based configuration for authentication and authorization in CakePHP applications.
 
-For the first one usually declares as a whitelist of actions per controller that will not require any authentication.
-If an action is not whitelisted, it will trigger the login process.
+## Core Concepts
 
-The second only gets invoked once the person is already logged in.
-In that case the role of this logged in user decides if that action is allowed to be accessed.
+### Authentication vs Authorization
+
+Understanding the difference is crucial:
+
+| Concept | Question | When | Purpose |
+|---------|----------|------|---------|
+| **Authentication** | "Who are you?" | First | Determines if a user is logged in |
+| **Authorization** | "What can you do?" | After authentication | Determines if a user can access a specific action |
+
+**Authentication** defines public actions via whitelist. Any non-whitelisted action triggers the login process.
+
+**Authorization** only applies to logged-in users. The user's role(s) determine which actions they can access.
+
+## Prerequisites
+
+**IMPORTANT:** TinyAuth wraps CakePHP's official Authentication and Authorization plugins. Before using TinyAuth features, you **must** install and configure the official plugins:
+
+| Feature | Required Plugin | Setup Guide |
+|---------|----------------|-------------|
+| **Authentication** (login/logout) | [cakephp/authentication](https://github.com/cakephp/authentication) | [AuthenticationPlugin.md](AuthenticationPlugin.md) + [Official Docs](https://book.cakephp.org/authentication/3/en/index.html) |
+| **Authorization** (roles/ACL) | [cakephp/authorization](https://github.com/cakephp/authorization) | [AuthorizationPlugin.md](AuthorizationPlugin.md) + [Official Docs](https://book.cakephp.org/authorization/2/en/index.html) |
+
+```bash
+# For authentication features
+composer require cakephp/authentication
+
+# For authorization features
+composer require cakephp/authorization
+```
+
+**Special Case:** The AuthUser component and helper work standalone without the official plugins - they work with any authentication solution that sets an identity in the request.
+
+## Getting Started
+
+1. **Install Prerequisites** - Install the official plugin(s) you need (see above)
+2. **Configure Middleware** - Set up middleware in your Application class (see plugin setup guides)
+3. **Choose Your Feature** - Pick what you need:
+   - [Authentication](Authentication.md) - INI-based public action whitelisting
+   - [Authorization](Authorization.md) - INI-based role permissions (ACL)
+   - [AuthUser](AuthUser.md) - Component/helper for role checks (works standalone)
 
 ## DebugKit Panel
 You can activate an "Auth" DebugKit panel to have useful insights per URL.
@@ -70,38 +105,44 @@ Current customizations:
 - [TinyAuthBackend plugin](https://github.com/dereuromark/cakephp-tinyauth-backend) as backend GUI for "allow" and "ACL".
 
 ## Troubleshooting
-First of all: Isolate the issue. Never mix **authentication** and **authorization** (read the top part again).
 
-If you want to use both, first attach authentication and make sure you can log in and you can log out. By default all actions are now protected unless you make them "public". So make sure the non-public actions are not accessible without being logged in and they are afterwards.
-You just verified: authentication is working now fine - it doesn't matter who logged in as long as someone did.
+### Step-by-Step Debugging
 
-Only if that is working, attach an Auth adapter (which now means authorization comes into play), in this case probably `Tiny`.
-By default it will now deny all logged in users any access to any protected action. Only by specifically whitelisting actions/controllers now in the ACL definition, a specific user can access a specific action again.
-Make sure that the session contains the correct data structure, also make sure the roles are configured or in the database and can be found as expected. The user with the right role should get access now to the corresponding action (make also sure cache is cleared).
-You then verified: authorization is working fine, as well - only with the correct role a user can now access protected actions.
+**Never mix authentication and authorization when troubleshooting!** Test each separately:
 
-## Required Dependencies
+#### 1. Test Authentication First
 
-**IMPORTANT:** TinyAuth is a wrapper plugin that extends the official CakePHP plugins.
-You must install them first, if you want to use Authentication or Authorization functionality:
+Set up **only** authentication (see [Authentication.md](Authentication.md)):
+- Load the `TinyAuth.Authentication` component
+- Configure `auth_allow.ini` for public actions
+- Verify you can log in and log out
+- Verify non-public actions require login
+- Verify public actions are accessible without login
 
-```bash
-# Required for TinyAuth.Authentication component
-composer require cakephp/authentication
+✅ **Once this works**, authentication is configured correctly.
 
-# Required for TinyAuth.Authorization component
-composer require cakephp/authorization
-```
+#### 2. Then Test Authorization
 
-See the docs for setup details:
-- [TinyAuth and Authentication plugin](AuthenticationPlugin.md)
-- [TinyAuth and Authorization plugin](AuthorizationPlugin.md)
+Add authorization **only after** authentication works (see [Authorization.md](Authorization.md)):
+- Load the `TinyAuth.Authorization` component
+- Set up roles (database or Configure)
+- Configure `auth_acl.ini` for role permissions
+- Clear cache (`bin/cake cache clear_all`)
+- Verify role-based access works correctly
 
-### Why use TinyAuth as a wrapper?
+**Common Issues:**
+- Session structure doesn't match expected format (check `role_id` column)
+- Roles not found in database or Configure
+- Cache not cleared after INI changes
+- ACL rules syntax errors
+
+✅ **Once this works**, both authentication and authorization are configured correctly.
+
+## Why Use TinyAuth?
 
 TinyAuth provides a powerful abstraction layer over the official Authentication and Authorization plugins:
 
-**Benefits of using TinyAuth:**
+### Benefits
 - **Zero-code configuration**: All auth rules in INI files, no controller modifications needed
 - **Instant setup**: Working authentication/authorization in under 5 minutes
 - **Plugin compatibility**: Works automatically with all plugins without modifications
@@ -109,18 +150,18 @@ TinyAuth provides a powerful abstraction layer over the official Authentication 
 - **Performance**: Built-in caching for optimal speed
 - **Developer friendly**: DebugKit panel, clear error messages, easy debugging
 
-**When to use TinyAuth wrapper:**
-If you only need the basic request policy provided by this plugin (controller-action level permissions),
-then TinyAuth provides a much simpler and faster solution.
+### When to Use TinyAuth
+✅ Controller-action level permissions
+✅ Simple role-based access control (RBAC)
+✅ Quick setup without extensive configuration
 
-**When you might need vanilla plugin functionality directly:**
-Consider using the official plugins' features directly (alongside TinyAuth) when you need:
+### When You Might Also Need Official Plugin Features Directly
+Consider using the official plugins' advanced features (alongside TinyAuth) when you need:
 - Complex policy-based authorization (ORM policies, custom voters)
-- Per-entity authorization rules
+- Per-entity/row-level authorization rules
 - Custom authentication flows beyond what TinyAuth provides
 
-You can seamlessly use both approaches together. TinyAuth's INI files work alongside the official plugins,
-and AuthUser component and helper are compatible with the Auth panel.
+**Note:** You can seamlessly use both approaches together. TinyAuth's INI files work alongside the official plugins' advanced features.
 
 ## Upgrade notes
 

@@ -1,11 +1,35 @@
 # TinyAuth Authentication
 The fast and easy way for user authentication in CakePHP applications.
 
-**IMPORTANT:** This component wraps the official CakePHP Authentication plugin.
-You must install it first - see [AuthenticationPlugin.md](AuthenticationPlugin.md).
+## Prerequisites
 
-Use TinyAuth Authentication Component if you want to add instant (and easy) INI-based action whitelisting to your application.
-You can allow/deny per controller action or with wildcards also per controller and more.
+**IMPORTANT:** This component wraps the official CakePHP Authentication plugin.
+You **must** install and understand it first:
+
+### Required Steps
+
+1. **Install the official plugin:**
+   ```bash
+   composer require cakephp/authentication
+   ```
+
+2. **Configure middleware and authentication service:**
+   See [AuthenticationPlugin.md](AuthenticationPlugin.md) for complete TinyAuth-specific setup instructions.
+
+   Also refer to the [official CakePHP Authentication documentation](https://book.cakephp.org/authentication/3/en/index.html) for:
+   - Middleware configuration
+   - Authentication service setup
+   - Identity configuration
+   - Login/logout implementation
+
+3. **Load TinyAuth component** (see [Enabling](#enabling) section below)
+
+### What TinyAuth Authentication Adds
+
+Once the official plugin is configured, TinyAuth Authentication Component adds:
+- **INI-based action whitelisting** - Define public actions in `auth_allow.ini` instead of code
+- **Zero controller modifications** - No need to call `allowUnauthenticated()` in every controller
+- **Plugin compatibility** - Automatically works with third-party plugins
 
 ## Basic Features
 - INI file (static) based access rights (controller-action setup)

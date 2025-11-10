@@ -1,168 +1,255 @@
-### Authorization plugin support
+# TinyAuth with CakePHP Authorization Plugin
 
-Support for [Authorization plugin](https://github.com/cakephp/authorization) usage.
+This guide shows how to integrate TinyAuth with the official [CakePHP Authorization plugin](https://github.com/cakephp/authorization).
 
-## Installation
+## Overview
 
-First, you need to install the official CakePHP Authorization plugin:
+TinyAuth's Authorization component wraps the official plugin and adds INI-based configuration for role-based access control (RBAC). This page covers the **official plugin setup** required before using TinyAuth features.
+
+## Step 1: Install the Official Plugin
 
 ```bash
 composer require cakephp/authorization
 ```
 
-See the [official Authorization plugin documentation](https://book.cakephp.org/authorization/2/en/index.html) for more details.
+## Step 2: Learn the Official Plugin
 
-## Setup
+**📖 Official Documentation:** [book.cakephp.org/authorization/2](https://book.cakephp.org/authorization/2/en/index.html)
 
-Instead of the core Auth component you load the Authorization component:
+GitHub Repository: [github.com/cakephp/authorization](https://github.com/cakephp/authorization)
+
+**Key Topics from Official Docs:**
+- Authorization service and middleware setup
+- Policy-based authorization (ORM policies)
+- Request policies for controller actions
+- Identity authorization
+- Scoping results
+
+## Step 3: Implement Authorization Interface
+
+Your `Application` class must implement `AuthorizationServiceProviderInterface`:
 
 ```php
-$this->loadComponent('TinyAuth.Authorization', [
-    ...
-]);
+// src/Application.php
+use Authorization\AuthorizationServiceProviderInterface;
+use Authorization\AuthorizationServiceInterface;
+use Psr\Http\Message\ServerRequestInterface;
+
+class Application extends BaseApplication implements AuthorizationServiceProviderInterface
+{
+    // ...
+}
 ```
 
-And in your `Application` class you need to load both `Authorization` and TinyAuth specific
-`RequestAuthorization` middlewares in that order:
+**Note:** If you're also using Authentication, implement both interfaces:
+```php
+class Application extends BaseApplication
+    implements AuthenticationServiceProviderInterface, AuthorizationServiceProviderInterface
+{
+    // ...
+}
+```
+
+**📖 See:** [Getting Started](https://book.cakephp.org/authorization/2/en/getting-started.html) in official docs
+
+## Step 4: Configure Middleware
+
+Add **both** Authorization and TinyAuth-specific middlewares to your `Application` class:
 
 ```php
+// src/Application.php
 use Authorization\Middleware\AuthorizationMiddleware;
 use TinyAuth\Middleware\RequestAuthorizationMiddleware;
 
-// in Application::middleware()
-$middlewareQueue->add(new AuthorizationMiddleware($this, [
-    'unauthorizedHandler' => [
-        'className' => 'Authorization.CakeRedirect',
-        'url' => [
-            ...
+public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
+{
+    // ... other middleware (including Authentication)
+
+    // 1. Official Authorization middleware
+    $middlewareQueue->add(new AuthorizationMiddleware($this));
+
+    // 2. TinyAuth Request Authorization middleware for INI-based RBAC
+    $middlewareQueue->add(new RequestAuthorizationMiddleware([
+        'unauthorizedHandler' => [
+            'className' => 'TinyAuth.ForbiddenCakeRedirect',
+            'url' => ['controller' => 'Users', 'action' => 'login'],
+            'unauthorizedMessage' => 'You are not authorized to access that location.',
         ],
-    ],
-]));
-$middlewareQueue->add(new RequestAuthorizationMiddleware([
-    'unauthorizedHandler' => [
-        'className' => 'TinyAuth.ForbiddenCakeRedirect',
-        'url' => [
-            ...
-        ],
-        'unauthorizedMessage' => 'You are not authorized to access that location.',
-    ],
-])));
+    ]));
+
+    // ... other middleware
+
+    return $middlewareQueue;
+}
 ```
 
-### Unauthorized Handlers
+**📖 See:** [Middleware Setup](https://book.cakephp.org/authorization/2/en/middleware.html) in official docs
 
-TinyAuth provides two enhanced redirect handlers for authorization failures:
+## Step 5: Configure Authorization Service
 
-#### `TinyAuth.ForbiddenCakeRedirect`
-Works with CakePHP's routing system and supports flash messages:
+Implement `getAuthorizationService()` in your `Application` class to set up the TinyAuth request policy:
 
+```php
+// src/Application.php
+use Authorization\AuthorizationService;
+use Authorization\AuthorizationServiceInterface;
+use Authorization\Policy\MapResolver;
+use Cake\Http\ServerRequest;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use TinyAuth\Policy\RequestPolicy;
+
+public function getAuthorizationService(ServerRequestInterface $request): AuthorizationServiceInterface
+{
+    // Map ServerRequest to TinyAuth's RequestPolicy for INI-based RBAC
+    $mapResolver = new MapResolver();
+    $mapResolver->map(ServerRequest::class, new RequestPolicy());
+
+    return new AuthorizationService($mapResolver);
+}
+```
+
+This configures the request policy that reads your `auth_acl.ini` file for role-based permissions.
+
+**📖 See:** [Authorization Service](https://book.cakephp.org/authorization/2/en/getting-started.html#authorization-service) in official docs
+
+## Step 6: Load TinyAuth Component
+
+Load the Authorization component in your controller:
+
+```php
+// src/Controller/AppController.php
+
+public function initialize(): void
+{
+    parent::initialize();
+
+    $this->loadComponent('TinyAuth.Authorization', [
+        // Configuration options (see Authorization.md)
+    ]);
+}
+```
+
+## Step 7: Set Up Roles and Configure INI File
+
+1. Set up user roles - See [Authorization.md#roles](Authorization.md#roles)
+2. Create `config/auth_acl.ini` to define role permissions - See [Authorization.md](Authorization.md)
+
+## TinyAuth-Specific Enhancements
+
+### Enhanced Redirect Handlers
+
+TinyAuth provides redirect handlers with flash message support:
+
+**`TinyAuth.ForbiddenCakeRedirect`** - Works with CakePHP routing arrays:
 ```php
 'unauthorizedHandler' => [
     'className' => 'TinyAuth.ForbiddenCakeRedirect',
     'url' => ['controller' => 'Users', 'action' => 'login'],
     'queryParam' => 'redirect',
     'statusCode' => 302,
-    'unauthorizedMessage' => 'You need permission to access that page.', // Set to false to disable
+    'unauthorizedMessage' => 'You need permission to access that page.',
 ]
 ```
 
-#### `TinyAuth.ForbiddenRedirect`
-Similar to `ForbiddenCakeRedirect` but with standard URL handling:
-
+**`TinyAuth.ForbiddenRedirect`** - Uses direct URLs:
 ```php
 'unauthorizedHandler' => [
     'className' => 'TinyAuth.ForbiddenRedirect',
     'url' => '/',
     'queryParam' => 'redirect',
     'statusCode' => 302,
-    'unauthorizedMessage' => 'Access denied.', // Set to false or null to disable
+    'unauthorizedMessage' => 'Access denied.',
 ]
 ```
 
-**Key Features:**
-- Automatically sets a flash error message for unauthorized access
-- Skips JSON/XML requests (throws exception instead of redirecting)
-- Preserves the target URL in query parameter for redirect after login
+**Features:**
+- Automatically sets flash error messages
+- Skips JSON/XML requests (throws exception instead)
+- Preserves target URL in query parameter for post-login redirect
+- Set `unauthorizedMessage` to `false` to disable flash messages
 
-For all the rest just follow the plugin's documentation.
+You can use the official handlers instead if you prefer.
 
-For your resolver you need to use this map inside `Application::getAuthorizationService()`:
-```php
-use TinyAuth\Policy\RequestPolicy;
+## Advanced Topics
 
-/**
- * @param \Psr\Http\Message\ServerRequestInterface $request
- * @param \Psr\Http\Message\ResponseInterface $response
- *
- * @return \Authorization\AuthorizationServiceInterface
- */
-public function getAuthorizationService(ServerRequestInterface $request, ResponseInterface $response) {
-    $map = [
-        ServerRequest::class => new RequestPolicy(),
-    ];
-    $resolver = new MapResolver($map);
+### Controller-Specific Authorization
 
-    return new AuthorizationService($resolver);
-}
-```
-
-Then you use the [Authorization documentation](Authorization.md) to set up roles and fill your INI config file.
-
-#### Tips
-
-You can add loginUpdate() method to your UsersTable to update the user's data here accordingly:
+In some cases, you may want to apply authorization at the controller level instead of globally. Move `RequestAuthorizationMiddleware` from `Application` to your controller:
 
 ```php
-    /**
-     * @param \Authentication\Authenticator\ResultInterface $result
-     *
-     * @return void
-     */
-    public function loginUpdate(ResultInterface $result): void
-    {
-        /** @var \App\Model\Entity\User $user */
-        $user = $result->getData();
-        $this->updateAll(['last_login' => new DateTime()], ['id' => $user->id]);
-    }
-```
-Then hook it in:
-```php
-// Inside your AccountController::login() method
-    $result = $this->Authentication->getResult();
-    // If the user is logged in send them away.
-    if ($result && $result->isValid()) {
-        $this->Users->loginUpdate($result);
-        $target = $this->Authentication->getLoginRedirect() ?? '/';
-        $this->Flash->success(__('You are now logged in.'));
+// src/Controller/AppController.php
 
-        return $this->redirect($target);
-    }
-```
+public function initialize(): void
+{
+    parent::initialize();
 
-#### Controller specific Authorization
-
-In some cases with default fallback routing in place, it can make more sense to have the authorization part more coupled to your controllers (extending AppController).
-In that case only keep Authentication/Authorization middlewares in Application, and move RequestAuthorizationMiddleware to `AppController::initialize()`:
-
-```php
+    // Apply authorization middleware at controller level
     $this->middleware(function (ServerRequest $request, $handler): ResponseInterface {
         $config = [
             'unauthorizedHandler' => [
                 'className' => 'TinyAuth.ForbiddenCakeRedirect',
                 'url' => [
-                    'prefix' => false,
-                    'plugin' => false,
-                    'controller' => 'Account',
+                    'controller' => 'Users',
                     'action' => 'login',
                 ],
             ],
         ];
         $middleware = new RequestAuthorizationMiddleware($config);
-        $result = $middleware->process($request, $handler);
 
-        return $result;
+        return $middleware->process($request, $handler);
     });
+}
 ```
-In case there are redirect loops, you might have to wrap the whole thing in `if ($this->AuthUser->id()) {}`.
-Since authentication needs to trigger first anway, the methods are protected. Only once there is a valid user, the authorization makes sense anyway.
+
+**Note:** If you experience redirect loops, wrap the middleware in `if ($this->AuthUser->id()) {}` since authentication must complete before authorization can run.
+
+### Tracking User Login
+
+You can update user data on login (e.g., `last_login` timestamp) by adding a method to your UsersTable:
+
+```php
+// src/Model/Table/UsersTable.php
+use Authentication\Authenticator\ResultInterface;
+use DateTime;
+
+public function loginUpdate(ResultInterface $result): void
+{
+    $user = $result->getData();
+    $this->updateAll(['last_login' => new DateTime()], ['id' => $user->id]);
+}
+```
+
+Then call it in your login action:
+
+```php
+// src/Controller/UsersController.php
+
+public function login()
+{
+    $result = $this->Authentication->getResult();
+    if ($result && $result->isValid()) {
+        $this->fetchTable('Users')->loginUpdate($result);
+        $this->Flash->success(__('You are now logged in.'));
+
+        return $this->redirect($this->Authentication->getLoginRedirect() ?? '/');
+    }
+    // ... rest of login logic
+}
+```
+
+## Next Steps
+
+After completing the setup above:
+
+1. ✅ Official plugin is now configured
+2. 👥 Complete Step 7: Set up roles - See [Authorization.md#roles](Authorization.md#roles)
+3. 📄 Complete Step 7: Configure `auth_acl.ini` - See [Authorization.md](Authorization.md)
+4. 🧪 Test your authorization rules
+
+## Additional Resources
+
+- **📖 Official Authorization Docs:** [book.cakephp.org/authorization/2](https://book.cakephp.org/authorization/2/en/index.html)
+- **🔧 TinyAuth Authorization:** [Authorization.md](Authorization.md)
+- **❓ Troubleshooting:** See [docs/README.md](README.md#troubleshooting)
 

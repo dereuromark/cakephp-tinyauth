@@ -116,18 +116,29 @@ echo $this->AuthUser->postLink('Delete', ['action' => 'delete', $id], ['confirm'
 
 ### Required Dependencies
 
-TinyAuth acts as a wrapper around CakePHP's official [Authentication](https://github.com/cakephp/authentication) and [Authorization](https://github.com/cakephp/authorization) plugins.
-You need to install them first, depending on which part you want to use:
+**IMPORTANT:** TinyAuth is a wrapper plugin that extends CakePHP's official plugins. You must understand them first:
+
+#### 📦 Official CakePHP Plugins
+
+| Plugin | Purpose | Documentation |
+|--------|---------|---------------|
+| **[cakephp/authentication](https://github.com/cakephp/authentication)** | Handles user authentication (login, sessions, etc.) | [📖 Official Docs](https://book.cakephp.org/authentication/3/en/index.html) |
+| **[cakephp/authorization](https://github.com/cakephp/authorization)** | Handles user authorization (permissions, access control) | [📖 Official Docs](https://book.cakephp.org/authorization/2/en/index.html) |
 
 ```bash
-# Required for authentication features
+# Install for authentication features (login, sessions)
 composer require cakephp/authentication
 
-# Required for authorization features
+# Install for authorization features (roles, ACL)
 composer require cakephp/authorization
 ```
 
-Then install TinyAuth:
+**Note:** You only need to install the plugin(s) for the features you plan to use.
+The AuthUser component and helper can work standalone without requiring the official plugins.
+
+#### 📦 Install TinyAuth
+
+After installing the required official plugin(s), install TinyAuth:
 
 ```bash
 composer require dereuromark/cakephp-tinyauth
@@ -138,8 +149,6 @@ Finally, load the plugin:
 ```sh
 bin/cake plugin load TinyAuth
 ```
-
-**Note:** The AuthUser component and helper can work standalone without requiring the official plugins. They work with any authentication solution that sets an identity in the request.
 
 ## Docs
 For setup and usage see [Docs](/docs).

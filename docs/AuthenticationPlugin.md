@@ -1,182 +1,281 @@
-### Authentication plugin support
+# TinyAuth with CakePHP Authentication Plugin
 
-Support for [Authentication plugin](https://github.com/cakephp/authentication) usage.
+This guide shows how to integrate TinyAuth with the official [CakePHP Authentication plugin](https://github.com/cakephp/authentication).
 
-## Installation
+## Overview
 
-First, you need to install the official CakePHP Authentication plugin:
+TinyAuth's Authentication component wraps the official plugin and adds INI-based configuration for public actions. This page covers the **official plugin setup** required before using TinyAuth features.
+
+## Step 1: Install the Official Plugin
 
 ```bash
 composer require cakephp/authentication
 ```
 
-See the [official Authentication plugin documentation](https://book.cakephp.org/authentication/2/en/index.html) for more details.
+## Step 2: Learn the Official Plugin
 
-## Setup
+**📖 Official Documentation:** [book.cakephp.org/authentication/3](https://book.cakephp.org/authentication/3/en/index.html)
 
-Instead of the core Auth component you load the Authentication component:
+GitHub Repository: [github.com/cakephp/authentication](https://github.com/cakephp/authentication)
+
+## Step 3: Implement Authentication Interface
+
+Your `Application` class must implement `AuthenticationServiceProviderInterface`:
 
 ```php
-$this->loadComponent('TinyAuth.Authentication', [
-    ...
+// src/Application.php
+use Authentication\AuthenticationServiceProviderInterface;
+use Authentication\AuthenticationServiceInterface;
+use Psr\Http\Message\ServerRequestInterface;
+
+class Application extends BaseApplication implements AuthenticationServiceProviderInterface
+{
+    // ...
+}
+```
+
+## Step 4: Configure Middleware
+
+Add the authentication middleware to your `Application` class:
+
+```php
+// src/Application.php
+use Authentication\Middleware\AuthenticationMiddleware;
+
+public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
+{
+    // ... other middleware
+
+    $middlewareQueue->add(new AuthenticationMiddleware($this));
+
+    // ... other middleware
+
+    return $middlewareQueue;
+}
+```
+
+**📖 See:** [Middleware Setup](https://book.cakephp.org/authentication/3/en/middleware.html) in official docs
+
+## Step 5: Configure Authentication Service
+
+Implement `getAuthenticationService()` in your `Application` class to configure how users authenticate:
+
+```php
+// src/Application.php
+use Authentication\AuthenticationService;
+use Authentication\AuthenticationServiceInterface;
+use Psr\Http\Message\ServerRequestInterface;
+
+public function getAuthenticationService(ServerRequestInterface $request): AuthenticationServiceInterface
+{
+    $service = new AuthenticationService();
+
+    // Configure redirect for unauthenticated users
+    $service->setConfig([
+        'unauthenticatedRedirect' => '/users/login',
+        'queryParam' => 'redirect',
+    ]);
+
+    // Load authenticators - Session should be first
+    $service->loadAuthenticator('Authentication.Session');
+    $service->loadAuthenticator('Authentication.Form', [
+        'fields' => [
+            'username' => 'email',
+            'password' => 'password',
+        ],
+        'loginUrl' => '/users/login',
+    ]);
+
+    // Load identifiers
+    $service->loadIdentifier('Authentication.Password', [
+        'fields' => [
+            'username' => 'email',
+            'password' => 'password',
+        ],
+    ]);
+
+    return $service;
+}
+```
+
+**📖 See:** [Authentication Service](https://book.cakephp.org/authentication/3/en/authentication-service.html) in official docs
+
+## Step 6: Load TinyAuth Component
+
+Now load the TinyAuth Authentication component in your controller:
+
+```php
+// src/Controller/AppController.php
+
+public function initialize(): void
+{
+    parent::initialize();
+
+    $this->loadComponent('TinyAuth.Authentication', [
+        // TinyAuth-specific options (see Authentication.md)
+    ]);
+}
+```
+
+## Step 7: Configure INI File
+
+Create `config/auth_allow.ini` to define public actions. See [Authentication.md](Authentication.md) for details.
+
+## TinyAuth-Specific Enhancements
+
+TinyAuth provides optional enhanced components you can use instead of the official ones:
+
+### Enhanced Session Authenticator
+
+**`TinyAuth.PrimaryKeySession`** (extends `Authentication.Session`):
+- Stores only the user ID in session (not full user data)
+- Fetches fresh user data from database on each request
+- Keeps user data always up to date without re-login
+
+**Usage:**
+```php
+$service->loadAuthenticator('TinyAuth.PrimaryKeySession');
+```
+
+**📖 See:** [Session Authenticator](https://book.cakephp.org/authentication/3/en/authenticators.html#session) in official docs for base functionality
+
+### Enhanced Redirect Handlers
+
+TinyAuth provides redirect handlers with flash message support:
+
+**`TinyAuth.ForbiddenCakeRedirect`** - Works with CakePHP routing:
+```php
+$service->setConfig([
+    'unauthenticatedRedirect' => ['controller' => 'Users', 'action' => 'login'],
+    'unauthorizedHandler' => [
+        'className' => 'TinyAuth.ForbiddenCakeRedirect',
+        'unauthorizedMessage' => 'Please login to continue.',
+    ],
 ]);
 ```
 
-Make sure you load the middleware in your `Application` class:
+**`TinyAuth.ForbiddenRedirect`** - Uses direct URLs:
 ```php
-use Authentication\Middleware\AuthenticationMiddleware;
-
-// in Application::middleware()
-$middlewareQueue->add(new AuthenticationMiddleware($this));
+$service->setConfig([
+    'unauthenticatedRedirect' => '/users/login',
+    'unauthorizedHandler' => [
+        'className' => 'TinyAuth.ForbiddenRedirect',
+        'unauthorizedMessage' => 'Access denied.',
+    ],
+]);
 ```
 
-This plugin ships with optional enhanced components:
+**Features:**
+- Automatically sets flash error messages
+- Skips JSON/XML requests (throws exception instead)
+- Preserves target URL in query parameter for post-login redirect
 
-### Session Authenticator
+You can use the official handlers instead if you prefer.
 
-- **PrimaryKeySession** (extending `Authentication.Session`): Stores only the ID in session and fetches the rest from DB on each request, keeping data always up to date
+## Complete Example with TinyAuth Enhancements
 
-### Unauthorized Handlers
-
-TinyAuth provides enhanced redirect handlers for authentication failures:
-
-- **TinyAuth.ForbiddenCakeRedirect**: Works with CakePHP routing and allows setting an `unauthorizedMessage` as flash message
-- **TinyAuth.ForbiddenRedirect**: Standard URL-based redirect with flash message support
-
-Both handlers:
-- Automatically set flash error messages for unauthorized access
-- Skip JSON/XML requests (throw exception instead of redirecting)
-- Preserve the target URL in query parameter for redirect after login
-
-You can, of course, stick to the official ones as well.
-
-Now let's set up `getAuthenticationService()` and make sure to load all needed Authenticators, e.g.:
+Here's a complete example using TinyAuth's enhanced authenticator and handlers:
 
 ```php
-    /**
-     * @param \Psr\Http\Message\ServerRequestInterface $request Request
-     *
-     * @return \Authentication\AuthenticationServiceInterface
-     */
-    public function getAuthenticationService(ServerRequestInterface $request): AuthenticationServiceInterface
-    {
-        $service = new AuthenticationService();
+// src/Application.php
+use Authentication\AuthenticationService;
+use Authentication\AuthenticationServiceInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Cake\Routing\Router;
 
-        // Define where users should be redirected to when they are not authenticated
-        $service->setConfig([
-            'unauthenticatedRedirect' => Router::url([
-                'prefix' => false,
-                'plugin' => false,
-                'controller' => 'Account',
-                'action' => 'login',
-            ]),
-            'queryParam' => 'redirect',
-        ]);
+public function getAuthenticationService(ServerRequestInterface $request): AuthenticationServiceInterface
+{
+    $service = new AuthenticationService();
 
-        $fields = [
-            AbstractIdentifier::CREDENTIAL_USERNAME => 'email',
-            AbstractIdentifier::CREDENTIAL_PASSWORD => 'password',
-        ];
-        $passwordIdentifier = [
-            'Authentication.Password' => [
-                'fields' => $fields,
-                'resolver' => [
-                    'className' => 'Authentication.Orm',
-                    'finder' => 'active',
-                ],
-            ],
-        ];
+    // Configure redirects with TinyAuth enhanced handler
+    $service->setConfig([
+        'unauthenticatedRedirect' => Router::url([
+            'prefix' => false,
+            'plugin' => false,
+            'controller' => 'Users',
+            'action' => 'login',
+        ]),
+        'queryParam' => 'redirect',
+    ]);
 
-        // Load the authenticators. Session should be first.
-        $service->loadAuthenticator('TinyAuth.PrimaryKeySession', [
-            'identifier' => [
-                'Authentication.Token' => [
-                    'tokenField' => 'id',
-                    'dataField' => 'key',
-                    'resolver' => [
-                        'className' => 'Authentication.Orm',
-                        'finder' => 'active',
-                    ],
-                ],
-            ],
-            'urlChecker' => 'Authentication.CakeRouter',
-        ]);
-        $service->loadAuthenticator('Authentication.Form', [
-            'identifier' => $passwordIdentifier,
-            'fields' => $fields,
-            'urlChecker' => 'Authentication.CakeRouter',
-            'loginUrl' => [
-                'prefix' => false,
-                'plugin' => false,
-                'controller' => 'Account',
-                'action' => 'login',
-            ],
-        ]);
-        $service->loadAuthenticator('Authentication.Cookie', [
-            'identifier' => $passwordIdentifier,
-            'rememberMeField' => 'remember_me',
-            'fields' => $fields,
-            'urlChecker' => 'Authentication.CakeRouter',
-            'loginUrl' => [
-                'prefix' => false,
-                'plugin' => false,
-                'controller' => 'Account',
-                'action' => 'login',
-            ],
-        ]);
+    $fields = [
+        'username' => 'email',
+        'password' => 'password',
+    ];
 
-        // This is a one click token login as optional addition
-        $service->loadAuthenticator('Tools.LoginLink', [
-            'identifier' => [
-                'Tools.LoginLink' => [
-                    'resolver' => [
-                        'className' => 'Authentication.Orm',
-                        'finder' => 'active',
-                    ],
-                    'preCallback' => function (int $id) {
-                        TableRegistry::getTableLocator()->get('Users')->confirmEmail($id);
-                    },
-                ],
-            ],
-            'urlChecker' => 'Authentication.CakeRouter',
-            'loginUrl' => [
-                'prefix' => false,
-                'plugin' => false,
-                'controller' => 'Account',
-                'action' => 'login',
-            ],
-        ]);
+    // Use TinyAuth's enhanced PrimaryKeySession authenticator
+    $service->loadAuthenticator('TinyAuth.PrimaryKeySession', [
+        'identify' => true,
+        'fields' => $fields,
+    ]);
 
-        return $service;
-    }
+    // Standard Form authenticator for login
+    $service->loadAuthenticator('Authentication.Form', [
+        'fields' => $fields,
+        'loginUrl' => Router::url([
+            'controller' => 'Users',
+            'action' => 'login',
+        ]),
+    ]);
+
+    // Optional: Cookie for "remember me" functionality
+    $service->loadAuthenticator('Authentication.Cookie', [
+        'fields' => $fields,
+        'rememberMeField' => 'remember_me',
+    ]);
+
+    // Load identifier
+    $service->loadIdentifier('Authentication.Password', [
+        'fields' => $fields,
+        'resolver' => [
+            'className' => 'Authentication.Orm',
+            // Optional: Use custom finder
+            // 'finder' => 'active',
+        ],
+    ]);
+
+    return $service;
+}
 ```
 
+## Advanced Topics
 
-You can always get the identity result (User entity) from the AuthUser component and helper:
+### Session Caching with PrimaryKeySession
+
+When using `PrimaryKeySession` authenticator (which fetches user data from DB on each request), consider adding caching:
+
 ```php
-$this->AuthUser->identity();
-```
-
-
-### Caching
-Especially when you use the PrimaryKeySession authenticator and always pulling the live data
-from DB, you might want to consider adding a short-lived cache in between.
-The authenticator supports this directly:
-
-In this case you need to manually invalidate the session cache every time a user modifies some of their
-data that is part of the session (e.g. username, email, roles, birthday, ...).
-For that you can use the following after the change was successful:
-```php
+// After user updates their profile data
 use TinyAuth\Utility\SessionCache;
 
 SessionCache::delete($userId);
 ```
-This will force the session to be pulled (the ID), and the cache refilled with up-to-date data.
 
+This invalidates the cache so fresh data is fetched on the next request.
 
----
+### Accessing User Identity
 
+Get the authenticated user from the AuthUser component or helper:
 
-For all the rest, follow the plugin's documentation.
+```php
+// In controller
+$user = $this->AuthUser->identity();
+$userId = $this->AuthUser->id();
 
-Then you use the [Authentication documentation](Authentication.md) to fill your INI config file.
+// In template
+$user = $this->AuthUser->identity();
+```
+
+## Next Steps
+
+After completing the setup above:
+
+1. ✅ Official plugin is now configured (Steps 1-5 complete)
+2. 📄 Complete Step 7: Configure `auth_allow.ini` - See [Authentication.md](Authentication.md)
+3. 🔐 Optionally add authorization - See [AuthorizationPlugin.md](AuthorizationPlugin.md)
+
+## Additional Resources
+
+- **📖 Official Authentication Docs:** [book.cakephp.org/authentication/3](https://book.cakephp.org/authentication/3/en/index.html)
+- **🔧 TinyAuth Authentication:** [Authentication.md](Authentication.md)
+- **❓ Troubleshooting:** See [docs/README.md](README.md#troubleshooting)

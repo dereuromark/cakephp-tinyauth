@@ -1,10 +1,37 @@
 # TinyAuth Authorization
 The fast and easy way for user authorization in CakePHP applications.
 
-**IMPORTANT:** This component wraps the official CakePHP Authorization plugin. You must install it first - see [AuthorizationPlugin.md](AuthorizationPlugin.md).
+## Prerequisites
 
-Enable TinyAuth Authorization if you want to add instant (and easy) INI-based role
-based access control (RBAC) to your application.
+**IMPORTANT:** This component wraps the official CakePHP Authorization plugin.
+You **must** install and understand it first:
+
+### Required Steps
+
+1. **Install the official plugin:**
+   ```bash
+   composer require cakephp/authorization
+   ```
+
+2. **Configure middleware and authorization service:**
+   See [AuthorizationPlugin.md](AuthorizationPlugin.md) for complete TinyAuth-specific setup instructions.
+
+   Also refer to the [official CakePHP Authorization documentation](https://book.cakephp.org/authorization/2/en/index.html) for:
+   - Middleware configuration
+   - Authorization service setup
+   - Policy basics
+   - Request authorization
+
+3. **Set up roles** (see [Roles](#roles) section below)
+
+4. **Load TinyAuth component** (see [Enabling](#enabling) section below)
+
+### What TinyAuth Authorization Adds
+
+Once the official plugin is configured, TinyAuth Authorization Component adds:
+- **INI-based role permissions** - Define role-based access in `auth_acl.ini` instead of policies
+- **Simple RBAC** - Controller-action level permissions based on user roles
+- **Quick setup** - Get role-based authorization working in minutes
 
 ## Basic Features
 - Single or multi role
@@ -20,23 +47,21 @@ frontend yourself)
 
 ## Enabling
 
-**IMPORTANT:** You must first install and configure the official Authorization plugin. See [AuthorizationPlugin.md](AuthorizationPlugin.md) for complete setup instructions.
-
-Load the Authorization component in your controller:
+Load the Authorization component in your controller (after completing the prerequisites above):
 
 ```php
-// src/Controller/AppController
+// src/Controller/AppController.php
 
-public function initialize() {
+public function initialize(): void {
     parent::initialize();
 
     $this->loadComponent('TinyAuth.Authorization', [
-        ...
+        // Configuration options (see Configuration section below)
     ]);
 }
 ```
 
-The TinyAuth.Authorization component extends the official `cakephp/authorization` plugin and adds INI-based access control on top of it.
+That's it! The component will now use your `auth_acl.ini` file for role-based authorization.
 
 
 ## Roles
