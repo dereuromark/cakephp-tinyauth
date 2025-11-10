@@ -8,10 +8,10 @@ TinyAuth provides simple, INI-based configuration for authentication and authori
 
 Understanding the difference is crucial:
 
-| Concept | Question | When | Purpose |
-|---------|----------|------|---------|
-| **Authentication** | "Who are you?" | First | Determines if a user is logged in |
-| **Authorization** | "What can you do?" | After authentication | Determines if a user can access a specific action |
+| Concept            | Question           | When                 | Purpose                                           |
+|--------------------|--------------------|----------------------|---------------------------------------------------|
+| **Authentication** | "Who are you?"     | First                | Determines if a user is logged in                 |
+| **Authorization**  | "What can you do?" | After authentication | Determines if a user can access a specific action |
 
 **Authentication** defines public actions via whitelist. Any non-whitelisted action triggers the login process.
 
@@ -21,10 +21,10 @@ Understanding the difference is crucial:
 
 **IMPORTANT:** TinyAuth wraps CakePHP's official Authentication and Authorization plugins. Before using TinyAuth features, you **must** install and configure the official plugins:
 
-| Feature | Required Plugin | Setup Guide |
-|---------|----------------|-------------|
-| **Authentication** (login/logout) | [cakephp/authentication](https://github.com/cakephp/authentication) | [AuthenticationPlugin.md](AuthenticationPlugin.md) + [Official Docs](https://book.cakephp.org/authentication/3/en/index.html) |
-| **Authorization** (roles/ACL) | [cakephp/authorization](https://github.com/cakephp/authorization) | [AuthorizationPlugin.md](AuthorizationPlugin.md) + [Official Docs](https://book.cakephp.org/authorization/2/en/index.html) |
+| Feature                           | Required Plugin                                                     | Setup Guide                                                                                                             |
+|-----------------------------------|---------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------|
+| **Authentication** (login/logout) | [cakephp/authentication](https://github.com/cakephp/authentication) | [Authentication.md](AuthenticationPlugin.md) + [Official Docs](https://book.cakephp.org/authentication/3/en/index.html) |
+| **Authorization** (roles/ACL)     | [cakephp/authorization](https://github.com/cakephp/authorization)   | [Authorization.md](AuthorizationPlugin.md) + [Official Docs](https://book.cakephp.org/authorization/2/en/index.html)    |
 
 ```bash
 # For authentication features
@@ -38,12 +38,11 @@ composer require cakephp/authorization
 
 ## Getting Started
 
-1. **Install Prerequisites** - Install the official plugin(s) you need (see above)
-2. **Configure Middleware** - Set up middleware in your Application class (see plugin setup guides)
-3. **Choose Your Feature** - Pick what you need:
-   - [Authentication](Authentication.md) - INI-based public action whitelisting
-   - [Authorization](Authorization.md) - INI-based role permissions (ACL)
-   - [AuthUser](AuthUser.md) - Component/helper for role checks (works standalone)
+Each guide includes complete setup instructions for both the official plugin AND TinyAuth features:
+
+1. **[Authentication](Authentication.md)** - Complete guide from official plugin setup to INI-based public action whitelisting
+2. **[Authorization](Authorization.md)** - Complete guide from official plugin setup to INI-based role permissions (ACL)
+3. **[AuthUser](AuthUser.md)** - Component/helper for role checks (works standalone)
 
 ## DebugKit Panel
 You can activate an "Auth" DebugKit panel to have useful insights per URL.
