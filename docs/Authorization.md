@@ -34,16 +34,16 @@ Before using TinyAuth features, you must set up the official CakePHP Authorizati
 composer require cakephp/authorization
 ```
 
-**📖 Official Documentation:** [book.cakephp.org/authorization/2](https://book.cakephp.org/authorization/2/en/index.html)
+**📖 Official Documentation:** [book.cakephp.org/authorization/3](https://book.cakephp.org/authorization/3/en/index.html)
 
 **GitHub Repository:** [github.com/cakephp/authorization](https://github.com/cakephp/authorization)
 
 **Key Official Resources:**
-- [Getting Started](https://book.cakephp.org/authorization/2/en/getting-started.html) - Basic setup tutorial
-- [Policies](https://book.cakephp.org/authorization/2/en/policies.html) - Policy-based authorization
-- [Middleware](https://book.cakephp.org/authorization/2/en/middleware.html) - Authorization middleware setup
-- [Request Authorization](https://book.cakephp.org/authorization/2/en/request-authorization.html) - Controller-level authorization
-- [Policy Resolvers](https://book.cakephp.org/authorization/2/en/policy-resolvers.html) - How policies are found
+- [Getting Started](https://book.cakephp.org/authorization/3/en/getting-started.html) - Basic setup tutorial
+- [Policies](https://book.cakephp.org/authorization/3/en/policies.html) - Policy-based authorization
+- [Middleware](https://book.cakephp.org/authorization/3/en/middleware.html) - Authorization middleware setup
+- [Request Authorization](https://book.cakephp.org/authorization/3/en/request-authorization.html) - Controller-level authorization
+- [Policy Resolvers](https://book.cakephp.org/authorization/3/en/policy-resolvers.html) - How policies are found
 
 ## Step 2: Implement Authorization Interface
 
@@ -71,7 +71,7 @@ class Application extends BaseApplication
 }
 ```
 
-**📖 See:** [Getting Started](https://book.cakephp.org/authorization/2/en/getting-started.html) in official docs
+**📖 See:** [Getting Started](https://book.cakephp.org/authorization/3/en/getting-started.html) in official docs
 
 ## Step 3: Configure Middleware
 
@@ -104,7 +104,7 @@ public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
 }
 ```
 
-**📖 See:** [Middleware Setup](https://book.cakephp.org/authorization/2/en/middleware.html) in official docs
+**📖 See:** [Middleware Setup](https://book.cakephp.org/authorization/3/en/middleware.html) in official docs
 
 ## Step 4: Configure Authorization Service
 
@@ -131,7 +131,7 @@ public function getAuthorizationService(ServerRequestInterface $request): Author
 
 This configures the request policy that reads your `auth_acl.ini` file for role-based permissions.
 
-**📖 See:** [Authorization Service](https://book.cakephp.org/authorization/2/en/getting-started.html#authorization-service) in official docs
+**📖 See:** [Authorization Service](https://book.cakephp.org/authorization/3/en/getting-started.html#authorization-service) in official docs
 
 ---
 
@@ -720,6 +720,6 @@ By default INI files and the IniAdapter will be used. See [AuthorizationAdapter]
 
 # Additional Resources
 
-- **📖 Official Authorization Docs:** [book.cakephp.org/authorization/2](https://book.cakephp.org/authorization/2/en/index.html)
+- **📖 Official Authorization Docs:** [book.cakephp.org/authorization/3](https://book.cakephp.org/authorization/3/en/index.html)
 - **🔐 Authentication:** Set up authentication first - See [Authentication.md](Authentication.md)
 - **❓ Troubleshooting:** See [docs/README.md](README.md#troubleshooting)

@@ -21,7 +21,7 @@ public function initialize() {
 }
 ```
 
-See [AuthenticationPlugin.md](AuthenticationPlugin.md) and [AuthorizationPlugin.md](AuthorizationPlugin.md) for complete middleware setup instructions.
+See [Authentication.md](Authentication.md) and [Authorization.md](Authorization.md) for complete middleware setup instructions.
 
 ### auth_allow.ini
 ```ini

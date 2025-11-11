@@ -123,7 +123,7 @@ echo $this->AuthUser->postLink('Delete', ['action' => 'delete', $id], ['confirm'
 | Plugin                                                                  | Purpose                                                  | Documentation                                                               |
 |-------------------------------------------------------------------------|----------------------------------------------------------|-----------------------------------------------------------------------------|
 | **[cakephp/authentication](https://github.com/cakephp/authentication)** | Handles user authentication (login, sessions, etc.)      | [📖 Official Docs](https://book.cakephp.org/authentication/3/en/index.html) |
-| **[cakephp/authorization](https://github.com/cakephp/authorization)**   | Handles user authorization (permissions, access control) | [📖 Official Docs](https://book.cakephp.org/authorization/2/en/index.html)  |
+| **[cakephp/authorization](https://github.com/cakephp/authorization)**   | Handles user authorization (permissions, access control) | [📖 Official Docs](https://book.cakephp.org/authorization/3/en/index.html)  |
 
 ```bash
 # Install for authentication features (login, sessions)

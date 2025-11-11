@@ -23,8 +23,8 @@ Understanding the difference is crucial:
 
 | Feature                           | Required Plugin                                                     | Setup Guide                                                                                                             |
 |-----------------------------------|---------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------|
-| **Authentication** (login/logout) | [cakephp/authentication](https://github.com/cakephp/authentication) | [Authentication.md](AuthenticationPlugin.md) + [Official Docs](https://book.cakephp.org/authentication/3/en/index.html) |
-| **Authorization** (roles/ACL)     | [cakephp/authorization](https://github.com/cakephp/authorization)   | [Authorization.md](AuthorizationPlugin.md) + [Official Docs](https://book.cakephp.org/authorization/2/en/index.html)    |
+| **Authentication** (login/logout) | [cakephp/authentication](https://github.com/cakephp/authentication) | [Authentication.md](Authentication.md) + [Official Docs](https://book.cakephp.org/authentication/3/en/index.html) |
+| **Authorization** (roles/ACL)     | [cakephp/authorization](https://github.com/cakephp/authorization)   | [Authorization.md](Authorization.md) + [Official Docs](https://book.cakephp.org/authorization/3/en/index.html)    |
 
 ```bash
 # For authentication features
@@ -191,7 +191,7 @@ Consider using the official plugins' advanced features (alongside TinyAuth) when
    $this->loadComponent('TinyAuth.Authorization', [...]);
    ```
 
-3. Set up middleware in your `Application` class (see [AuthenticationPlugin.md](AuthenticationPlugin.md) and [AuthorizationPlugin.md](AuthorizationPlugin.md))
+3. Set up middleware in your `Application` class (see [Authentication.md](Authentication.md) and [Authorization.md](Authorization.md))
 
 4. Your INI files (`auth_allow.ini` and `auth_acl.ini`) continue to work as before
 
