@@ -494,9 +494,7 @@ trait AclTrait {
 	protected function _getRolesFromDb(string $rolesTableKey): array {
 		try {
 			$rolesTable = TableRegistry::getTableLocator()->get($rolesTableKey);
-			$result = $rolesTable->find()->formatResults(function (ResultSetInterface $results) {
-				return $results->combine($this->getConfig('aliasColumn'), 'id');
-			});
+			$result = $rolesTable->find()->all()->combineBy($this->getConfig('aliasColumn'), 'id');
 		} catch (RuntimeException $e) {
 			throw new CakeException('Invalid roles config: DB table `' . $rolesTableKey . '` cannot be found/accessed (`' . $e->getMessage() . '`).', null, $e);
 		}
