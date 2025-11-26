@@ -17,13 +17,13 @@ use TinyAuth\Utility\TinyAuth;
  * have entries in the ACL INI file (default: config/auth_acl.ini).
  *
  * Usage examples:
- * - `bin/cake tiny_auth_sync user,admin` - Add all controllers with access for user and admin roles
- * - `bin/cake tiny_auth_sync "*" -p all` - Add all controllers (including plugins) with access for all roles
- * - `bin/cake tiny_auth_sync user -d` - Dry run, shows what would be added without modifying files
+ * - `bin/cake tiny_auth sync user,admin` - Add all controllers with access for user and admin roles
+ * - `bin/cake tiny_auth sync "*" -p all` - Add all controllers (including plugins) with access for all roles
+ * - `bin/cake tiny_auth sync user -d` - Dry run, shows what would be added without modifying files
  *
  * @see config/auth_acl.ini - The file that gets modified by this command
  */
-class TinyAuthSyncCommand extends Command {
+class SyncCommand extends Command {
 
 	/**
 	 * @inheritDoc
@@ -88,13 +88,13 @@ class TinyAuthSyncCommand extends Command {
 			. '  3. Preserve existing entries (never overwrites)' . PHP_EOL
 			. PHP_EOL
 			. 'Examples:' . PHP_EOL
-			. '  bin/cake tiny_auth_sync user,admin' . PHP_EOL
+			. '  bin/cake tiny_auth sync user,admin' . PHP_EOL
 			. '    → Adds all missing controllers with: * = user, admin' . PHP_EOL
 			. PHP_EOL
-			. '  bin/cake tiny_auth_sync "*" -p all' . PHP_EOL
+			. '  bin/cake tiny_auth sync "*" -p all' . PHP_EOL
 			. '    → Adds all missing controllers (including plugins) with: * = *' . PHP_EOL
 			. PHP_EOL
-			. '  bin/cake tiny_auth_sync admin -d' . PHP_EOL
+			. '  bin/cake tiny_auth sync admin -d' . PHP_EOL
 			. '    → Dry run - shows what would be added without modifying files',
 		)->addArgument('roles', [
 			'help' => 'Role names, comma separated, e.g. `user,admin`.' . ($roles ? PHP_EOL . 'Available roles: ' . implode(', ', $roles) . '.' : ''),

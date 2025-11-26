@@ -594,7 +594,7 @@ If you need to build a navigation that includes publicly accessible actions, you
 The plugin offers a convenience CLI command to sync ACL for any new controller. It will automatically skip controllers that are whitelisted as public (non authenticated).
 
 ```
-bin/cake tiny_auth_sync {your default roles, comma separated}
+bin/cake tiny_auth sync {your default roles, comma separated}
 ```
 
 This will then add any missing controller with `* = ...` for all actions and you can then manually fine-tune.
@@ -606,7 +606,7 @@ This will then add any missing controller with `* = ...` for all actions and you
 Add any role to any command and action:
 
 ```
-bin/cake tiny_auth_add {Controller} {Action} {roles, comma separated}
+bin/cake tiny_auth add {Controller} {Action} {roles, comma separated}
 ```
 
 It will skip if the roles are already present for this controller and action.

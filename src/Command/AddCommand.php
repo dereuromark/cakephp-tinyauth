@@ -17,13 +17,13 @@ use TinyAuth\Utility\TinyAuth;
  * or updating specific controller/action permissions for given roles.
  *
  * Usage examples:
- * - `bin/cake tiny_auth_add Articles index user,admin` - Allow users and admins to access Articles::index
- * - `bin/cake tiny_auth_add Articles` - Interactive mode, prompts for action and roles
- * - `bin/cake tiny_auth_add Articles "*" "*"` - Allow all roles to access all Articles actions
+ * - `bin/cake tiny_auth add Articles index user,admin` - Allow users and admins to access Articles::index
+ * - `bin/cake tiny_auth add Articles` - Interactive mode, prompts for action and roles
+ * - `bin/cake tiny_auth add Articles "*" "*"` - Allow all roles to access all Articles actions
  *
  * @see config/auth_acl.ini - The file that gets modified by this command
  */
-class TinyAuthAddCommand extends Command {
+class AddCommand extends Command {
 
 	/**
 	 * @inheritDoc
@@ -96,13 +96,13 @@ class TinyAuthAddCommand extends Command {
 			. 'This command modifies: config/auth_acl.ini (or custom path via TinyAuth.aclFilePath)' . PHP_EOL
 			. PHP_EOL
 			. 'Examples:' . PHP_EOL
-			. '  bin/cake tiny_auth_add Articles index user,admin' . PHP_EOL
+			. '  bin/cake tiny_auth add Articles index user,admin' . PHP_EOL
 			. '    → Adds: [Articles] index = user, admin' . PHP_EOL
 			. PHP_EOL
-			. '  bin/cake tiny_auth_add Articles "*" admin' . PHP_EOL
+			. '  bin/cake tiny_auth add Articles "*" admin' . PHP_EOL
 			. '    → Adds: [Articles] * = admin' . PHP_EOL
 			. PHP_EOL
-			. '  bin/cake tiny_auth_add MyPlugin.Admin/Articles edit admin' . PHP_EOL
+			. '  bin/cake tiny_auth add MyPlugin.Admin/Articles edit admin' . PHP_EOL
 			. '    → Adds: [MyPlugin.Admin/Articles] edit = admin',
 		)->addArgument('controller', [
 			'help' => 'Controller name (Plugin.Prefix/Name) without Controller suffix.',

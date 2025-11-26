@@ -13,7 +13,7 @@ use TinyAuth\Utility\Utility;
 /**
  * Helper class for adding specific ACL entries to the INI configuration file.
  *
- * Used by TinyAuthAddCommand to modify auth_acl.ini file with new or updated
+ * Used by AddCommand to modify auth_acl.ini file with new or updated
  * controller/action/role mappings.
  *
  * @internal

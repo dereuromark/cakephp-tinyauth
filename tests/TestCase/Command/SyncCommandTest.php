@@ -8,7 +8,7 @@ use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
 use TinyAuth\Filesystem\Folder;
 
-class TinyAuthSyncCommandTest extends TestCase {
+class SyncCommandTest extends TestCase {
 
 	use ConsoleIntegrationTestTrait;
 
@@ -40,7 +40,7 @@ class TinyAuthSyncCommandTest extends TestCase {
 		$folder = new Folder();
 		$folder->copy('/tmp' . DS . 'src' . DS . 'Controller' . DS, ['from' => TESTS . 'test_app' . DS . 'Controller' . DS]);
 
-		$this->exec('tiny_auth_sync foo,bar -d -v');
+		$this->exec('tiny_auth sync foo,bar -d -v');
 
 		$this->assertExitCode(Command::CODE_SUCCESS);
 		$this->assertOutputContains('index = admin');
