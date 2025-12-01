@@ -4,6 +4,7 @@ namespace TinyAuth\Auth;
 
 use ArrayAccess;
 use Cake\Utility\Hash;
+use Countable;
 use InvalidArgumentException;
 use Traversable;
 
@@ -184,7 +185,7 @@ trait AuthUserTrait {
 		if ($identity instanceof Traversable) {
 			return iterator_to_array($identity);
 		}
-		if (!$identity instanceof \Countable) {
+		if (!$identity instanceof Countable) {
 			throw new InvalidArgumentException('You cannot use a pure ArrayAccess object as identity. Use Entity or ArrayObject at least.');
 		}
 
