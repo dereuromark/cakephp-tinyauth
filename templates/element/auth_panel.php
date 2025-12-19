@@ -9,9 +9,10 @@
  * @var bool[] $access
  * @var string $path;
  * @var array<string, mixed> $config
- * @var \Authorization\Identity|\Authentication\Identity|null $identity
- * @var \Authentication\Authenticator\AuthenticatorInterface|null $authenticationProvider
- * @var \Authentication\Identifier\IdentifierInterface|null $identificationProvider
+ * @var array|null $identity
+ * @var string|null $identityClass
+ * @var string|null $authenticationProvider
+ * @var string|null $identificationProvider
  */
 
 use Cake\Error\Debugger;
@@ -67,12 +68,12 @@ if (!isset($isPublic)) {
 
 				<?php if ($authenticationProvider) {
 					echo '<p>';
-					echo 'Authentication provider used: ' . get_class($authenticationProvider);
+					echo 'Authentication provider used: ' . h($authenticationProvider);
 					echo '</p>';
 				} ?>
 				<?php if ($identificationProvider) {
 					echo '<p>';
-					echo 'Identification provider used: ' . get_class($identificationProvider);
+					echo 'Identification provider used: ' . h($identificationProvider);
 					echo '</p>';
 				} ?>
 
@@ -128,12 +129,13 @@ if (!isset($isPublic)) {
 	<?php if ($identity) { ?>
 	<h2>Identity</h2>
 		<?php
-		echo '<h4>' . get_class($identity) . '</h4>';
+		if (!empty($identityClass)) {
+			echo '<h4>' . h($identityClass) . '</h4>';
+		}
 		?>
 
 		<?php
-		$user = $identity->getOriginalData();
-		echo Debugger::exportVar($user);
+		echo Debugger::exportVar($identity);
 		?>
 	<?php } ?>
 

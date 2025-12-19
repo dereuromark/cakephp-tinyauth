@@ -103,12 +103,15 @@ class AuthPanel extends DebugPanel {
 		$data['config'] = $authUserComponent->getConfig();
 		$data['access'] = $access;
 
-		$data['identity'] = $request->getAttribute('identity');
+		$identity = $request->getAttribute('identity');
+		// Store as array to avoid serialization issues with PDO/ORM connections
+		$data['identity'] = $identity ? $identity->getOriginalData() : null;
+		$data['identityClass'] = $identity ? get_class($identity) : null;
 
 		/** @var \Authentication\AuthenticationService|null $auth */
 		$auth = $request->getAttribute('authentication');
-		$data['authenticationProvider'] = $auth ? $auth->getAuthenticationProvider() : null;
-		$data['identificationProvider'] = $auth ? $auth->getIdentificationProvider() : null;
+		$data['authenticationProvider'] = $auth?->getAuthenticationProvider() ? get_class($auth->getAuthenticationProvider()) : null;
+		$data['identificationProvider'] = $auth?->getIdentificationProvider() ? get_class($auth->getIdentificationProvider()) : null;
 
 		$this->_data = $data;
 	}
