@@ -184,7 +184,7 @@ class AuthenticationComponentTest extends TestCase {
 			->onlyMethods(['isAction'])
 			->getMock();
 
-		$controller->expects($this->any())->method('isAction')->willReturn(true);
+		$controller->method('isAction')->willReturn(true);
 
 		return $controller;
 	}
