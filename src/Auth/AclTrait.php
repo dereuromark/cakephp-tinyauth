@@ -420,10 +420,13 @@ trait AclTrait {
 	 * Constructs an ACL INI section key from a given Request.
 	 *
 	 * @param array $params The request params
-	 * @return string Hash with named keys for controller, plugin and prefix
+	 * @return string|null Hash with named keys for controller, plugin and prefix
 	 */
-	protected function _constructIniKey($params) {
-		$res = $params['controller'];
+	protected function _constructIniKey($params): ?string {
+		$res = $params['controller'] ?? null;
+		if ($res === null) {
+			return null;
+		}
 		if (!empty($params['prefix'])) {
 			$res = $params['prefix'] . "/$res";
 		}
