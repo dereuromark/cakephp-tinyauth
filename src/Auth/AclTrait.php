@@ -176,7 +176,7 @@ trait AclTrait {
 		}
 
 		$iniKey = $this->_constructIniKey($params);
-		if (empty($this->_acl[$iniKey])) {
+		if ($iniKey === null || empty($this->_acl[$iniKey])) {
 			return false;
 		}
 
