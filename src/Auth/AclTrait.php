@@ -261,7 +261,7 @@ trait AclTrait {
 	 * @param string $prefix
 	 * @param array<string> $prefixMap
 	 * @param array<string, int|string> $userRoles
-	 * @param array<int> $availableRoles
+	 * @param array<string, int|string> $availableRoles
 	 *
 	 * @return bool
 	 */
