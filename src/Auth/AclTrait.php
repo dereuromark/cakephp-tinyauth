@@ -25,7 +25,7 @@ trait AclTrait {
 	protected $_acl;
 
 	/**
-	 * @var array<int>|null
+	 * @var array<int|string>|null
 	 */
 	protected $_roles;
 
@@ -444,7 +444,7 @@ trait AclTrait {
 	 * Configure first, tries database roles table next.
 	 *
 	 * @throws \Cake\Core\Exception\CakeException
-	 * @return array<string, int> List with all available roles
+	 * @return array<string, int|string> List with all available roles
 	 */
 	protected function _getAvailableRoles() {
 		if ($this->_roles !== null) {
