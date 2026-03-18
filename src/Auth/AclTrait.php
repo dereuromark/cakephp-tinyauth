@@ -492,19 +492,20 @@ trait AclTrait {
 	 *
 	 * @throws \Cake\Core\Exception\CakeException
 	 *
-	 * @return array<int>
+	 * @return array<int|string>
 	 */
 	protected function _getRolesFromDb(string $rolesTableKey): array {
 		try {
 			$rolesTable = TableRegistry::getTableLocator()->get($rolesTableKey);
-			$result = $rolesTable->find()->formatResults(function (ResultSetInterface $results) {
-				return $results->combine($this->getConfig('aliasColumn'), 'id');
+			$roleIdColumn = $this->getConfig('roleIdColumn') ?: 'id';
+			$result = $rolesTable->find()->formatResults(function (ResultSetInterface $results) use ($roleIdColumn) {
+				return $results->combine($this->getConfig('aliasColumn'), $roleIdColumn);
 			});
 		} catch (RuntimeException $e) {
 			throw new CakeException('Invalid roles config: DB table `' . $rolesTableKey . '` cannot be found/accessed (`' . $e->getMessage() . '`).', null, $e);
 		}
 
-		/** @var array<int> */
+		/** @var array<int|string> */
 		return $result->toArray();
 	}
 
