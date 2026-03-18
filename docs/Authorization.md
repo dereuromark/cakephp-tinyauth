@@ -407,6 +407,7 @@ TinyAuthorize adapter supports the following configuration options:
 | roleColumn            | string        | Name of column in user table holding role id (used for foreign key in users table in a single role per user setup, or in the pivot table on multi-roles setup) |
 | userColumn            | string        | Name of column in pivot table holding role id (only used in pivot table on multi-roles setup)                                                                  |
 | aliasColumn           | string        | Name of the column for the alias in the role table                                                                                                             |
+| roleIdColumn          | string        | Name of the primary key column in roles table. Defaults to `id`. Set to `uuid` for UUID-based role systems.                                                    |
 | idColumn              | string        | Name of the ID Column in users table                                                                                                                           |
 | rolesTable            | string        | Name of Configure key holding all available roles OR class name of roles database table                                                                        |
 | usersTable            | string        | Class name of the users table.                                                                                                                                 |

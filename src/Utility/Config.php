@@ -32,6 +32,7 @@ class Config {
 		'roleColumn' => 'role_id', // Foreign key for the Role ID in users table or in pivot table
 		'userColumn' => 'user_id', // Foreign key for the User id in pivot table. Only for multi-roles setup
 		'aliasColumn' => 'alias', // Name of column in roles table holding role alias/slug
+		'roleIdColumn' => 'id', // Primary key column in roles table (allows using 'uuid' for UUID-based systems)
 		'rolesTable' => 'Roles', // name of Configure key holding available roles OR class name of roles table
 		'usersTable' => 'Users', // name of the Users table
 		'pivotTable' => null, // Should be used in multi-roles setups
