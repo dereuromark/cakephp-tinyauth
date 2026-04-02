@@ -533,7 +533,7 @@ For any action that gets the user id passed, you can also ask:
 ```php
 $isMe = $this->AuthUser->isMe($userEntity->id);
 // This would be equal to
-$isMe = $this->AuthUser->id() == $userEntity->id;
+$isMe = $this->AuthUser->id() === $userEntity->id;
 ```
 
 ## AuthUser Helper
