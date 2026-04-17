@@ -23,6 +23,7 @@ class AuthPanelTest extends TestCase {
 	 * @var array
 	 */
 	protected array $config = [];
+
 	/**
 	 * @return void
 	 */
