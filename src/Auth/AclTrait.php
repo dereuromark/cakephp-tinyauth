@@ -315,11 +315,23 @@ trait AclTrait {
 		$authentication = $this->_getAuth();
 
 		foreach ($authentication as $rule) {
-			if ($params['plugin'] && $params['plugin'] !== $rule['plugin']) {
-				continue;
+			if (!empty($params['plugin'])) {
+				if ($params['plugin'] !== $rule['plugin']) {
+					continue;
+				}
+			} else {
+				if (!empty($rule['plugin'])) {
+					continue;
+				}
 			}
-			if (!empty($params['prefix']) && $params['prefix'] !== $rule['prefix']) {
-				continue;
+			if (!empty($params['prefix'])) {
+				if ($params['prefix'] !== $rule['prefix']) {
+					continue;
+				}
+			} else {
+				if (!empty($rule['prefix'])) {
+					continue;
+				}
 			}
 			if ($params['controller'] !== $rule['controller']) {
 				continue;

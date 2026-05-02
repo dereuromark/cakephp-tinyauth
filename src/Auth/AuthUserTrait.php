@@ -104,6 +104,14 @@ trait AuthUserTrait {
 	/**
 	 * Check if the current session has this role.
 	 *
+	 * Comparison is performed strictly after coercing both the expected role
+	 * and the provided role values to string. Without this normalization, the
+	 * loose `in_array()` semantics make e.g. `0 == 'admin'` evaluate to true
+	 * (PHP < 8) and mixed-type role IDs from different sources (DB ints vs.
+	 * Configure strings) would match by accident. String coercion preserves
+	 * cross-type equivalence between numeric strings and ints (the common
+	 * legacy case) while rejecting unrelated scalar/string juggling.
+	 *
 	 * @param mixed $expectedRole
 	 * @param mixed|null $providedRoles
 	 * @return bool Success
@@ -119,8 +127,23 @@ trait AuthUserTrait {
 			return false;
 		}
 
-		if (array_key_exists($expectedRole, $roles) || in_array($expectedRole, $roles)) {
-			return true;
+		if (!is_scalar($expectedRole)) {
+			return false;
+		}
+
+		$expectedRoleString = (string)$expectedRole;
+		foreach ($roles as $key => $role) {
+			// Only string keys are role aliases; auto-int keys would otherwise
+			// produce a false positive for `hasRole(0, [0 => 'admin'])`.
+			if (is_string($key) && $key === $expectedRoleString) {
+				return true;
+			}
+			if (!is_scalar($role)) {
+				continue;
+			}
+			if ((string)$role === $expectedRoleString) {
+				return true;
+			}
 		}
 
 		return false;

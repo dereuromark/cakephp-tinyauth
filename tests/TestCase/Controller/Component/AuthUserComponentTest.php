@@ -462,6 +462,27 @@ class AuthUserComponentTest extends TestCase {
 	}
 
 	/**
+	 * Regression: role lookup must not accept type-juggled false positives.
+	 *
+	 * Without normalization, `in_array(0, ['admin'])` evaluates to `true` on
+	 * PHP < 8 and `in_array('1abc', [1])` evaluates to `true` on any version
+	 * — both of which would let an unrelated value masquerade as a real role.
+	 *
+	 * @return void
+	 */
+	public function testHasRoleRejectsLooseTypeJugglingMatches() {
+		$this->assertFalse($this->AuthUser->hasRole(0, ['admin', 'moderator']));
+		$this->assertFalse($this->AuthUser->hasRole('1abc', [1, 2, 3]));
+		$this->assertFalse($this->AuthUser->hasRole('admin', [0, 1, 2]));
+		$this->assertFalse($this->AuthUser->hasRole(null, ['admin']));
+		$this->assertFalse($this->AuthUser->hasRole(true, ['admin']));
+
+		// Numeric-string / int equivalence is preserved on purpose.
+		$this->assertTrue($this->AuthUser->hasRole('2', [1, 2, 3]));
+		$this->assertTrue($this->AuthUser->hasRole(2, ['1', '2', '3']));
+	}
+
+	/**
 	 * @return void
 	 */
 	public function testHasRoles() {
