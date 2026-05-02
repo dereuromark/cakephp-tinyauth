@@ -100,6 +100,64 @@ class AuthenticationComponentTest extends TestCase {
 	}
 
 	/**
+	 * Regression: a rule scoped to a plugin must not match a request without one.
+	 *
+	 * `Extras.Offers = "!superPrivate", *` defines a plugin-scoped rule.
+	 * A request to non-plugin `Offers::view` previously matched it because
+	 * `_isPublic()` short-circuited the plugin guard when the request had none.
+	 *
+	 * @return void
+	 */
+	public function testIsPublicDoesNotMatchPluginRuleForNonPluginRequest() {
+		$request = new ServerRequest([
+			'params' => [
+				'controller' => 'Offers',
+				'action' => 'view',
+				'plugin' => null,
+				'_ext' => null,
+				'pass' => [],
+			],
+		]);
+		$controller = $this->getControllerMock($request);
+		$registry = new ComponentRegistry($controller);
+		$this->component = new AuthenticationComponent($registry, $this->componentConfig);
+
+		$result = $this->component->isPublic();
+		$this->assertFalse($result);
+	}
+
+	/**
+	 * Regression: a rule scoped to a prefix must not match a request without one.
+	 *
+	 * `Admin/Users = index` is prefix-scoped to `Admin`. A non-prefix request
+	 * to `Users::index` is already covered by the unprefixed `Users` rule, but
+	 * a non-prefix request to `Users::view` (which is allowed unprefixed too)
+	 * must not pull in the Admin-scoped rule. We exercise the inverse path by
+	 * requesting an action that is only allowed under the Admin prefix to make
+	 * sure the prefix-scoped rule does not leak to non-prefix requests.
+	 *
+	 * @return void
+	 */
+	public function testIsPublicDoesNotMatchPrefixRuleForNonPrefixRequest() {
+		$request = new ServerRequest([
+			'params' => [
+				'controller' => 'MyTest',
+				'action' => 'myPublic',
+				'plugin' => null,
+				'prefix' => null,
+				'_ext' => null,
+				'pass' => [],
+			],
+		]);
+		$controller = $this->getControllerMock($request);
+		$registry = new ComponentRegistry($controller);
+		$this->component = new AuthenticationComponent($registry, $this->componentConfig);
+
+		$result = $this->component->isPublic();
+		$this->assertFalse($result);
+	}
+
+	/**
 	 * @return void
 	 */
 	public function testIsPublicAllowNonPrefixed() {
