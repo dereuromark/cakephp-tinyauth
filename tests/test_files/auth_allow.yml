@@ -1,9 +1,0 @@
-# YAML allow fixture.
-# See auth_acl.yml for quoting notes — public-action lists are plain
-# comma-separated bare strings; only the leading `!` deny-shorthand
-# (and `*` wildcards) need quoting.
-
-Users: index, view
-Admin/Users: index
-Extras.Offers: '!superPrivate, *'
-Admin/MyPrefix/MyTest: myPublic
