@@ -1,0 +1,49 @@
+Tags:
+  index: 'user, undefined-role'
+  edit: user
+  delete: admin
+  very_long_underscored_action: user
+  veryLongActionNameAction: user
+Admin/Tags:
+  index: 'user, undefined-role'
+  edit: user
+  delete: admin
+  very_long_underscored_action: user
+  veryLongActionNameAction: user
+Tags.Tags:
+  index: user
+  'edit,view': user
+  delete: admin
+  very_long_underscored_action: user
+  veryLongActionNameAction: user
+Tags.Admin/Tags:
+  index: user
+  'view, edit': user
+  delete: admin
+  very_long_underscored_action: user
+  veryLongActionNameAction: user
+Special/Comments:
+  '*': admin
+Comments.Special/Comments:
+  '*': admin
+Posts:
+  '*': '*'
+Admin/Posts:
+  '*': '*'
+Posts.Posts:
+  '*': '*'
+Posts.Admin/Posts:
+  '*': '*'
+Blogs:
+  '*': 'user,moderator'
+  foo: '!user'
+Admin/Blogs:
+  '*': moderator
+Blogs.Blogs:
+  '*': moderator
+Blogs.Admin/Blogs:
+  '*': moderator
+Admin/MyPrefix/MyTest:
+  myModerator: moderator
+  myAll: '*'
+  myDenied: '!moderator,admin'
