@@ -1,6 +1,26 @@
 ### Authentication Adapters
 For adapters to define allow/deny (public/protected) per controller action.
 
+#### Built-in adapters
+
+| Adapter | Class | Default file | Notes |
+|---------|-------|--------------|-------|
+| INI     | `TinyAuth\Auth\AllowAdapter\IniAllowAdapter` | `auth_allow.ini` | Default. Zero dependencies. |
+| PHP     | `TinyAuth\Auth\AllowAdapter\PhpAllowAdapter` | `auth_allow.php` | Returns a plain `return [...]` array. Zero dependencies. |
+
+Switch the adapter via the `allowAdapter` configuration key, e.g.:
+
+```php
+'TinyAuth' => [
+    'allowAdapter' => \TinyAuth\Auth\AllowAdapter\PhpAllowAdapter::class,
+    'allowFile' => 'auth_allow.php',
+],
+```
+
+The PHP file uses the same section/value shape as the INI variant — top-level keys are `Plugin.Prefix/Controller` identifiers and values are comma-separated action lists.
+
+#### Custom adapters
+
 Implement the AllowAdapterInterface and make sure your `getAllow()` method returns an array like so:
 ```php
     // normal controller

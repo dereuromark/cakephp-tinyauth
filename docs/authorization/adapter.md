@@ -1,6 +1,26 @@
 ### Authorization Adapters
 For RBAC ACL adapters.
 
+#### Built-in adapters
+
+| Adapter | Class | Default file | Notes |
+|---------|-------|--------------|-------|
+| INI     | `TinyAuth\Auth\AclAdapter\IniAclAdapter` | `auth_acl.ini` | Default. Zero dependencies. |
+| PHP     | `TinyAuth\Auth\AclAdapter\PhpAclAdapter` | `auth_acl.php` | Returns a plain `return [...]` array. Zero dependencies. |
+
+Switch the adapter via the `aclAdapter` configuration key, e.g.:
+
+```php
+'TinyAuth' => [
+    'aclAdapter' => \TinyAuth\Auth\AclAdapter\PhpAclAdapter::class,
+    'aclFile' => 'auth_acl.php',
+],
+```
+
+The PHP file uses the same section/key/value shape as the INI variant — top-level keys are `Plugin.Prefix/Controller` identifiers and each section maps action names (or comma-separated action lists) to comma-separated role lists.
+
+#### Custom adapters
+
 Implement the AclAdapterInterface and make sure your `getAcl()` method returns an array like so:
 ```php
     // normal controller
