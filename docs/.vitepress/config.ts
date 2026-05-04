@@ -10,6 +10,7 @@ function unifiedSidebar() {
         { text: '5-min Quick Start', link: '/guide/quick-start' },
         { text: 'Installation', link: '/guide/install' },
         { text: 'Configuration', link: '/guide/configuration' },
+        { text: 'Custom Adapters', link: '/guide/custom-adapters' },
         { text: 'Troubleshooting', link: '/guide/troubleshooting' },
         { text: 'Upgrade Guide', link: '/guide/upgrade' },
       ],
@@ -19,6 +20,7 @@ function unifiedSidebar() {
       collapsed: false,
       items: [
         { text: 'Setup & INI', link: '/authentication/' },
+        { text: 'Impersonation', link: '/authentication/impersonation' },
         { text: 'Custom Adapter', link: '/authentication/adapter' },
       ],
     },
@@ -27,6 +29,7 @@ function unifiedSidebar() {
       collapsed: false,
       items: [
         { text: 'Setup & INI', link: '/authorization/' },
+        { text: 'Middleware & Policy', link: '/authorization/middleware' },
         { text: 'Custom Adapter', link: '/authorization/adapter' },
         { text: 'Multi-Role', link: '/authorization/multi-role' },
       ],
@@ -37,6 +40,13 @@ function unifiedSidebar() {
       items: [
         { text: 'AuthUser (Component / Helper)', link: '/auth-user' },
         { text: 'AuthPanel (DebugKit)', link: '/auth-panel' },
+      ],
+    },
+    {
+      text: 'Reference',
+      collapsed: true,
+      items: [
+        { text: 'CLI Commands', link: '/reference/cli' },
       ],
     },
   ]
