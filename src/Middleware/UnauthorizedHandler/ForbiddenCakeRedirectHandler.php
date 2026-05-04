@@ -52,7 +52,7 @@ class ForbiddenCakeRedirectHandler extends CakeRedirectHandler {
 
 		$response = parent::handle($exception, $request, $options);
 
-		$message = $options['unauthorizedMessage'] ?? __('You are not authorized to access that location.');
+		$message = $options['unauthorizedMessage'] ?? __d('tinyauth', 'You are not authorized to access that location.');
 		if ($message) {
 			/** @var \Cake\Http\ServerRequest $request */
 			$request->getFlash()->error($message);
