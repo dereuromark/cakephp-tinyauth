@@ -715,12 +715,12 @@ The easiest way here to contain the roles, however, is to have your custom `find
 
 ## Adapters
 
-By default INI files and the IniAdapter will be used. See [AuthorizationAdapter](AuthorizationAdapter.md) for how to change the strategy and maybe build your own adapter solution.
+By default INI files and the IniAdapter will be used. See [AuthorizationAdapter](/authorization/adapter) for how to change the strategy and maybe build your own adapter solution.
 
 ---
 
 # Additional Resources
 
 - **📖 Official Authorization Docs:** [book.cakephp.org/authorization/3](https://book.cakephp.org/authorization/3/en/index.html)
-- **🔐 Authentication:** Set up authentication first - See [Authentication.md](Authentication.md)
-- **❓ Troubleshooting:** See [docs/README.md](README.md#troubleshooting)
+- **🔐 Authentication:** Set up authentication first - See [Authentication](/authentication/)
+- **❓ Troubleshooting:** See [Troubleshooting](/guide/troubleshooting)

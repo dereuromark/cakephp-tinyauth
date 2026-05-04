@@ -1,6 +1,6 @@
 ## Configuration Multi-role
 
-**IMPORTANT:** First install the official plugins as described in [docs/README.md](README.md#required-dependencies)
+**IMPORTANT:** First install the official plugins as described in [Installation Guide](/guide/install#required-dependencies)
 
 ```php
 // in your app.php
@@ -21,7 +21,7 @@ public function initialize() {
 }
 ```
 
-See [Authentication.md](Authentication.md) and [Authorization.md](Authorization.md) for complete middleware setup instructions.
+See [Authentication](/authentication/) and [Authorization](/authorization/) for complete middleware setup instructions.
 
 ### auth_allow.ini
 ```ini

@@ -7,3 +7,7 @@ composer.phar
 logs/
 .idea/
 .phpcs.cache
+
+/docs/node_modules/
+/docs/.vitepress/cache/
+/docs/.vitepress/dist/
