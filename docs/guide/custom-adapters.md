@@ -1,6 +1,6 @@
 # Custom Adapters
 
-TinyAuth's two INI-based stores (`auth_allow.ini` for public actions, `auth_acl.ini` for role permissions) are just the default backends. You can swap either one out for a database-driven, API-driven, or any other source by implementing a small interface.
+TinyAuth ships with three file-based backends (`Ini`, `Php`, `Yaml` — see [Authorization Adapters](/authorization/adapter) and [Authentication Adapters](/authentication/adapter)) for the public-action whitelist (`auth_allow.*`) and the role permissions (`auth_acl.*`). If a different format is all you need, just switch the `aclAdapter` / `allowAdapter` config key. You only need a custom adapter when the data has to come from somewhere else entirely — a database, an API, etc.
 
 ## When you'd want a custom adapter
 
