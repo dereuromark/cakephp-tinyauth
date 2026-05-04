@@ -23,7 +23,8 @@
 	],
 	"homepage": "https://github.com/dereuromark/cakephp-tinyauth",
 	"support": {
-		"source": "https://github.com/dereuromark/cakephp-tinyauth"
+		"source": "https://github.com/dereuromark/cakephp-tinyauth",
+		"docs": "https://dereuromark.github.io/cakephp-tinyauth/"
 	},
 	"require": {
 		"php": ">=8.2",
