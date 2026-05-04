@@ -152,6 +152,6 @@ bin/cake plugin load TinyAuth
 ```
 
 ## Docs
-For setup and usage see [Docs](/docs).
+Full documentation: https://dereuromark.github.io/cakephp-tinyauth/
 
 Also note the original [blog post](https://www.dereuromark.de/2011/12/18/tinyauth-the-fastest-and-easiest-authorization-for-cake2/) and how it all started.

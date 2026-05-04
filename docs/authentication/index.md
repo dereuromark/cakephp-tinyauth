@@ -547,5 +547,5 @@ $user = $this->AuthUser->identity();
 # Additional Resources
 
 - **📖 Official Authentication Docs:** [book.cakephp.org/authentication/3](https://book.cakephp.org/authentication/3/en/index.html)
-- **🔐 Authorization:** Add role-based access control - See [Authorization.md](Authorization.md)
-- **❓ Troubleshooting:** See [docs/README.md](README.md#troubleshooting)
+- **🔐 Authorization:** Add role-based access control - See [Authorization](/authorization/)
+- **❓ Troubleshooting:** See [Troubleshooting](/guide/troubleshooting)

@@ -9,19 +9,19 @@ Also:
 
 Public action (quick icon):
 
-![public](img/auth_public.png)
+![public](/img/auth_public.png)
 
 Protected action (quick icon):
 
-![public](img/auth_restricted.png)
+![public](/img/auth_restricted.png)
 
 Panel showcase once opened as "guest":
 
-![panel](img/panel_guest.png)
+![panel](/img/panel_guest.png)
 
 Panel showcase as "logged in user":
 
-![panel](img/panel.png)
+![panel](/img/panel.png)
 
 ### Enable the panel
 Activate the panel in your config:
