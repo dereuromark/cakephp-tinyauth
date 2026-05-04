@@ -37,10 +37,10 @@
 		"composer/semver": "^3.0",
 		"fig-r/psr2r-sniffer": "dev-master",
 		"phpunit/phpunit": "^11.5 || ^12.1 || ^13.0",
-		"symfony/yaml": "^6.4 || ^7.0"
+		"symfony/yaml": "^6.4 || ^7.0 || ^8.0"
 	},
 	"suggest": {
-		"symfony/yaml": "Required when using the YAML ACL/Allow adapters (^6.4 || ^7.0)."
+		"symfony/yaml": "Required when using the YAML ACL/Allow adapters (^6.4 || ^7.0 || ^8.0)."
 	},
 	"minimum-stability": "stable",
 	"prefer-stable": true,
