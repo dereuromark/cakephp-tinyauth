@@ -1,31 +1,68 @@
+# YAML fixture mirroring auth_acl.ini.
+#
+# Quoting rule of thumb in this config shape:
+#   - Plain comma-separated role lists do NOT need quoting:
+#       index: user, undefined-role         # bare scalar, comma is fine
+#       edit,view: user                     # comma in a bare key is fine
+#       view, edit: user                    # comma + space too
+#   - Quoting is only required when the value/key STARTS with a YAML
+#     reserved character — `*` (alias), `!` (tag), `&`, `>`, `|`, etc.:
+#       '*': '*'                            # `*` as bare key/value is reserved
+#       foo: '!user'                        # leading `!` is the tag indicator
+#       myDenied: '!moderator, admin'       # same — quote the whole value
+
+# ----------------------------------------------------------
+# TagsController (no prefixed route, no plugin)
+# ----------------------------------------------------------
 Tags:
-  index: 'user, undefined-role'
+  index: user, undefined-role
   edit: user
   delete: admin
   very_long_underscored_action: user
   veryLongActionNameAction: user
+
+# ----------------------------------------------------------
+# TagsController (Admin prefixed route, no plugin)
+# ----------------------------------------------------------
 Admin/Tags:
-  index: 'user, undefined-role'
+  index: user, undefined-role
   edit: user
   delete: admin
   very_long_underscored_action: user
   veryLongActionNameAction: user
+
+# ----------------------------------------------------------
+# TagsController (plugin Tags, no prefixed route)
+# ----------------------------------------------------------
 Tags.Tags:
   index: user
-  'edit,view': user
+  edit,view: user
   delete: admin
   very_long_underscored_action: user
   veryLongActionNameAction: user
+
+# ----------------------------------------------------------
+# TagsController (plugin Tags, Admin prefixed route)
+# ----------------------------------------------------------
 Tags.Admin/Tags:
   index: user
-  'view, edit': user
+  view, edit: user
   delete: admin
   very_long_underscored_action: user
   veryLongActionNameAction: user
+
+# ----------------------------------------------------------
+# CommentsController, used for testing 'allowLoggedIn' access to
+# non-Admin-prefixed routes.
+# ----------------------------------------------------------
 Special/Comments:
   '*': admin
 Comments.Special/Comments:
   '*': admin
+
+# ----------------------------------------------------------
+# PostsController, used for testing generic wildcard access
+# ----------------------------------------------------------
 Posts:
   '*': '*'
 Admin/Posts:
@@ -34,8 +71,12 @@ Posts.Posts:
   '*': '*'
 Posts.Admin/Posts:
   '*': '*'
+
+# ----------------------------------------------------------
+# BlogsController, used for testing specific wildcard access
+# ----------------------------------------------------------
 Blogs:
-  '*': 'user,moderator'
+  '*': user, moderator
   foo: '!user'
 Admin/Blogs:
   '*': moderator
@@ -43,7 +84,11 @@ Blogs.Blogs:
   '*': moderator
 Blogs.Admin/Blogs:
   '*': moderator
+
+# ----------------------------------------------------------
+# MyTestController, used for testing nested prefixes
+# ----------------------------------------------------------
 Admin/MyPrefix/MyTest:
   myModerator: moderator
   myAll: '*'
-  myDenied: '!moderator,admin'
+  myDenied: '!moderator, admin'
