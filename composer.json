@@ -21,7 +21,7 @@
 			"role": "Maintainer"
 		}
 	],
-	"homepage": "https://github.com/dereuromark/cakephp-tinyauth",
+	"homepage": "https://dereuromark.github.io/cakephp-tinyauth/",
 	"support": {
 		"source": "https://github.com/dereuromark/cakephp-tinyauth",
 		"docs": "https://dereuromark.github.io/cakephp-tinyauth/"
