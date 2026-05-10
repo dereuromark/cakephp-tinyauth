@@ -154,8 +154,11 @@ class Syncer {
 	 * Replaces the previously-vendored `Folder::read()` from the legacy CakePHP
 	 * filesystem package. The shape matches what `Folder::read()` returned so the
 	 * existing `$folderContent[0]` (subfolders) / `$folderContent[1]` (files)
-	 * unpacking keeps working. Missing or unreadable directories yield two empty
-	 * arrays rather than fataling — matching the upstream tolerance.
+	 * unpacking keeps working. Hidden entries (names starting with `.`) are
+	 * skipped to match the previous behavior — important because the legacy
+	 * Folder::read() didn't descend into `.git`, `.svn`, `.DS_Store`, etc. when
+	 * scanning controller directories. Missing or unreadable directories yield
+	 * two empty arrays rather than fataling.
 	 *
 	 * @param string $folder Directory path (trailing DS optional)
 	 * @return array{0: array<string>, 1: array<string>}
@@ -169,7 +172,7 @@ class Syncer {
 		$folders = [];
 		$files = [];
 		foreach (scandir($folder) ?: [] as $entry) {
-			if ($entry === '.' || $entry === '..') {
+			if ($entry === '' || $entry[0] === '.') {
 				continue;
 			}
 			$path = $folder . $entry;

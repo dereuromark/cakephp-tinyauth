@@ -164,7 +164,9 @@ class Adder {
 	 * See {@see \TinyAuth\Sync\Syncer::_listDirectory()} for the rationale — this is the
 	 * same replacement for the previously-vendored legacy `Folder::read()` call, kept
 	 * local to this class to avoid introducing a shared base class purely for two
-	 * near-clone implementations.
+	 * near-clone implementations. Hidden entries (names starting with `.`) are
+	 * skipped to preserve the previous behavior of not descending into `.git`,
+	 * `.svn`, `.DS_Store` etc. when scanning controller directories.
 	 *
 	 * @param string $folder Directory path (trailing DS optional)
 	 * @return array{0: array<string>, 1: array<string>}
@@ -178,7 +180,7 @@ class Adder {
 		$folders = [];
 		$files = [];
 		foreach (scandir($folder) ?: [] as $entry) {
-			if ($entry === '.' || $entry === '..') {
+			if ($entry === '' || $entry[0] === '.') {
 				continue;
 			}
 			$path = $folder . $entry;

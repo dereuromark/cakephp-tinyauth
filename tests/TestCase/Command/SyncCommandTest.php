@@ -49,6 +49,33 @@ class SyncCommandTest extends TestCase {
 	}
 
 	/**
+	 * Hidden directories (e.g. `.git`, `.svn`, `.DS_Store`) must not be descended into
+	 * during controller discovery — that was the behavior of the legacy `Folder::read`
+	 * we replaced, and the scan would otherwise spend time recursing through editor /
+	 * VCS metadata and possibly choke on weird filenames.
+	 *
+	 * @return void
+	 */
+	public function testSyncSkipsHiddenDirectories() {
+		Configure::write('TinyAuth.aclFilePath', TESTS . 'test_files/subfolder/');
+		Configure::write('TinyAuth.allowFilePath', TESTS . 'test_files/');
+
+		$target = '/tmp' . DS . 'src' . DS . 'Controller' . DS;
+		$this->copyDirectory(TESTS . 'test_app' . DS . 'Controller' . DS, $target);
+
+		$hiddenDir = $target . '.svn';
+		if (!is_dir($hiddenDir)) {
+			mkdir($hiddenDir, 0777, true);
+		}
+		file_put_contents($hiddenDir . DS . 'SecretController.php', "<?php\nclass SecretController {}\n");
+
+		$this->exec('tiny_auth sync foo,bar -d -v');
+
+		$this->assertExitCode(Command::CODE_SUCCESS);
+		$this->assertOutputNotContains('Secret');
+	}
+
+	/**
 	 * Recursively copy $source into $target, creating directories as needed.
 	 *
 	 * Drop-in replacement for the previously-used `Folder::copy()` from the now-removed
