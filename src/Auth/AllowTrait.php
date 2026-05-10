@@ -30,23 +30,15 @@ trait AllowTrait {
 		$allowDefaults = $this->_getAllowDefaultsForCurrentParams($params);
 
 		foreach ($rules as $rule) {
-			if (isset($params['plugin'])) {
-				if ($params['plugin'] !== $rule['plugin']) {
-					continue;
-				}
-			} else {
-				if (!empty($rule['plugin'])) {
-					continue;
-				}
+			// Treat null and empty-string the same on both sides (request and rule); see
+			// AclTrait::_matchesRouteSlot for the rationale. Inlining the check here
+			// rather than calling the AclTrait method because this trait lives next to
+			// AclTrait but is not guaranteed to be composed alongside it.
+			if (!$this->_matchesAllowSlot($params['plugin'] ?? null, $rule['plugin'] ?? null)) {
+				continue;
 			}
-			if (isset($params['prefix'])) {
-				if ($params['prefix'] !== $rule['prefix']) {
-					continue;
-				}
-			} else {
-				if (!empty($rule['prefix'])) {
-					continue;
-				}
+			if (!$this->_matchesAllowSlot($params['prefix'] ?? null, $rule['prefix'] ?? null)) {
+				continue;
 			}
 			if ($params['controller'] !== $rule['controller']) {
 				continue;
@@ -63,6 +55,30 @@ trait AllowTrait {
 			'allow' => $allowDefaults,
 			'deny' => [],
 		];
+	}
+
+	/**
+	 * Compare a request-side route slot value (plugin/prefix) against an allow-rule value.
+	 *
+	 * Treats null and the empty string as the "no plugin / no prefix" sentinel; anything
+	 * else must match exactly. See AclTrait::_matchesRouteSlot for the broader rationale.
+	 *
+	 * @param mixed $request
+	 * @param mixed $rule
+	 * @return bool
+	 */
+	protected function _matchesAllowSlot($request, $rule): bool {
+		$requestEmpty = $request === null || $request === '';
+		$ruleEmpty = $rule === null || $rule === '';
+
+		if ($requestEmpty && $ruleEmpty) {
+			return true;
+		}
+		if ($requestEmpty xor $ruleEmpty) {
+			return false;
+		}
+
+		return $request === $rule;
 	}
 
 	/**
@@ -107,7 +123,7 @@ trait AllowTrait {
 		$result = [];
 		if ($allowedPrefixes) {
 			foreach ($allowedPrefixes as $allowedPrefix) {
-				if ($params['prefix'] === $allowedPrefix || strpos($params['prefix'], $allowedPrefix . '/') === 0) {
+				if ($params['prefix'] === $allowedPrefix || str_starts_with((string)$params['prefix'], $allowedPrefix . '/')) {
 					return ['*'];
 				}
 			}

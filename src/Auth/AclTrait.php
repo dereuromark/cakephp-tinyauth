@@ -136,12 +136,39 @@ trait AclTrait {
 	 */
 	protected function _isProtectedPrefix($prefix, array $protectedPrefixes) {
 		foreach ($protectedPrefixes as $protectedPrefix) {
-			if ($prefix === $protectedPrefix || strpos($prefix, $protectedPrefix . '/') === 0) {
+			if ($prefix === $protectedPrefix || str_starts_with((string)$prefix, $protectedPrefix . '/')) {
 				return true;
 			}
 		}
 
 		return false;
+	}
+
+	/**
+	 * Compare a request-side route slot value (plugin/prefix) against a rule-side value.
+	 *
+	 * Both `null` and the empty string are treated as "no plugin / no prefix". Anything
+	 * else must match exactly. The previous code used `!empty()` which coerced `'0'` and
+	 * other PHP-falsy values to "no plugin", which is too lossy for an authorization
+	 * matcher. Using an explicit null/empty-string check is more honest about the input
+	 * space and easier to audit.
+	 *
+	 * @param mixed $request The value from the current request's routing params.
+	 * @param mixed $rule The value declared on the ACL rule.
+	 * @return bool True when both sides describe the same slot.
+	 */
+	protected function _matchesRouteSlot($request, $rule): bool {
+		$requestEmpty = $request === null || $request === '';
+		$ruleEmpty = $rule === null || $rule === '';
+
+		if ($requestEmpty && $ruleEmpty) {
+			return true;
+		}
+		if ($requestEmpty xor $ruleEmpty) {
+			return false;
+		}
+
+		return $request === $rule;
 	}
 
 	/**
@@ -315,23 +342,16 @@ trait AclTrait {
 		$authentication = $this->_getAuth();
 
 		foreach ($authentication as $rule) {
-			if (!empty($params['plugin'])) {
-				if ($params['plugin'] !== $rule['plugin']) {
-					continue;
-				}
-			} else {
-				if (!empty($rule['plugin'])) {
-					continue;
-				}
+			// Match plugin and prefix slots using `null`-equivalent semantics:
+			// a routing param that is missing, null, or an empty string is treated as
+			// "no plugin / no prefix". Previously `!empty()` swallowed the literal
+			// strings `'0'` and any value PHP coerces to false (rare for routes, but
+			// the explicit `null` check is more honest about what the param can be).
+			if (!$this->_matchesRouteSlot($params['plugin'] ?? null, $rule['plugin'] ?? null)) {
+				continue;
 			}
-			if (!empty($params['prefix'])) {
-				if ($params['prefix'] !== $rule['prefix']) {
-					continue;
-				}
-			} else {
-				if (!empty($rule['prefix'])) {
-					continue;
-				}
+			if (!$this->_matchesRouteSlot($params['prefix'] ?? null, $rule['prefix'] ?? null)) {
+				continue;
 			}
 			if ($params['controller'] !== $rule['controller']) {
 				continue;

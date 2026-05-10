@@ -7,7 +7,6 @@ use Cake\Console\ConsoleIo;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use TinyAuth\Filesystem\Folder;
 use TinyAuth\Utility\Utility;
 
 /**
@@ -125,7 +124,7 @@ class Adder {
 	 * @return array
 	 */
 	protected function _parseControllers($folder, $plugin, $prefix = null) {
-		$folderContent = (new Folder($folder))->read(Folder::SORT_NAME, true);
+		$folderContent = $this->_listDirectory($folder);
 
 		$controllers = [];
 		foreach ($folderContent[1] as $file) {
@@ -157,6 +156,42 @@ class Adder {
 		}
 
 		return $controllers;
+	}
+
+	/**
+	 * Read directory entries split into [folders, files], both name-sorted ascending.
+	 *
+	 * See {@see \TinyAuth\Sync\Syncer::_listDirectory()} for the rationale — this is the
+	 * same replacement for the previously-vendored legacy `Folder::read()` call, kept
+	 * local to this class to avoid introducing a shared base class purely for two
+	 * near-clone implementations.
+	 *
+	 * @param string $folder Directory path (trailing DS optional)
+	 * @return array{0: array<string>, 1: array<string>}
+	 */
+	protected function _listDirectory(string $folder): array {
+		if (!is_dir($folder)) {
+			return [[], []];
+		}
+
+		$folder = rtrim($folder, DS) . DS;
+		$folders = [];
+		$files = [];
+		foreach (scandir($folder) ?: [] as $entry) {
+			if ($entry === '.' || $entry === '..') {
+				continue;
+			}
+			$path = $folder . $entry;
+			if (is_dir($path)) {
+				$folders[] = $entry;
+			} elseif (is_file($path)) {
+				$files[] = $entry;
+			}
+		}
+		sort($folders);
+		sort($files);
+
+		return [$folders, $files];
 	}
 
 	/**
