@@ -7,7 +7,6 @@ use Cake\Console\ConsoleIo;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use TinyAuth\Filesystem\Folder;
 use TinyAuth\Utility\Utility;
 
 class Syncer {
@@ -115,7 +114,7 @@ class Syncer {
 	 * @return array
 	 */
 	protected function _parseControllers($folder, $plugin, $prefix = null) {
-		$folderContent = (new Folder($folder))->read(Folder::SORT_NAME, true);
+		$folderContent = $this->_listDirectory($folder);
 
 		$controllers = [];
 		foreach ($folderContent[1] as $file) {
@@ -147,6 +146,46 @@ class Syncer {
 		}
 
 		return $controllers;
+	}
+
+	/**
+	 * Read directory entries split into [folders, files], both name-sorted ascending.
+	 *
+	 * Replaces the previously-vendored `Folder::read()` from the legacy CakePHP
+	 * filesystem package. The shape matches what `Folder::read()` returned so the
+	 * existing `$folderContent[0]` (subfolders) / `$folderContent[1]` (files)
+	 * unpacking keeps working. Hidden entries (names starting with `.`) are
+	 * skipped to match the previous behavior — important because the legacy
+	 * Folder::read() didn't descend into `.git`, `.svn`, `.DS_Store`, etc. when
+	 * scanning controller directories. Missing or unreadable directories yield
+	 * two empty arrays rather than fataling.
+	 *
+	 * @param string $folder Directory path (trailing DS optional)
+	 * @return array{0: array<string>, 1: array<string>}
+	 */
+	protected function _listDirectory(string $folder): array {
+		if (!is_dir($folder)) {
+			return [[], []];
+		}
+
+		$folder = rtrim($folder, DS) . DS;
+		$folders = [];
+		$files = [];
+		foreach (scandir($folder) ?: [] as $entry) {
+			if ($entry === '' || $entry[0] === '.') {
+				continue;
+			}
+			$path = $folder . $entry;
+			if (is_dir($path)) {
+				$folders[] = $entry;
+			} elseif (is_file($path)) {
+				$files[] = $entry;
+			}
+		}
+		sort($folders);
+		sort($files);
+
+		return [$folders, $files];
 	}
 
 	/**

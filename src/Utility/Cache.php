@@ -80,8 +80,16 @@ class Cache {
 	}
 
 	/**
+	 * Resolve the cache key for a given type (acl/allow), prepending the configured prefix.
+	 *
+	 * Two TinyAuth installs that share a Cake cache pool would previously collide on the
+	 * bare `acl` / `allow` keys because the `cachePrefix` option was declared but never
+	 * applied. Multi-tenant or test environments where Cache pools survive across plugin
+	 * boots could read another install's permissions data. The prefix is now applied so
+	 * the on-disk key is e.g. `tiny_auth_acl` / `tiny_auth_allow` by default.
+	 *
 	 * @param string $type
-	 *@throws \Cake\Core\Exception\CakeException
+	 * @throws \Cake\Core\Exception\CakeException
 	 * @return string
 	 */
 	public static function key(string $type): string {
@@ -89,12 +97,14 @@ class Cache {
 
 		static::assertValidCacheSetup($config);
 
-		$key = $type . 'CacheKey';
-		if (empty($config[$key])) {
-			throw new CakeException(sprintf('Invalid TinyAuth cache key `%s`', $key));
+		$keyConfigName = $type . 'CacheKey';
+		if (empty($config[$keyConfigName])) {
+			throw new CakeException(sprintf('Invalid TinyAuth cache key `%s`', $keyConfigName));
 		}
 
-		return $config[$key];
+		$prefix = isset($config['cachePrefix']) ? (string)$config['cachePrefix'] : '';
+
+		return $prefix . $config[$keyConfigName];
 	}
 
 	/**
