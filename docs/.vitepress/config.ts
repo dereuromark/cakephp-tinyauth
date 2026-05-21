@@ -56,6 +56,7 @@ export default defineConfig({
   title: 'cakephp-tinyauth',
   description: 'INI-based authentication and authorization for CakePHP — a thin wrapper over the official Authentication and Authorization plugins.',
   base: '/cakephp-tinyauth/',
+  cleanUrls: true,
   lastUpdated: true,
   sitemap: {
     hostname: 'https://dereuromark.github.io/cakephp-tinyauth/',
