@@ -15,17 +15,20 @@
  * keys you need; anything omitted falls back to the values shown below.
  */
 
+use TinyAuth\Auth\AclAdapter\IniAclAdapter;
+use TinyAuth\Auth\AllowAdapter\IniAllowAdapter;
+
 return [
 	'TinyAuth' => [
 		// allow (public access) configuration
-		'allowAdapter' => \TinyAuth\Auth\AllowAdapter\IniAllowAdapter::class, // Adapter resolving public/allowed actions
+		'allowAdapter' => IniAllowAdapter::class, // Adapter resolving public/allowed actions
 		'allowFilePath' => null, // Path to the allow INI file, e.g. Plugin::configPath('Admin'); filePath is also honored for shared config
 		'allowFile' => 'auth_allow.ini', // File name of the allow rules
 		'allowNonPrefixed' => false, // true allows all non-prefixed controller actions as public access
 		'allowPrefixes' => [], // Prefixes whitelisted as public access
 
 		// acl (authorization) configuration
-		'aclAdapter' => \TinyAuth\Auth\AclAdapter\IniAclAdapter::class, // Adapter resolving ACL rules
+		'aclAdapter' => IniAclAdapter::class, // Adapter resolving ACL rules
 		'idColumn' => 'id', // ID column in the users table
 		'roleColumn' => 'role_id', // Foreign key for the role id in users table or pivot table
 		'userColumn' => 'user_id', // Foreign key for the user id in the pivot table (multi-role setups only)
