@@ -1,0 +1,34 @@
+// cakephp-tinyauth — database schema snapshot (DBML)
+//
+// A merged snapshot of all plugin migrations under config/Migrations/.
+// Hand-maintained: update it when you add a migration that changes these tables.
+// Paste into https://dbdiagram.io (or any DBML tool) to view/diagram.
+// DBML reference: https://dbml.dbdiagram.io/docs
+
+Project cakephp_tinyauth {
+  database_type: 'Generic'
+  Note: 'TinyAuth sample tables only (multi-role example schema).'
+}
+
+Table roles {
+  id integer [pk, increment]
+  name varchar(64) [not null]
+  description varchar(255) [not null]
+  alias varchar(20) [not null]
+  created datetime [null]
+  modified datetime [null]
+}
+
+Table users {
+  id integer [pk, increment]
+  username varchar(255) [null]
+  password varchar(255) [null]
+  created datetime [null]
+  modified datetime [null]
+}
+
+Table roles_users {
+  id integer [pk, increment]
+  user_id int [null]
+  role_id int [null]
+}
