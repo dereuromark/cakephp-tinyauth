@@ -96,9 +96,7 @@ trait AuthUserTrait {
 			return [];
 		}
 
-		$roles = $this->_getUserRoles($user);
-
-		return $roles;
+		return $this->_getUserRoles($user);
 	}
 
 	/**
@@ -117,11 +115,7 @@ trait AuthUserTrait {
 	 * @return bool Success
 	 */
 	public function hasRole($expectedRole, $providedRoles = null) {
-		if ($providedRoles !== null) {
-			$roles = (array)$providedRoles;
-		} else {
-			$roles = $this->roles();
-		}
+		$roles = $providedRoles !== null ? (array)$providedRoles : $this->roles();
 
 		if (!$roles) {
 			return false;
@@ -161,11 +155,7 @@ trait AuthUserTrait {
 	 * @return bool Success
 	 */
 	public function hasRoles($expectedRoles, $oneRoleIsEnough = true, $providedRoles = null): bool {
-		if ($providedRoles !== null) {
-			$roles = $providedRoles;
-		} else {
-			$roles = $this->roles();
-		}
+		$roles = $providedRoles ?? $this->roles();
 
 		$expectedRoles = (array)$expectedRoles;
 		if (!$expectedRoles) {
@@ -175,22 +165,15 @@ trait AuthUserTrait {
 		$count = 0;
 		foreach ($expectedRoles as $expectedRole) {
 			if ($this->hasRole($expectedRole, $roles)) {
-				if ($oneRoleIsEnough) {
+                if ($oneRoleIsEnough) {
 					return true;
 				}
-				$count++;
-			} else {
-				if (!$oneRoleIsEnough) {
-					return false;
-				}
-			}
+                $count++;
+            } elseif (!$oneRoleIsEnough) {
+                return false;
+            }
 		}
-
-		if ($count === count($expectedRoles)) {
-			return true;
-		}
-
-		return false;
+        return $count === count($expectedRoles);
 	}
 
 	/**

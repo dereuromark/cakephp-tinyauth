@@ -65,8 +65,8 @@ class AuthUserComponent extends Component {
 	public function hasAccess(array $url): bool {
 		$params = $this->getController()->getRequest()->getAttribute('params');
 		$url += [
-			'prefix' => !empty($params['prefix']) ? $params['prefix'] : null,
-			'plugin' => !empty($params['plugin']) ? $params['plugin'] : null,
+			'prefix' => empty($params['prefix']) ? null : $params['prefix'],
+			'plugin' => empty($params['plugin']) ? null : $params['plugin'],
 			'controller' => $params['controller'],
 			'action' => 'index',
 		];

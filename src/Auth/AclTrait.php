@@ -255,11 +255,7 @@ trait AclTrait {
 			return [];
 		}
 
-		if ($prefixMap === true) {
-			$prefixMap = $this->_prefixesFromRoles($roles);
-		} else {
-			$prefixMap = $this->_normalizePrefixes($prefixMap);
-		}
+		$prefixMap = $prefixMap === true ? $this->_prefixesFromRoles($roles) : $this->_normalizePrefixes($prefixMap);
 
 		$this->_prefixMap = $prefixMap;
 
@@ -561,7 +557,7 @@ trait AclTrait {
 			}
 
 			// Check if the roleColumn is a dot notation path
-			if (str_contains($roleColumn, '.')) {
+			if (str_contains((string) $roleColumn, '.')) {
 				$role = Hash::get($user, $roleColumn);
 				if (!$role) {
 					throw new CakeException(sprintf('Missing TinyAuth role id field (%s) in user session', 'Auth.User.' . $roleColumn));

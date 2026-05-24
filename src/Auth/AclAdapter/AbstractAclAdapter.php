@@ -79,7 +79,7 @@ abstract class AbstractAclAdapter implements AclAdapterInterface {
 					}
 
 					foreach ($roles as $role) {
-						$role = trim($role);
+						$role = trim((string) $role);
 						if (!$role) {
 							continue;
 						}

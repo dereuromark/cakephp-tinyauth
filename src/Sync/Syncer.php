@@ -195,7 +195,7 @@ class Syncer {
 	 * @return bool
 	 */
 	protected function _noAuthenticationNeeded($name, $plugin, $prefix) {
-		if (!isset($this->authAllow)) {
+		if ($this->authAllow === null) {
 			$this->authAllow = $this->_parseAuthAllow();
 		}
 
@@ -203,13 +203,8 @@ class Syncer {
 		if (!isset($this->authAllow[$key])) {
 			return false;
 		}
-
-		if ($this->authAllow[$key] === '*') {
-			return true;
-		}
-
-		//TODO: specific actions?
-		return false;
+        //TODO: specific actions?
+        return $this->authAllow[$key] === '*';
 	}
 
 	/**

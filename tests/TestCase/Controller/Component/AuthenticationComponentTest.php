@@ -53,7 +53,7 @@ class AuthenticationComponentTest extends TestCase {
 		$this->component->initialize($config);
 
 		$event = new Event('Controller.startup', $controller);
-		$response = $this->component->startup($event);
+		$response = $this->component->startup();
 		$this->assertNull($response);
 	}
 

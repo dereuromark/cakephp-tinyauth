@@ -365,7 +365,7 @@ class AuthUserComponentTest extends TestCase {
 			 * @return \Authorization\Policy\ResultInterface
 			 */
 			public function canResult(?IdentityInterface $user, string $action, mixed $resource, ...$optionalArgs): ResultInterface {
-				$x = new class implements ResultInterface {
+				return new class implements ResultInterface {
 					/**
 					 * @return bool
 					 */
@@ -380,8 +380,6 @@ class AuthUserComponentTest extends TestCase {
 						return null;
 					}
 				};
-
-				return $x;
 			}
 
 			/**

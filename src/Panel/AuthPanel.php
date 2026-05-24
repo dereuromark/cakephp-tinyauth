@@ -92,11 +92,7 @@ class AuthPanel extends DebugPanel {
 
 		$access = [];
 		foreach ($availableRoles as $role => $id) {
-			if ($user) {
-				$tmpUser = $this->_injectRole($user, $role, $id);
-			} else {
-				$tmpUser = $this->_generateUser($role, $id);
-			}
+			$tmpUser = $user ? $this->_injectRole($user, $role, $id) : $this->_generateUser($role, $id);
 			$access[$role] = $this->_checkUser($tmpUser, $params);
 		}
 
