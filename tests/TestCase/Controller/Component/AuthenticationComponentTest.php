@@ -5,7 +5,6 @@ namespace TinyAuth\Test\TestCase\Controller\Component;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
 use Cake\Core\Plugin;
-use Cake\Event\Event;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use TinyAuth\Controller\Component\AuthenticationComponent;
@@ -52,7 +51,6 @@ class AuthenticationComponentTest extends TestCase {
 		$config = [];
 		$this->component->initialize($config);
 
-		$event = new Event('Controller.startup', $controller);
 		$response = $this->component->startup();
 		$this->assertNull($response);
 	}
