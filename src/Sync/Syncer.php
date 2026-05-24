@@ -203,8 +203,9 @@ class Syncer {
 		if (!isset($this->authAllow[$key])) {
 			return false;
 		}
-        //TODO: specific actions?
-        return $this->authAllow[$key] === '*';
+
+		//TODO: specific actions?
+		return $this->authAllow[$key] === '*';
 	}
 
 	/**

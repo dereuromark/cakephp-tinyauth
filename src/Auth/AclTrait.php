@@ -557,7 +557,7 @@ trait AclTrait {
 			}
 
 			// Check if the roleColumn is a dot notation path
-			if (str_contains((string) $roleColumn, '.')) {
+			if (str_contains((string)$roleColumn, '.')) {
 				$role = Hash::get($user, $roleColumn);
 				if (!$role) {
 					throw new CakeException(sprintf('Missing TinyAuth role id field (%s) in user session', 'Auth.User.' . $roleColumn));

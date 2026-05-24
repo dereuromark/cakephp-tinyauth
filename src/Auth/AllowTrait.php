@@ -96,7 +96,8 @@ trait AllowTrait {
 		if (in_array($action, $rule['deny'], true) || in_array('*', $rule['deny'], true)) {
 			return false;
 		}
-        return !(!in_array($action, $rule['allow'], true) && !in_array('*', $rule['allow'], true));
+
+		return !(!in_array($action, $rule['allow'], true) && !in_array('*', $rule['allow'], true));
 	}
 
 	/**

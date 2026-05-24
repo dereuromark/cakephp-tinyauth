@@ -165,15 +165,16 @@ trait AuthUserTrait {
 		$count = 0;
 		foreach ($expectedRoles as $expectedRole) {
 			if ($this->hasRole($expectedRole, $roles)) {
-                if ($oneRoleIsEnough) {
+				if ($oneRoleIsEnough) {
 					return true;
 				}
-                $count++;
-            } elseif (!$oneRoleIsEnough) {
-                return false;
-            }
+				$count++;
+			} elseif (!$oneRoleIsEnough) {
+				return false;
+			}
 		}
-        return $count === count($expectedRoles);
+
+		return $count === count($expectedRoles);
 	}
 
 	/**
