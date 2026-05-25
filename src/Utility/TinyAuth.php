@@ -30,9 +30,7 @@ class TinyAuth {
 	 * @return array<string, int|string>
 	 */
 	public function getAvailableRoles() {
-		$roles = $this->_getAvailableRoles();
-
-		return $roles;
+		return $this->_getAvailableRoles();
 	}
 
 }

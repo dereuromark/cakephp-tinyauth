@@ -66,7 +66,7 @@ class Adder {
 
 		if (isset($content[$controller][$action]) || isset($content[$controller]['*'])) {
 			$mappedRoles = $content[$controller][$action] ?? $content[$controller]['*'];
-			if (strpos($mappedRoles, ',') !== false) {
+			if (str_contains($mappedRoles, ',')) {
 				$mappedRoles = array_map('trim', explode(',', $mappedRoles));
 			}
 			$this->checkRoles($roles, (array)$mappedRoles, $io);
@@ -203,7 +203,7 @@ class Adder {
 	 * @return bool
 	 */
 	protected function _noAuthenticationNeeded($name, $plugin, $prefix) {
-		if (!isset($this->authAllow)) {
+		if ($this->authAllow === null) {
 			$this->authAllow = $this->_parseAuthAllow();
 		}
 
@@ -212,12 +212,8 @@ class Adder {
 			return false;
 		}
 
-		if ($this->authAllow[$key] === '*') {
-			return true;
-		}
-
 		//TODO: specific actions?
-		return false;
+		return $this->authAllow[$key] === '*';
 	}
 
 	/**

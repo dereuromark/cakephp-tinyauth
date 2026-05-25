@@ -255,11 +255,7 @@ trait AclTrait {
 			return [];
 		}
 
-		if ($prefixMap === true) {
-			$prefixMap = $this->_prefixesFromRoles($roles);
-		} else {
-			$prefixMap = $this->_normalizePrefixes($prefixMap);
-		}
+		$prefixMap = $prefixMap === true ? $this->_prefixesFromRoles($roles) : $this->_normalizePrefixes($prefixMap);
 
 		$this->_prefixMap = $prefixMap;
 
@@ -556,7 +552,7 @@ trait AclTrait {
 		// Single-role from session
 		if (!$this->getConfig('multiRole')) {
 			$roleColumn = $this->getConfig('roleColumn');
-			if (!$roleColumn) {
+			if (!is_string($roleColumn) || $roleColumn === '') {
 				throw new CakeException('Invalid TinyAuth config, `roleColumn` config missing.');
 			}
 
