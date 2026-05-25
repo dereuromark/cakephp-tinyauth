@@ -5,7 +5,7 @@ namespace TinyAuth\Test\TestCase\Authenticator;
 
 use ArrayObject;
 use Authentication\Authenticator\Result;
-use Authentication\Identifier\IdentifierCollection;
+use Authentication\Identifier\IdentifierFactory;
 use Cake\Http\Exception\UnauthorizedException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequestFactory;
@@ -26,7 +26,7 @@ class PrimaryKeySessionAuthenticatorTest extends TestCase {
 	];
 
 	/**
-	 * @var \Authentication\IdentifierCollection
+	 * @var \Authentication\Identifier\IdentifierInterface
 	 */
 	protected $identifiers;
 
@@ -41,9 +41,7 @@ class PrimaryKeySessionAuthenticatorTest extends TestCase {
 	public function setUp(): void {
 		parent::setUp();
 
-		$this->identifiers = new IdentifierCollection([
-			'Authentication.Password',
-		]);
+		$this->identifiers = IdentifierFactory::create('Authentication.Password');
 
 		$this->sessionMock = $this->getMockBuilder(Session::class)
 			->disableOriginalConstructor()
@@ -66,14 +64,13 @@ class PrimaryKeySessionAuthenticatorTest extends TestCase {
 
 		$request = $request->withAttribute('session', $this->sessionMock);
 
-		$this->identifiers = new IdentifierCollection([
-			'Authentication.Token' => [
-				'tokenField' => 'id',
-				'dataField' => 'key',
-				'resolver' => [
-					'className' => 'Authentication.Orm',
-					'finder' => 'active',
-				],
+		$this->identifiers = IdentifierFactory::create([
+			'className' => 'Authentication.Token',
+			'tokenField' => 'id',
+			'dataField' => 'key',
+			'resolver' => [
+				'className' => 'Authentication.Orm',
+				'finder' => 'active',
 			],
 		]);
 
@@ -106,14 +103,13 @@ class PrimaryKeySessionAuthenticatorTest extends TestCase {
 
 		$request = $request->withAttribute('session', $this->sessionMock);
 
-		$this->identifiers = new IdentifierCollection([
-			'Authentication.Token' => [
-				'tokenField' => 'id',
-				'dataField' => 'key',
-				'resolver' => [
-					'className' => 'Authentication.Orm',
-					'finder' => 'active',
-				],
+		$this->identifiers = IdentifierFactory::create([
+			'className' => 'Authentication.Token',
+			'tokenField' => 'id',
+			'dataField' => 'key',
+			'resolver' => [
+				'className' => 'Authentication.Orm',
+				'finder' => 'active',
 			],
 		]);
 
