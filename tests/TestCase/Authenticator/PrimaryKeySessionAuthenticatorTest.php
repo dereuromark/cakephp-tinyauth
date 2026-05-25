@@ -29,7 +29,7 @@ class PrimaryKeySessionAuthenticatorTest extends TestCase {
 	/**
 	 * @var \Authentication\Identifier\IdentifierInterface
 	 */
-	protected $identifiers;
+	protected $identifier;
 
 	/**
 	 * @var \Cake\Http\Session&\PHPUnit\Framework\MockObject\MockObject
@@ -42,7 +42,7 @@ class PrimaryKeySessionAuthenticatorTest extends TestCase {
 	public function setUp(): void {
 		parent::setUp();
 
-		$this->identifiers = new PasswordIdentifier();
+		$this->identifier = new PasswordIdentifier();
 
 		$this->sessionMock = $this->getMockBuilder(Session::class)
 			->disableOriginalConstructor()
@@ -65,7 +65,7 @@ class PrimaryKeySessionAuthenticatorTest extends TestCase {
 
 		$request = $request->withAttribute('session', $this->sessionMock);
 
-		$this->identifiers = new TokenIdentifier([
+		$this->identifier = new TokenIdentifier([
 			'tokenField' => 'id',
 			'dataField' => 'key',
 			'resolver' => [
@@ -74,7 +74,7 @@ class PrimaryKeySessionAuthenticatorTest extends TestCase {
 			],
 		]);
 
-		$authenticator = new PrimaryKeySessionAuthenticator($this->identifiers);
+		$authenticator = new PrimaryKeySessionAuthenticator($this->identifier);
 		$result = $authenticator->authenticate($request);
 
 		$this->assertInstanceOf(Result::class, $result);
@@ -103,7 +103,7 @@ class PrimaryKeySessionAuthenticatorTest extends TestCase {
 
 		$request = $request->withAttribute('session', $this->sessionMock);
 
-		$this->identifiers = new TokenIdentifier([
+		$this->identifier = new TokenIdentifier([
 			'tokenField' => 'id',
 			'dataField' => 'key',
 			'resolver' => [
@@ -112,7 +112,7 @@ class PrimaryKeySessionAuthenticatorTest extends TestCase {
 			],
 		]);
 
-		$authenticator = new PrimaryKeySessionAuthenticator($this->identifiers, []);
+		$authenticator = new PrimaryKeySessionAuthenticator($this->identifier, []);
 		$result = $authenticator->authenticate($request);
 
 		$this->assertInstanceOf(Result::class, $result);
@@ -137,7 +137,7 @@ class PrimaryKeySessionAuthenticatorTest extends TestCase {
 
 		$request = $request->withAttribute('session', $this->sessionMock);
 
-		$authenticator = new PrimaryKeySessionAuthenticator($this->identifiers);
+		$authenticator = new PrimaryKeySessionAuthenticator($this->identifier);
 		$result = $authenticator->authenticate($request);
 
 		$this->assertInstanceOf(Result::class, $result);
@@ -159,7 +159,7 @@ class PrimaryKeySessionAuthenticatorTest extends TestCase {
 
 		$request = $request->withAttribute('session', $this->sessionMock);
 
-		$authenticator = new PrimaryKeySessionAuthenticator($this->identifiers, []);
+		$authenticator = new PrimaryKeySessionAuthenticator($this->identifier, []);
 		$result = $authenticator->authenticate($request);
 
 		$this->assertInstanceOf(Result::class, $result);
@@ -175,7 +175,7 @@ class PrimaryKeySessionAuthenticatorTest extends TestCase {
 		$request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/']);
 		$request = $request->withAttribute('session', $this->sessionMock);
 		$response = new Response();
-		$authenticator = new PrimaryKeySessionAuthenticator($this->identifiers);
+		$authenticator = new PrimaryKeySessionAuthenticator($this->identifier);
 
 		$data = new ArrayObject(['id' => 1]);
 
@@ -217,7 +217,7 @@ class PrimaryKeySessionAuthenticatorTest extends TestCase {
 		$request = $request->withAttribute('session', $this->sessionMock);
 		$response = new Response();
 
-		$authenticator = new PrimaryKeySessionAuthenticator($this->identifiers);
+		$authenticator = new PrimaryKeySessionAuthenticator($this->identifier);
 
 		$this->sessionMock->expects($this->once())
 			->method('delete')
@@ -245,7 +245,7 @@ class PrimaryKeySessionAuthenticatorTest extends TestCase {
 		$request = $request->withAttribute('session', $this->sessionMock);
 		$response = new Response();
 
-		$authenticator = new PrimaryKeySessionAuthenticator($this->identifiers);
+		$authenticator = new PrimaryKeySessionAuthenticator($this->identifier);
 		$usersTable = $this->fetchTable('Users');
 		$impersonator = $usersTable->newEntity([
 			'username' => 'mariano',
@@ -285,7 +285,7 @@ class PrimaryKeySessionAuthenticatorTest extends TestCase {
 		$request = $request->withAttribute('session', $this->sessionMock);
 		$response = new Response();
 
-		$authenticator = new PrimaryKeySessionAuthenticator($this->identifiers);
+		$authenticator = new PrimaryKeySessionAuthenticator($this->identifier);
 		$impersonator = new ArrayObject([
 			'username' => 'mariano',
 			'password' => 'password',
@@ -318,7 +318,7 @@ class PrimaryKeySessionAuthenticatorTest extends TestCase {
 		$request = $request->withAttribute('session', $this->sessionMock);
 		$response = new Response();
 
-		$authenticator = new PrimaryKeySessionAuthenticator($this->identifiers);
+		$authenticator = new PrimaryKeySessionAuthenticator($this->identifier);
 
 		$impersonator = new ArrayObject([
 			'username' => 'mariano',
@@ -364,7 +364,7 @@ class PrimaryKeySessionAuthenticatorTest extends TestCase {
 		$request = $request->withAttribute('session', $this->sessionMock);
 		$response = new Response();
 
-		$authenticator = new PrimaryKeySessionAuthenticator($this->identifiers);
+		$authenticator = new PrimaryKeySessionAuthenticator($this->identifier);
 
 		$this->sessionMock->expects($this->once())
 			->method('check')
@@ -400,7 +400,7 @@ class PrimaryKeySessionAuthenticatorTest extends TestCase {
 		$request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/']);
 		$request = $request->withAttribute('session', $this->sessionMock);
 
-		$authenticator = new PrimaryKeySessionAuthenticator($this->identifiers);
+		$authenticator = new PrimaryKeySessionAuthenticator($this->identifier);
 
 		$this->sessionMock->expects($this->once())
 			->method('check')
