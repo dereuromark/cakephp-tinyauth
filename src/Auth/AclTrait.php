@@ -552,12 +552,12 @@ trait AclTrait {
 		// Single-role from session
 		if (!$this->getConfig('multiRole')) {
 			$roleColumn = $this->getConfig('roleColumn');
-			if (!$roleColumn) {
+			if (!is_string($roleColumn) || $roleColumn === '') {
 				throw new CakeException('Invalid TinyAuth config, `roleColumn` config missing.');
 			}
 
 			// Check if the roleColumn is a dot notation path
-			if (str_contains((string)$roleColumn, '.')) {
+			if (str_contains($roleColumn, '.')) {
 				$role = Hash::get($user, $roleColumn);
 				if (!$role) {
 					throw new CakeException(sprintf('Missing TinyAuth role id field (%s) in user session', 'Auth.User.' . $roleColumn));
