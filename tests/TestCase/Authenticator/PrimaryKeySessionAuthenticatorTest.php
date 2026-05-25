@@ -5,8 +5,8 @@ namespace TinyAuth\Test\TestCase\Authenticator;
 
 use ArrayObject;
 use Authentication\Authenticator\Result;
-use Authentication\Identifier\IdentifierCollection;
-use Authentication\Identifier\IdentifierFactory;
+use Authentication\Identifier\PasswordIdentifier;
+use Authentication\Identifier\TokenIdentifier;
 use Cake\Http\Exception\UnauthorizedException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequestFactory;
@@ -42,7 +42,7 @@ class PrimaryKeySessionAuthenticatorTest extends TestCase {
 	public function setUp(): void {
 		parent::setUp();
 
-		$this->identifiers = $this->buildIdentifier('Authentication.Password');
+		$this->identifiers = new PasswordIdentifier();
 
 		$this->sessionMock = $this->getMockBuilder(Session::class)
 			->disableOriginalConstructor()
@@ -65,8 +65,7 @@ class PrimaryKeySessionAuthenticatorTest extends TestCase {
 
 		$request = $request->withAttribute('session', $this->sessionMock);
 
-		$this->identifiers = $this->buildIdentifier([
-			'className' => 'Authentication.Token',
+		$this->identifiers = new TokenIdentifier([
 			'tokenField' => 'id',
 			'dataField' => 'key',
 			'resolver' => [
@@ -104,8 +103,7 @@ class PrimaryKeySessionAuthenticatorTest extends TestCase {
 
 		$request = $request->withAttribute('session', $this->sessionMock);
 
-		$this->identifiers = $this->buildIdentifier([
-			'className' => 'Authentication.Token',
+		$this->identifiers = new TokenIdentifier([
 			'tokenField' => 'id',
 			'dataField' => 'key',
 			'resolver' => [
@@ -410,24 +408,6 @@ class PrimaryKeySessionAuthenticatorTest extends TestCase {
 
 		$result = $authenticator->isImpersonating($request);
 		$this->assertFalse($result);
-	}
-
-	/**
-	 * @param array<string, mixed>|string $config
-	 * @return \Authentication\Identifier\IdentifierInterface
-	 */
-	protected function buildIdentifier(array|string $config) {
-		if (class_exists(IdentifierFactory::class)) {
-			return IdentifierFactory::create($config);
-		}
-
-		$identifierCollection = new IdentifierCollection(
-			is_string($config) ? [$config] : [$config['className'] => array_diff_key($config, ['className' => true])],
-		);
-
-		$className = is_string($config) ? $config : $config['className'];
-
-		return $identifierCollection->get($className);
 	}
 
 }
