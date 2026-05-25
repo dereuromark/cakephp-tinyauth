@@ -66,16 +66,16 @@ class AuthenticationComponent extends CakeAuthenticationComponent {
 				throw new CakeException('Controller or action name could not be null.');
 			}
 			$url = [
-				'prefix' => empty($defaults['prefix']) ? null : $defaults['prefix'],
-				'plugin' => empty($defaults['plugin']) ? null : $defaults['plugin'],
+				'prefix' => !empty($defaults['prefix']) ? $defaults['prefix'] : null,
+				'plugin' => !empty($defaults['plugin']) ? $defaults['plugin'] : null,
 				'controller' => $defaults['controller'],
 				'action' => $defaults['action'],
 			];
 		} else {
 			$params = $this->getController()->getRequest()->getAttribute('params');
 			$url += [
-				'prefix' => empty($params['prefix']) ? null : $params['prefix'],
-				'plugin' => empty($params['plugin']) ? null : $params['plugin'],
+				'prefix' => !empty($params['prefix']) ? $params['prefix'] : null,
+				'plugin' => !empty($params['plugin']) ? $params['plugin'] : null,
 				'controller' => $params['controller'],
 				'action' => 'index',
 			];
