@@ -62,7 +62,7 @@ class PrimaryKeySessionAuthenticator extends AuthenticationSessionAuthenticator 
 			}
 		}
 
-		$user = $this->_identifier->identify([$this->getConfig('identifierKey') => $userId]);
+		$user = $this->getIdentifier()->identify([$this->getConfig('identifierKey') => $userId]);
 		if (!$user) {
 			return new Result(null, Result::FAILURE_IDENTITY_NOT_FOUND);
 		}

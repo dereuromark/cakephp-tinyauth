@@ -31,7 +31,7 @@
 		"cakephp/cakephp": "^5.1.1"
 	},
 	"require-dev": {
-		"cakephp/authentication": "^3.0.1",
+		"cakephp/authentication": "^3.0.1 || ^4.0",
 		"cakephp/authorization": "^3.0.1",
 		"cakephp/debug_kit": "^5.0.1",
 		"composer/semver": "^3.0",
