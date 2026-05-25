@@ -5,6 +5,7 @@ namespace TinyAuth\Test\TestCase\Authenticator;
 
 use ArrayObject;
 use Authentication\Authenticator\Result;
+use Authentication\Identifier\IdentifierCollection;
 use Authentication\Identifier\IdentifierFactory;
 use Cake\Http\Exception\UnauthorizedException;
 use Cake\Http\Response;
@@ -41,7 +42,7 @@ class PrimaryKeySessionAuthenticatorTest extends TestCase {
 	public function setUp(): void {
 		parent::setUp();
 
-		$this->identifiers = IdentifierFactory::create('Authentication.Password');
+		$this->identifiers = $this->buildIdentifier('Authentication.Password');
 
 		$this->sessionMock = $this->getMockBuilder(Session::class)
 			->disableOriginalConstructor()
@@ -64,7 +65,7 @@ class PrimaryKeySessionAuthenticatorTest extends TestCase {
 
 		$request = $request->withAttribute('session', $this->sessionMock);
 
-		$this->identifiers = IdentifierFactory::create([
+		$this->identifiers = $this->buildIdentifier([
 			'className' => 'Authentication.Token',
 			'tokenField' => 'id',
 			'dataField' => 'key',
@@ -103,7 +104,7 @@ class PrimaryKeySessionAuthenticatorTest extends TestCase {
 
 		$request = $request->withAttribute('session', $this->sessionMock);
 
-		$this->identifiers = IdentifierFactory::create([
+		$this->identifiers = $this->buildIdentifier([
 			'className' => 'Authentication.Token',
 			'tokenField' => 'id',
 			'dataField' => 'key',
@@ -409,6 +410,24 @@ class PrimaryKeySessionAuthenticatorTest extends TestCase {
 
 		$result = $authenticator->isImpersonating($request);
 		$this->assertFalse($result);
+	}
+
+	/**
+	 * @param array<string, mixed>|string $config
+	 * @return \Authentication\Identifier\IdentifierInterface
+	 */
+	protected function buildIdentifier(array|string $config) {
+		if (class_exists(IdentifierFactory::class)) {
+			return IdentifierFactory::create($config);
+		}
+
+		$identifierCollection = new IdentifierCollection(
+			is_string($config) ? [$config] : [$config['className'] => array_diff_key($config, ['className' => true])],
+		);
+
+		$className = is_string($config) ? $config : $config['className'];
+
+		return $identifierCollection->get($className);
 	}
 
 }
