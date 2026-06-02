@@ -46,7 +46,7 @@ class SessionCache {
 	 *
 	 * @return void
 	 */
-	public static function write(int|string $userId, ArrayAccess|array $data): void {
+	public static function write(string|int $userId, ArrayAccess|array $data): void {
 		$config = static::prepareConfig();
 
 		Cache::write(static::key($userId), $data, $config['cache']);
@@ -57,7 +57,7 @@ class SessionCache {
 	 *
 	 * @return \ArrayAccess|array|null
 	 */
-	public static function read(int|string $userId): ArrayAccess|array|null {
+	public static function read(string|int $userId): ArrayAccess|array|null {
 		$config = static::prepareConfig();
 
 		return Cache::read(static::key($userId), $config['cache']) ?: null;
@@ -68,7 +68,7 @@ class SessionCache {
 	 *
 	 * @return bool
 	 */
-	public static function delete(int|string $userId): bool {
+	public static function delete(string|int $userId): bool {
 		$config = static::prepareConfig();
 
 		return Cache::delete(static::key($userId), $config['cache']);
@@ -78,7 +78,7 @@ class SessionCache {
 	 * @param string|int $userId
 	 * @return string
 	 */
-	public static function key(int|string $userId): string {
+	public static function key(string|int $userId): string {
 		$config = static::prepareConfig();
 
 		static::assertValidCacheSetup($config);
