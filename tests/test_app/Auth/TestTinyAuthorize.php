@@ -24,11 +24,11 @@ class TestTinyAuthorize extends TinyAuthorize {
 	}
 
 	/**
-	 * @param string|null $path
+	 * @param array<string>|string|null $path
 	 *
 	 * @return array
 	 */
-	protected function _getAcl($path = null) {
+	protected function _getAcl(array|string|null $path = null): array {
 		$path = Plugin::path('TinyAuth') . 'tests' . DS . 'test_files' . DS;
 
 		return parent::_getAcl($path);

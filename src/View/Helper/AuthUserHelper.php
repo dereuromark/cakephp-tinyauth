@@ -62,7 +62,7 @@ class AuthUserHelper extends Helper {
 	 * @throws \Cake\Core\Exception\CakeException
 	 * @return bool
 	 */
-	public function hasAccess(array $url) {
+	public function hasAccess(array $url): bool {
 		if (isset($url['_name'])) {
 			//throw MissingRouteException if necessary
 			Router::url($url);
@@ -107,7 +107,7 @@ class AuthUserHelper extends Helper {
 	 * @param array<string, mixed> $options
 	 * @return string
 	 */
-	public function link($title, array $url, array $options = []) {
+	public function link(string $title, array $url, array $options = []) {
 		if (!$this->hasAccess($url)) {
 			return $this->_default($title, $options);
 		}
@@ -127,7 +127,7 @@ class AuthUserHelper extends Helper {
 	 * @param array<string, mixed> $options
 	 * @return string
 	 */
-	public function postLink($title, array $url, array $options = []) {
+	public function postLink(string $title, array $url, array $options = []) {
 		if (!$this->hasAccess($url)) {
 			return $this->_default($title, $options);
 		}
@@ -141,7 +141,7 @@ class AuthUserHelper extends Helper {
 	 * @param array<string, mixed> $options
 	 * @return string
 	 */
-	protected function _default($title, array $options) {
+	protected function _default(string $title, array $options) {
 		$options += [
 			'default' => '',
 			'escape' => true,

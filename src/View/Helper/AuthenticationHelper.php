@@ -38,7 +38,7 @@ class AuthenticationHelper extends Helper {
 	 * @param array $url
 	 * @return bool
 	 */
-	public function isPublic(array $url = []) {
+	public function isPublic(array $url = []): bool {
 		if (!$url) {
 			$url = $this->_View->getRequest()->getAttribute('params');
 		}

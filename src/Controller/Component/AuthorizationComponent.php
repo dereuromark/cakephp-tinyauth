@@ -24,7 +24,7 @@ class AuthorizationComponent extends CakeAuthorizationComponent {
 	/**
 	 * @var \TinyAuth\Controller\Component\AuthenticationComponent|null
 	 */
-	protected $_authentication;
+	protected ?AuthenticationComponent $_authentication = null;
 
 	/**
 	 * @param \Cake\Controller\ComponentRegistry $registry
@@ -77,7 +77,7 @@ class AuthorizationComponent extends CakeAuthorizationComponent {
 	 *
 	 * @return bool
 	 */
-	protected function _isUnauthenticatedAction() {
+	protected function _isUnauthenticatedAction(): bool {
 		if ($this->_authentication === null) {
 			return false;
 		}
