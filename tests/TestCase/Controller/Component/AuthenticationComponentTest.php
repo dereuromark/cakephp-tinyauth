@@ -8,6 +8,7 @@ use Cake\Core\Plugin;
 use Cake\Event\Event;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
+use ReflectionMethod;
 use TinyAuth\Controller\Component\AuthenticationComponent;
 
 class AuthenticationComponentTest extends TestCase {
@@ -158,6 +159,63 @@ class AuthenticationComponentTest extends TestCase {
 
 		$result = $this->component->isPublic();
 		$this->assertFalse($result);
+	}
+
+	/**
+	 * A wildcard (`*`) allow rule must keep unauthenticated access open even for
+	 * actions that do not exist on the controller. Otherwise an unknown action
+	 * under a fully public controller is treated as protected and unauthenticated
+	 * users get redirected to login instead of receiving the MissingActionException
+	 * (404) that the action's absence should produce.
+	 *
+	 * @see https://github.com/dereuromark/cakephp-tinyauth/issues/173
+	 *
+	 * @return void
+	 */
+	public function testPrepareAuthenticationWildcardAllowsUnknownAction() {
+		$request = new ServerRequest(['params' => [
+			'controller' => 'Offers',
+			'action' => 'thisDoesNotExist',
+			'plugin' => 'Extras',
+			'prefix' => null,
+			'_ext' => null,
+			'pass' => [],
+		]]);
+		$controller = $this->getControllerMock($request);
+		$registry = new ComponentRegistry($controller);
+		$this->component = new AuthenticationComponent($registry, $this->componentConfig);
+
+		$method = new ReflectionMethod($this->component, '_prepareAuthentication');
+		$method->setAccessible(true);
+		$method->invoke($this->component);
+
+		$this->assertContains('thisDoesNotExist', $this->component->getUnauthenticatedActions());
+	}
+
+	/**
+	 * A wildcard allow rule with an explicit deny must still protect the denied
+	 * action, even though the requested action does not exist on the controller.
+	 *
+	 * @return void
+	 */
+	public function testPrepareAuthenticationWildcardStillHonorsDeny() {
+		$request = new ServerRequest(['params' => [
+			'controller' => 'Offers',
+			'action' => 'superPrivate',
+			'plugin' => 'Extras',
+			'prefix' => null,
+			'_ext' => null,
+			'pass' => [],
+		]]);
+		$controller = $this->getControllerMock($request);
+		$registry = new ComponentRegistry($controller);
+		$this->component = new AuthenticationComponent($registry, $this->componentConfig);
+
+		$method = new ReflectionMethod($this->component, '_prepareAuthentication');
+		$method->setAccessible(true);
+		$method->invoke($this->component);
+
+		$this->assertNotContains('superPrivate', $this->component->getUnauthenticatedActions());
 	}
 
 	/**
