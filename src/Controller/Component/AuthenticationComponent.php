@@ -116,6 +116,14 @@ class AuthenticationComponent extends CakeAuthenticationComponent {
 		$allowed = $this->unauthenticatedActions;
 		if (in_array('*', $rule['allow'], true)) {
 			$allowed = $this->_getAllActions();
+			// A wildcard rule makes the whole controller public, including actions
+			// that do not exist as methods. Keep the current action allowed so an
+			// unknown action falls through to MissingActionException (404) instead
+			// of being treated as protected and redirected to login.
+			// @see https://github.com/dereuromark/cakephp-tinyauth/issues/173
+			if (isset($params['action'])) {
+				$allowed[] = $params['action'];
+			}
 		} elseif (!empty($rule['allow'])) {
 			$allowed = array_merge($allowed, $rule['allow']);
 		}
