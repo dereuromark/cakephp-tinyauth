@@ -24,7 +24,7 @@ class AuthUserHelper extends Helper {
 	use	AuthUserTrait;
 
 	/**
-	 * @var array
+	 * @var array<int|string, array<string, mixed>|string>
 	 */
 	protected array $helpers = ['Html', 'Form'];
 
