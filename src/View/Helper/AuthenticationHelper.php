@@ -16,7 +16,7 @@ class AuthenticationHelper extends Helper {
 	use AllowTrait;
 
 	/**
-	 * @var array
+	 * @var array<int|string, array<string, mixed>|string>
 	 */
 	protected array $helpers = [];
 
