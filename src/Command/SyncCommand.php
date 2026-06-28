@@ -50,7 +50,7 @@ class SyncCommand extends Command {
 	 * @param \Cake\Console\ConsoleIo $io The console io
 	 * @return int
 	 */
-	public function execute(Arguments $args, ConsoleIo $io) {
+	public function execute(Arguments $args, ConsoleIo $io): int {
 		$syncer = $this->_getSyncer();
 		$syncer->syncAcl($args, $io);
 
@@ -64,7 +64,7 @@ class SyncCommand extends Command {
 	/**
 	 * @return \TinyAuth\Sync\Syncer
 	 */
-	protected function _getSyncer() {
+	protected function _getSyncer(): Syncer {
 		return new Syncer();
 	}
 
@@ -115,7 +115,7 @@ class SyncCommand extends Command {
 	/**
 	 * @return array<string>
 	 */
-	protected function _getAvailableRoles() {
+	protected function _getAvailableRoles(): array {
 		$roles = (new TinyAuth())->getAvailableRoles();
 
 		return array_keys($roles);

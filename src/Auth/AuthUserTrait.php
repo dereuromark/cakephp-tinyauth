@@ -48,7 +48,7 @@ trait AuthUserTrait {
 	 *
 	 * @return string|int|null User id if existent, null otherwise.
 	 */
-	public function id() {
+	public function id(): string|int|null {
 		$field = $this->getConfig('idColumn');
 
 		return $this->user($field);
@@ -73,7 +73,7 @@ trait AuthUserTrait {
 	 * @param string|null $key Key in dot syntax.
 	 * @return mixed Data
 	 */
-	public function user(?string $key = null) {
+	public function user(?string $key = null): mixed {
 		$user = $this->_getUser();
 		if ($key === null) {
 			return $user;
@@ -114,7 +114,7 @@ trait AuthUserTrait {
 	 * @param mixed|null $providedRoles
 	 * @return bool Success
 	 */
-	public function hasRole($expectedRole, $providedRoles = null) {
+	public function hasRole(mixed $expectedRole, mixed $providedRoles = null): bool {
 		$roles = $providedRoles !== null ? (array)$providedRoles : $this->roles();
 
 		if (!$roles) {
@@ -154,7 +154,7 @@ trait AuthUserTrait {
 	 * @param mixed|null $providedRoles
 	 * @return bool Success
 	 */
-	public function hasRoles($expectedRoles, $oneRoleIsEnough = true, $providedRoles = null): bool {
+	public function hasRoles(mixed $expectedRoles, $oneRoleIsEnough = true, mixed $providedRoles = null): bool {
 		$roles = $providedRoles ?? $this->roles();
 
 		$expectedRoles = (array)$expectedRoles;

@@ -4,6 +4,7 @@ namespace TinyAuth\Auth;
 
 use ArrayAccess;
 use BackedEnum;
+use Cake\Collection\CollectionInterface;
 use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
 use Cake\Database\Type\EnumLabelInterface;
@@ -22,32 +23,32 @@ trait AclTrait {
 	/**
 	 * @var array|null
 	 */
-	protected $_acl;
+	protected ?array $_acl = null;
 
 	/**
 	 * @var array<int|string>|null
 	 */
-	protected $_roles;
+	protected ?array $_roles = null;
 
 	/**
 	 * @var array<string>|null
 	 */
-	protected $_prefixMap;
+	protected ?array $_prefixMap = null;
 
 	/**
 	 * @var array|null
 	 */
-	protected $_userRoles;
+	protected ?array $_userRoles = null;
 
 	/**
 	 * @var \TinyAuth\Auth\AclAdapter\AclAdapterInterface|null
 	 */
-	protected $_aclAdapter;
+	protected ?AclAdapterInterface $_aclAdapter = null;
 
 	/**
 	 * @var array|null
 	 */
-	protected $auth;
+	protected ?array $auth = null;
 
 	/**
 	 * Finds the authorization adapter to use for this request.
@@ -57,7 +58,7 @@ trait AclTrait {
 	 * @throws \InvalidArgumentException
 	 * @return \TinyAuth\Auth\AclAdapter\AclAdapterInterface
 	 */
-	protected function _loadAclAdapter($adapter) {
+	protected function _loadAclAdapter(string $adapter): AclAdapterInterface {
 		if ($this->_aclAdapter !== null) {
 			return $this->_aclAdapter;
 		}
@@ -134,7 +135,7 @@ trait AclTrait {
 	 *
 	 * @return bool
 	 */
-	protected function _isProtectedPrefix($prefix, array $protectedPrefixes) {
+	protected function _isProtectedPrefix($prefix, array $protectedPrefixes): bool {
 		foreach ($protectedPrefixes as $protectedPrefix) {
 			if ($prefix === $protectedPrefix || str_starts_with((string)$prefix, $protectedPrefix . '/')) {
 				return true;
@@ -157,7 +158,7 @@ trait AclTrait {
 	 * @param mixed $rule The value declared on the ACL rule.
 	 * @return bool True when both sides describe the same slot.
 	 */
-	protected function _matchesRouteSlot($request, $rule): bool {
+	protected function _matchesRouteSlot(mixed $request, mixed $rule): bool {
 		$requestEmpty = $request === null || $request === '';
 		$ruleEmpty = $rule === null || $rule === '';
 
@@ -177,7 +178,7 @@ trait AclTrait {
 	 *
 	 * @return bool
 	 */
-	protected function _check(array $userRoles, array $params) {
+	protected function _check(array $userRoles, array $params): bool {
 		// Allow access to all prefixed actions for users belonging to
 		// the specified role that matches the prefix.
 		$prefixMap = $this->getConfig('authorizeByPrefix');
@@ -269,7 +270,7 @@ trait AclTrait {
 	 *
 	 * @return array<string>
 	 */
-	protected function _prefixesFromRoles(array $roles) {
+	protected function _prefixesFromRoles(array $roles): array {
 		$names = array_keys($roles);
 		$prefixMap = [];
 		foreach ($names as $name) {
@@ -288,7 +289,7 @@ trait AclTrait {
 	 *
 	 * @return bool
 	 */
-	protected function _isAuthorizedByPrefix($prefix, array $prefixMap, array $userRoles, array $availableRoles) {
+	protected function _isAuthorizedByPrefix($prefix, array $prefixMap, array $userRoles, array $availableRoles): bool {
 		if (!$userRoles || !$prefixMap || !$availableRoles) {
 			return false;
 		}
@@ -315,7 +316,7 @@ trait AclTrait {
 	 *
 	 * @return array<string, mixed>
 	 */
-	protected function _normalizePrefixes(array $prefixes) {
+	protected function _normalizePrefixes(array $prefixes): array {
 		$normalized = [];
 		foreach ($prefixes as $prefix => $role) {
 			if (is_int($prefix)) {
@@ -334,7 +335,7 @@ trait AclTrait {
 	 *
 	 * @return bool
 	 */
-	protected function _isPublic(array $params) {
+	protected function _isPublic(array $params): bool {
 		$authentication = $this->_getAuth();
 
 		foreach ($authentication as $rule) {
@@ -376,7 +377,7 @@ trait AclTrait {
 	 * @throws \Cake\Core\Exception\CakeException
 	 * @return array
 	 */
-	protected function _getAuth() {
+	protected function _getAuth(): array {
 		if ($this->auth) {
 			return $this->auth;
 		}
@@ -399,7 +400,7 @@ trait AclTrait {
 	 * @param array|string|null $path
 	 * @return array
 	 */
-	protected function _getAcl($path = null) {
+	protected function _getAcl(array|string|null $path = null): array {
 		if ($this->getConfig('autoClearCache') && Configure::read('debug')) {
 			Cache::clear(Cache::KEY_ACL);
 		}
@@ -430,7 +431,7 @@ trait AclTrait {
 	 * @param string $file INI file name.
 	 * @return array List with all found files.
 	 */
-	protected function _parseFiles($paths, $file) {
+	protected function _parseFiles(array|string|null $paths, string $file): array {
 		return Utility::parseFiles($paths, $file);
 	}
 
@@ -440,7 +441,7 @@ trait AclTrait {
 	 * @param string $key INI section key as found in acl.ini
 	 * @return array<string, mixed> Array with named keys for controller, plugin and prefix
 	 */
-	protected function _deconstructIniKey($key) {
+	protected function _deconstructIniKey(string $key): array {
 		return Utility::deconstructIniKey($key);
 	}
 
@@ -450,7 +451,7 @@ trait AclTrait {
 	 * @param array $params The request params
 	 * @return string|null Hash with named keys for controller, plugin and prefix
 	 */
-	protected function _constructIniKey($params): ?string {
+	protected function _constructIniKey(array $params): ?string {
 		$res = $params['controller'] ?? null;
 		if ($res === null) {
 			return null;
@@ -474,7 +475,7 @@ trait AclTrait {
 	 * @throws \Cake\Core\Exception\CakeException
 	 * @return array<string, int|string> List with all available roles
 	 */
-	protected function _getAvailableRoles() {
+	protected function _getAvailableRoles(): array {
 		if ($this->_roles !== null) {
 			return $this->_roles;
 		}
@@ -526,7 +527,7 @@ trait AclTrait {
 		try {
 			$rolesTable = TableRegistry::getTableLocator()->get($rolesTableKey);
 			$roleIdColumn = $this->getConfig('roleIdColumn') ?: 'id';
-			$result = $rolesTable->find()->formatResults(function (ResultSetInterface $results) use ($roleIdColumn) {
+			$result = $rolesTable->find()->formatResults(function (ResultSetInterface $results) use ($roleIdColumn): CollectionInterface {
 				return $results->combine($this->getConfig('aliasColumn'), $roleIdColumn);
 			});
 		} catch (RuntimeException $e) {
@@ -548,7 +549,7 @@ trait AclTrait {
 	 * @param \ArrayAccess|array $user The user to get the roles for
 	 * @return array<string, int|string> List with all role ids belonging to the user
 	 */
-	protected function _getUserRoles(ArrayAccess|array $user) {
+	protected function _getUserRoles(ArrayAccess|array $user): array {
 		// Single-role from session
 		if (!$this->getConfig('multiRole')) {
 			$roleColumn = $this->getConfig('roleColumn');
@@ -611,7 +612,7 @@ trait AclTrait {
 	/**
 	 * @return string
 	 */
-	protected function _pivotTableName() {
+	protected function _pivotTableName(): string {
 		$pivotTableName = $this->getConfig('pivotTable');
 		if (!$pivotTableName) {
 			[, $rolesTableName] = pluginSplit($this->getConfig('rolesTable'));
@@ -632,7 +633,7 @@ trait AclTrait {
 	 * @param int $id User ID
 	 * @return array
 	 */
-	protected function _getRolesFromJunction($pivotTableName, $id) {
+	protected function _getRolesFromJunction(string $pivotTableName, $id): array {
 		if (isset($this->_userRoles[$id])) {
 			return $this->_userRoles[$id];
 		}
@@ -657,7 +658,7 @@ trait AclTrait {
 	 * @param array<int|string|\BackedEnum> $roles
 	 * @return array<string, int|string>
 	 */
-	protected function _mapped(array $roles) {
+	protected function _mapped(array $roles): array {
 		$availableRoles = $this->_getAvailableRoles();
 
 		$array = [];

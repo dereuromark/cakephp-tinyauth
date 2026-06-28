@@ -52,7 +52,7 @@ class AuthenticationComponent extends CakeAuthenticationComponent {
 	 * @throws \Cake\Core\Exception\CakeException
 	 * @return bool
 	 */
-	public function isPublic(array $url = []) {
+	public function isPublic(array $url = []): bool {
 		if (!$url) {
 			$url = $this->getController()->getRequest()->getAttribute('params');
 		}
@@ -89,7 +89,7 @@ class AuthenticationComponent extends CakeAuthenticationComponent {
 	/**
 	 * @return void
 	 */
-	protected function _prepareAuthentication() {
+	protected function _prepareAuthentication(): void {
 		$params = $this->_registry->getController()->getRequest()->getAttribute('params');
 		if (!isset($params['plugin'])) {
 			$params['plugin'] = null;
@@ -136,7 +136,7 @@ class AuthenticationComponent extends CakeAuthenticationComponent {
 	/**
 	 * @return array
 	 */
-	protected function _getAllActions() {
+	protected function _getAllActions(): array {
 		$controller = $this->_registry->getController();
 
 		return get_class_methods($controller);

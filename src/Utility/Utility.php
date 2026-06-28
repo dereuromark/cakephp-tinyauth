@@ -13,7 +13,7 @@ class Utility {
 	 * @param string $key INI section key as found in authentication.ini
 	 * @return array<string, mixed> Array with named keys for controller, plugin and prefix
 	 */
-	public static function deconstructIniKey($key) {
+	public static function deconstructIniKey(string $key): array {
 		$res = [
 			'plugin' => null,
 			'prefix' => null,
@@ -40,7 +40,7 @@ class Utility {
 	 * @param string $file INI file name.
 	 * @return array List with all found files.
 	 */
-	public static function parseFiles($paths, $file) {
+	public static function parseFiles(array|string|null $paths, string $file): array {
 		if ($paths === null) {
 			$paths = ROOT . DS . 'config' . DS;
 		}
@@ -60,7 +60,7 @@ class Utility {
 	 * @throws \Cake\Core\Exception\CakeException
 	 * @return array List
 	 */
-	public static function parseFile($ini) {
+	public static function parseFile(string $ini): array {
 		if (!file_exists($ini)) {
 			throw new CakeException(sprintf('Missing TinyAuth config file (%s)', $ini));
 		}
@@ -88,7 +88,7 @@ class Utility {
 	 *
 	 * @return bool
 	 */
-	public static function generateFile($file, array $content) {
+	public static function generateFile(string $file, array $content): bool {
 		$string = static::buildIniString($content);
 
 		return (bool)file_put_contents($file, $string);
@@ -99,7 +99,7 @@ class Utility {
 	 *
 	 * @return string
 	 */
-	public static function buildIniString(array $a) {
+	public static function buildIniString(array $a): string {
 		$out = [];
 		foreach ($a as $rootkey => $rootvalue) {
 			$out[] = "[$rootkey]";

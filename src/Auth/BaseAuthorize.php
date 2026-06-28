@@ -30,17 +30,15 @@ abstract class BaseAuthorize {
 
 	/**
 	 * ComponentRegistry instance for getting more components.
-	 *
-	 * @var \Cake\Controller\ComponentRegistry
 	 */
-	protected $_registry;
+	protected ComponentRegistry $_registry;
 
 	/**
 	 * Default config for authorize objects.
 	 *
 	 * @var array<string, mixed>
 	 */
-	protected $_defaultConfig = [];
+	protected array $_defaultConfig = [];
 
 	/**
 	 * Constructor

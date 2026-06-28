@@ -14,7 +14,7 @@ class Syncer {
 	/**
 	 * @var array|null
 	 */
-	protected $authAllow;
+	protected ?array $authAllow = null;
 
 	/**
 	 * Synchronizes all discovered controllers with the ACL INI file.
@@ -39,7 +39,7 @@ class Syncer {
 	 * @param \Cake\Console\ConsoleIo $io Console I/O for output
 	 * @return void
 	 */
-	public function syncAcl(Arguments $args, ConsoleIo $io) {
+	public function syncAcl(Arguments $args, ConsoleIo $io): void {
 		$defaults = [
 			'aclFile' => 'auth_acl.ini',
 			'aclFilePath' => null,
@@ -84,7 +84,7 @@ class Syncer {
 	 * @param string|null $plugin
 	 * @return array
 	 */
-	protected function _getControllers($plugin) {
+	protected function _getControllers(?string $plugin): array {
 		if ($plugin === 'all') {
 			$plugins = Plugin::loaded();
 
@@ -113,7 +113,7 @@ class Syncer {
 	 *
 	 * @return array
 	 */
-	protected function _parseControllers($folder, $plugin, $prefix = null) {
+	protected function _parseControllers(string $folder, ?string $plugin, ?string $prefix = null): array {
 		$folderContent = $this->_listDirectory($folder);
 
 		$controllers = [];
@@ -194,7 +194,7 @@ class Syncer {
 	 * @param string|null $prefix
 	 * @return bool
 	 */
-	protected function _noAuthenticationNeeded($name, $plugin, $prefix) {
+	protected function _noAuthenticationNeeded(string $name, ?string $plugin, ?string $prefix): bool {
 		if ($this->authAllow === null) {
 			$this->authAllow = $this->_parseAuthAllow();
 		}
@@ -211,7 +211,7 @@ class Syncer {
 	/**
 	 * @return array
 	 */
-	protected function _parseAuthAllow() {
+	protected function _parseAuthAllow(): array {
 		$defaults = [
 			'allowFilePath' => null,
 			'allowFile' => 'auth_allow.ini',

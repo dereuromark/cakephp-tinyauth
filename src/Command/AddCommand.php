@@ -47,7 +47,7 @@ class AddCommand extends Command {
 	 * @param \Cake\Console\ConsoleIo $io The console io
 	 * @return int
 	 */
-	public function execute(Arguments $args, ConsoleIo $io) {
+	public function execute(Arguments $args, ConsoleIo $io): int {
 		$adder = $this->_getAdder();
 
 		$controller = $args->getArgument('controller');
@@ -77,7 +77,7 @@ class AddCommand extends Command {
 	/**
 	 * @return \TinyAuth\Sync\Adder
 	 */
-	protected function _getAdder() {
+	protected function _getAdder(): Adder {
 		return new Adder();
 	}
 
@@ -129,7 +129,7 @@ class AddCommand extends Command {
 	/**
 	 * @return array<string>
 	 */
-	protected function _getAvailableRoles() {
+	protected function _getAvailableRoles(): array {
 		$roles = (new TinyAuth())->getAvailableRoles();
 
 		return array_keys($roles);
