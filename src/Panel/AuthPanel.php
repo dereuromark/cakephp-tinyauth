@@ -106,8 +106,18 @@ class AuthPanel extends DebugPanel {
 
 		/** @var \Authentication\AuthenticationService|null $auth */
 		$auth = $request->getAttribute('authentication');
-		$data['authenticationProvider'] = $auth?->getAuthenticationProvider() ? get_class($auth->getAuthenticationProvider()) : null;
-		$data['identificationProvider'] = $auth?->getIdentificationProvider() ? get_class($auth->getIdentificationProvider()) : null;
+		$authenticationProvider = $auth?->getAuthenticationProvider();
+		$data['authenticationProvider'] = $authenticationProvider ? get_class($authenticationProvider) : null;
+
+		try {
+			$identificationProvider = $auth?->getIdentificationProvider();
+		} catch (Exception) {
+			// Some authenticators (e.g. session based authentication without an
+			// identifier) throw instead of returning null. Treat as "no provider"
+			// so the debug panel never takes down the request.
+			$identificationProvider = null;
+		}
+		$data['identificationProvider'] = $identificationProvider ? get_class($identificationProvider) : null;
 
 		$this->_data = $data;
 	}

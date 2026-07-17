@@ -9,6 +9,7 @@ use Cake\Core\Plugin;
 use Cake\Event\Event;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
+use RuntimeException;
 use TinyAuth\Panel\AuthPanel;
 use TinyAuth\Utility\Config;
 
@@ -174,6 +175,53 @@ class AuthPanelTest extends TestCase {
 		$this->assertFalse($result['access']['admin']);
 
 		$this->assertSame('Tags.Tags', $result['path']);
+	}
+
+	/**
+	 * The panel must not crash when an authenticator throws on
+	 * getIdentificationProvider() (e.g. session based auth without an
+	 * identifier). It should report no identification provider instead.
+	 *
+	 * @return void
+	 */
+	public function testPanelIdentificationProviderThrows() {
+		$auth = new class {
+
+			/**
+			 * @return object|null
+			 */
+			public function getAuthenticationProvider(): ?object {
+				return null;
+			}
+
+			/**
+			 * @return object|null
+			 */
+			public function getIdentificationProvider(): ?object {
+				throw new RuntimeException('Identifier is required for `SessionAuthenticator`.');
+			}
+
+		};
+
+		$request = new ServerRequest(['url' => '/users']);
+		$request = $request->withAttribute('params', [
+			'plugin' => null,
+			'prefix' => null,
+			'controller' => 'Users',
+			'action' => 'index',
+		]);
+		$request = $request->withAttribute('authentication', $auth);
+
+		$controller = new Controller($request);
+		$controller->loadComponent('TinyAuth.Authentication');
+		$event = new Event('event', $controller);
+
+		$this->panel->shutdown($event);
+
+		$result = $this->panel->data();
+
+		$this->assertNull($result['identificationProvider']);
+		$this->assertNull($result['authenticationProvider']);
 	}
 
 }
