@@ -1,6 +1,6 @@
 # Middleware & Policy
 
-The component-based authorization documented in [Authorization Setup](/authorization/) covers most apps. For middleware-based authorization (or routes that bypass controllers entirely), TinyAuth ships its own middleware and policy.
+The component-based authorization documented in [Authorization Setup](/authorization/) covers most apps. For authorization before controller dispatch, TinyAuth ships its own middleware and policy. Both expect routing parameters containing `controller` and `action`. For endpoints without those parameters, use the official request authorization middleware with a policy suited to that endpoint.
 
 ## RequestAuthorizationMiddleware
 
@@ -104,7 +104,7 @@ Both handlers re-throw the original `ForbiddenException` if the request has a no
 
 | Use the **component** | Use the **middleware** |
 | --- | --- |
-| Standard MVC apps where every request hits a controller | Routes that bypass controllers (custom routing, JSON-RPC, etc.) |
+| Standard MVC apps where every request hits a controller | Routed controller actions checked before dispatch |
 | You want fine-grained per-controller config | You want a single global rule application |
 | Easier to debug (per-controller `beforeFilter`) | Authorization runs after routing, before controller dispatch |
 

@@ -201,7 +201,7 @@ class Syncer {
 			$this->authAllow = $this->_parseAuthAllow();
 		}
 
-		$key = $name;
+		$key = ($plugin ? $plugin . '.' : '') . ($prefix ? $prefix . '/' : '') . $name;
 		if (!isset($this->authAllow[$key])) {
 			return false;
 		}
