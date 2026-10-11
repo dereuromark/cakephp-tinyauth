@@ -15,7 +15,7 @@ class TinyAuth {
 	/**
 	 * @var array
 	 */
-	protected array $_defaultConfig = [];
+	protected array $defaultConfig = [];
 
 	/**
 	 * @param array<string, mixed> $config
@@ -29,7 +29,7 @@ class TinyAuth {
 	/**
 	 * @return array<string, int|string>
 	 */
-	public function getAvailableRoles() {
+	public function getAvailableRoles(): array {
 		return $this->_getAvailableRoles();
 	}
 

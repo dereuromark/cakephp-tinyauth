@@ -23,7 +23,7 @@ class RequestPolicy implements RequestPolicyInterface {
 	/**
 	 * @var array<string, mixed>
 	 */
-	protected array $_defaultConfig = [];
+	protected array $defaultConfig = [];
 
 	/**
 	 * @param array<string, mixed> $config

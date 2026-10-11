@@ -3,8 +3,6 @@
 namespace TinyAuth\Command;
 
 use Cake\Command\Command;
-use Cake\Console\Arguments;
-use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Core\Configure;
 use TinyAuth\Sync\Adder;
@@ -43,11 +41,11 @@ class AddCommand extends Command {
 	 * 2. Add or update the specified controller/action with the given roles
 	 * 3. Write the updated configuration back to the INI file
 	 *
-	 * @param \Cake\Console\Arguments $args The command arguments.
-	 * @param \Cake\Console\ConsoleIo $io The console io
 	 * @return int
 	 */
-	public function execute(Arguments $args, ConsoleIo $io) {
+	public function execute(): int {
+		$args = $this->args;
+		$io = $this->io;
 		$adder = $this->_getAdder();
 
 		$controller = $args->getArgument('controller');
@@ -83,7 +81,7 @@ class AddCommand extends Command {
 	/**
 	 * @return \TinyAuth\Sync\Adder
 	 */
-	protected function _getAdder() {
+	protected function _getAdder(): Adder {
 		return new Adder();
 	}
 
@@ -135,7 +133,7 @@ class AddCommand extends Command {
 	/**
 	 * @return array<string>
 	 */
-	protected function _getAvailableRoles() {
+	protected function _getAvailableRoles(): array {
 		$roles = (new TinyAuth())->getAvailableRoles();
 
 		return array_keys($roles);

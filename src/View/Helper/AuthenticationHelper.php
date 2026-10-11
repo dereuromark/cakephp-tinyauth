@@ -38,9 +38,9 @@ class AuthenticationHelper extends Helper {
 	 * @param array $url
 	 * @return bool
 	 */
-	public function isPublic(array $url = []) {
+	public function isPublic(array $url = []): bool {
 		if (!$url) {
-			$url = $this->_View->getRequest()->getAttribute('params');
+			$url = $this->View->getRequest()->getAttribute('params');
 		}
 
 		if (isset($url['_name'])) {
@@ -58,7 +58,7 @@ class AuthenticationHelper extends Helper {
 				'action' => $defaults['action'],
 			];
 		} else {
-			$params = $this->_View->getRequest()->getAttribute('params');
+			$params = $this->View->getRequest()->getAttribute('params');
 			$url += [
 				'prefix' => !empty($params['prefix']) ? $params['prefix'] : null,
 				'plugin' => !empty($params['plugin']) ? $params['plugin'] : null,

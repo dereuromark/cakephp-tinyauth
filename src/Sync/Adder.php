@@ -3,7 +3,7 @@
 namespace TinyAuth\Sync;
 
 use Cake\Console\Arguments;
-use Cake\Console\ConsoleIo;
+use Cake\Console\ConsoleIoInterface;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
@@ -35,7 +35,7 @@ class Adder {
 	/**
 	 * @var array|null
 	 */
-	protected $authAllow;
+	protected ?array $authAllow = null;
 
 	/**
 	 * Adds or updates a controller/action entry in the ACL INI file.
@@ -55,11 +55,11 @@ class Adder {
 	 * @param string $action Action name (e.g., 'index') or '*' for all actions
 	 * @param array<string> $roles Role names to grant access (e.g., ['user', 'admin'])
 	 * @param \Cake\Console\Arguments $args
-	 * @param \Cake\Console\ConsoleIo $io
+	 * @param \Cake\Console\ConsoleIoInterface $io
 	 *
 	 * @return void
 	 */
-	public function addAcl(string $controller, string $action, array $roles, Arguments $args, ConsoleIo $io) {
+	public function addAcl(string $controller, string $action, array $roles, Arguments $args, ConsoleIoInterface $io): void {
 		$path = $this->config['aclFilePath'] ?: ROOT . DS . 'config' . DS;
 		$file = $path . $this->config['aclFile'];
 		$content = Utility::parseFile($file);
@@ -96,7 +96,7 @@ class Adder {
 	 * @param string|null $plugin
 	 * @return array
 	 */
-	protected function _getControllers($plugin) {
+	protected function _getControllers(?string $plugin): array {
 		if ($plugin === 'all') {
 			$plugins = Plugin::loaded();
 
@@ -125,7 +125,7 @@ class Adder {
 	 *
 	 * @return array
 	 */
-	protected function _parseControllers($folder, $plugin, $prefix = null) {
+	protected function _parseControllers(string $folder, ?string $plugin, ?string $prefix = null): array {
 		$folderContent = $this->_listDirectory($folder);
 
 		$controllers = [];
@@ -204,7 +204,7 @@ class Adder {
 	 * @param string|null $prefix
 	 * @return bool
 	 */
-	protected function _noAuthenticationNeeded($name, $plugin, $prefix) {
+	protected function _noAuthenticationNeeded(string $name, ?string $plugin, ?string $prefix): bool {
 		if ($this->authAllow === null) {
 			$this->authAllow = $this->_parseAuthAllow();
 		}
@@ -221,7 +221,7 @@ class Adder {
 	/**
 	 * @return array
 	 */
-	protected function _parseAuthAllow() {
+	protected function _parseAuthAllow(): array {
 		$defaults = [
 			'allowFilePath' => null,
 			'allowFile' => 'auth_allow.ini',
@@ -252,11 +252,11 @@ class Adder {
 	/**
 	 * @param array<string> $roles
 	 * @param array<string> $mappedRoles
-	 * @param \Cake\Console\ConsoleIo $io
+	 * @param \Cake\Console\ConsoleIoInterface $io
 	 *
 	 * @return void
 	 */
-	protected function checkRoles(array $roles, array $mappedRoles, ConsoleIo $io): void {
+	protected function checkRoles(array $roles, array $mappedRoles, ConsoleIoInterface $io): void {
 		foreach ($roles as $role) {
 			if (!in_array($role, $mappedRoles, true) && !in_array('*', $mappedRoles, true)) {
 				return;

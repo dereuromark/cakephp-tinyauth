@@ -14,12 +14,12 @@ class Config {
 	 *
 	 * @var array
 	 */
-	protected static $_config = [];
+	protected static array $_config = [];
 
 	/**
 	 * @var array
 	 */
-	protected static $_defaultConfig = [
+	protected static array $defaultConfig = [
 		// allow
 		'allowAdapter' => IniAllowAdapter::class,
 		'allowFilePath' => null, // Possible to locate INI file at given path e.g. Plugin::configPath('Admin'), filePath is also available for shared config
@@ -52,9 +52,9 @@ class Config {
 	/**
 	 * @return array
 	 */
-	public static function all() {
+	public static function all(): array {
 		if (!static::$_config) {
-			$config = (array)Configure::read('TinyAuth') + static::$_defaultConfig;
+			$config = (array)Configure::read('TinyAuth') + static::$defaultConfig;
 
 			if ($config['autoClearCache'] === null) {
 				$config['autoClearCache'] = Configure::read('debug');
@@ -71,7 +71,7 @@ class Config {
 	 * @throws \Cake\Core\Exception\CakeException
 	 * @return mixed
 	 */
-	public static function get($key) {
+	public static function get(string $key): mixed {
 		$config = static::all();
 		if (!isset($config[$key])) {
 			throw new CakeException('Key ' . $key . ' not found in config.');
@@ -83,7 +83,7 @@ class Config {
 	/**
 	 * @return void
 	 */
-	public static function drop() {
+	public static function drop(): void {
 		static::$_config = [];
 	}
 

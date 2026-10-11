@@ -43,7 +43,7 @@ class AuthUserHelper extends Helper {
 	 */
 	public function identity(): ArrayAccess|array|null {
 		/** @var \Authorization\Identity|\Authentication\Identity|null $identity */
-		$identity = $this->_View->getRequest()->getAttribute('identity');
+		$identity = $this->View->getRequest()->getAttribute('identity');
 		if (!$identity) {
 			return null;
 		}
@@ -62,7 +62,7 @@ class AuthUserHelper extends Helper {
 	 * @throws \Cake\Core\Exception\CakeException
 	 * @return bool
 	 */
-	public function hasAccess(array $url) {
+	public function hasAccess(array $url): bool {
 		if (isset($url['_name'])) {
 			//throw MissingRouteException if necessary
 			Router::url($url);
@@ -78,7 +78,7 @@ class AuthUserHelper extends Helper {
 				'action' => $defaults['action'],
 			];
 		} else {
-			$params = $this->_View->getRequest()->getAttribute('params');
+			$params = $this->View->getRequest()->getAttribute('params');
 			$url += [
 				'prefix' => !empty($params['prefix']) ? $params['prefix'] : null,
 				'plugin' => !empty($params['plugin']) ? $params['plugin'] : null,
@@ -87,7 +87,7 @@ class AuthUserHelper extends Helper {
 			];
 		}
 
-		$authUser = $this->_View->get('_authUser');
+		$authUser = $this->View->get('_authUser');
 		if ($authUser === null && !$this->getConfig('includeAuthentication')) {
 			throw new CakeException('Variable _authUser containing the user data needs to be passed down. The TinyAuth.Auth component does it automatically, if loaded.');
 		}
@@ -107,7 +107,7 @@ class AuthUserHelper extends Helper {
 	 * @param array<string, mixed> $options
 	 * @return string
 	 */
-	public function link($title, array $url, array $options = []) {
+	public function link(string $title, array $url, array $options = []) {
 		if (!$this->hasAccess($url)) {
 			return $this->_default($title, $options);
 		}
@@ -127,7 +127,7 @@ class AuthUserHelper extends Helper {
 	 * @param array<string, mixed> $options
 	 * @return string
 	 */
-	public function postLink($title, array $url, array $options = []) {
+	public function postLink(string $title, array $url, array $options = []) {
 		if (!$this->hasAccess($url)) {
 			return $this->_default($title, $options);
 		}
@@ -141,7 +141,7 @@ class AuthUserHelper extends Helper {
 	 * @param array<string, mixed> $options
 	 * @return string
 	 */
-	protected function _default($title, array $options) {
+	protected function _default(string $title, array $options) {
 		$options += [
 			'default' => '',
 			'escape' => true,
@@ -165,7 +165,7 @@ class AuthUserHelper extends Helper {
 			return $identity ? $this->_toArray($identity) : [];
 		}
 
-		$authUser = $this->_View->get('_authUser');
+		$authUser = $this->View->get('_authUser');
 		if ($authUser === null) {
 			throw new CakeException('TinyAuth.AuthUser helper needs TinyAuth.AuthUser component to function. Please make sure it is loaded in your controller.');
 		}

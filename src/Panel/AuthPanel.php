@@ -40,12 +40,12 @@ class AuthPanel extends DebugPanel {
 	/**
 	 * @var bool|null
 	 */
-	protected $isPublic;
+	protected ?bool $isPublic = null;
 
 	/**
 	 * @var array
 	 */
-	protected array $_defaultConfig = [];
+	protected array $defaultConfig = [];
 
 	public function __construct() {
 		$this->setConfig(Config::all());
@@ -119,7 +119,7 @@ class AuthPanel extends DebugPanel {
 		}
 		$data['identificationProvider'] = $identificationProvider ? get_class($identificationProvider) : null;
 
-		$this->_data = $data;
+		$this->data = $data;
 	}
 
 	/**
@@ -132,7 +132,7 @@ class AuthPanel extends DebugPanel {
 			'isPublic' => $this->isPublic,
 		];
 
-		return $this->_data + $data;
+		return $this->data + $data;
 	}
 
 	/**
@@ -157,7 +157,7 @@ class AuthPanel extends DebugPanel {
 	 *
 	 * @return array
 	 */
-	protected function _injectRole(array $user, $role, $id) {
+	protected function _injectRole(array $user, $role, string|int $id): array {
 		if (!$this->getConfig('multiRole')) {
 			$user[$this->getConfig('roleColumn')] = $id;
 
@@ -188,7 +188,7 @@ class AuthPanel extends DebugPanel {
 	 *
 	 * @return array
 	 */
-	protected function _generateUser($role, $id): array {
+	protected function _generateUser($role, string|int $id): array {
 		$user = [
 			'id' => 0,
 		];
@@ -208,7 +208,7 @@ class AuthPanel extends DebugPanel {
 	 *
 	 * @return array
 	 */
-	protected function _getParams(array $params) {
+	protected function _getParams(array $params): array {
 		$params += [
 			'prefix' => null,
 			'plugin' => null,
@@ -223,9 +223,9 @@ class AuthPanel extends DebugPanel {
 	/**
 	 * @param array $params
 	 *
-	 * @return string
+	 * @return string|null
 	 */
-	protected function _getPath(array $params) {
+	protected function _getPath(array $params): ?string {
 		$path = $params['controller'];
 		if ($params['prefix']) {
 			$path = $params['prefix'] . '/' . $path;
