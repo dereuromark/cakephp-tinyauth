@@ -35,6 +35,6 @@ You can swap the INI file backends entirely using the `allowAdapter` (authentica
 
 Existing options:
 
-- **[TinyAuthBackend plugin](https://github.com/dereuromark/cakephp-tinyauth-backend)** — admin GUI that stores allow / ACL rules in the database.
+- [TinyAuthBackend plugin](https://github.com/dereuromark/cakephp-tinyauth-backend): admin GUI that stores allow / ACL rules in the database.
 
 For writing your own adapter, see [Authentication Adapter](/authentication/adapter) and [Authorization Adapter](/authorization/adapter).

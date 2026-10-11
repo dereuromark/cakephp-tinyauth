@@ -9,35 +9,10 @@ use InvalidArgumentException;
 use Traversable;
 
 /**
- * Convenience wrapper to access Auth data and check on rights/roles.
+ * Read identity data and check configured role membership.
  *
- * Simply add it at the class file:
- *
- *   trait AuthUserTrait;
- *
- * But needs
- *
- *   protected function _getUser() {}
- *
- * to be implemented in the using class.
- *
- * Expects the Role session infos to be either
- *     - `Auth.User.role_id` (single) or
- *     - `Auth.User.Role` (multi - flat array of roles, or array role data)
- * and can be adjusted via constants and defined().
- * Same goes for Right data.
- *
- * If roles are defined in configuration file (non-db roles setup) the constant
- * `USER_ROLE_KEY` has to be defined in `bootstrap.php`.
- * ```
- * // if role key in User model is role_id
- * define('USER_ROLE_KEY', 'role_id');
- * ```
- *
- * Note: This uses Identity from Authentication plugin.
- *
- * @author Mark Scherer
- * @license MIT
+ * The using class implements _getUser(). Role fields are configured through
+ * roleColumn and multiRole; user data is an array or an ArrayAccess object.
  */
 trait AuthUserTrait {
 

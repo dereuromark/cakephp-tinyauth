@@ -91,7 +91,7 @@ class Utility {
 	public static function generateFile($file, array $content) {
 		$string = static::buildIniString($content);
 
-		return (bool)file_put_contents($file, $string);
+		return file_put_contents($file, $string) !== false;
 	}
 
 	/**

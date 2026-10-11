@@ -77,7 +77,9 @@ class Syncer {
 			return;
 		}
 
-		Utility::generateFile($file, $content);
+		if (!Utility::generateFile($file, $content)) {
+			$io->abort('Could not write ACL file: ' . $file);
+		}
 	}
 
 	/**

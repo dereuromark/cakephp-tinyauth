@@ -56,7 +56,8 @@ class SyncCommand extends Command {
 
 		$path = Configure::read('TinyAuth.aclFilePath', ROOT . DS . 'config' . DS);
 		$file = Configure::read('TinyAuth.aclFile', 'auth_acl.ini');
-		$io->success('Controllers synced to: ' . $path . $file);
+		$message = $args->getOption('dry-run') ? 'Preview only; ACL file unchanged: ' : 'Controllers synced to: ';
+		$io->success($message . $path . $file);
 
 		return static::CODE_SUCCESS;
 	}

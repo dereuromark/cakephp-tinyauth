@@ -11,8 +11,7 @@ use TinyAuth\Utility\Config;
 /**
  * TinyAuth AuthorizationComponent to handle all authorization in a central INI file.
  *
- * Make sure you have the new Authorization plugin installed if you want to use this component.
- * Otherwise, just use the Auth component.
+ * Requires the official Authorization plugin and its configured middleware.
  *
  * @link https://github.com/cakephp/authorization
  */

@@ -7,22 +7,11 @@ use Cake\Http\ServerRequest;
 use TinyAuth\Utility\Config;
 
 /**
- * Probably the most simple and fastest ACL out there.
- * Only one config file `acl.ini` necessary,
- * doesn't even need a Roles Table / roles table.
- * Uses most persistent _cake_core_ cache by default.
+ * Adapter for checking role-based controller permissions directly.
  *
- * @link https://www.dereuromark.de/2011/12/18/tinyauth-the-fastest-and-easiest-authorization-for-cake2
- *
- * Usage:
- * Include it in your beforeFilter() method of the AppController with the following config:
- * 'authorize' => ['Tools.Tiny']
- *
- * Or with admin prefix protection only
- * 'authorize' => ['Tools.Tiny' => ['allowLoggedIn' => true]];
- *
- * @author Mark Scherer
- * @license MIT
+ * CakePHP 5 applications normally use the TinyAuth Authorization component or
+ * RequestPolicy with the official Authorization plugin. This adapter exposes
+ * the same ACL check through authorize().
  */
 class TinyAuthorize extends BaseAuthorize {
 

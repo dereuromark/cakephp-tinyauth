@@ -61,11 +61,13 @@ public function initialize(): void {
 
 With the underlying services and login redirects configured, non-public actions require authentication. Logged-in users are checked against `auth_acl.ini`. Adapt the controller and action names to the routes in your application.
 
+TinyAuth does not create these controllers or actions. The `edit` rule grants request access; use an entity policy to check whether a user may edit a particular record.
+
 ## 5. Verify in the browser
 
-- Try `/pages/display/home`: works without login (whitelisted).
-- Try `/users/index`: redirects to `/users/login`.
-- Log in, then try `/users/profile` as a `user` role → works. As something else → forbidden.
+- Open a URL routed to `Pages::display`, such as `/` in the default CakePHP application: it works without login.
+- Open your `Users::index` route without login: it redirects to your configured login URL.
+- Log in and open your `Users::profile` route with the `user` role: access is allowed. A role absent from that rule is forbidden.
 
 ## Where to next
 

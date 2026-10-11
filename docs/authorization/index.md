@@ -1,49 +1,12 @@
 # TinyAuth Authorization
 
-The fast and easy way for user authorization in CakePHP applications using INI-based role-based access control (RBAC).
+TinyAuth checks controller actions against role rules in `auth_acl.ini`. Use it for request-level permissions, and keep entity policies for permissions on individual records.
 
-## Overview
+Complete [Installation](/guide/install) first. [Getting started](/guide/quick-start) shows a small role map and ACL. This page covers the official Authorization service and TinyAuth’s component integration.
 
-TinyAuth's Authorization component wraps the official [CakePHP Authorization plugin](https://github.com/cakephp/authorization) and adds INI-based configuration for role-based access control, eliminating the need for writing policy classes for simple controller-action permissions.
+## Official plugin setup
 
-**What TinyAuth Adds:**
-- **INI-based role permissions** - Define role-based access in `auth_acl.ini` instead of policies
-- **Simple RBAC** - Controller-action level permissions based on user roles
-- **Quick setup** - Get role-based authorization working in minutes
-- **Single or multi-role support** - Flexible user-role relationships
-
-**When to Use:**
-- ✅ Controller-action level permissions
-- ✅ Simple role-based access control (RBAC)
-- ✅ Centralized authorization configuration
-
-**When NOT to Use:**
-- ❌ You need row/entity-level authorization
-- ❌ You need complex policy-based authorization logic
-- ❌ You want to dynamically adjust access rights in code
-
----
-
-# Part 1: Official Plugin Setup
-
-Before using TinyAuth features, you must set up the official CakePHP Authorization plugin.
-
-## Step 1: Install the Official Plugin
-
-```bash
-composer require cakephp/authorization
-```
-
-**📖 Official Documentation:** [book.cakephp.org/authorization/3](https://book.cakephp.org/authorization/3/en/index.html)
-
-**GitHub Repository:** [github.com/cakephp/authorization](https://github.com/cakephp/authorization)
-
-**Key Official Resources:**
-- [Getting Started](https://book.cakephp.org/authorization/3/en/getting-started.html) - Basic setup tutorial
-- [Policies](https://book.cakephp.org/authorization/3/en/policies.html) - Policy-based authorization
-- [Middleware](https://book.cakephp.org/authorization/3/en/middleware.html) - Authorization middleware setup
-- [Request Authorization](https://book.cakephp.org/authorization/3/en/request-authorization.html) - Controller-level authorization
-- [Policy Resolvers](https://book.cakephp.org/authorization/3/en/policy-resolvers.html) - How policies are found
+Set up the [CakePHP Authorization plugin](https://github.com/cakephp/authorization) with its [Getting started guide](https://book.cakephp.org/authorization/3/en/getting-started.html). Authentication middleware must run before Authorization middleware so the latter can decorate the authenticated identity.
 
 ## Step 2: Implement Authorization Interface
 
@@ -75,36 +38,15 @@ class Application extends BaseApplication
 
 ## Step 3: Configure Middleware
 
-Add **both** Authorization and TinyAuth-specific middlewares to your `Application` class:
+Add the official Authorization middleware after Authentication middleware:
 
 ```php
-// src/Application.php
 use Authorization\Middleware\AuthorizationMiddleware;
-use TinyAuth\Middleware\RequestAuthorizationMiddleware;
 
-public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
-{
-    // ... other middleware (including Authentication)
-
-    // 1. Official Authorization middleware
-    $middlewareQueue->add(new AuthorizationMiddleware($this));
-
-    // 2. TinyAuth Request Authorization middleware for INI-based RBAC
-    $middlewareQueue->add(new RequestAuthorizationMiddleware([
-        'unauthorizedHandler' => [
-            'className' => 'TinyAuth.ForbiddenCakeRedirect',
-            'url' => ['controller' => 'Users', 'action' => 'login'],
-            'unauthorizedMessage' => 'You are not authorized to access that location.',
-        ],
-    ]));
-
-    // ... other middleware
-
-    return $middlewareQueue;
-}
+$middlewareQueue->add(new AuthorizationMiddleware($this));
 ```
 
-**📖 See:** [Middleware Setup](https://book.cakephp.org/authorization/3/en/middleware.html) in official docs
+The TinyAuth Authorization component performs the request check at controller startup. If you prefer to check requests in middleware, follow [Middleware and policy](/authorization/middleware) instead; do not add both checks for the same request.
 
 ## Step 4: Configure Authorization Service
 
@@ -388,13 +330,13 @@ Since non-prefixed routes are not caught by this, this is best combined with `'a
 
 ## Caching
 
-TinyAuth makes heavy use of caching to achieve optimal performance. By default it will not use caching in debug mode.
+TinyAuth caches parsed rules. When `debug` is enabled, `autoClearCache` defaults to `true` and clears the rule cache before reading it. Set it to `false` to retain cached rules while debugging. In production, changing an INI file requires clearing the configured rule cache.
 
 To modify the caching behavior set the `autoClearCache` configuration option:
 
 ```php
 $this->loadComponent('TinyAuth.Authorization', [
-    'autoClearCache' => true|false,
+    'autoClearCache' => false,
 ]);
 ```
 
@@ -421,8 +363,8 @@ TinyAuthorize adapter supports the following configuration options:
 | authorizeByPrefix     | bool/array    | If prefixed routes should be auto-handled by their matching role name or a prefix=>role map.                                                                   |
 | allowLoggedIn         | bool          | True will give authenticated users access to all resources except those using the `protectedPrefix`.                                                           |
 | protectedPrefix       | string/array  | Name of the prefix(es) used for admin pages. Defaults to `Admin`.                                                                                              |
-| autoClearCache        | bool          | True will generate a new ACL cache file every time.                                                                                                            |
-| aclFilePath           | string        | Full path to the auth_acl.ini. Can also be an array of multiple paths. Defaults to `ROOT . DS . 'config' . DS`.                                                |
+| autoClearCache        | bool          | Clears the parsed-rule cache before reading it when both this option and `debug` are true.                                                                                                            |
+| aclFilePath           | string        | Directory containing `auth_acl.ini`, with a trailing separator. Can also be an array of directories. Defaults to `ROOT . DS . 'config' . DS`.                                                |
 | aclFile               | string        | Name of the INI file. Defaults to `auth_acl.ini`.                                                                                                              |
 | aclAdapter            | string        | Class name, defaults to `IniAclAdapter::class`.                                                                                                                |
 | includeAuthentication | bool          | Set to true to include public auth access into hasAccess() checks. Note, that this requires Configure configuration.                                           |
@@ -501,7 +443,7 @@ public function initialize(): void
 }
 ```
 
-**Note:** If you experience redirect loops, wrap the middleware in `if ($this->AuthUser->id()) {}` since authentication must complete before authorization can run.
+If redirects loop, check that your login route is public and that Authentication middleware runs before Authorization middleware. Skipping authorization based only on a missing identity would also skip guest ACL checks.
 
 ## AuthUser Component
 

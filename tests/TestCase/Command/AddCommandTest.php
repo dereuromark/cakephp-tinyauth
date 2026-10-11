@@ -3,15 +3,34 @@
 namespace TinyAuth\Test\TestCase\Command;
 
 use Cake\Command\Command;
+use Cake\Console\Arguments;
+use Cake\Console\ConsoleIo;
 use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use TinyAuth\Command\AddCommand;
+use TinyAuth\Sync\Adder;
 
 class AddCommandTest extends TestCase {
 
 	use ConsoleIntegrationTestTrait;
+
+	/**
+	 * @return void
+	 */
+	public function testNoControllersReturnsErrorWithoutPrompt(): void {
+		$adder = $this->createMock(Adder::class);
+		$adder->expects($this->once())->method('controllers')->willReturn([]);
+		$command = $this->getMockBuilder(AddCommand::class)->onlyMethods(['_getAdder'])->getMock();
+		$command->expects($this->once())->method('_getAdder')->willReturn($adder);
+		$io = $this->createMock(ConsoleIo::class);
+		$io->expects($this->never())->method('ask');
+		$io->expects($this->once())->method('err')->with('No controllers available. Supply a controller name explicitly.');
+
+		$this->assertSame(Command::CODE_ERROR, $command->execute(new Arguments([], [], ['controller']), $io));
+	}
 
 	/**
 	 * setup method
@@ -43,6 +62,7 @@ class AddCommandTest extends TestCase {
 		$this->exec('tiny_auth add Some action foo,bar -d -v');
 
 		$this->assertExitCode(Command::CODE_SUCCESS);
+		$this->assertOutputContains('Preview only; ACL file unchanged:');
 		$this->assertOutputContains('[Some]');
 		$this->assertOutputContains('action = foo, bar');
 	}
