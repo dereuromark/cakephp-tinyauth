@@ -22,7 +22,7 @@ $service->loadAuthenticator('TinyAuth.PrimaryKeySession', [
 ]);
 ```
 
-The authenticator stores only the user’s primary key in the session. With caching disabled, it reloads the identity through the configured identifier on each request. For Authentication 3, configure the Token identifier using its [versioned setup guide](https://book.cakephp.org/authentication/3/quick-start.html).
+The authenticator stores only the user’s primary key in the session. With caching disabled, it reloads the identity through the configured identifier on each request. For Authentication 3, configure the Token identifier using its [versioned setup guide](https://book.cakephp.org/authentication/5/quick-start.html).
 
 ### Config keys
 
