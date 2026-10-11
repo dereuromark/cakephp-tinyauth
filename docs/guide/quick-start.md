@@ -7,20 +7,28 @@ Configure TinyAuth for an application that already has working login, an identit
 Create `config/auth_allow.ini`:
 
 ```ini
-[Pages]
-display = *
-
-[Users]
-login = *
-register = *
-forgotPassword = *
+Pages = display
+Users = login, register, forgotPassword
 
 ; everything not listed here will require authentication
 ```
 
-`*` means "any role", which for unauthenticated routes really means "everyone".
+Authentication rules use `Controller = action, otherAction`, without INI sections. `*` allows every action of that controller to be public. Roles apply to the separate ACL file below.
 
-## 2. Define role permissions
+## 2. Map your roles
+
+Define the role aliases in `config/app.php`, using the values stored in your users' `role_id` field:
+
+```php
+'Roles' => [
+    'user' => 1,
+    'admin' => 2,
+],
+```
+
+These IDs are examples. Match them to your existing users and configure `roleColumn` if you use another field.
+
+## 3. Define role permissions
 
 Create `config/auth_acl.ini` (only needed if you also use authorization):
 
@@ -39,7 +47,7 @@ edit = user, admin
 
 Each section is a controller (or `Prefix/Controller`). Each line maps `actions = roles`.
 
-## 3. Load TinyAuth components
+## 4. Load TinyAuth components
 
 In `AppController`:
 
@@ -53,7 +61,7 @@ public function initialize(): void {
 
 With the underlying services and login redirects configured, non-public actions require authentication. Logged-in users are checked against `auth_acl.ini`. Adapt the controller and action names to the routes in your application.
 
-## 4. Verify in the browser
+## 5. Verify in the browser
 
 - Try `/pages/display/home`: works without login (whitelisted).
 - Try `/users/index`: redirects to `/users/login`.
