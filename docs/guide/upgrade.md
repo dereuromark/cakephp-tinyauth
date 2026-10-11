@@ -41,3 +41,9 @@
 - INI-based configuration files.
 - All role-based authorization features.
 - DebugKit Auth panel.
+
+## Current CakePHP 5 maintenance changes
+
+Clear the rule cache after upgrading. Parsed rules now include their configuration context; existing unscoped cache entries are ignored and rebuilt through the configured adapter. Keep the INI/PHP files or custom adapter available rather than supplying permissions only through manually primed cache entries.
+
+INI deny rules now remove actions previously registered through `allowUnauthenticated()`, including when every public action is denied. Request authorization preserves policy result details and routes policy exceptions through the configured unauthorized handler.

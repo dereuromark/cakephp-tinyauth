@@ -15,7 +15,7 @@ Each topic page lists the keys it actually reads (see [Authentication](/authenti
 
 ## Cache busting
 
-INI files are parsed once and cached. After deploys, clear the cache:
+Parsed rules are cached with their adapter and configuration context. A component using another rule file or role source cannot reuse permissions cached for a different configuration. Keep shared rule sources in the global configuration to avoid repeatedly replacing cached rules. After deploys, clear the cache:
 
 ```bash
 bin/cake cache clear_all

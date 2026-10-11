@@ -19,7 +19,6 @@ use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use IteratorAggregate;
 use TestApp\Controller\Component\TestAuthUserComponent;
-use TinyAuth\Utility\Cache;
 use Traversable;
 
 class AuthUserComponentTest extends TestCase {
@@ -121,13 +120,7 @@ class AuthUserComponentTest extends TestCase {
 	public function testHasAccessPublicCache() {
 		$this->AuthUser->setConfig('includeAuthentication', true);
 		$this->AuthUser->setConfig('autoClearCache', false);
-		$data = [
-			'Users' => [
-				'controller' => 'Users',
-				'allow' => ['view'],
-			],
-		];
-		Cache::write(Cache::KEY_ALLOW, $data);
+		$this->AuthUser->setConfig('allowFilePath', TESTS . 'test_files' . DS);
 
 		$request = [
 			'controller' => 'Users',
@@ -144,17 +137,11 @@ class AuthUserComponentTest extends TestCase {
 		$this->AuthUser->setConfig('includeAuthentication', true);
 		$this->AuthUser->setConfig('autoClearCache', false);
 
-		$data = [
-			'Users' => [
-				'controller' => 'Users',
-				'allow' => ['index'],
-			],
-		];
-		Cache::write(Cache::KEY_ALLOW, $data);
+		$this->AuthUser->setConfig('allowFilePath', TESTS . 'test_files' . DS);
 
 		$request = [
 			'controller' => 'Users',
-			'action' => 'view',
+			'action' => 'delete',
 		];
 		$result = $this->AuthUser->hasAccess($request);
 		$this->assertFalse($result);

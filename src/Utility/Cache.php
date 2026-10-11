@@ -59,24 +59,63 @@ class Cache {
 	/**
 	 * @param string $type
 	 * @param array $data
+	 * @param string|null $context Configuration fingerprint
 	 *
 	 * @return void
 	 */
-	public static function write(string $type, array $data): void {
+	public static function write(string $type, array $data, ?string $context = null): void {
 		$config = static::prepareConfig();
+
+		if ($context !== null) {
+			$data = ['_tiny_auth_context' => $context, '_tiny_auth_rules' => $data];
+		}
 
 		CoreCache::write(static::key($type), $data, $config['cache']);
 	}
 
 	/**
 	 * @param string $type
+	 * @param string|null $context Configuration fingerprint
 	 *
 	 * @return array|null
 	 */
-	public static function read(string $type): ?array {
+	public static function read(string $type, ?string $context = null): ?array {
 		$config = static::prepareConfig();
 
-		return CoreCache::read(static::key($type), $config['cache']) ?: null;
+		$data = CoreCache::read(static::key($type), $config['cache']);
+		if (!is_array($data)) {
+			return null;
+		}
+		if (isset($data['_tiny_auth_context'], $data['_tiny_auth_rules'])
+			&& is_string($data['_tiny_auth_context']) && is_array($data['_tiny_auth_rules'])
+		) {
+			return $context === null || $context === $data['_tiny_auth_context'] ? $data['_tiny_auth_rules'] : null;
+		}
+
+		return $context === null ? ($data ?: null) : null;
+	}
+
+	/**
+	 * Fingerprint scalar configuration. Object and resource options bypass caching.
+	 *
+	 * @param array<string, mixed> $config
+	 * @return string|null
+	 */
+	public static function fingerprint(array $config): ?string {
+		$cacheable = true;
+		array_walk_recursive($config, function ($value) use (&$cacheable): void {
+			if (is_object($value) || is_resource($value)) {
+				$cacheable = false;
+			}
+		});
+		if (!$cacheable) {
+			return null;
+		}
+		unset($config['autoClearCache']);
+		$config['_debug'] = (bool)Configure::read('debug');
+		ksort($config);
+
+		return hash('sha256', serialize($config));
 	}
 
 	/**
