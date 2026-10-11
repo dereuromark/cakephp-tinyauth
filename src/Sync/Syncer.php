@@ -77,7 +77,9 @@ class Syncer {
 			return;
 		}
 
-		Utility::generateFile($file, $content);
+		if (!Utility::generateFile($file, $content)) {
+			$io->abort('Could not write ACL file: ' . $file);
+		}
 	}
 
 	/**
@@ -142,7 +144,7 @@ class Syncer {
 				continue;
 			}
 
-			$controllers = array_merge($controllers, $this->_parseControllers($folder . $subFolder . DS, $plugin, $subFolder));
+			$controllers = array_merge($controllers, $this->_parseControllers($folder . $subFolder . DS, $plugin, ($prefix ? $prefix . '/' : '') . $subFolder));
 		}
 
 		return $controllers;
@@ -199,7 +201,7 @@ class Syncer {
 			$this->authAllow = $this->_parseAuthAllow();
 		}
 
-		$key = $name;
+		$key = ($plugin ? $plugin . '.' : '') . ($prefix ? $prefix . '/' : '') . $name;
 		if (!isset($this->authAllow[$key])) {
 			return false;
 		}

@@ -2,7 +2,7 @@
 
 The AuthUser component and helper provide convenient methods for working with the currently authenticated user in your controllers and views.
 
-**Key Feature:** These work **standalone** and do not require the official Authentication or Authorization plugins. They work with any authentication solution that sets an identity in the request attributes.
+Key Feature: These work standalone and do not require the official Authentication or Authorization plugins. They work with any authentication solution that sets an identity in the request attributes.
 
 ## AuthUser Component
 
@@ -79,7 +79,7 @@ if ($this->AuthUser->hasAccess(['action' => 'delete', $id])) {
 // Do something else instead
 ```
 
-**Note:** By default, `hasAccess()` only checks the `auth_acl.ini` file, not `auth_allow.ini`. Set `includeAuthentication` config to `true` if you need to check public actions as well.
+Note: By default, `hasAccess()` only checks the `auth_acl.ini` file, not `auth_allow.ini`. Set `includeAuthentication` config to `true` if you need to check public actions as well.
 
 #### `identity()`
 Get the full identity object/array:
@@ -94,7 +94,7 @@ $identity = $this->AuthUser->identity();
 ```php
 // In a controller action
 public function edit($id) {
-    $post = $this->Posts->get($id);
+    $post = $this->fetchTable('Posts')->get($id);
 
     // Only allow editing own posts unless admin
     if (!$this->AuthUser->isMe($post->user_id) && !$this->AuthUser->hasRole('admin')) {
@@ -124,7 +124,7 @@ public function initialize(): void {
 }
 ```
 
-**Important:** The helper requires the component to be loaded, as it needs data passed from the controller.
+Important: The helper requires the component to be loaded, as it needs data passed from the controller.
 
 ### Available Methods
 
@@ -240,9 +240,11 @@ $this->loadComponent('TinyAuth.AuthUser', [
 ]);
 ```
 
-**Note:** This only works with INI-based configuration. Controller-level `allow()` calls cannot be detected.
+This reads the configured allow adapter, including custom adapters. Actions allowed only through controller `allowUnauthenticated()` calls are not included.
 
-## Best Practices
+Helper visibility checks do not authorize a request or restrict submitted fields. Enforce the same permissions in your controller or policies.
+
+## Role constants and forms
 
 ### Use Constants for Roles
 
@@ -288,8 +290,8 @@ echo $this->Form->end();
 
 AuthUser works with any authentication solution, not just TinyAuth:
 
-- **CakePHP Authentication plugin** - Works out of the box
-- **CakePHP Authorization plugin** - Works out of the box
-- **Custom auth** - As long as you set an identity in request attributes
+- CakePHP Authentication plugin - Works out of the box
+- CakePHP Authorization plugin - Works out of the box
+- Custom auth - As long as you set an identity in request attributes
 
-The component looks for the identity in `$request->getAttribute('identity')` and works with any object that implements `getOriginalData()` or is an array.
+The component reads an identity object from `$request->getAttribute('identity')`. That object must implement `getOriginalData()`, returning an array or an `ArrayAccess` object that provides `toArray()`, implements `Traversable`, or implements `Countable`. CakePHP entities and `ArrayObject` provide explicit conversion paths. The `Countable` fallback casts object properties to an array; it does not enumerate offset keys. A raw array in the request’s `identity` attribute is not supported.

@@ -88,4 +88,11 @@ class AuthenticationHelperTest extends TestCase {
 		$this->assertFalse($result);
 	}
 
+	public function testCurrentActionIsCheckedInsteadOfIndex(): void {
+		$request = new ServerRequest(['params' => ['controller' => 'Users', 'action' => 'edit', 'plugin' => null, 'prefix' => null]]);
+		$this->helper->getView()->setRequest($request);
+		$this->assertFalse($this->helper->isPublic());
+		$this->assertTrue($this->helper->isPublic(['controller' => 'Users']));
+	}
+
 }

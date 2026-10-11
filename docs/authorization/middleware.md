@@ -1,10 +1,10 @@
 # Middleware & Policy
 
-The component-based authorization documented in [Authorization Setup](/authorization/) covers most apps. For middleware-based authorization (or routes that bypass controllers entirely), TinyAuth ships its own middleware and policy.
+The component-based authorization documented in [Authorization Setup](/authorization/) covers most apps. For authorization before controller dispatch, TinyAuth ships its own middleware and policy. Both expect routing parameters containing `controller` and `action`. For endpoints without those parameters, use the official request authorization middleware with a policy suited to that endpoint.
 
 ## RequestAuthorizationMiddleware
 
-A drop-in replacement for `Authorization\Middleware\RequestAuthorizationMiddleware` that applies the TinyAuth allow / ACL rules instead of policies. Works with any controller / route (no per-controller wiring needed).
+TinyAuth checks its public-route rules first. Protected routes are authorized through the configured Authorization service. Map `ServerRequest` to TinyAuth’s `RequestPolicy` in that service to apply the role ACL rules. The middleware does not install this mapping automatically.
 
 > **Order matters:** add this AFTER `AuthorizationMiddleware`, `AuthenticationMiddleware`, and `RoutingMiddleware`.
 
@@ -28,23 +28,26 @@ $middlewareQueue
 
 | Key | Default | What it does |
 | --- | --- | --- |
-| `identityAttribute` | inherits parent | Request attribute name that holds the authenticated identity. |
-| `method` | inherits parent | Policy method invoked to check access (defaults to the parent middleware's). |
-| `unauthorizedHandler` | inherits parent | Handler used when authorization fails. Use TinyAuth's two flavors below. |
+| `identityAttribute` | `identity` | Request attribute name that holds the authenticated identity. |
+| `method` | `access` | Policy method invoked to check access. |
+| `unauthorizedHandler` | `Authorization.Exception` | Handler used when authorization fails. Use TinyAuth's two flavors below. |
 
-The middleware picks up TinyAuth's full Configure block (`Configure::read('TinyAuth')`) automatically — no need to repeat keys here.
+The middleware reads the TinyAuth configuration from `Configure::read('TinyAuth')`. Explicit middleware options take precedence.
 
 ## RequestPolicy
 
-Used internally by `RequestAuthorizationMiddleware` to evaluate the allow / ACL rules against the current request. You generally don't instantiate it directly, but if you wire `Authorization\Middleware\RequestAuthorizationMiddleware` yourself (instead of TinyAuth's subclass), point its `RequestAuthorizationMiddleware` at TinyAuth's policy:
+Register this policy in `Application::getAuthorizationService()`. Both TinyAuth’s middleware and the official request authorization middleware need a resolver mapping for the request:
 
 ```php
+use Authorization\AuthorizationService;
 use Authorization\Policy\MapResolver;
 use Cake\Http\ServerRequest;
 use TinyAuth\Policy\RequestPolicy;
 
 $resolver = new MapResolver();
 $resolver->map(ServerRequest::class, RequestPolicy::class);
+
+return new AuthorizationService($resolver);
 ```
 
 `RequestPolicy::canAccess(?IdentityInterface $identity, ServerRequest $request): bool` returns `true` if the current user (or guest) may access the route.
@@ -95,14 +98,14 @@ Redirects to a CakePHP URL array — typically the login action.
 
 ### Non-HTML requests
 
-Both handlers re-throw the original `ForbiddenException` if the request has a non-HTML extension (`_ext` other than `'html'`). API consumers get a proper 403 instead of a 302 to a login page.
+Both handlers re-throw the original `ForbiddenException` if the request has a non-HTML extension (`_ext` other than `'html'`). An extension such as `.json` therefore preserves the forbidden response. Requests without an extension still use the configured redirect handler, regardless of their `Accept` header.
 
 ## When to use middleware vs component
 
 | Use the **component** | Use the **middleware** |
 | --- | --- |
-| Standard MVC apps where every request hits a controller | Routes that bypass controllers (custom routing, JSON-RPC, etc.) |
+| Standard MVC apps where every request hits a controller | Routed controller actions checked before dispatch |
 | You want fine-grained per-controller config | You want a single global rule application |
-| Easier to debug (per-controller `beforeFilter`) | Cleaner stack — auth runs before routing dispatches |
+| Easier to debug (per-controller `beforeFilter`) | Authorization runs after routing, before controller dispatch |
 
-The two approaches are not mutually exclusive but typically you pick one. The component is the simpler choice; the middleware is the right choice when you need authorization to run regardless of the controller.
+Choose one place to enforce request access. With the middleware approach, you do not need the TinyAuth Authorization component to repeat the same request check. Entity policies can still enforce permissions on individual records.

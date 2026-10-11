@@ -1,33 +1,32 @@
-# 5-min Quick Start
+# Getting started
 
-The smallest working setup. Two INI files, two components, you're done.
+Configure TinyAuth for an application that already has working login, an identity with role information, and the official Authentication and Authorization middleware. Complete [Installation](./install) first. The [Authentication](/authentication/) and [Authorization](/authorization/) guides cover those prerequisites.
 
-## 1. Install plugins
-
-```bash
-composer require cakephp/authentication cakephp/authorization dereuromark/cakephp-tinyauth
-bin/cake plugin load TinyAuth
-```
-
-The [official plugins](https://book.cakephp.org/authentication/3/en/index.html) need their own initial setup (Application class middleware, an `AuthenticationServiceProviderInterface` implementation, a Users table). See [Authentication](/authentication/) and [Authorization](/authorization/) for full details.
-
-## 2. Whitelist public actions
+## 1. Whitelist public actions
 
 Create `config/auth_allow.ini`:
 
 ```ini
-[Pages]
-display = *
-
-[Users]
-login = *
-register = *
-forgotPassword = *
+Pages = display
+Users = login, register, forgotPassword
 
 ; everything not listed here will require authentication
 ```
 
-`*` means "any role", which for unauthenticated routes really means "everyone".
+Authentication rules use `Controller = action, otherAction`, without INI sections. `*` allows every action of that controller to be public. Roles apply to the separate ACL file below.
+
+## 2. Map your roles
+
+Define the role aliases in `config/app.php`, using the values stored in your users' `role_id` field:
+
+```php
+'Roles' => [
+    'user' => 1,
+    'admin' => 2,
+],
+```
+
+These IDs are examples. Match them to your existing users and configure `roleColumn` if you use another field.
 
 ## 3. Define role permissions
 
@@ -60,19 +59,21 @@ public function initialize(): void {
 }
 ```
 
-That's it. Visiting any non-whitelisted action now redirects to login; logged-in users are checked against `auth_acl.ini`.
+With the underlying services and login redirects configured, non-public actions require authentication. Logged-in users are checked against `auth_acl.ini`. Adapt the controller and action names to the routes in your application.
+
+TinyAuth does not create these controllers or actions. The `edit` rule grants request access; use an entity policy to check whether a user may edit a particular record.
 
 ## 5. Verify in the browser
 
-- Try `/pages/display/home` — works without login (whitelisted).
-- Try `/users/index` — redirects to `/users/login`.
-- Log in, then try `/users/profile` as a `user` role → works. As something else → forbidden.
+- Open a URL routed to `Pages::display`, such as `/` in the default CakePHP application: it works without login.
+- Open your `Users::index` route without login: it redirects to your configured login URL.
+- Log in and open your `Users::profile` route with the `user` role: access is allowed. A role absent from that rule is forbidden.
 
 ## Where to next
 
-- [Authentication](/authentication/) — full options for the Authentication component, INI syntax for `auth_allow.ini`.
-- [Authorization](/authorization/) — full options for the Authorization component, INI syntax for `auth_acl.ini`.
-- [Multi-role setup](/authorization/multi-role) — when a user has more than one role.
-- [AuthUser](/auth-user) — controller / view helpers for "is this user an admin?" checks.
-- [AuthPanel](/auth-panel) — DebugKit panel for inspecting decisions.
-- [Troubleshooting](/guide/troubleshooting) — when something doesn't behave.
+- [Authentication](/authentication/): full options for the Authentication component, INI syntax for `auth_allow.ini`.
+- [Authorization](/authorization/): full options for the Authorization component, INI syntax for `auth_acl.ini`.
+- [Multi-role setup](/authorization/multi-role): when a user has more than one role.
+- [AuthUser](/auth-user): controller / view helpers for "is this user an admin?" checks.
+- [AuthPanel](/auth-panel): DebugKit panel for inspecting decisions.
+- [Troubleshooting](/guide/troubleshooting): when something doesn't behave.

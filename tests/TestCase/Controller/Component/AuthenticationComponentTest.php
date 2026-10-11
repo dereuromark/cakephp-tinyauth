@@ -258,7 +258,6 @@ class AuthenticationComponentTest extends TestCase {
 		$this->component = new AuthenticationComponent($registry, $this->componentConfig);
 
 		$method = new ReflectionMethod($this->component, '_prepareAuthentication');
-		$method->setAccessible(true);
 		$method->invoke($this->component);
 
 		$this->assertContains('thisDoesNotExist', $this->component->getUnauthenticatedActions());
@@ -286,25 +285,47 @@ class AuthenticationComponentTest extends TestCase {
 		$this->component = new AuthenticationComponent($registry, $this->componentConfig);
 
 		$method = new ReflectionMethod($this->component, '_prepareAuthentication');
-		$method->setAccessible(true);
 		$method->invoke($this->component);
 
 		$this->assertNotContains('superPrivate', $this->component->getUnauthenticatedActions());
 	}
 
 	/**
+	 * @return void
+	 */
+	public function testIniDenyRemovesPreviouslyAllowedActions(): void {
+		foreach (['Private', 'DenyAll'] as $name) {
+			$request = new ServerRequest([
+				'params' => [
+					'controller' => $name,
+					'action' => 'view',
+					'plugin' => null,
+					'prefix' => null,
+				],
+			]);
+			$controller = $this->getControllerMock($request);
+			$component = new AuthenticationComponent(new ComponentRegistry($controller), $this->componentConfig + [
+				'allowFile' => 'deny_allow.ini',
+			]);
+			$component->allowUnauthenticated(['view']);
+			$method = new ReflectionMethod($component, '_prepareAuthentication');
+			$method->invoke($component);
+
+			$this->assertSame([], $component->getUnauthenticatedActions());
+			$this->assertFalse($component->isPublic());
+		}
+	}
+
+	/**
 	 * @param \Cake\Http\ServerRequest $request
-	 * @return \Cake\Controller\Controller|\PHPUnit\Framework\MockObject\MockObject
+	 * @return \Cake\Controller\Controller
 	 */
 	protected function getControllerMock(ServerRequest $request): Controller {
-		$controller = $this->getMockBuilder(Controller::class)
-			->setConstructorArgs([$request])
-			->onlyMethods(['isAction'])
-			->getMock();
-
-		$controller->method('isAction')->willReturn(true);
-
-		return $controller;
+		return new class ($request) extends Controller {
+			public function isAction(string $action): bool {
+				return true;
+			}
+		};
 	}
 
 }

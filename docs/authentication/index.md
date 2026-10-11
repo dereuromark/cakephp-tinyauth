@@ -1,48 +1,14 @@
 # TinyAuth Authentication
 
-The fast and easy way for user authentication in CakePHP applications using INI-based configuration.
+TinyAuth extends the official Authentication component with public-action rules from `auth_allow.ini`. It does not replace your login action, user table, identifiers, or authenticators.
 
-## Overview
+Complete [Installation](/guide/install) first. For a small working rule set, follow [Getting started](/guide/quick-start). The sections below explain the integration points and available configuration.
 
-TinyAuth's Authentication component wraps the official [CakePHP Authentication plugin](https://github.com/cakephp/authentication) and adds INI-based configuration for public actions, eliminating the need for code changes in every controller.
+## Official plugin setup
 
-**What TinyAuth Adds:**
-- **INI-based action whitelisting** - Define public actions in `auth_allow.ini` instead of code
-- **Zero controller modifications** - No need to call `allowUnauthenticated()` in every controller
-- **Plugin compatibility** - You can still use all the core plugin functionality.
+Set up the [CakePHP Authentication plugin](https://github.com/cakephp/authentication) before loading TinyAuth’s component. Use the documentation matching your installed version: [Authentication 4](https://book.cakephp.org/authentication/4/en/quick-start.html) or [Authentication 3](https://book.cakephp.org/authentication/3/en/quick-start.html).
 
-**When to Use:**
-- ✅ You want centralized authentication configuration
-- ✅ You need simple public action whitelisting
-- ✅ You want to avoid scattering auth logic across controllers
-
-**When NOT to Use:**
-- ❌ You need to dynamically adjust public pages inside controllers
-- ❌ You prefer code-based configuration over INI files
-
----
-
-# Part 1: Official Plugin Setup
-
-Before using TinyAuth features, you must set up the official CakePHP Authentication plugin.
-
-## Step 1: Install the Official Plugin
-
-```bash
-composer require cakephp/authentication
-```
-
-**📖 Official Documentation:** [book.cakephp.org/authentication/3](https://book.cakephp.org/authentication/3/en/index.html)
-
-**GitHub Repository:** [github.com/cakephp/authentication](https://github.com/cakephp/authentication)
-
-**Key Official Resources:**
-- [Quick Start Guide](https://book.cakephp.org/authentication/3/en/quick-start.html) - Basic setup tutorial
-- [Authenticators](https://book.cakephp.org/authentication/3/en/authenticators.html) - Session, Form, Token, Cookie, etc.
-- [Identifiers](https://book.cakephp.org/authentication/3/en/identifiers.html) - Password, Token, JWT, etc.
-- [URL Checkers](https://book.cakephp.org/authentication/3/en/url-checkers.html) - Controlling where authenticators apply
-
-## Step 2: Implement Authentication Interface
+## Implement Authentication Interface
 
 Your `Application` class must implement `AuthenticationServiceProviderInterface`:
 
@@ -58,9 +24,9 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
 }
 ```
 
-**📖 See:** [Application Setup](https://book.cakephp.org/authentication/3/en/quick-start.html#application-setup) in official docs
+📖 See: [Application Setup](https://book.cakephp.org/authentication/4/en/quick-start.html#application-setup) in official docs
 
-## Step 3: Configure Middleware
+## Configure Middleware
 
 Add the authentication middleware to your `Application` class:
 
@@ -80,17 +46,16 @@ public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
 }
 ```
 
-**📖 See:** [Middleware Setup](https://book.cakephp.org/authentication/3/en/middleware.html) in official docs
+📖 See: [Middleware Setup](https://book.cakephp.org/authentication/4/en/middleware.html) in official docs
 
-## Step 4: Configure Authentication Service
+## Configure Authentication Service
 
-Implement `getAuthenticationService()` in your `Application` class to configure how users authenticate:
+The example below uses Authentication 4. For Authentication 3, follow its versioned guide to configure identifiers, then load the same TinyAuth component. Implement `getAuthenticationService()` in your `Application` class:
 
 ```php
 // src/Application.php
 use Authentication\AuthenticationService;
 use Authentication\AuthenticationServiceInterface;
-use Authentication\Identifier\AbstractIdentifier;
 use Cake\Routing\Router;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -110,19 +75,16 @@ public function getAuthenticationService(ServerRequestInterface $request): Authe
     ]);
 
     $fields = [
-        AbstractIdentifier::CREDENTIAL_USERNAME => 'email',
-        AbstractIdentifier::CREDENTIAL_PASSWORD => 'password',
+        'username' => 'email',
+        'password' => 'password',
     ];
 
     // Identifier configuration for password-based authentication
     $passwordIdentifier = [
-        'Authentication.Password' => [
-            'fields' => $fields,
-            'resolver' => [
-                'className' => 'Authentication.Orm',
-                // Optional: Use custom finder for active users only
-                // 'finder' => 'active',
-            ],
+        'className' => 'Authentication.Password',
+        'fields' => $fields,
+        'resolver' => [
+            'className' => 'Authentication.Orm',
         ],
     ];
 
@@ -159,15 +121,13 @@ public function getAuthenticationService(ServerRequestInterface $request): Authe
 }
 ```
 
-**Note:** Each authenticator has its own `identifier` configuration. The Session authenticator doesn't need one as it uses the stored identity.
+Note: Each authenticator has its own `identifier` configuration. The Session authenticator doesn't need one as it uses the stored identity.
 
-**📖 See:** [Authentication Service](https://book.cakephp.org/authentication/3/en/authentication-service.html) in official docs
+📖 See: [Authentication Service](https://book.cakephp.org/authentication/4/en/authentication-service.html) in official docs
 
 ---
 
-# Part 2: TinyAuth Features
-
-## Step 5: Load TinyAuth Component
+## Load TinyAuth Component
 
 Now load the TinyAuth Authentication component in your controller:
 
@@ -186,7 +146,7 @@ public function initialize(): void
 
 That's it for code changes! Now configure your public actions via INI file.
 
-## Step 6: Configure auth_allow.ini
+## Configure auth_allow.ini
 
 TinyAuth expects an `auth_allow.ini` file in your config directory. Use it to specify what actions are not protected by authentication.
 
@@ -232,7 +192,7 @@ Accounts.Accounts = view, edit
 Accounts.MyAdmin/Accounts = index
 ```
 
->**Note:** Prefixes are always `CamelCased`. The route inflects to the final casing if needed.
+>Note: Prefixes are always `CamelCased`. The route inflects to the final casing if needed.
 >Nested prefixes are joined using `/`, e.g. `MyAdmin/Nested`.
 
 ### Deny Rules (Use with Caution)
@@ -244,7 +204,7 @@ Users = "!secret",*
 ```
 Meaning: Grant public access to all "Users" controller actions by default, but keep authentication required for "secret" action.
 
-**Note:** Denying always trumps granting, if both are declared for an action.
+Note: Denying always trumps granting, if both are declared for an action.
 
 ### Multiple Files and Merging
 
@@ -283,9 +243,9 @@ $this->loadComponent('TinyAuth.Authentication', [
 ]);
 ```
 
->**Note:** Prefixes are always `CamelCased` (even if routing makes them to `dashed-ones` in the URL).
+>Note: Prefixes are always `CamelCased` (even if routing makes them to `dashed-ones` in the URL).
 
-**Careful:** Nested prefixes currently also match (and inherit) by parent. So if `MyPrefix` is allowed, `MyPrefix/Sub` and other nested ones would also automatically be allowed. You would need to explicitly set up deny rules here if needed.
+Careful: Nested prefixes currently also match (and inherit) by parent. So if `MyPrefix` is allowed, `MyPrefix/Sub` and other nested ones would also automatically be allowed. You would need to explicitly set up deny rules here if needed.
 
 ## Mixing with Code
 
@@ -305,21 +265,21 @@ public function beforeFilter(EventInterface $event): void
 
 This can be useful when migrating slowly to TinyAuth. Once you move such a code based rule into the INI file, you can safely remove those lines of code in your controller.
 
-### allow() vs deny()
+### When rules are merged
 
-Since 1.11.0 you can also mix it with `deny()` calls. From how the Authentication component works, all `allow()` calls need be done before calling `deny()`. As such TinyAuth injects its list now before `Controller::beforeFilter()` gets called.
+TinyAuth merges the INI rules during the component’s `startup()` callback, after the controller’s `beforeFilter()`. Actions registered with `allowUnauthenticated()` in `beforeFilter()` are included in that merge; explicit INI deny rules remove matching actions.
 
-**Note:** It is advised to move away from these controller calls when possible.
+Keep the Authentication component’s default `identityCheckEvent` (`Controller.startup`). Checking identity during `Controller.initialize` happens before TinyAuth has applied its public-action rules.
 
 ## Caching
 
-TinyAuth makes heavy use of caching to achieve optimal performance. By default, it will not use caching in debug mode.
+TinyAuth caches parsed rules. When `debug` is enabled, `autoClearCache` defaults to `true` and clears the rule cache before reading it. Set it to `false` to retain cached rules while debugging. In production, changing an INI file requires clearing the configured rule cache.
 
 To modify the caching behavior set the `autoClearCache` configuration option:
 
 ```php
 $this->loadComponent('TinyAuth.Authentication', [
-    'autoClearCache' => true|false,
+    'autoClearCache' => false,
 ]);
 ```
 
@@ -404,8 +364,8 @@ TinyAuth Authentication component supports the following configuration options:
 
 | Option         | Type   | Description                                                                                             |
 |:---------------|:-------|:--------------------------------------------------------------------------------------------------------|
-| autoClearCache | bool   | True will generate a new ACL cache file every time.                                                     |
-| allowFilePath  | string | Full path to the INI file. Can also be an array of paths. <br/>Defaults to `ROOT . DS . 'config' . DS`. |
+| autoClearCache | bool   | Clears the parsed-rule cache before reading it when both this option and `debug` are true.                                                     |
+| allowFilePath  | string | Directory containing the INI file, with a trailing separator. Can also be an array of directories. <br/>Defaults to `ROOT . DS . 'config' . DS`. |
 | allowFile      | string | Name of the INI file. Defaults to `auth_allow.ini`.                                                     |
 | allowAdapter   | string | Class name, defaults to `IniAllowAdapter::class`.                                                       |
 
@@ -419,32 +379,30 @@ TinyAuth provides optional enhanced components you can use instead of the offici
 
 ### Enhanced Session Authenticator
 
-**`TinyAuth.PrimaryKeySession`** (extends `Authentication.Session`):
+`TinyAuth.PrimaryKeySession` (extends `Authentication.Session`):
 - Stores only the user ID in session (not full user data)
 - Fetches fresh user data from database on each request
-- Keeps user data always up to date without re-login
+- Reloads user data without re-login when its optional user cache is disabled
 
-**Usage in your `getAuthenticationService()` method:**
+Usage in your `getAuthenticationService()` method:
 
 ```php
 // Use TinyAuth's enhanced PrimaryKeySession authenticator
 // This stores only user ID in session and fetches fresh data from DB
 $service->loadAuthenticator('TinyAuth.PrimaryKeySession', [
     'identifier' => [
-        'Authentication.Token' => [
-            'tokenField' => 'id',
-            'dataField' => 'key',
-            'resolver' => [
-                'className' => 'Authentication.Orm',
-                'finder' => 'active',
-            ],
+        'className' => 'Authentication.Token',
+        'tokenField' => 'id',
+        'dataField' => 'key',
+        'resolver' => [
+            'className' => 'Authentication.Orm',
         ],
     ],
     'urlChecker' => 'Authentication.CakeRouter',
 ]);
 ```
 
-**📖 See:** [Session Authenticator](https://book.cakephp.org/authentication/3/en/authenticators.html#session) in official docs for base functionality
+📖 See: [Session Authenticator](https://book.cakephp.org/authentication/4/en/authenticators.html#session) in official docs for base functionality
 
 ### Session Caching with PrimaryKeySession
 
@@ -463,7 +421,7 @@ This invalidates the cache so fresh data is fetched on the next request.
 
 TinyAuth provides redirect handlers with flash message support:
 
-**`TinyAuth.ForbiddenCakeRedirect`** - Works with CakePHP routing:
+`TinyAuth.ForbiddenCakeRedirect` - Works with CakePHP routing:
 
 ```php
 $service->setConfig([
@@ -475,7 +433,7 @@ $service->setConfig([
 ]);
 ```
 
-**`TinyAuth.ForbiddenRedirect`** - Uses direct URLs:
+`TinyAuth.ForbiddenRedirect` - Uses direct URLs:
 
 ```php
 $service->setConfig([
@@ -487,9 +445,9 @@ $service->setConfig([
 ]);
 ```
 
-**Features:**
+Features:
 - Automatically sets flash error messages
-- Skips JSON/XML requests (throws exception instead)
+- Rethrows exceptions for non-HTML route extensions. The Accept header alone does not select this behavior.
 - Preserves target URL in query parameter for post-login redirect
 
 You can use the official handlers instead if you prefer.
@@ -525,9 +483,9 @@ $service->loadAuthenticator('Tools.LoginLink', [
 ]);
 ```
 
-**Note:** Requires `composer require dereuromark/cakephp-tools`
+Note: Requires `composer require dereuromark/cakephp-tools`
 
-**📖 See:** [Tools Plugin LoginLink](https://github.com/dereuromark/cakephp-tools/blob/master/docs/Authentication/LoginLink.md)
+📖 See: [Tools Plugin LoginLink](https://github.com/dereuromark/cakephp-tools/blob/master/docs/Authentication/LoginLink.md)
 
 ## Accessing User Identity
 
@@ -546,6 +504,6 @@ $user = $this->AuthUser->identity();
 
 # Additional Resources
 
-- **📖 Official Authentication Docs:** [book.cakephp.org/authentication/3](https://book.cakephp.org/authentication/3/en/index.html)
-- **🔐 Authorization:** Add role-based access control - See [Authorization](/authorization/)
-- **❓ Troubleshooting:** See [Troubleshooting](/guide/troubleshooting)
+- 📖 Official Authentication Docs: [book.cakephp.org/authentication/3](https://book.cakephp.org/authentication/3/en/index.html)
+- 🔐 Authorization: Add role-based access control - See [Authorization](/authorization/)
+- ❓ Troubleshooting: See [Troubleshooting](/guide/troubleshooting)

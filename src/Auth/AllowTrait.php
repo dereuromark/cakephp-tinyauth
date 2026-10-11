@@ -6,6 +6,8 @@ use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
 use InvalidArgumentException;
 use TinyAuth\Auth\AllowAdapter\AllowAdapterInterface;
+use TinyAuth\Auth\AllowAdapter\IniAllowAdapter;
+use TinyAuth\Auth\AllowAdapter\PhpAllowAdapter;
 use TinyAuth\Utility\Cache;
 
 trait AllowTrait {
@@ -136,10 +138,6 @@ trait AllowTrait {
 		if ($this->getConfig('autoClearCache') && Configure::read('debug')) {
 			Cache::clear(Cache::KEY_ALLOW);
 		}
-		$auth = Cache::read(Cache::KEY_ALLOW);
-		if ($auth !== null) {
-			return $auth;
-		}
 
 		if ($path === null) {
 			$path = $this->getConfig('allowFilePath');
@@ -150,10 +148,21 @@ trait AllowTrait {
 		$config['file'] = $config['allowFile'];
 		unset($config['allowFilePath']);
 		unset($config['allowFile']);
+		$cacheConfig = $config;
+		if (in_array($config['allowAdapter'], [IniAllowAdapter::class, PhpAllowAdapter::class], true)) {
+			$cacheConfig = array_intersect_key($config, array_flip(['allowAdapter', 'filePath', 'file']));
+		}
+		$context = Cache::fingerprint($cacheConfig);
+		$auth = $context !== null ? Cache::read(Cache::KEY_ALLOW, $context) : null;
+		if ($auth !== null) {
+			return $auth;
+		}
 
 		$auth = $this->_loadAllowAdapter($config['allowAdapter'])->getAllow($config);
 
-		Cache::write(Cache::KEY_ALLOW, $auth);
+		if ($context !== null) {
+			Cache::write(Cache::KEY_ALLOW, $auth, $context);
+		}
 
 		return $auth;
 	}

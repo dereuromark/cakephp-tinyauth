@@ -85,10 +85,28 @@ class RequestPolicyTest extends TestCase {
 	}
 
 	/**
-	 * @return \Authorization\AuthorizationService|\PHPUnit\Framework\MockObject\MockObject
+	 * @return \Authorization\AuthorizationService
 	 */
 	protected function getService(): AuthorizationService {
-		return $this->getMockBuilder(AuthorizationService::class)->disableOriginalConstructor()->getMock();
+		return $this->createStub(AuthorizationService::class);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testIncludedAuthenticationHonorsWildcardDenyAndPublicDefaults(): void {
+		$config = $this->config + [
+			'includeAuthentication' => true,
+			'allowFilePath' => $this->config['aclFilePath'],
+			'allowFile' => 'deny_allow.ini',
+		];
+		$request = new ServerRequest(['params' => ['controller' => 'MixedDeny', 'action' => 'index']]);
+		$this->assertFalse((new RequestPolicy($config))->canAccess(null, $request));
+
+		$request = new ServerRequest(['params' => ['controller' => 'Unlisted', 'action' => 'index']]);
+		$this->assertTrue((new RequestPolicy($config + ['allowNonPrefixed' => true]))->canAccess(null, $request));
+		$request = $request->withParam('prefix', 'Admin/Sub');
+		$this->assertTrue((new RequestPolicy($config + ['allowPrefixes' => ['Admin/Sub']]))->canAccess(null, $request));
 	}
 
 }

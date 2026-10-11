@@ -10,7 +10,10 @@ hero:
     alt: cakephp-tinyauth
   actions:
     - theme: brand
-      text: 5-min Quick Start
+      text: Installation
+      link: /guide/install
+    - theme: alt
+      text: Getting started
       link: /guide/quick-start
     - theme: alt
       text: Authentication
@@ -27,14 +30,14 @@ features:
     title: All rules in INI files
     details: Whitelist public actions in auth_allow.ini, define role permissions in auth_acl.ini. Stop sprinkling allow/deny calls across controllers.
   - icon: ⚡
-    title: Working auth in under 5 minutes
-    details: Install the official plugins, drop in two TinyAuth components, write two short INI files. That's the whole setup.
+    title: Configure an existing login flow
+    details: Complete the official authentication and authorization setup, then configure public actions and role permissions with TinyAuth.
   - icon: 🔌
     title: Plugin-friendly by default
     details: Picks up actions from every loaded plugin without modifications. No "register your plugin's controllers" step.
   - icon: 🚀
     title: Cached on first read
-    details: INI files parsed once and cached. Auto-bypassed in debug mode for fast iteration; cleared on deploy.
+    details: Parsed rules are cached. Debug mode clears the rule cache by default; clear it after deploying changes to permission files.
   - icon: 🔍
     title: DebugKit Auth panel
     details: See per URL which rule matched, why a request was allowed or denied, and what role the current user has. No more guessing.

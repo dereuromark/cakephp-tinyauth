@@ -5,7 +5,6 @@ namespace TinyAuth\Middleware;
 use Authorization\Exception\Exception;
 use Authorization\Exception\ForbiddenException;
 use Authorization\Middleware\RequestAuthorizationMiddleware as PluginRequestAuthorizationMiddleware;
-use Authorization\Policy\Result;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -56,11 +55,9 @@ class RequestAuthorizationMiddleware extends PluginRequestAuthorizationMiddlewar
 
 		$identity = $request->getAttribute($this->getConfig('identityAttribute'));
 
-		$can = $service->can($identity, $this->getConfig('method'), $request);
 		try {
-			if (!$can) {
-				$result = new Result($can, 'Can not ' . $this->getConfig('method') . ' request');
-
+			$result = $service->canResult($identity, $this->getConfig('method'), $request);
+			if (!$result->getStatus()) {
 				throw new ForbiddenException($result, [$this->getConfig('method'), $request->getRequestTarget()]);
 			}
 		} catch (Exception $exception) {

@@ -10,6 +10,19 @@ class UtilityTest extends TestCase {
 	/**
 	 * @return void
 	 */
+	public function testGenerateEmptyFile(): void {
+		$file = TMP . 'empty-acl.ini';
+		try {
+			$this->assertTrue(Utility::generateFile($file, []));
+			$this->assertSame('', file_get_contents($file));
+		} finally {
+			@unlink($file);
+		}
+	}
+
+	/**
+	 * @return void
+	 */
 	public function testGenerateFile() {
 		$content = [
 			'Root' => [

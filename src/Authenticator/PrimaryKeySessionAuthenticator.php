@@ -107,6 +107,10 @@ class PrimaryKeySessionAuthenticator extends AuthenticationSessionAuthenticator 
 			}
 		}
 
+		/** @var \Cake\Http\Session $session */
+		$session = $request->getAttribute('session');
+		$session->delete($this->getConfig('impersonateSessionKey'));
+
 		return parent::clearIdentity($request, $response);
 	}
 

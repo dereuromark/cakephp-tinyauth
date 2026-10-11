@@ -18,7 +18,7 @@ use TinyAuth\Utility\TinyAuth;
  *
  * Usage examples:
  * - `bin/cake tiny_auth add Articles index user,admin` - Allow users and admins to access Articles::index
- * - `bin/cake tiny_auth add Articles` - Interactive mode, prompts for action and roles
+ * - `bin/cake tiny_auth add Articles` - Uses wildcard action and roles
  * - `bin/cake tiny_auth add Articles "*" "*"` - Allow all roles to access all Articles actions
  *
  * @see config/auth_acl.ini - The file that gets modified by this command
@@ -53,6 +53,11 @@ class AddCommand extends Command {
 		$controller = $args->getArgument('controller');
 		if ($controller === null) {
 			$controllerNames = $adder->controllers($args);
+			if (!$controllerNames) {
+				$io->err('No controllers available. Supply a controller name explicitly.');
+
+				return static::CODE_ERROR;
+			}
 			$io->out('Select a controller:');
 			foreach ($controllerNames as $controllerName) {
 				$io->out(' - ' . $controllerName);
@@ -69,7 +74,8 @@ class AddCommand extends Command {
 
 		$path = Configure::read('TinyAuth.aclFilePath', ROOT . DS . 'config' . DS);
 		$file = Configure::read('TinyAuth.aclFile', 'auth_acl.ini');
-		$io->success('ACL entry added/updated in: ' . $path . $file);
+		$message = $args->getOption('dry-run') ? 'Preview only; ACL file unchanged: ' : 'ACL entry added/updated in: ';
+		$io->success($message . $path . $file);
 
 		return static::CODE_SUCCESS;
 	}

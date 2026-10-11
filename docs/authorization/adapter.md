@@ -1,14 +1,6 @@
-### Authorization Adapters
-For RBAC ACL adapters.
+# Authorization adapters
 
-#### Built-in adapters
-
-| Adapter | Class | Default file | Notes |
-|---------|-------|--------------|-------|
-| INI     | `TinyAuth\Auth\AclAdapter\IniAclAdapter` | `auth_acl.ini` | Default. Zero dependencies. |
-| PHP     | `TinyAuth\Auth\AclAdapter\PhpAclAdapter` | `auth_acl.php` | Returns a plain `return [...]` array. Zero dependencies. |
-
-Switch the adapter via the `aclAdapter` configuration key, e.g.:
+The default `TinyAuth\Auth\AclAdapter\IniAclAdapter` reads `auth_acl.ini`. To use a PHP file instead, configure the adapter and file name together in `config/app.php`:
 
 ```php
 'TinyAuth' => [
@@ -17,49 +9,19 @@ Switch the adapter via the `aclAdapter` configuration key, e.g.:
 ],
 ```
 
-The PHP file uses the same section/key/value shape as the INI variant — top-level keys are `Plugin.Prefix/Controller` identifiers and each section maps action names (or comma-separated action lists) to comma-separated role lists.
+Create `config/auth_acl.php` with a returned array:
 
-#### Custom adapters
-
-Implement the AclAdapterInterface and make sure your `getAcl()` method returns an array like so:
 ```php
-    // normal controller
-    'Posts' => [
-        'plugin' => null,
-        'prefix' => null,
-        'controller' => 'Posts',
-        'allow' => [
-            // action to role id mapping
-        ],
-        'deny => [
-            // action to role id mapping
-        ],
+<?php
+
+return [
+    'Articles' => [
+        'index' => 'user, admin',
+        'edit' => 'admin',
     ],
-    // or plugin with admin prefix
-    'Queue.admin/QueuedJobs' => [
-        'plugin' => 'Queue',
-        'prefix' => 'Admin',
-        'controller' => 'QueuedJobs',
-        'allow' => [
-            'index' => [
-                'user' => 1,
-            ],
-            'view' => [
-                'user' => 1,
-            ],
-            '*' => [
-                'admin' => 3,
-            ],
-        ],
-    ],
-    ...
+];
 ```
 
-Unique array keys due to the internal `PluginName.Prefix/ControllerName` syntax.
-URL elements and then an array of actions mapped to their role id(s).
-The `*` action key means 'any'.
+PHP adapters use the same controller identifiers and comma-separated values as INI adapters. They do not take the normalized `allow` / `deny` structure returned by custom adapters.
 
-With this you can easily built your own database adapter and manage your ACL via backend.
-Make sure you bust the cache with each update/change, though.
-
-Note: Some adapters may contain `map` data which is for debugging only (returns the original data).
+For a database-backed implementation, see [Custom adapters](/guide/custom-adapters). Clear the [rule cache](/guide/configuration#cache-busting) after changing either file.

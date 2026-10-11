@@ -15,15 +15,15 @@ Each topic page lists the keys it actually reads (see [Authentication](/authenti
 
 ## Cache busting
 
-INI files are parsed once and cached. After deploys, clear the cache:
+Parsed rules are cached with their adapter and configuration context. A component using another rule file or role source cannot reuse permissions cached for a different configuration. Keep shared rule sources in the global configuration to avoid repeatedly replacing cached rules. After deploys, clear the cache:
 
 ```bash
 bin/cake cache clear_all
 ```
 
-In **debug mode** the cache is bypassed automatically — every request re-reads the INI files, so iteration is fast.
+In debug mode, `autoClearCache` defaults to enabled. Set it to `false` to retain cached rules during development.
 
-The cache engine is `_cake_core_` and the prefix is `tiny_auth_`. To clear from code:
+The default cache configuration is `_cake_model_` and the prefix is `tiny_auth_`. For compatibility, a configured `_cake_core_` cache is used instead when present. Set `TinyAuth.cache` explicitly to choose a configured cache. To clear from code:
 
 ```php
 \TinyAuth\Utility\Cache::clear();
@@ -35,6 +35,6 @@ You can swap the INI file backends entirely using the `allowAdapter` (authentica
 
 Existing options:
 
-- **[TinyAuthBackend plugin](https://github.com/dereuromark/cakephp-tinyauth-backend)** — admin GUI that stores allow / ACL rules in the database.
+- [TinyAuthBackend plugin](https://github.com/dereuromark/cakephp-tinyauth-backend): admin GUI that stores allow / ACL rules in the database.
 
 For writing your own adapter, see [Authentication Adapter](/authentication/adapter) and [Authorization Adapter](/authorization/adapter).

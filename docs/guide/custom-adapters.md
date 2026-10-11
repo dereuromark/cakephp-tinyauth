@@ -1,12 +1,12 @@
 # Custom Adapters
 
-TinyAuth ships with two file-based backends (`Ini`, `Php` — see [Authorization Adapters](/authorization/adapter) and [Authentication Adapters](/authentication/adapter)) for the public-action whitelist (`auth_allow.*`) and the role permissions (`auth_acl.*`). If a different format is all you need, just switch the `aclAdapter` / `allowAdapter` config key. You only need a custom adapter when the data has to come from somewhere else entirely — a database, an API, etc.
+TinyAuth ships with two file-based backends (`Ini`, `Php`: see [Authorization Adapters](/authorization/adapter) and [Authentication Adapters](/authentication/adapter)) for the public-action whitelist (`auth_allow.*`) and the role permissions (`auth_acl.*`). If a different format is all you need, just switch the `aclAdapter` / `allowAdapter` config key. You only need a custom adapter when the data has to come from somewhere else entirely: a database, an API, etc.
 
 ## When you'd want a custom adapter
 
-- **Live editing** — admins editing rules from a UI rather than redeploying a file. The [TinyAuthBackend plugin](https://github.com/dereuromark/cakephp-tinyauth-backend) already provides this.
-- **Multi-tenant rules** — different rule sets per host / customer / region.
-- **Remote source** — central auth service, central feature flags, etc.
+- Live editing: admins editing rules from a UI rather than redeploying a file. The [TinyAuthBackend plugin](https://github.com/dereuromark/cakephp-tinyauth-backend) already provides this.
+- Multi-tenant rules: different rule sets per host / customer / region.
+- Remote source: central auth service, central feature flags, etc.
 
 If your rules are stable and per-environment, the INI files are usually fine. Don't overbuild this.
 
@@ -20,7 +20,7 @@ interface AllowAdapterInterface {
 }
 ```
 
-`getAllow()` returns the **public-action whitelist**, keyed by section. The reference implementation is [`IniAllowAdapter`](https://github.com/dereuromark/cakephp-tinyauth/blob/master/src/Auth/AllowAdapter/IniAllowAdapter.php).
+`getAllow()` returns the public-action whitelist, keyed by section. The reference implementation is [`IniAllowAdapter`](https://github.com/dereuromark/cakephp-tinyauth/blob/master/src/Auth/AllowAdapter/IniAllowAdapter.php).
 
 Each entry should look like:
 
@@ -57,7 +57,7 @@ interface AclAdapterInterface {
 }
 ```
 
-`getAcl()` returns the **role-permission map**, keyed by section. The reference implementation is [`IniAclAdapter`](https://github.com/dereuromark/cakephp-tinyauth/blob/master/src/Auth/AclAdapter/IniAclAdapter.php).
+`getAcl()` returns the role-permission map, keyed by section. The reference implementation is [`IniAclAdapter`](https://github.com/dereuromark/cakephp-tinyauth/blob/master/src/Auth/AclAdapter/IniAclAdapter.php).
 
 `$availableRoles` is `['admin' => 1, 'user' => 2, ...]` so you can look up role IDs by name.
 
@@ -80,7 +80,7 @@ Each entry should look like:
 ];
 ```
 
-`allow` is `[action => [roleName => roleId, ...]]` — a single action can have multiple roles. `deny` follows the same shape and is checked first; an action denied for a role overrides any allow.
+`allow` is `[action => [roleName => roleId, ...]]`: a single action can have multiple roles. `deny` follows the same shape and is checked first; an action denied for a role overrides any allow.
 
 ## Registering your adapter
 
@@ -96,16 +96,21 @@ Set the relevant config key in `app.php`:
 ],
 ```
 
-That's it — TinyAuth instantiates the adapter and calls `getAllow()` / `getAcl()` once per request (cached, see [Configuration](/guide/configuration#cache-busting)).
+That's it: TinyAuth calls the adapter when parsed rules are absent from the cache. Clear the rule cache after updating its data source; a cached rule set can otherwise survive across requests (see [Configuration](/guide/configuration#cache-busting)).
 
-## Skeleton example
+## Database example
+
+This example assumes an application `AuthRules` table with `section`, `action`, `role`, and `is_deny` fields. Create that table and its model before using this adapter.
 
 ```php
 namespace App\Auth;
 
+use Cake\ORM\Locator\LocatorAwareTrait;
 use TinyAuth\Auth\AclAdapter\AclAdapterInterface;
 
 class DatabaseAclAdapter implements AclAdapterInterface {
+
+    use LocatorAwareTrait;
 
     public function getAcl(array $availableRoles, array $config): array {
         $acl = [];
@@ -139,5 +144,5 @@ class DatabaseAclAdapter implements AclAdapterInterface {
 
 ## See also
 
-- [TinyAuthBackend](https://github.com/dereuromark/cakephp-tinyauth-backend) — a ready-made admin GUI for editing both stores.
-- [Configuration: Custom adapters](/guide/configuration#custom-adapters) — the config key reference.
+- [TinyAuthBackend](https://github.com/dereuromark/cakephp-tinyauth-backend): a ready-made admin GUI for editing both stores.
+- [Configuration: Custom adapters](/guide/configuration#custom-adapters): the config key reference.

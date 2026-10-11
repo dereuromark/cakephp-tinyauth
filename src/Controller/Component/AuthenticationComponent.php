@@ -12,8 +12,7 @@ use TinyAuth\Utility\Config;
 /**
  * TinyAuth AuthenticationComponent to handle all authentication in a central INI file.
  *
- * Make sure you have the new Authentication plugin installed if you want to use this component.
- * Otherwise, just use the Auth component.
+ * Requires the official Authentication plugin and its configured middleware.
  *
  * @link https://github.com/cakephp/authentication
  */
@@ -105,6 +104,8 @@ class AuthenticationComponent extends CakeAuthenticationComponent {
 		}
 
 		if (in_array('*', $rule['deny'], true)) {
+			$this->allowUnauthenticated([]);
+
 			return;
 		}
 
@@ -124,10 +125,6 @@ class AuthenticationComponent extends CakeAuthenticationComponent {
 		}
 		if (!empty($rule['deny'])) {
 			$allowed = array_diff($allowed, $rule['deny']);
-		}
-
-		if (!$allowed) {
-			return;
 		}
 
 		$this->allowUnauthenticated($allowed);

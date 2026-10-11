@@ -219,15 +219,19 @@ class PrimaryKeySessionAuthenticatorTest extends TestCase {
 
 		$authenticator = new PrimaryKeySessionAuthenticator($this->identifier);
 
-		$this->sessionMock->expects($this->once())
+		$deletedKeys = [];
+		$this->sessionMock->expects($this->exactly(2))
 			->method('delete')
-			->with('Auth');
+			->willReturnCallback(function ($key) use (&$deletedKeys): void {
+				$deletedKeys[] = $key;
+			});
 
 		$this->sessionMock
 			->expects($this->once())
 			->method('renew');
 
 		$result = $authenticator->clearIdentity($request, $response);
+		$this->assertSame(['AuthImpersonate', 'Auth'], $deletedKeys);
 		$this->assertIsArray($result);
 		$this->assertArrayHasKey('request', $result);
 		$this->assertArrayHasKey('response', $result);
@@ -408,6 +412,34 @@ class PrimaryKeySessionAuthenticatorTest extends TestCase {
 
 		$result = $authenticator->isImpersonating($request);
 		$this->assertFalse($result);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testLogoutCannotRestorePreviousImpersonatorAfterAnotherLogin(): void {
+		$this->sessionMock->expects($this->never())->method('read');
+		$session = new Session();
+		$request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/'])
+			->withAttribute('session', $session);
+		$response = new Response();
+		$authenticator = new PrimaryKeySessionAuthenticator($this->identifier, [
+			'impersonateSessionKey' => 'OriginalUser',
+		]);
+
+		try {
+			$authenticator->impersonate($request, $response, new ArrayObject(['id' => 123]), new ArrayObject(['id' => 456]));
+			$this->assertSame(123, $session->read('OriginalUser'));
+			$authenticator->clearIdentity($request, $response);
+			$this->assertFalse($session->check('OriginalUser'));
+			$this->assertFalse($session->check('Auth'));
+
+			$authenticator->persistIdentity($request, $response, new ArrayObject(['id' => 789]));
+			$authenticator->stopImpersonating($request, $response);
+			$this->assertSame(789, $session->read('Auth'));
+		} finally {
+			$session->destroy();
+		}
 	}
 
 }

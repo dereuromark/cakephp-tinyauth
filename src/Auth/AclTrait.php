@@ -14,6 +14,8 @@ use Cake\Utility\Inflector;
 use InvalidArgumentException;
 use RuntimeException;
 use TinyAuth\Auth\AclAdapter\AclAdapterInterface;
+use TinyAuth\Auth\AclAdapter\IniAclAdapter;
+use TinyAuth\Auth\AclAdapter\PhpAclAdapter;
 use TinyAuth\Utility\Cache;
 use TinyAuth\Utility\Utility;
 
@@ -335,38 +337,9 @@ trait AclTrait {
 	 * @return bool
 	 */
 	protected function _isPublic(array $params) {
-		$authentication = $this->_getAuth();
+		$rule = $this->_getAllowRule($params);
 
-		foreach ($authentication as $rule) {
-			// Match plugin and prefix slots using `null`-equivalent semantics:
-			// a routing param that is missing, null, or an empty string is treated as
-			// "no plugin / no prefix". Previously `!empty()` swallowed the literal
-			// strings `'0'` and any value PHP coerces to false (rare for routes, but
-			// the explicit `null` check is more honest about what the param can be).
-			if (!$this->_matchesRouteSlot($params['plugin'] ?? null, $rule['plugin'] ?? null)) {
-				continue;
-			}
-			if (!$this->_matchesRouteSlot($params['prefix'] ?? null, $rule['prefix'] ?? null)) {
-				continue;
-			}
-			if ($params['controller'] !== $rule['controller']) {
-				continue;
-			}
-
-			$action = $params['action'];
-
-			if (!empty($rule['deny']) && in_array($action, $rule['deny'], true)) {
-				return false;
-			}
-
-			if (in_array('*', $rule['allow'], true)) {
-				return true;
-			}
-
-			return in_array($params['action'], $rule['allow'], true);
-		}
-
-		return false;
+		return $this->_isActionAllowed($rule, $params['action']);
 	}
 
 	/**
@@ -403,10 +376,6 @@ trait AclTrait {
 		if ($this->getConfig('autoClearCache') && Configure::read('debug')) {
 			Cache::clear(Cache::KEY_ACL);
 		}
-		$acl = Cache::read(Cache::KEY_ACL);
-		if ($acl !== null) {
-			return $acl;
-		}
 
 		if ($path === null) {
 			$path = $this->getConfig('aclFilePath');
@@ -416,9 +385,23 @@ trait AclTrait {
 		$config['file'] = $config['aclFile'];
 		unset($config['aclFilePath']);
 		unset($config['aclFile']);
+		$cacheConfig = $config;
+		if (in_array($config['aclAdapter'], [IniAclAdapter::class, PhpAclAdapter::class], true)) {
+			$cacheConfig = array_intersect_key($config, array_flip([
+				'aclAdapter', 'filePath', 'file', 'rolesTable', 'rolesTablePlugin', 'aliasColumn', 'roleIdColumn',
+			]));
+		}
+		$cacheConfig['_roles'] = Configure::read($config['rolesTable']);
+		$context = Cache::fingerprint($cacheConfig);
+		$acl = $context !== null ? Cache::read(Cache::KEY_ACL, $context) : null;
+		if ($acl !== null) {
+			return $acl;
+		}
 
 		$acl = $this->_loadAclAdapter($config['aclAdapter'])->getAcl($this->_getAvailableRoles(), $config);
-		Cache::write(Cache::KEY_ACL, $acl);
+		if ($context !== null) {
+			Cache::write(Cache::KEY_ACL, $acl, $context);
+		}
 
 		return $acl;
 	}
