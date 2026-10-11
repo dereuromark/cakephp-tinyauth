@@ -131,10 +131,10 @@ trait AllowTrait {
 	}
 
 	/**
-	 * @param string|null $path
+	 * @param array<string>|string|null $path
 	 * @return array
 	 */
-	protected function _getAllow(?string $path = null): array {
+	protected function _getAllow(array|string|null $path = null): array {
 		if ($this->getConfig('autoClearCache') && Configure::read('debug')) {
 			Cache::clear(Cache::KEY_ALLOW);
 		}
