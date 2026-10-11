@@ -33,9 +33,9 @@ Once this works, both authentication and authorization are configured.
 | Symptom | Likely cause |
 | --- | --- |
 | Always redirected to login, even on whitelisted actions | INI file path wrong, or cache stale (run `cache clear_all`). |
-| "Roles not found" | Session structure doesn't match the expected format — check the `role_id` column or the role-loading config. |
-| Changed INI file but nothing happened | Cache not cleared after the edit. In debug mode this is automatic; in production you must run `cache clear_all` after deploy. |
-| ACL rule appears to be ignored | Syntax error in `auth_acl.ini` — check the format `actions = roles` per line. |
+| "Roles not found" | Session structure doesn't match the expected format: check the `role_id` column or the role-loading config. |
+| Changed INI file but nothing happened | Cache not cleared after the edit. In debug mode this is automatic unless `autoClearCache` is disabled; in production you must run `cache clear_all` after deploy. |
+| ACL rule appears to be ignored | Syntax error in `auth_acl.ini`: check the format `actions = roles` per line. |
 | Multi-role user denied access | See [Multi-role setup](/authorization/multi-role). |
 
 ## Use the DebugKit Auth panel

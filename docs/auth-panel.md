@@ -15,11 +15,11 @@ Protected action (quick icon):
 
 ![public](/img/auth_restricted.png)
 
-Panel showcase once opened as "guest":
+Panel opened as a guest:
 
 ![panel](/img/panel_guest.png)
 
-Panel showcase as "logged in user":
+Panel opened with a logged-in user:
 
 ![panel](/img/panel.png)
 
@@ -29,7 +29,7 @@ Activate the panel in your config:
 ```php
     'DebugKit' => [
         'panels' => [
-            ...
+            // Other panels can remain here.
             'TinyAuth.Auth' => true,
         ],
     ],
@@ -41,5 +41,5 @@ Note: If you only use TinyAuth authentication or authorization (and not both) it
 Make sure you enabled the documented components and helpers here to have all features enabled.
 
 ### Notes
-The allow/ACL data only works correctly, if you don't use any Controller allow()/deny() injections.
+The allow/ACL data only works correctly, if you don't use any controller `allowUnauthenticated()` calls.
 You should first migrate away from those before using this panel.

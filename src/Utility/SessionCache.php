@@ -21,7 +21,7 @@ class SessionCache {
 	];
 
 	/**
-	 * Clears all session user info based on prefix
+	 * Clears the configured cache groups, or the entire configured cache.
 	 *
 	 * @return void
 	 */
