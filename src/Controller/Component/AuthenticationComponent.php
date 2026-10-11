@@ -104,6 +104,8 @@ class AuthenticationComponent extends CakeAuthenticationComponent {
 		}
 
 		if (in_array('*', $rule['deny'], true)) {
+			$this->allowUnauthenticated([]);
+
 			return;
 		}
 
@@ -123,10 +125,6 @@ class AuthenticationComponent extends CakeAuthenticationComponent {
 		}
 		if (!empty($rule['deny'])) {
 			$allowed = array_diff($allowed, $rule['deny']);
-		}
-
-		if (!$allowed) {
-			return;
 		}
 
 		$this->allowUnauthenticated($allowed);

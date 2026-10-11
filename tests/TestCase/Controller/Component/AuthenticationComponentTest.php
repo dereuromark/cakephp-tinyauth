@@ -291,6 +291,32 @@ class AuthenticationComponentTest extends TestCase {
 	}
 
 	/**
+	 * @return void
+	 */
+	public function testIniDenyRemovesPreviouslyAllowedActions(): void {
+		foreach (['Private', 'DenyAll'] as $name) {
+			$request = new ServerRequest([
+				'params' => [
+					'controller' => $name,
+					'action' => 'view',
+					'plugin' => null,
+					'prefix' => null,
+				],
+			]);
+			$controller = $this->getControllerMock($request);
+			$component = new AuthenticationComponent(new ComponentRegistry($controller), $this->componentConfig + [
+				'allowFile' => 'deny_allow.ini',
+			]);
+			$component->allowUnauthenticated(['view']);
+			$method = new ReflectionMethod($component, '_prepareAuthentication');
+			$method->invoke($component);
+
+			$this->assertSame([], $component->getUnauthenticatedActions());
+			$this->assertFalse($component->isPublic());
+		}
+	}
+
+	/**
 	 * @param \Cake\Http\ServerRequest $request
 	 * @return \Cake\Controller\Controller
 	 */
