@@ -47,6 +47,7 @@ jobs:
           path: docs/.vitepress/dist
 
   deploy:
+    if: github.ref == 'refs/heads/master'
     permissions:
       contents: read
       pages: write
