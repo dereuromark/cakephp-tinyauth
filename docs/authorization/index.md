@@ -6,7 +6,7 @@ Complete [Installation](/guide/install) first. [Getting started](/guide/quick-st
 
 ## Official plugin setup
 
-Set up the [CakePHP Authorization plugin](https://github.com/cakephp/authorization) with its [Getting started guide](https://book.cakephp.org/authorization/3/en/getting-started.html). Authentication middleware must run before Authorization middleware so the latter can decorate the authenticated identity.
+Set up the [CakePHP Authorization plugin](https://github.com/cakephp/authorization) with its [Getting started guide](https://book.cakephp.org/authorization/4/#getting-started). Authentication middleware must run before Authorization middleware so the latter can decorate the authenticated identity.
 
 ## Implement Authorization Interface
 
@@ -34,7 +34,7 @@ class Application extends BaseApplication
 }
 ```
 
-📖 See: [Getting Started](https://book.cakephp.org/authorization/3/en/getting-started.html) in official docs
+📖 See: [Getting Started](https://book.cakephp.org/authorization/4/#getting-started) in official docs
 
 ## Configure Middleware
 
@@ -73,7 +73,7 @@ public function getAuthorizationService(ServerRequestInterface $request): Author
 
 This configures the request policy that reads your `auth_acl.ini` file for role-based permissions.
 
-📖 See: [Authorization Service](https://book.cakephp.org/authorization/3/en/getting-started.html#authorization-service) in official docs
+📖 See: [Authorization Service](https://book.cakephp.org/authorization/4/#getting-started) in official docs
 
 ---
 
@@ -578,6 +578,6 @@ By default INI files and the IniAdapter will be used. See [AuthorizationAdapter]
 
 # Additional Resources
 
-- 📖 Official Authorization Docs: [book.cakephp.org/authorization/3](https://book.cakephp.org/authorization/3/en/index.html)
+- 📖 Official Authorization Docs: [book.cakephp.org/authorization/4](https://book.cakephp.org/authorization/4/)
 - 🔐 Authentication: Set up authentication first - See [Authentication](/authentication/)
 - ❓ Troubleshooting: See [Troubleshooting](/guide/troubleshooting)

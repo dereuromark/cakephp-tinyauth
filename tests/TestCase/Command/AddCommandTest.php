@@ -3,7 +3,6 @@
 namespace TinyAuth\Test\TestCase\Command;
 
 use Cake\Command\Command;
-use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
 use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\Core\Configure;
@@ -29,7 +28,7 @@ class AddCommandTest extends TestCase {
 		$io->expects($this->never())->method('ask');
 		$io->expects($this->once())->method('err')->with('No controllers available. Supply a controller name explicitly.');
 
-		$this->assertSame(Command::CODE_ERROR, $command->execute(new Arguments([], [], ['controller']), $io));
+		$this->assertSame(Command::CODE_ERROR, $command->run([], $io));
 	}
 
 	/**

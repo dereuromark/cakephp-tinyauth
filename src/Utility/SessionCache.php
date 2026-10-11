@@ -15,7 +15,7 @@ class SessionCache {
 
 	use StaticConfigTrait;
 
-	protected static array $_defaultConfig = [
+	protected static array $defaultConfig = [
 		'cache' => 'default',
 		'prefix' => 'auth_user_',
 	];
@@ -101,7 +101,7 @@ class SessionCache {
 	 * @return array<string, mixed>
 	 */
 	protected static function prepareConfig(): array {
-		$defaultConfig = static::$_defaultConfig;
+		$defaultConfig = static::$defaultConfig;
 
 		return (array)Configure::read('TinyAuth') + $defaultConfig;
 	}

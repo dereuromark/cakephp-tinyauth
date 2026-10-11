@@ -15,7 +15,7 @@ trait AllowTrait {
 	/**
 	 * @var \TinyAuth\Auth\AllowAdapter\AllowAdapterInterface|null
 	 */
-	protected $_allowAdapter;
+	protected ?AllowAdapterInterface $_allowAdapter = null;
 
 	/**
 	 * Get the rules for a specific controller.
@@ -26,7 +26,7 @@ trait AllowTrait {
 	 * @param array $params
 	 * @return array
 	 */
-	protected function _getAllowRule(array $params) {
+	protected function _getAllowRule(array $params): array {
 		$rules = $this->_getAllow($this->getConfig('allowFilePath'));
 
 		$allowDefaults = $this->_getAllowDefaultsForCurrentParams($params);
@@ -69,7 +69,7 @@ trait AllowTrait {
 	 * @param mixed $rule
 	 * @return bool
 	 */
-	protected function _matchesAllowSlot($request, $rule): bool {
+	protected function _matchesAllowSlot(mixed $request, mixed $rule): bool {
 		$requestEmpty = $request === null || $request === '';
 		$ruleEmpty = $rule === null || $rule === '';
 
@@ -85,11 +85,11 @@ trait AllowTrait {
 
 	/**
 	 * @param array $rule
-	 * @param string $action
+	 * @param string|null $action
 	 *
 	 * @return bool
 	 */
-	protected function _isActionAllowed(array $rule, $action) {
+	protected function _isActionAllowed(array $rule, ?string $action): bool {
 		$rule += [
 			'deny' => [],
 			'allow' => [],
@@ -106,7 +106,7 @@ trait AllowTrait {
 	 * @param array $params
 	 * @return array<string>
 	 */
-	protected function _getAllowDefaultsForCurrentParams(array $params) {
+	protected function _getAllowDefaultsForCurrentParams(array $params): array {
 		if ($this->getConfig('allowNonPrefixed') && empty($params['prefix'])) {
 			return ['*'];
 		}
@@ -131,10 +131,10 @@ trait AllowTrait {
 	}
 
 	/**
-	 * @param string|null $path
+	 * @param array<string>|string|null $path
 	 * @return array
 	 */
-	protected function _getAllow($path = null) {
+	protected function _getAllow(array|string|null $path = null): array {
 		if ($this->getConfig('autoClearCache') && Configure::read('debug')) {
 			Cache::clear(Cache::KEY_ALLOW);
 		}
@@ -175,7 +175,7 @@ trait AllowTrait {
 	 * @throws \InvalidArgumentException
 	 * @return \TinyAuth\Auth\AllowAdapter\AllowAdapterInterface
 	 */
-	protected function _loadAllowAdapter($adapter) {
+	protected function _loadAllowAdapter(string $adapter): AllowAdapterInterface {
 		if ($this->_allowAdapter !== null) {
 			return $this->_allowAdapter;
 		}

@@ -27,7 +27,7 @@ class Cache {
 	/**
 	 * @var array
 	 */
-	protected static array $_defaultConfig = [
+	protected static array $defaultConfig = [
 		'cache' => '_cake_model_',
 		'cachePrefix' => 'tiny_auth_',
 		'allowCacheKey' => self::KEY_ALLOW,
@@ -161,7 +161,7 @@ class Cache {
 	 * @return array<string, mixed>
 	 */
 	protected static function prepareConfig(): array {
-		$defaultConfig = static::$_defaultConfig;
+		$defaultConfig = static::$defaultConfig;
 
 		//BC with 5.0.x
 		if (in_array('_cake_core_', CoreCache::configured(), true)) {

@@ -3,8 +3,6 @@
 namespace TinyAuth\Command;
 
 use Cake\Command\Command;
-use Cake\Console\Arguments;
-use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Core\Configure;
 use TinyAuth\Sync\Syncer;
@@ -46,11 +44,11 @@ class SyncCommand extends Command {
 	 *
 	 * Note: Existing entries are never modified, only new controllers are added.
 	 *
-	 * @param \Cake\Console\Arguments $args The command arguments.
-	 * @param \Cake\Console\ConsoleIo $io The console io
 	 * @return int
 	 */
-	public function execute(Arguments $args, ConsoleIo $io) {
+	public function execute(): int {
+		$args = $this->args;
+		$io = $this->io;
 		$syncer = $this->_getSyncer();
 		$syncer->syncAcl($args, $io);
 
@@ -65,7 +63,7 @@ class SyncCommand extends Command {
 	/**
 	 * @return \TinyAuth\Sync\Syncer
 	 */
-	protected function _getSyncer() {
+	protected function _getSyncer(): Syncer {
 		return new Syncer();
 	}
 
@@ -116,7 +114,7 @@ class SyncCommand extends Command {
 	/**
 	 * @return array<string>
 	 */
-	protected function _getAvailableRoles() {
+	protected function _getAvailableRoles(): array {
 		$roles = (new TinyAuth())->getAvailableRoles();
 
 		return array_keys($roles);

@@ -80,6 +80,36 @@ class AuthenticationComponentTest extends TestCase {
 	/**
 	 * @return void
 	 */
+	public function testAllowFilePathsMergeDirectories() {
+		$directory = TMP . 'tiny-auth-allow-' . uniqid() . DS;
+		mkdir($directory);
+		file_put_contents($directory . 'auth_allow.ini', 'Sales = view');
+		try {
+			$config = $this->componentConfig;
+			$config['allowFilePath'] = [$config['allowFilePath'], $directory];
+			foreach (['Users', 'Sales'] as $controllerName) {
+				$request = new ServerRequest([
+					'params' => [
+						'controller' => $controllerName,
+						'action' => 'view',
+						'plugin' => null,
+						'_ext' => null,
+						'pass' => [],
+					],
+				]);
+				$registry = new ComponentRegistry($this->getControllerMock($request));
+				$component = new AuthenticationComponent($registry, $config);
+				$this->assertTrue($component->isPublic(), $controllerName);
+			}
+		} finally {
+			unlink($directory . 'auth_allow.ini');
+			rmdir($directory);
+		}
+	}
+
+	/**
+	 * @return void
+	 */
 	public function testIsPublicFail() {
 		$request = new ServerRequest([
 			'params' => [

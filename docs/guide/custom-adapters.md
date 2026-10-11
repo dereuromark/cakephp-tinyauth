@@ -20,7 +20,7 @@ interface AllowAdapterInterface {
 }
 ```
 
-`getAllow()` returns the public-action whitelist, keyed by section. The reference implementation is [`IniAllowAdapter`](https://github.com/dereuromark/cakephp-tinyauth/blob/master/src/Auth/AllowAdapter/IniAllowAdapter.php).
+`getAllow()` returns the public-action whitelist, keyed by section. The reference implementation is [`IniAllowAdapter`](https://github.com/dereuromark/cakephp-tinyauth/blob/cake6/src/Auth/AllowAdapter/IniAllowAdapter.php).
 
 Each entry should look like:
 
@@ -57,7 +57,7 @@ interface AclAdapterInterface {
 }
 ```
 
-`getAcl()` returns the role-permission map, keyed by section. The reference implementation is [`IniAclAdapter`](https://github.com/dereuromark/cakephp-tinyauth/blob/master/src/Auth/AclAdapter/IniAclAdapter.php).
+`getAcl()` returns the role-permission map, keyed by section. The reference implementation is [`IniAclAdapter`](https://github.com/dereuromark/cakephp-tinyauth/blob/cake6/src/Auth/AclAdapter/IniAclAdapter.php).
 
 `$availableRoles` is `['admin' => 1, 'user' => 2, ...]` so you can look up role IDs by name.
 

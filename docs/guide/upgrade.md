@@ -1,5 +1,13 @@
 # Upgrade Guide
 
+## CakePHP 6 development branch
+
+The `cake6` branch requires PHP 8.5 and CakePHP 6. Authentication features use Authentication 5; authorization features use Authorization 4. Follow the [installation guide](/guide/install) to select the development branches and configure Composer stability.
+
+Custom components and helpers must follow the CakePHP 6 configuration and view property names. Custom commands implement `execute(): int` and access the inherited argument and console properties. Review overrides against the native parameter and return types in this branch. INI allow-file configuration still accepts one directory or an array of directories.
+
+The test suite uses PHPUnit 13. The published documentation website describes the stable CakePHP 5 branch; use the `docs/` files in this branch for CakePHP 6.
+
 ## Upgrading from TinyAuth 3.x (CakePHP 4.x)
 
 **Breaking changes:** TinyAuth has fundamentally changed from a standalone auth solution to a wrapper around the official CakePHP plugins.
