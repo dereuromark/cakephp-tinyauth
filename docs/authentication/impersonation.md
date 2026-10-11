@@ -4,7 +4,7 @@ TinyAuth ships a `PrimaryKeySessionAuthenticator` that enables the classic "admi
 
 ## Setup
 
-With Authentication 4, replace the default Session authenticator in `getAuthenticationService()` with the following configuration. This example assumes a `Users` table with an `id` primary key:
+With Authentication 5, replace the default Session authenticator in `getAuthenticationService()` with the following configuration. This example assumes a `Users` table with an `id` primary key:
 
 ```php
 $service->loadAuthenticator('TinyAuth.PrimaryKeySession', [
@@ -22,7 +22,7 @@ $service->loadAuthenticator('TinyAuth.PrimaryKeySession', [
 ]);
 ```
 
-The authenticator stores only the user’s primary key in the session. With caching disabled, it reloads the identity through the configured identifier on each request. For Authentication 3, configure the Token identifier using its [versioned setup guide](https://book.cakephp.org/authentication/5/quick-start.html).
+The authenticator stores only the user’s primary key in the session. With caching disabled, it reloads the identity through the configured identifier on each request. Configure the Token identifier using its [versioned setup guide](https://book.cakephp.org/authentication/5/#quick-start).
 
 ### Config keys
 
