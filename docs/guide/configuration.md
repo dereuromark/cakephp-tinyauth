@@ -21,9 +21,9 @@ INI files are parsed once and cached. After deploys, clear the cache:
 bin/cake cache clear_all
 ```
 
-In **debug mode** the cache is bypassed automatically — every request re-reads the INI files, so iteration is fast.
+In debug mode, `autoClearCache` defaults to enabled. Set it to `false` to retain cached rules during development.
 
-The cache engine is `_cake_core_` and the prefix is `tiny_auth_`. To clear from code:
+The default cache configuration is `_cake_model_` and the prefix is `tiny_auth_`. To clear from code:
 
 ```php
 \TinyAuth\Utility\Cache::clear();

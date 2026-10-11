@@ -261,7 +261,7 @@ class AuthUserComponentTest extends TestCase {
 			 * @param int $offset
 			 * @return mixed
 			 */
-			public function offsetGet($offset) {
+			public function offsetGet($offset): mixed {
 				return $this->data[$offset];
 			}
 
@@ -310,7 +310,7 @@ class AuthUserComponentTest extends TestCase {
 			 * @param int $offset
 			 * @return mixed
 			 */
-			public function offsetGet($offset) {
+			public function offsetGet($offset): mixed {
 				return $this->data[$offset];
 			}
 

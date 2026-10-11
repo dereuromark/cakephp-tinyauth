@@ -7,8 +7,8 @@ function unifiedSidebar() {
       collapsed: false,
       items: [
         { text: 'Overview', link: '/guide/' },
-        { text: '5-min Quick Start', link: '/guide/quick-start' },
         { text: 'Installation', link: '/guide/install' },
+        { text: 'Getting started', link: '/guide/quick-start' },
         { text: 'Configuration', link: '/guide/configuration' },
         { text: 'Custom Adapters', link: '/guide/custom-adapters' },
         { text: 'Troubleshooting', link: '/guide/troubleshooting' },

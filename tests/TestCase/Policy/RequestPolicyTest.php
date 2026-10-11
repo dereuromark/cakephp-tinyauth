@@ -85,10 +85,10 @@ class RequestPolicyTest extends TestCase {
 	}
 
 	/**
-	 * @return \Authorization\AuthorizationService|\PHPUnit\Framework\MockObject\MockObject
+	 * @return \Authorization\AuthorizationService
 	 */
 	protected function getService(): AuthorizationService {
-		return $this->getMockBuilder(AuthorizationService::class)->disableOriginalConstructor()->getMock();
+		return $this->createStub(AuthorizationService::class);
 	}
 
 }
