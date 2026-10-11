@@ -294,4 +294,4 @@ AuthUser works with any authentication solution, not just TinyAuth:
 - CakePHP Authorization plugin - Works out of the box
 - Custom auth - As long as you set an identity in request attributes
 
-The component reads an identity object from `$request->getAttribute('identity')`. That object must implement `getOriginalData()`, returning an array or an `ArrayAccess` object such as a CakePHP entity or `ArrayObject`. A raw array in the request’s `identity` attribute is not supported.
+The component reads an identity object from `$request->getAttribute('identity')`. That object must implement `getOriginalData()`, returning an array or an `ArrayAccess` object that provides `toArray()`, implements `Traversable`, or implements `Countable`. CakePHP entities and `ArrayObject` provide explicit conversion paths. The `Countable` fallback casts object properties to an array; it does not enumerate offset keys. A raw array in the request’s `identity` attribute is not supported.

@@ -12,7 +12,9 @@ use Traversable;
  * Read identity data and check configured role membership.
  *
  * The using class implements _getUser(). Role fields are configured through
- * roleColumn and multiRole; user data is an array or an ArrayAccess object.
+ * roleColumn and multiRole. ArrayAccess data provides toArray(), implements
+ * Traversable, or implements Countable. The Countable fallback casts object
+ * properties rather than enumerating offset keys.
  */
 trait AuthUserTrait {
 
