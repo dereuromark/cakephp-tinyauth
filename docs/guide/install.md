@@ -8,8 +8,8 @@ TinyAuth wraps CakePHP's official Authentication and Authorization plugins. Befo
 
 | Feature | Required Plugin | Setup Guide |
 | --- | --- | --- |
-| Authentication (login/logout) | [cakephp/authentication](https://github.com/cakephp/authentication) | [/authentication/](/authentication/) + [Authentication 5](https://book.cakephp.org/authentication/5/en/index.html) |
-| Authorization (roles / ACL) | [cakephp/authorization](https://github.com/cakephp/authorization) | [/authorization/](/authorization/) + [Official Docs](https://book.cakephp.org/authorization/4/en/index.html) |
+| Authentication (login/logout) | [cakephp/authentication](https://github.com/cakephp/authentication) | [/authentication/](/authentication/) + [Authentication 5](https://book.cakephp.org/authentication/5/) |
+| Authorization (roles / ACL) | [cakephp/authorization](https://github.com/cakephp/authorization) | [/authorization/](/authorization/) + [Official Docs](https://book.cakephp.org/authorization/4/) |
 
 ```bash
 composer config minimum-stability dev
