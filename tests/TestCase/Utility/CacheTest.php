@@ -2,6 +2,7 @@
 
 namespace TinyAuth\Test\TestCase\Utility;
 
+use Cake\Cache\Cache as CoreCache;
 use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
 use Cake\TestSuite\TestCase;
@@ -66,6 +67,35 @@ class CacheTest extends TestCase {
 
 		$this->assertSame('acl', Cache::key(Cache::KEY_ACL));
 		$this->assertSame('allow', Cache::key(Cache::KEY_ALLOW));
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testConfiguredCoreCacheIsSelectedBeforeEngineInstantiation(): void {
+		$original = CoreCache::getConfig('_cake_core_');
+		CoreCache::drop('_cake_core_');
+		CoreCache::setConfig('_cake_core_', ['className' => 'Array']);
+		Configure::delete('TinyAuth.cache');
+
+		try {
+			$this->assertFalse(CoreCache::getRegistry()->has('_cake_core_'));
+			Cache::write(Cache::KEY_ALLOW, ['public']);
+			$this->assertSame(['public'], CoreCache::read(Cache::key(Cache::KEY_ALLOW), '_cake_core_'));
+			Cache::clear();
+			$this->assertNull(CoreCache::read(Cache::key(Cache::KEY_ALLOW), '_cake_core_'));
+
+			Configure::write('TinyAuth.cache', '_cake_model_');
+			Cache::write(Cache::KEY_ALLOW, ['explicit']);
+			$this->assertSame(['explicit'], CoreCache::read(Cache::key(Cache::KEY_ALLOW), '_cake_model_'));
+			$this->assertNull(CoreCache::read(Cache::key(Cache::KEY_ALLOW), '_cake_core_'));
+			Cache::clear();
+		} finally {
+			CoreCache::drop('_cake_core_');
+			if ($original !== null) {
+				CoreCache::setConfig('_cake_core_', $original);
+			}
+		}
 	}
 
 }

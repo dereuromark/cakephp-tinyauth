@@ -154,7 +154,7 @@ class Adder {
 				continue;
 			}
 
-			$controllers = array_merge($controllers, $this->_parseControllers($folder . $subFolder . DS, $plugin, $subFolder));
+			$controllers = array_merge($controllers, $this->_parseControllers($folder . $subFolder . DS, $plugin, ($prefix ? $prefix . '/' : '') . $subFolder));
 		}
 
 		return $controllers;

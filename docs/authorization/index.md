@@ -8,7 +8,7 @@ Complete [Installation](/guide/install) first. [Getting started](/guide/quick-st
 
 Set up the [CakePHP Authorization plugin](https://github.com/cakephp/authorization) with its [Getting started guide](https://book.cakephp.org/authorization/3/en/getting-started.html). Authentication middleware must run before Authorization middleware so the latter can decorate the authenticated identity.
 
-## Step 2: Implement Authorization Interface
+## Implement Authorization Interface
 
 Your `Application` class must implement `AuthorizationServiceProviderInterface`:
 
@@ -36,7 +36,7 @@ class Application extends BaseApplication
 
 📖 See: [Getting Started](https://book.cakephp.org/authorization/3/en/getting-started.html) in official docs
 
-## Step 3: Configure Middleware
+## Configure Middleware
 
 Add the official Authorization middleware after Authentication middleware:
 
@@ -48,7 +48,7 @@ $middlewareQueue->add(new AuthorizationMiddleware($this));
 
 The TinyAuth Authorization component performs the request check at controller startup. If you prefer to check requests in middleware, follow [Middleware and policy](/authorization/middleware) instead; do not add both checks for the same request.
 
-## Step 4: Configure Authorization Service
+## Configure Authorization Service
 
 Implement `getAuthorizationService()` in your `Application` class to set up the TinyAuth request policy:
 
@@ -77,9 +77,7 @@ This configures the request policy that reads your `auth_acl.ini` file for role-
 
 ---
 
-# Part 2: TinyAuth Features
-
-## Step 5: Set Up Roles
+## Set Up Roles
 
 TinyAuth requires the presence of roles to function. Choose one of the following options:
 
@@ -163,7 +161,7 @@ bin/cake migrations migrate -p TinyAuth
 
 Alternatively you can copy and paste this migration file to your `app/Config` folder and adjust the fields and table names and then use that modified version instead.
 
-## Step 6: Load TinyAuth Component
+## Load TinyAuth Component
 
 Load the Authorization component in your controller:
 
@@ -182,7 +180,7 @@ public function initialize(): void
 
 That's it for code changes! Now configure your role permissions via INI file.
 
-## Step 7: Configure auth_acl.ini
+## Configure auth_acl.ini
 
 TinyAuth expects an `auth_acl.ini` file in your config directory. Use it to specify in detail who gets access to which resources.
 
@@ -409,45 +407,15 @@ TinyAuth provides redirect handlers with flash message support:
 
 Features:
 - Automatically sets flash error messages
-- Skips JSON/XML requests (throws exception instead)
+- Rethrows exceptions for non-HTML route extensions. The Accept header alone does not select this behavior.
 - Preserves target URL in query parameter for post-login redirect
 - Set `unauthorizedMessage` to `false` to disable flash messages
 
 You can use the official handlers instead if you prefer.
 
-### Controller-Specific Authorization
+### Middleware alternative
 
-In some cases, you may want to apply authorization at the controller level instead of globally. Move `RequestAuthorizationMiddleware` from `Application` to your controller:
-
-```php
-// src/Controller/AppController.php
-use Psr\Http\Message\ResponseInterface;
-use Cake\Http\ServerRequest;
-use TinyAuth\Middleware\RequestAuthorizationMiddleware;
-
-public function initialize(): void
-{
-    parent::initialize();
-
-    // Apply authorization middleware at controller level
-    $this->middleware(function (ServerRequest $request, $handler): ResponseInterface {
-        $config = [
-            'unauthorizedHandler' => [
-                'className' => 'TinyAuth.ForbiddenCakeRedirect',
-                'url' => [
-                    'controller' => 'Users',
-                    'action' => 'login',
-                ],
-            ],
-        ];
-        $middleware = new RequestAuthorizationMiddleware($config);
-
-        return $middleware->process($request, $handler);
-    });
-}
-```
-
-If redirects loop, check that your login route is public and that Authentication middleware runs before Authorization middleware. Skipping authorization based only on a missing identity would also skip guest ACL checks.
+Use the [request middleware guide](./middleware) if you prefer middleware to the component. Choose one request authorization check to avoid running both.
 
 ## AuthUser Component
 

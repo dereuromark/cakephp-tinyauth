@@ -52,7 +52,7 @@ bin/cake tiny_auth add Articles index user --dry-run
 
 ## `tiny_auth sync`
 
-Scan all discovered controllers and add any that don't yet have an ACL entry. Existing entries are **never** modified ; sync only adds missing rows with the wildcard action.
+Scan all discovered controllers and add any that don't yet have an ACL entry. Existing entries are **never** modified; sync only adds missing rows with the wildcard action.
 
 ```bash
 bin/cake tiny_auth sync <roles> [options]
@@ -100,4 +100,4 @@ Review the controller names and role choices, then run the command without `--dr
 
 - Both commands respect `TinyAuth.aclFilePath` and `TinyAuth.aclFile` overrides for non-default INI locations.
 - Both commands list discovered roles in their `--help` output (pulled from `TinyAuth\Utility\TinyAuth::getAvailableRoles()`).
-- Successful runs return exit code `0`. There's no separate "no changes made" exit code ; `--dry-run` is the way to detect drift.
+- Successful runs return exit code `0`. There's no separate "no changes made" exit code; `--dry-run` is the way to detect drift.

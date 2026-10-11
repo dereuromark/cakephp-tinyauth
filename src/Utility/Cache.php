@@ -164,8 +164,7 @@ class Cache {
 		$defaultConfig = static::$_defaultConfig;
 
 		//BC with 5.0.x
-		$configured = CoreCache::getRegistry();
-		if ($configured->has('_cake_core_')) {
+		if (in_array('_cake_core_', CoreCache::configured(), true)) {
 			$defaultConfig['cache'] = '_cake_core_';
 		}
 

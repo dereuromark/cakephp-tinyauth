@@ -23,7 +23,7 @@ bin/cake cache clear_all
 
 In debug mode, `autoClearCache` defaults to enabled. Set it to `false` to retain cached rules during development.
 
-The default cache configuration is `_cake_model_` and the prefix is `tiny_auth_`. For compatibility, an already loaded `_cake_core_` cache engine is used instead when present. Set `TinyAuth.cache` explicitly to choose a configured cache. To clear from code:
+The default cache configuration is `_cake_model_` and the prefix is `tiny_auth_`. For compatibility, a configured `_cake_core_` cache is used instead when present. Set `TinyAuth.cache` explicitly to choose a configured cache. To clear from code:
 
 ```php
 \TinyAuth\Utility\Cache::clear();

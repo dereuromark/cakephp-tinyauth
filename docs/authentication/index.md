@@ -8,7 +8,7 @@ Complete [Installation](/guide/install) first. For a small working rule set, fol
 
 Set up the [CakePHP Authentication plugin](https://github.com/cakephp/authentication) before loading TinyAuth’s component. Use the documentation matching your installed version: [Authentication 4](https://book.cakephp.org/authentication/4/en/quick-start.html) or [Authentication 3](https://book.cakephp.org/authentication/3/en/quick-start.html).
 
-## Step 2: Implement Authentication Interface
+## Implement Authentication Interface
 
 Your `Application` class must implement `AuthenticationServiceProviderInterface`:
 
@@ -24,9 +24,9 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
 }
 ```
 
-📖 See: [Application Setup](https://book.cakephp.org/authentication/3/en/quick-start.html#application-setup) in official docs
+📖 See: [Application Setup](https://book.cakephp.org/authentication/4/en/quick-start.html#application-setup) in official docs
 
-## Step 3: Configure Middleware
+## Configure Middleware
 
 Add the authentication middleware to your `Application` class:
 
@@ -46,9 +46,9 @@ public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
 }
 ```
 
-📖 See: [Middleware Setup](https://book.cakephp.org/authentication/3/en/middleware.html) in official docs
+📖 See: [Middleware Setup](https://book.cakephp.org/authentication/4/en/middleware.html) in official docs
 
-## Step 4: Configure Authentication Service
+## Configure Authentication Service
 
 The example below uses Authentication 4. For Authentication 3, follow its versioned guide to configure identifiers, then load the same TinyAuth component. Implement `getAuthenticationService()` in your `Application` class:
 
@@ -123,13 +123,11 @@ public function getAuthenticationService(ServerRequestInterface $request): Authe
 
 Note: Each authenticator has its own `identifier` configuration. The Session authenticator doesn't need one as it uses the stored identity.
 
-📖 See: [Authentication Service](https://book.cakephp.org/authentication/3/en/authentication-service.html) in official docs
+📖 See: [Authentication Service](https://book.cakephp.org/authentication/4/en/authentication-service.html) in official docs
 
 ---
 
-# Part 2: TinyAuth Features
-
-## Step 5: Load TinyAuth Component
+## Load TinyAuth Component
 
 Now load the TinyAuth Authentication component in your controller:
 
@@ -148,7 +146,7 @@ public function initialize(): void
 
 That's it for code changes! Now configure your public actions via INI file.
 
-## Step 6: Configure auth_allow.ini
+## Configure auth_allow.ini
 
 TinyAuth expects an `auth_allow.ini` file in your config directory. Use it to specify what actions are not protected by authentication.
 
@@ -404,7 +402,7 @@ $service->loadAuthenticator('TinyAuth.PrimaryKeySession', [
 ]);
 ```
 
-📖 See: [Session Authenticator](https://book.cakephp.org/authentication/3/en/authenticators.html#session) in official docs for base functionality
+📖 See: [Session Authenticator](https://book.cakephp.org/authentication/4/en/authenticators.html#session) in official docs for base functionality
 
 ### Session Caching with PrimaryKeySession
 
@@ -449,7 +447,7 @@ $service->setConfig([
 
 Features:
 - Automatically sets flash error messages
-- Skips JSON/XML requests (throws exception instead)
+- Rethrows exceptions for non-HTML route extensions. The Accept header alone does not select this behavior.
 - Preserves target URL in query parameter for post-login redirect
 
 You can use the official handlers instead if you prefer.
